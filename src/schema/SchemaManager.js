@@ -142,15 +142,16 @@ export class SchemaManager {
     const columns = Object.keys(schema.columns);
 
     switch (operation) {
-      case 'create':
+      case 'create': {
         const insertColumns = columns.filter(col => params[col] !== undefined);
         const placeholders = insertColumns.map(() => '?');
         return {
           sql: `INSERT INTO ${tableName} (${insertColumns.join(', ')}) VALUES (${placeholders.join(', ')})`,
           params: insertColumns.map(col => params[col])
         };
+      }
 
-      case 'read':
+      case 'read': {
         let whereClause = '';
         let whereParams = [];
 
@@ -171,8 +172,9 @@ export class SchemaManager {
           sql: `SELECT ${columns.join(', ')} FROM ${tableName} ${whereClause}`,
           params: whereParams
         };
+      }
 
-      case 'update':
+      case 'update': {
         const updateColumns = columns.filter(col => params[col] !== undefined && col !== 'id');
         const setClause = updateColumns.map(col => `${col} = ?`).join(', ');
         const updateParams = updateColumns.map(col => params[col]);
@@ -181,12 +183,14 @@ export class SchemaManager {
           sql: `UPDATE ${tableName} SET ${setClause} WHERE id = ?`,
           params: [...updateParams, params.id]
         };
+      }
 
-      case 'delete':
+      case 'delete': {
         return {
           sql: `DELETE FROM ${tableName} WHERE id = ?`,
           params: [params.id]
         };
+      }
 
       default:
         throw new Error(`Unknown operation: ${operation}`);
