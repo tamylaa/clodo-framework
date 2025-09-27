@@ -1,0 +1,55 @@
+{
+  "name": "@tamyla/lego-framework",
+  "version": "1.0.0",
+  "description": "Reusable framework for Lego-style software architecture on Cloudflare Workers + D1",
+  "main": "src/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./services": "./src/services/GenericDataService.js",
+    "./schema": "./src/schema/SchemaManager.js",
+    "./modules": "./src/modules/ModuleManager.js",
+    "./routing": "./src/routing/EnhancedRouter.js",
+    "./handlers": "./src/handlers/GenericRouteHandler.js",
+    "./config": "./src/config/index.js",
+    "./worker": "./src/worker/index.js",
+    "./utils": "./src/utils/index.js"
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/",
+    "build": "babel src/ --out-dir dist/",
+    "create-service": "node bin/create-service.js"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "d1",
+    "framework",
+    "reusable",
+    "microservices",
+    "lego-architecture"
+  ],
+  "author": "Tamyla",
+  "license": "MIT",
+  "dependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0"
+  },
+  "bin": {
+    "create-lego-service": "./bin/create-service.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamyla/lego-framework.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
