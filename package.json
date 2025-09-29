@@ -103,7 +103,7 @@
   "homepage": "https://lego-framework.tamyla.com",
   "release": {
     "branches": [
-      "main"
+      "master"
     ],
     "plugins": [
       "@semantic-release/commit-analyzer",
