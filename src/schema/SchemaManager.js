@@ -130,7 +130,7 @@ export class SchemaManager {
    * @param {string} modelName - Model name
    * @param {string} operation - Operation type (create, read, update, delete)
    * @param {Object} params - Operation parameters
-   * @returns {string} SQL query
+   * @returns {Object} SQL query object with sql and params properties
    */
   generateSQL(modelName, operation, params = {}) {
     const schema = this.getModel(modelName);

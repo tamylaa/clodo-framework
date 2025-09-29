@@ -64,6 +64,7 @@ export class EnhancedRouter {
       const match = this._matchRoute(routePath, path);
       if (match) {
         // Add route parameters to request
+        // @ts-ignore - Extending Request object with params
         request.params = match.params;
         return await handler(request, ...match.args);
       }

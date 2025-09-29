@@ -16,7 +16,7 @@
  * @version 2.0.0
  */
 
-import { existsSync } from 'fs';
+import { existsSync, access } from 'fs';
 import { readFile, writeFile, appendFile, mkdir, readdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import { exec } from 'child_process';
