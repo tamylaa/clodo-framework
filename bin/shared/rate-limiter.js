@@ -3,8 +3,8 @@
  * Implements exponential backoff and request queuing to prevent rate limit violations
  */
 
-const { promisify } = require('util');
-const { exec } = require('child_process');
+import { promisify } from 'util';
+import { exec } from 'child_process';
 
 const execAsync = promisify(exec);
 
@@ -237,7 +237,7 @@ function clearQueues() {
   });
 }
 
-module.exports = {
+export {
   executeWithRateLimit,
   queueRequest,
   getRateLimitStatus,

@@ -18,7 +18,7 @@
  */
 
 import { access, writeFile, readFile, mkdir, readdir, stat } from 'fs/promises';
-import { join, dirname } from 'path';
+import { join, dirname, basename } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
@@ -777,7 +777,7 @@ export default config;`;
         await mkdir(backupDir, { recursive: true });
       }
 
-      const backupFile = join(backupDir, `${Date.now()}-${require('path').basename(configFile)}`);
+      const backupFile = join(backupDir, `${Date.now()}-${basename(configFile)}`);
       const content = await readFile(configFile, 'utf8');
       await writeFile(backupFile, content);
 

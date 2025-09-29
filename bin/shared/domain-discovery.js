@@ -7,7 +7,7 @@
  * Extracted from dynamic-config-builder.js with enhancements
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -578,7 +578,7 @@ export class DomainDiscovery {
   loadConfigCache() {
     if (!existsSync(this.configPaths.cache)) return;
     
-    const files = require('fs').readdirSync(this.configPaths.cache);
+    const files = readdirSync(this.configPaths.cache);
     let loaded = 0;
     
     files.forEach(file => {

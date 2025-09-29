@@ -182,7 +182,7 @@ export async function deployWorker(env = 'production') {
 
 export async function deploySecret(key, value, env = 'production') {
   const command = process.platform === 'win32'
-    ? `echo "${value}" | npx wrangler secret put ${key} --env ${env}`
+    ? `powershell -Command "Write-Output '${value}' | npx wrangler secret put ${key} --env ${env}"`
     : `echo "${value}" | npx wrangler secret put ${key} --env ${env}`;
   
   try {

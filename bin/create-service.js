@@ -5,7 +5,7 @@
  * Creates new services from predefined templates
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync, readdirSync, statSync } from 'fs';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -209,11 +209,11 @@ function getAllFiles(dir) {
   const files = [];
 
   function traverse(currentDir) {
-    const items = require('fs').readdirSync(currentDir);
+    const items = readdirSync(currentDir);
 
     for (const item of items) {
       const fullPath = join(currentDir, item);
-      const stat = require('fs').statSync(fullPath);
+      const stat = statSync(fullPath);
 
       if (stat.isDirectory()) {
         // Skip node_modules and other unwanted directories

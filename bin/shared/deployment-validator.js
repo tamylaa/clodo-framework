@@ -398,8 +398,11 @@ export class DeploymentValidator {
   async validateNetworkEndpoint(endpoint) {
     console.log(`   Testing connectivity to ${endpoint}...`);
     try {
-      // Use curl or similar to test connectivity
-      await this.executeWithRetry(`curl -s --connect-timeout 10 ${endpoint} -o /dev/null`, 15000);
+      // Use curl on Unix-like systems, Invoke-WebRequest on Windows
+      const command = process.platform === 'win32'
+        ? `powershell -Command "try { Invoke-WebRequest -Uri '${endpoint}' -TimeoutSec 10 -UseBasicParsing | Out-Null } catch { exit 1 }"`
+        : `curl -s --connect-timeout 10 ${endpoint} -o /dev/null`;
+      await this.executeWithRetry(command, 15000);
       console.log(`     ✅ ${endpoint}: reachable`);
       this.addResult('network', `${endpoint} reachable`, 'info');
     } catch (error) {
@@ -457,8 +460,11 @@ export class DeploymentValidator {
     try {
       // Test health endpoint first
       const healthUrl = `https://${domain}/health`;
-      await this.executeWithRetry(`curl -s --connect-timeout 10 ${healthUrl}`, 15000);
-      
+      const command = process.platform === 'win32'
+        ? `powershell -Command "try { Invoke-WebRequest -Uri '${healthUrl}' -TimeoutSec 10 -UseBasicParsing | Out-Null } catch { exit 1 }"`
+        : `curl -s --connect-timeout 10 ${healthUrl}`;
+      await this.executeWithRetry(command, 15000);
+
       console.log(`     ✅ ${domain}: health endpoint responding`);
       this.addResult('endpoints', `${domain} endpoints accessible`, 'success');
     } catch (error) {

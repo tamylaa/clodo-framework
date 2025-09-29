@@ -8,7 +8,7 @@
  */
 
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, appendFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -403,7 +403,7 @@ export class DatabaseOrchestrator {
       await this.executeWithRetry(command, 300000); // 5 minute timeout for backups
       
       if (existsSync(backupFile)) {
-        const stats = require('fs').statSync(backupFile);
+        const stats = statSync(backupFile);
         console.log(`     💾 Backup created: ${backupFile} (${(stats.size / 1024).toFixed(1)}KB)`);
         
         return {
@@ -668,7 +668,7 @@ export class DatabaseOrchestrator {
       const logLine = JSON.stringify(logEntry) + '\n';
       
       if (existsSync(this.backupPaths.audit)) {
-        require('fs').appendFileSync(this.backupPaths.audit, logLine);
+        appendFileSync(this.backupPaths.audit, logLine);
       } else {
         writeFileSync(this.backupPaths.audit, logLine);
       }
