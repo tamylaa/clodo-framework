@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/lego-framework",
-  "version": "1.2.0",
+  "version": "1.3.1",
   "description": "Reusable framework for Lego-style software architecture on Cloudflare Workers + D1",
   "type": "module",
   "sideEffects": [
@@ -119,7 +119,11 @@
       [
         "@semantic-release/git",
         {
-          "assets": ["CHANGELOG.md", "package.json", "package-lock.json"],
+          "assets": [
+            "CHANGELOG.md",
+            "package.json",
+            "package-lock.json"
+          ],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
