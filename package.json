@@ -95,10 +95,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tamyla/lego-framework.git"
+    "url": "git+https://github.com/tamylaa/lego-framework.git"
   },
   "bugs": {
-    "url": "https://github.com/tamyla/lego-framework/issues"
+    "url": "https://github.com/tamylaa/lego-framework/issues"
   },
   "homepage": "https://lego-framework.tamyla.com",
   "release": {
