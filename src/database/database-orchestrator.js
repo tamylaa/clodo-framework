@@ -25,7 +25,9 @@ const __dirname = dirname(__filename);
  */
 export class DatabaseOrchestrator {
   constructor(options = {}) {
-    this.projectRoot = options.projectRoot || join(__dirname, '..', '..');
+    // Detect if running as a dependency (in node_modules)
+    const isDependency = __dirname.includes('node_modules');
+    this.projectRoot = options.projectRoot || (isDependency ? null : join(__dirname, '..', '..'));
     this.dryRun = options.dryRun || false;
     this.retryAttempts = options.retryAttempts || 3;
     this.retryDelay = options.retryDelay || 2000;
@@ -53,18 +55,24 @@ export class DatabaseOrchestrator {
       }
     };
 
-    // Backup and audit configuration
-    this.backupPaths = {
-      root: join(this.projectRoot, 'backups', 'database'),
-      migrations: join(this.projectRoot, 'backups', 'migrations'),
-      audit: join(this.projectRoot, 'logs', 'database-audit.log')
-    };
+    // Backup and audit configuration - only set paths if not running as dependency
+    if (this.projectRoot) {
+      this.backupPaths = {
+        root: join(this.projectRoot, 'backups', 'database'),
+        migrations: join(this.projectRoot, 'backups', 'migrations'),
+        audit: join(this.projectRoot, 'logs', 'database-audit.log')
+      };
 
-    // Migration configuration
-    this.migrationPaths = {
-      root: join(this.projectRoot, 'migrations'),
-      templates: join(this.projectRoot, 'migration-templates')
-    };
+      this.migrationPaths = {
+        root: join(this.projectRoot, 'migrations'),
+        templates: join(this.projectRoot, 'migration-templates')
+      };
+    } else {
+      // When used as dependency, disable file-based logging
+      this.backupPaths = null;
+      this.migrationPaths = null;
+      console.log('📦 Running as dependency - file logging disabled');
+    }
 
     this.initializeOrchestrator();
   }
@@ -75,20 +83,26 @@ export class DatabaseOrchestrator {
   initializeOrchestrator() {
     console.log('🗄️ Database Orchestrator v1.0');
     console.log('==============================');
-    console.log(`📁 Project Root: ${this.projectRoot}`);
+    if (this.projectRoot) {
+      console.log(`📁 Project Root: ${this.projectRoot}`);
+    } else {
+      console.log('📦 Running as dependency - limited functionality');
+    }
     console.log(`🔍 Mode: ${this.dryRun ? 'DRY RUN' : 'LIVE OPERATIONS'}`);
     console.log(`🔄 Retry Attempts: ${this.retryAttempts}`);
     console.log('');
 
-    // Create necessary directories
-    Object.values(this.backupPaths).forEach(path => {
-      if (!path.endsWith('.log')) {
-        this.ensureDirectory(path);
-      }
-    });
+    // Create necessary directories (only if not running as dependency)
+    if (this.backupPaths && this.migrationPaths) {
+      Object.values(this.backupPaths).forEach(path => {
+        if (!path.endsWith('.log')) {
+          this.ensureDirectory(path);
+        }
+      });
 
-    this.ensureDirectory(this.migrationPaths.root);
-    this.ensureDirectory(dirname(this.backupPaths.audit));
+      this.ensureDirectory(this.migrationPaths.root);
+      this.ensureDirectory(dirname(this.backupPaths.audit));
+    }
 
     this.logAuditEvent('ORCHESTRATOR_INITIALIZED', 'SYSTEM', {
       mode: this.dryRun ? 'DRY_RUN' : 'LIVE',
@@ -670,6 +684,12 @@ export class DatabaseOrchestrator {
       details,
       user: process.env.USER || process.env.USERNAME || 'system'
     };
+
+    // Skip logging if running as dependency (no file access)
+    if (!this.backupPaths) {
+      console.log(`📊 Audit: ${event} (${environment})`);
+      return;
+    }
 
     try {
       const logLine = JSON.stringify(logEntry) + '\n';
