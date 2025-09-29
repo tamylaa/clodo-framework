@@ -6,7 +6,7 @@ export * from './worker/index.js';
 export * from './utils/index.js';
 
 // Core framework classes and utilities
-export { default as FeatureFlagManager } from './config/features.js';
+export { FeatureFlagManager } from './config/features.js';
 export { createDomainConfigSchema, validateDomainConfig, mergeDomainConfigs } from './config/domains.js';
 export { initializeService, createFeatureGuard } from './worker/integration.js';
 

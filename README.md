@@ -11,9 +11,200 @@ Just like Lego bricks snap together to build anything you can imagine, this fram
 - **Domain Configuration System**: Centralized configuration management with validation
 - **Feature Flag System**: Runtime feature toggling per domain
 - **Worker Integration**: Consistent service initialization and feature guards
+- **Enterprise Deployment & Orchestration**: Advanced multi-domain deployment with rollback, validation, and monitoring
+- **Database Orchestration**: Multi-environment database management and migrations
+- **Domain Discovery**: Runtime domain configuration discovery and management
 - **Deployment Automation**: One-command deployment across environments
 - **Interactive Setup**: Guided service creation and configuration
 - **Service Templates**: Pre-built templates for common service patterns
+
+## Enterprise Deployment & Orchestration
+
+The Lego Framework now includes comprehensive enterprise-grade deployment and orchestration capabilities, extracted from production systems and made reusable across all services.
+
+### Orchestration Modules
+
+```javascript
+import { MultiDomainOrchestrator, CrossDomainCoordinator } from '@tamyla/lego-framework/orchestration';
+
+// Multi-domain deployment orchestration
+const orchestrator = new MultiDomainOrchestrator({
+  domains: ['api', 'auth', 'data'],
+  environment: 'production',
+  parallelDeployments: 3
+});
+
+// Cross-domain coordination for complex deployments
+const coordinator = new CrossDomainCoordinator({
+  portfolioName: 'enterprise-suite',
+  maxConcurrentDeployments: 5,
+  enableDependencyResolution: true
+});
+```
+
+### Deployment Management
+
+```javascript
+import { DeploymentValidator, RollbackManager, ProductionTester, DeploymentAuditor } from '@tamyla/lego-framework/deployment';
+
+// Pre-deployment validation
+const validator = new DeploymentValidator();
+await validator.validateDeployment(deploymentConfig);
+
+// Production testing suite
+const tester = new ProductionTester();
+await tester.runProductionTests(deploymentId);
+
+// Rollback management
+const rollback = new RollbackManager();
+await rollback.createRollbackPoint(deploymentId);
+
+// Comprehensive audit logging
+const auditor = new DeploymentAuditor();
+auditor.logDeployment(deploymentId, 'started', { domains: ['api', 'auth'] });
+```
+
+### Database Orchestration
+
+```javascript
+import { DatabaseOrchestrator } from '@tamyla/lego-framework/database';
+
+// Multi-environment database management
+const dbOrchestrator = new DatabaseOrchestrator({
+  projectRoot: './',
+  dryRun: false
+});
+
+// Run migrations across environments
+await dbOrchestrator.runMigrations('production');
+await dbOrchestrator.createBackup('production');
+```
+
+### Domain Discovery
+
+```javascript
+import { DomainDiscovery } from '@tamyla/lego-framework/config/discovery';
+
+// Runtime domain discovery and configuration
+const discovery = new DomainDiscovery({
+  apiToken: process.env.CLOUDFLARE_API_TOKEN
+});
+
+// Discover and cache domain configurations
+await discovery.discoverDomains();
+const config = await discovery.getDomainConfig('my-domain');
+```
+
+### Deployment Utilities
+
+```javascript
+import { EnhancedSecretManager, ConfigurationCacheManager, askUser, askYesNo } from '@tamyla/lego-framework/utils/deployment';
+
+// Advanced secret management
+const secretManager = new EnhancedSecretManager();
+await secretManager.generateSecrets(['database', 'api-keys']);
+
+// Configuration caching
+const cache = new ConfigurationCacheManager();
+await cache.cacheConfiguration(deploymentId, config);
+
+// Interactive prompts for deployment scripts
+const environment = await askChoice('Select environment:', ['staging', 'production']);
+const confirmed = await askYesNo('Deploy to production?');
+```
+
+## Enterprise CLI Tools
+
+The Lego Framework now includes powerful command-line tools for enterprise deployment and portfolio management.
+
+### Installation
+
+```bash
+npm install -g @tamyla/lego-framework
+# or
+npx @tamyla/lego-framework --help
+```
+
+### Available CLI Tools
+
+#### `lego-deploy` - Enterprise Deployment CLI
+Advanced deployment system with multi-domain orchestration, validation, and rollback capabilities.
+
+```bash
+# Deploy a single domain
+npx lego-deploy deploy my-domain --environment production
+
+# Deploy multiple domains with coordination
+npx lego-deploy deploy-multi api auth data --parallel
+
+# Validate deployment readiness
+npx lego-deploy validate my-domain
+
+# Run production tests
+npx lego-deploy test my-domain
+
+# Rollback deployment
+npx lego-deploy rollback my-domain
+```
+
+#### `lego-master-deploy` - Master Deployment Orchestrator
+Comprehensive deployment orchestrator with enterprise features and portfolio management.
+
+```bash
+# Deploy with full orchestration
+npx lego-master-deploy orchestrate --domains api,auth,data
+
+# Run pre-deployment validation
+npx lego-master-deploy validate --portfolio
+
+# Monitor deployment progress
+npx lego-master-deploy monitor
+```
+
+#### `lego-portfolio` - Portfolio Management CLI
+Multi-domain portfolio operations with bulk management and analytics.
+
+```bash
+# Initialize portfolio
+npx lego-portfolio init --portfolio-name my-enterprise
+
+# Discover all domains
+npx lego-portfolio discover
+
+# Deploy entire portfolio
+npx lego-portfolio deploy
+
+# Get portfolio health status
+npx lego-portfolio health
+
+# Generate portfolio analytics
+npx lego-portfolio analytics
+```
+
+#### `lego-db` - Database Management CLI
+Enterprise database operations across multiple environments.
+
+```bash
+# Run migrations for domain
+npx lego-db migrate my-domain --environment production
+
+# Synchronize schemas across portfolio
+npx lego-db sync --portfolio
+
+# Create backups
+npx lego-db backup my-domain
+```
+
+#### `lego-secrets` - Secret Generation Utility
+Cryptographically secure secret generation for production deployments.
+
+```bash
+# Generate secrets for domain
+npx lego-secrets --domain my-domain --environment production
+
+# Generate specific secret types
+npx lego-secrets --types database,api-keys,jwt --persist
+```
 
 ## Quick Start
 

@@ -1,11 +1,12 @@
 {
   "name": "@tamyla/lego-framework",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Reusable framework for Lego-style software architecture on Cloudflare Workers + D1",
   "type": "module",
   "sideEffects": [
-    "**/*.js",
-    "**/worker/**"
+    "**/worker/**",
+    "**/index.js",
+    "**/bin/**"
   ],
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -17,8 +18,13 @@
     "./routing": "./dist/routing/EnhancedRouter.js",
     "./handlers": "./dist/handlers/GenericRouteHandler.js",
     "./config": "./dist/config/index.js",
+    "./config/discovery": "./dist/config/discovery/domain-discovery.js",
     "./worker": "./dist/worker/index.js",
-    "./utils": "./dist/utils/index.js"
+    "./utils": "./dist/utils/index.js",
+    "./utils/deployment": "./dist/utils/deployment/index.js",
+    "./orchestration": "./dist/orchestration/index.js",
+    "./deployment": "./dist/deployment/index.js",
+    "./database": "./dist/database/index.js"
   },
   "publishConfig": {
     "access": "public"
@@ -26,6 +32,7 @@
   "files": [
     "dist",
     "bin",
+    "bin/shared",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
@@ -79,7 +86,12 @@
     "wrangler": ">=3.0.0"
   },
   "bin": {
-    "create-lego-service": "./bin/create-service.js"
+    "create-lego-service": "./bin/create-service.js",
+    "lego-deploy": "./bin/enterprise-deploy.js",
+    "lego-master-deploy": "./bin/master-deploy.js",
+    "lego-portfolio": "./bin/portfolio-manager.js",
+    "lego-db": "./bin/enterprise-db-manager.js",
+    "lego-secrets": "./scripts/generate-secrets.js"
   },
   "repository": {
     "type": "git",

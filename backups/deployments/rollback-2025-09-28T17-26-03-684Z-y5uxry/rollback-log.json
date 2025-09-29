@@ -1,0 +1,17 @@
+[
+  {
+    "timestamp": "2025-09-28T17:26:03.687Z",
+    "rollbackId": "rollback-2025-09-28T17-26-03-684Z-y5uxry",
+    "event": "SYSTEM_INITIALIZED",
+    "details": {
+      "backupPaths": {
+        "root": "backups",
+        "deployment": "backups\\deployments\\rollback-2025-09-28T17-26-03-684Z-y5uxry",
+        "configs": "backups\\configs\\rollback-2025-09-28T17-26-03-684Z-y5uxry",
+        "secrets": "backups\\secrets\\rollback-2025-09-28T17-26-03-684Z-y5uxry",
+        "database": "backups\\database\\rollback-2025-09-28T17-26-03-684Z-y5uxry"
+      },
+      "environment": "production"
+    }
+  }
+]
