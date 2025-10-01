@@ -17,35 +17,30 @@
  * @version 2.0.0
  */
 
-import { access, readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
-import { join, dirname } from 'path';
-import { promisify } from 'util';
+import { access, writeFile, readFile, mkdir, readdir, stat } from 'fs/promises';
+import { join, dirname, basename } from 'path';
 import { exec } from 'child_process';
-
-import { frameworkConfig } from '../framework-config.js';
+import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
 export class ConfigurationCacheManager {
   constructor(options = {}) {
-    const timing = frameworkConfig.getTiming();
-    const caching = frameworkConfig.getCaching();
-    
     this.config = {
-      // Cache configuration from framework config
+      // Cache configuration
       cacheDir: options.cacheDir || 'config-cache',
-      cacheTTL: options.cacheTTL || timing.cacheTTL,
-      maxCacheSize: options.maxCacheSize || caching.maxCacheSize,
-      enableCompression: options.enableCompression ?? caching.enableCompression,
+      cacheTTL: options.cacheTTL || 3600000, // 1 hour in ms
+      maxCacheSize: options.maxCacheSize || 50 * 1024 * 1024, // 50MB
+      enableCompression: options.enableCompression !== false,
       
       // Template configuration
       templateDir: options.templateDir || 'config-templates',
       enableTemplateInheritance: options.enableTemplateInheritance !== false,
       templateVersioning: options.templateVersioning !== false,
       
-      // Runtime discovery from framework config
+      // Runtime discovery
       enableRuntimeDiscovery: options.enableRuntimeDiscovery !== false,
-      discoveryTimeout: options.discoveryTimeout || timing.discoveryTimeout,
+      discoveryTimeout: options.discoveryTimeout || 30000,
       cloudflareCaching: options.cloudflareCaching !== false,
       
       // Environments
@@ -95,12 +90,11 @@ export class ConfigurationCacheManager {
       'cloudflare-worker': this.getCloudflareWorkerTemplate(),
       'database-standard': this.getStandardDatabaseTemplate()
     };
-
-    // Note: Async initialization required - call initialize() after construction
   }
 
   /**
-   * Initialize the cache manager asynchronously
+   * Initialize the configuration cache manager
+   * @returns {Promise<void>}
    */
   async initialize() {
     await this.initializeCacheSystem();
@@ -116,6 +110,7 @@ export class ConfigurationCacheManager {
 
   /**
    * Initialize cache system directories and structures
+   * @returns {Promise<void>}
    */
   async initializeCacheSystem() {
     this.paths = {
@@ -144,9 +139,11 @@ export class ConfigurationCacheManager {
 
   /**
    * Load cache metadata from disk
+   * @returns {Promise<void>}
    */
   async loadCacheMetadata() {
     try {
+      await access(this.cacheMetadataFile);
       const metadataContent = await readFile(this.cacheMetadataFile, 'utf8');
       const metadata = JSON.parse(metadataContent);
       this.cacheMetadata = {
@@ -154,7 +151,9 @@ export class ConfigurationCacheManager {
         loadedAt: new Date()
       };
     } catch (error) {
-      console.warn('⚠️  Failed to load cache metadata, initializing new');
+      if (error.code !== 'ENOENT') {
+        console.warn('⚠️  Failed to load cache metadata, initializing new');
+      }
       this.cacheMetadata = this.createEmptyMetadata();
     }
   }
@@ -176,6 +175,7 @@ export class ConfigurationCacheManager {
 
   /**
    * Save cache metadata to disk
+   * @returns {Promise<void>}
    */
   async saveCacheMetadata() {
     this.cacheMetadata.lastUpdate = new Date();
@@ -412,10 +412,13 @@ export class ConfigurationCacheManager {
     const sharedFile = join(this.paths.shared, 'shared-configs.json');
     
     try {
-      const sharedContent = await readFile(sharedFile, 'utf8');
-      return JSON.parse(sharedContent);
+      await access(sharedFile);
+      const content = await readFile(sharedFile, 'utf8');
+      return JSON.parse(content);
     } catch (error) {
-      console.warn('⚠️  Failed to load shared configurations');
+      if (error.code !== 'ENOENT') {
+        console.warn('⚠️  Failed to load shared configurations');
+      }
       return {};
     }
   }
@@ -502,7 +505,7 @@ export class ConfigurationCacheManager {
       size: cacheEntry.size
     };
 
-    this.saveCacheMetadata();
+    await this.saveCacheMetadata();
 
     // Write to disk cache
     await this.writeToDiskCache(cacheKey, cacheEntry);
@@ -561,20 +564,19 @@ export class ConfigurationCacheManager {
     try {
       const cacheFile = join(this.paths.cache, `${cacheKey}.json`);
       
-      try {
-        const cacheContent = await readFile(cacheFile, 'utf8');
-        const cacheEntry = JSON.parse(cacheContent);
-        
-        // Check expiration
-        if (new Date() < new Date(cacheEntry.expiresAt)) {
-          this.cache.set(cacheKey, cacheEntry);
-          return cacheEntry.config;
-        }
-      } catch {
-        // File doesn't exist or can't be read
+      await access(cacheFile);
+      const content = await readFile(cacheFile, 'utf8');
+      const cacheEntry = JSON.parse(content);
+      
+      // Check expiration
+      if (new Date() < new Date(cacheEntry.expiresAt)) {
+        this.cache.set(cacheKey, cacheEntry);
+        return cacheEntry.config;
       }
     } catch (error) {
-      console.warn(`⚠️  Failed to load disk cache: ${error.message}`);
+      if (error.code !== 'ENOENT') {
+        console.warn(`⚠️  Failed to load disk cache: ${error.message}`);
+      }
     }
 
     return null;
@@ -775,7 +777,7 @@ export default config;`;
         await mkdir(backupDir, { recursive: true });
       }
 
-      const backupFile = join(backupDir, `${Date.now()}-${require('path').basename(configFile)}`);
+      const backupFile = join(backupDir, `${Date.now()}-${basename(configFile)}`);
       const content = await readFile(configFile, 'utf8');
       await writeFile(backupFile, content);
 
@@ -789,8 +791,9 @@ export default config;`;
    * Invalidate cache for domain
    * @param {string} domain - Domain name
    * @param {string} environment - Environment (optional)
+   * @returns {Promise<void>}
    */
-  invalidateCache(domain, environment = null) {
+  async invalidateCache(domain, environment = null) {
     const pattern = environment 
       ? this.generateCacheKey(domain, environment)
       : domain;
@@ -805,7 +808,7 @@ export default config;`;
       }
     }
 
-    this.saveCacheMetadata();
+    await this.saveCacheMetadata();
 
     console.log(`🗑️  Invalidated ${invalidated} cache entries for ${domain}${environment ? `/${environment}` : ''}`);
   }

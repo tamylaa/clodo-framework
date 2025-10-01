@@ -25,8 +25,9 @@ const __dirname = dirname(__filename);
  */
 export class DatabaseOrchestrator {
   constructor(options = {}) {
-    // Enhanced project root detection
-    this.projectRoot = this.detectProjectRoot(options.projectRoot);
+    // Detect if running as a dependency (in node_modules)
+    const isDependency = __dirname.includes('node_modules');
+    this.projectRoot = options.projectRoot || (isDependency ? null : join(__dirname, '..', '..'));
     this.dryRun = options.dryRun || false;
     this.options = options;
     this.config = null;
@@ -56,14 +57,10 @@ export class DatabaseOrchestrator {
 
     // Backup and audit configuration - only set paths if not running as dependency
     if (this.projectRoot) {
-      // Use configurable paths from options or defaults
-      const baseLogsDir = options.logsDir || 'logs';
-      const baseBackupDir = options.backupDir || 'backups';
-      
       this.backupPaths = {
-        root: join(this.projectRoot, baseBackupDir, 'database'),
-        migrations: join(this.projectRoot, baseBackupDir, 'migrations'),
-        audit: join(this.projectRoot, baseLogsDir, 'database-audit.log')
+        root: join(this.projectRoot, 'backups', 'database'),
+        migrations: join(this.projectRoot, 'backups', 'migrations'),
+        audit: join(this.projectRoot, 'logs', 'database-audit.log')
       };
 
       this.migrationPaths = {
@@ -110,130 +107,24 @@ export class DatabaseOrchestrator {
     this.logAuditEvent('ORCHESTRATOR_INITIALIZED', 'SYSTEM', {
       mode: this.dryRun ? 'DRY_RUN' : 'LIVE',
       environments: Object.keys(this.environments)
-    }).catch(err => console.warn('⚠️ Audit logging failed:', err.message));
+    });
   }
 
   /**
    * Initialize with framework configuration
    */
   async initialize() {
-    try {
-      // Import framework config for consistent timing and database settings
-      const { frameworkConfig } = await import('../utils/framework-config.js');
-      const timing = frameworkConfig.getTiming();
-      const database = frameworkConfig.getDatabaseConfig();
-      const configPaths = frameworkConfig.getPaths();
-      
-      this.config = {
-        retryAttempts: this.options.retryAttempts || timing.retryAttempts,
-        retryDelay: this.options.retryDelay || timing.retryDelay,
-        executionTimeout: this.options.executionTimeout || database.executionTimeout,
-        ...this.options
-      };
-
-      // Update paths if framework config is available and we have project root
-      if (this.projectRoot) {
-        this.backupPaths = {
-          root: join(this.projectRoot, configPaths.backups, 'database'),
-          migrations: join(this.projectRoot, configPaths.backups, 'migrations'),
-          audit: join(this.projectRoot, configPaths.logs, 'database-audit.log')
-        };
-        
-        console.log(`📁 Database orchestrator paths updated with framework config`);
-        console.log(`   Backups: ${this.backupPaths.root}`);
-        console.log(`   Audit: ${this.backupPaths.audit}`);
-      }
-      
-    } catch (error) {
-      console.warn(`⚠️  Could not load framework config: ${error.message}. Using existing paths.`);
-    }
-
-    // Ensure directories exist for logging and backups
-    if (this.projectRoot && this.backupPaths) {
-      await this.ensureDirectoryExists(this.backupPaths.root);
-      await this.ensureDirectoryExists(this.backupPaths.migrations);
-      await this.ensureDirectoryExists(dirname(this.backupPaths.audit));
-    }
-  }
-
-  /**
-   * Detect project root with enhanced logic
-   */
-  detectProjectRoot(providedRoot) {
-    if (providedRoot) {
-      console.log(`📁 Using provided project root: ${providedRoot}`);
-      return providedRoot;
-    }
-
-    // Check if running as dependency (in node_modules)
-    const isDependency = __dirname.includes('node_modules');
+    // Import framework config for consistent timing and database settings
+    const { frameworkConfig } = await import('../../../src/utils/framework-config.js');
+    const timing = frameworkConfig.getTiming();
+    const database = frameworkConfig.getDatabaseConfig();
     
-    if (isDependency) {
-      console.log('📦 Running as dependency - limited functionality mode');
-      return null;
-    }
-
-    // Try multiple strategies to detect project root
-    let candidates = [
-      // Standard lego-framework structure
-      join(__dirname, '..', '..'),
-      // Alternative if running from dist/
-      join(__dirname, '..', '..', '..'),
-      // Current working directory
-      process.cwd(),
-      // Environment variable override
-      process.env.FRAMEWORK_PROJECT_ROOT
-    ];
-
-    // Filter out null/undefined candidates
-    candidates = candidates.filter(Boolean);
-
-    for (const candidate of candidates) {
-      if (this.isValidProjectRoot(candidate)) {
-        console.log(`📁 Detected project root: ${candidate}`);
-        return candidate;
-      }
-    }
-
-    console.warn('⚠️  Could not detect project root. Some features may be limited.');
-    return null;
-  }
-
-  /**
-   * Check if a directory appears to be a valid project root
-   */
-  isValidProjectRoot(path) {
-    try {
-      // Check for common project indicators
-      const indicators = [
-        'package.json',
-        'validation-config.json',
-        'src',
-        'bin'
-      ];
-
-      const hasIndicators = indicators.some(indicator => 
-        existsSync(join(path, indicator))
-      );
-
-      return hasIndicators;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  /**
-   * Ensure a directory exists, creating it if necessary
-   */
-  async ensureDirectoryExists(dirPath) {
-    try {
-      await mkdir(dirPath, { recursive: true });
-    } catch (error) {
-      if (error.code !== 'EEXIST') {
-        console.error(`❌ Failed to create directory ${dirPath}: ${error.message}`);
-        throw error;
-      }
-    }
+    this.config = {
+      retryAttempts: this.options.retryAttempts || timing.retryAttempts,
+      retryDelay: this.options.retryDelay || timing.retryDelay,
+      executionTimeout: this.options.executionTimeout || database.executionTimeout,
+      ...this.options
+    };
   }
 
   /**
@@ -314,7 +205,7 @@ export class DatabaseOrchestrator {
       results.endTime = new Date();
       results.summary.duration = (results.endTime - results.startTime) / 1000;
 
-      await this.logAuditEvent('MIGRATION_ORCHESTRATION_COMPLETED', 'ALL', results.summary);
+      this.logAuditEvent('MIGRATION_ORCHESTRATION_COMPLETED', 'ALL', results.summary);
 
       console.log('\n📊 MIGRATION ORCHESTRATION SUMMARY');
       console.log('==================================');
@@ -326,7 +217,7 @@ export class DatabaseOrchestrator {
       return results;
 
     } catch (error) {
-      await this.logAuditEvent('MIGRATION_ORCHESTRATION_FAILED', 'ALL', { error: error.message });
+      this.logAuditEvent('MIGRATION_ORCHESTRATION_FAILED', 'ALL', { error: error.message });
       throw error;
     }
   }
@@ -394,7 +285,7 @@ export class DatabaseOrchestrator {
     results.endTime = new Date();
     results.duration = (results.endTime - results.startTime) / 1000;
 
-    await this.logAuditEvent('ENVIRONMENT_MIGRATION_COMPLETED', environment, {
+    this.logAuditEvent('ENVIRONMENT_MIGRATION_COMPLETED', environment, {
       databases: Object.keys(results.databases),
       migrationsApplied: results.migrationsApplied,
       duration: results.duration
@@ -432,7 +323,7 @@ export class DatabaseOrchestrator {
       
       console.log(`     ✅ Applied ${migrationsApplied} migrations to ${databaseName}`);
       
-      await this.logAuditEvent('DATABASE_MIGRATION_APPLIED', environment, {
+      this.logAuditEvent('DATABASE_MIGRATION_APPLIED', environment, {
         databaseName,
         migrationsApplied,
         isRemote
@@ -447,7 +338,7 @@ export class DatabaseOrchestrator {
       };
 
     } catch (error) {
-      await this.logAuditEvent('DATABASE_MIGRATION_FAILED', environment, {
+      this.logAuditEvent('DATABASE_MIGRATION_FAILED', environment, {
         databaseName,
         error: error.message
       });
@@ -507,7 +398,7 @@ export class DatabaseOrchestrator {
       const manifestPath = join(backupDir, 'backup-manifest.json');
       await writeFile(manifestPath, JSON.stringify(backupResults, null, 2));
 
-      await this.logAuditEvent('ENVIRONMENT_BACKUP_CREATED', environment, {
+      this.logAuditEvent('ENVIRONMENT_BACKUP_CREATED', environment, {
         backupId,
         databases: Object.keys(backupResults.databases),
         duration: backupResults.duration
@@ -517,7 +408,7 @@ export class DatabaseOrchestrator {
       return backupResults;
 
     } catch (error) {
-      await this.logAuditEvent('ENVIRONMENT_BACKUP_FAILED', environment, {
+      this.logAuditEvent('ENVIRONMENT_BACKUP_FAILED', environment, {
         backupId,
         error: error.message
       });
@@ -643,7 +534,7 @@ export class DatabaseOrchestrator {
       cleanupResults.endTime = new Date();
       cleanupResults.duration = (cleanupResults.endTime - cleanupResults.startTime) / 1000;
 
-      await this.logAuditEvent('DATA_CLEANUP_COMPLETED', environment, {
+      this.logAuditEvent('DATA_CLEANUP_COMPLETED', environment, {
         cleanupId: cleanupResults.cleanupId,
         cleanupType,
         operations: Object.keys(cleanupResults.operations),
@@ -654,7 +545,7 @@ export class DatabaseOrchestrator {
       return cleanupResults;
 
     } catch (error) {
-      await this.logAuditEvent('DATA_CLEANUP_FAILED', environment, {
+      this.logAuditEvent('DATA_CLEANUP_FAILED', environment, {
         cleanupId: cleanupResults.cleanupId,
         error: error.message
       });
@@ -803,7 +694,7 @@ export class DatabaseOrchestrator {
     }
   }
 
-  async logAuditEvent(event, environment, details = {}) {
+  logAuditEvent(event, environment, details = {}) {
     const logEntry = {
       timestamp: new Date().toISOString(),
       event,
@@ -819,15 +710,12 @@ export class DatabaseOrchestrator {
     }
 
     try {
-      // Ensure the audit log directory exists
-      await this.ensureDirectory(dirname(this.backupPaths.audit));
-      
       const logLine = JSON.stringify(logEntry) + '\n';
       
       if (existsSync(this.backupPaths.audit)) {
-        await appendFile(this.backupPaths.audit, logLine);
+        appendFile(this.backupPaths.audit, logLine);
       } else {
-        await writeFile(this.backupPaths.audit, logLine);
+        writeFile(this.backupPaths.audit, logLine);
       }
     } catch (error) {
       console.warn(`⚠️ Failed to log audit event: ${error.message}`);

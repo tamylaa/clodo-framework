@@ -1,12 +1,15 @@
-name = "{{SERVICE_NAME}}-staging"
+name = "{{SERVICE_NAME}}-dev"
 main = "src/worker/index.js"
 compatibility_date = "{{CURRENT_DATE}}"
+
+[env.development]
+name = "{{SERVICE_NAME}}-dev"
 
 [env.staging]
 name = "{{SERVICE_NAME}}-staging"
 
 [env.production]
-name = "{{SERVICE_NAME}}-production"
+name = "{{SERVICE_NAME}}"
 
 # Database bindings will be added during deployment
 # [[d1_databases]]
@@ -15,7 +18,7 @@ name = "{{SERVICE_NAME}}-production"
 
 # Environment variables
 [vars]
-DOMAIN_NAME = "{{SERVICE_NAME}}"
+DOMAIN_NAME = "{{SERVICE_NAME}}.yourdomain.com"
 ENVIRONMENT = "development"
 SERVICE_NAME = "{{SERVICE_NAME}}"
 SERVICE_TYPE = "{{SERVICE_TYPE}}"

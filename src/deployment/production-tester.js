@@ -22,15 +22,20 @@ import { join } from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 
+import { frameworkConfig } from '../utils/framework-config.js';
+
 const execAsync = promisify(exec);
 
 export class ProductionTester {
   constructor(options = {}) {
+    const timing = frameworkConfig.getTiming();
+    const testing = frameworkConfig.getTesting();
+    
     this.config = {
-      // Test configuration
-      retryAttempts: options.retryAttempts || 3,
-      retryDelay: options.retryDelay || 1000,
-      timeout: options.timeout || 30000,
+      // Test configuration from framework config
+      retryAttempts: options.retryAttempts || timing.retryAttempts,
+      retryDelay: options.retryDelay || timing.retryDelay,
+      timeout: options.timeout || testing.production.testTimeout,
       concurrent: options.concurrent || false,
       
       // Performance thresholds

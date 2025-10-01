@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lego Framework Enhanced Configuration",
+  "description": "Comprehensive configuration for flexible service deployment and validation",
+  
+  "commands": {
+    "required": {
+      "npx": "npx",
+      "node": "node", 
+      "npm": "npm",
+      "wrangler": "npx wrangler"
+    },
+    "cloudflare": {
+      "whoami": "npx wrangler whoami",
+      "auth_login": "npx wrangler auth login",
+      "deployments_list": "npx wrangler deployments list",
+      "list_workers": "npx wrangler dev --help",
+      "deploy": "npx wrangler deploy",
+      "list_zones": "echo 'Zone listing not available via wrangler CLI'",
+      "worker_status": "npx wrangler status"
+    },
+    "system": {
+      "powershell_web_request": "powershell -Command \"try { Invoke-WebRequest -Uri '{url}' -TimeoutSec 10 -UseBasicParsing | Out-Null } catch { exit 1 }\"",
+      "curl_test": "curl -s --connect-timeout 10 {url} -o /dev/null"
+    }
+  },
+
+  "timing": {
+    "deploymentTimeout": 300000,
+    "discoveryTimeout": 30000,
+    "healthCheckTimeout": 10000,
+    "productionTestTimeout": 30000,
+    "shutdownTimeout": 30000,
+    "forceShutdownTimeout": 5000,
+    "retryDelay": 1000,
+    "retryAttempts": 3,
+    "cacheTTL": 3600000,
+    "maxAge": 86400000,
+    "rateLimitWindow": 60000,
+    "circuitBreakerTimeout": 60000,
+    "circuitBreakerThreshold": 5,
+    "deploymentInterval": 5000,
+    "endpointValidationTimeout": 5000,
+    "maxConcurrentDeployments": 3
+  },
+
+  "networking": {
+    "endpoints": {
+      "cloudflare": "https://api.cloudflare.com",
+      "npm": "https://registry.npmjs.org",
+      "healthCheck": "https://httpbin.org/status/200"
+    },
+    "development": {
+      "defaultPorts": {
+        "frontend": 3000,
+        "api": 8787,
+        "worker": 8787,
+        "preview": 8788
+      },
+      "allowedOrigins": ["http://localhost:3000", "http://localhost:8787"],
+      "corsDefaults": ["*"]
+    },
+    "rateLimiting": {
+      "defaultRequests": 100,
+      "defaultWindow": 60000,
+      "burstLimit": 200,
+      "strictMode": false
+    }
+  },
+
+  "caching": {
+    "maxCacheSize": 52428800,
+    "compressionThreshold": 1024,
+    "cleanupInterval": 3600000,
+    "enableCompression": true,
+    "maxEntries": 1000
+  },
+
+  "environments": {
+    "development": {
+      "domainTemplate": "dev-{service}.{domain}",
+      "workerSuffix": "-dev",
+      "databaseSuffix": "-dev",
+      "logLevel": "debug",
+      "enableMetrics": true,
+      "strictValidation": false
+    },
+    "staging": {
+      "domainTemplate": "staging-{service}.{domain}",
+      "workerSuffix": "-staging", 
+      "databaseSuffix": "-staging",
+      "logLevel": "info",
+      "enableMetrics": true,
+      "strictValidation": true
+    },
+    "production": {
+      "domainTemplate": "{service}.{domain}",
+      "workerSuffix": "",
+      "databaseSuffix": "",
+      "logLevel": "warn",
+      "enableMetrics": true,
+      "strictValidation": true
+    }
+  },
+
+  "serviceDefaults": {
+    "compatibility_date": "2024-01-01",
+    "node_compat": true,
+    "minify": true,
+    "sourcemap": false
+  },
+
+  "validation": {
+    "requiredFiles": [
+      "package.json",
+      "wrangler.toml"
+    ],
+    "optionalFiles": [
+      "README.md",
+      "LICENSE",
+      ".gitignore"
+    ],
+    "requiredFields": {
+      "package.json": ["name", "version", "type", "main"],
+      "wrangler.toml": ["name", "main", "compatibility_date"]
+    },
+    "serviceTypes": [
+      "data-service",
+      "auth-service", 
+      "content-service",
+      "api-gateway",
+      "generic"
+    ]
+  },
+
+  "security": {
+    "requiredEnvironmentVars": [
+      "CLOUDFLARE_API_TOKEN"
+    ],
+    "optionalEnvironmentVars": [
+      "CLOUDFLARE_ACCOUNT_ID",
+      "CLOUDFLARE_ZONE_ID",
+      "ENVIRONMENT",
+      "LOG_LEVEL",
+      "CORS_ORIGINS",
+      "RATE_LIMIT_REQUESTS",
+      "RATE_LIMIT_WINDOW_MS",
+      "ENABLE_METRICS",
+      "METRICS_ENDPOINT"
+    ],
+    "secretsConfig": {
+      "encryptionEnabled": true,
+      "rotationInterval": 7776000000,
+      "backupCount": 5,
+      "distributionDelay": 5000
+    }
+  },
+
+  "monitoring": {
+    "healthCheck": {
+      "endpoints": ["/health", "/ping"],
+      "expectedStatus": [200, 204],
+      "timeout": 5000,
+      "interval": 30000
+    },
+    "metrics": {
+      "enabledByDefault": true,
+      "collectionInterval": 60000,
+      "retentionPeriod": 2592000000,
+      "aggregationWindow": 300000
+    },
+    "logging": {
+      "levels": ["debug", "info", "warn", "error"],
+      "defaultLevel": "info",
+      "enableConsole": true,
+      "enableFile": false,
+      "maxFileSize": 10485760
+    }
+  },
+
+  "deployment": {
+    "strategies": ["blue-green", "rolling", "canary"],
+    "defaultStrategy": "blue-green",
+    "validation": {
+      "runTests": true,
+      "requireHealthCheck": true,
+      "allowSkipValidation": false
+    },
+    "rollback": {
+      "enableAutoRollback": true,
+      "healthCheckThreshold": 3,
+      "timeoutThreshold": 30000
+    }
+  },
+
+  "testing": {
+    "production": {
+      "enabled": true,
+      "lightweight": true,
+      "skipHeavyTests": true,
+      "generateReports": false,
+      "testTimeout": 30000
+    },
+    "integration": {
+      "enabled": false,
+      "requiresRealEnvironment": true,
+      "cleanupAfterTests": true
+    }
+  },
+
+  "database": {
+    "namingConvention": {
+      "development": "{service}-dev",
+      "staging": "{service}-staging", 
+      "production": "{service}"
+    },
+    "migration": {
+      "autoRun": false,
+      "backupBeforeMigration": true,
+      "rollbackOnFailure": true
+    },
+    "connection": {
+      "timeout": 30000,
+      "retryAttempts": 3,
+      "poolSize": 10
+    }
+  },
+
+  "templates": {
+    "directory": "templates",
+    "defaultType": "generic",
+    "variablePrefix": "{{",
+    "variableSuffix": "}}",
+    "commonVariables": {
+      "CURRENT_DATE": "auto-generated",
+      "CURRENT_YEAR": "auto-generated", 
+      "FRAMEWORK_VERSION": "auto-generated"
+    }
+  }
+}

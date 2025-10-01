@@ -66,7 +66,17 @@ wrangler.toml.backup
 # PowerShell
 *.ps1.bak
 
-# Test outputs
+# Generated files and directories (centralized)
+generated/
+
+# Legacy generated directories (to be cleaned up)
+logs/
+backups/
+migrations/
+config-cache/
+audit-logs/
+audit-backups/
+audit-reports/
 test-results/
 coverage/
 
@@ -74,7 +84,7 @@ coverage/
 local.config.js
 local.domains.js
 
-# Generated service directories (when using create-service)
+# Legacy generated service directories (to be cleaned up)
 generated-services/
 
 # Database files (local development)

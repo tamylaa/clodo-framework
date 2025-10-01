@@ -16,17 +16,12 @@
  * @version 2.0.0
  */
 
-import { existsSync, access } from 'fs';
-import { readFile, writeFile, appendFile, mkdir, readdir, stat } from 'fs/promises';
+import { existsSync, writeFileSync, appendFileSync, mkdirSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join, dirname } from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
+import { execSync } from 'child_process';
 
 export class DeploymentAuditor {
   constructor(options = {}) {
-    this.frameworkConfig = null; // Will be loaded in initialize()
     this.config = {
       // Audit configuration
       auditLevel: options.auditLevel || 'detailed', // minimal, standard, detailed, verbose
@@ -38,10 +33,10 @@ export class DeploymentAuditor {
       includeMetrics: options.includeMetrics !== false,
       includeBackups: options.includeBackups !== false,
       
-      // Paths - will be updated in initialize() with framework config
-      auditDir: options.auditDir,
-      backupDir: options.backupDir,
-      reportsDir: options.reportsDir,
+      // Paths
+      auditDir: options.auditDir || 'audit-logs',
+      backupDir: options.backupDir || 'audit-backups',
+      reportsDir: options.reportsDir || 'audit-reports',
       
       // Real-time options
       realTimeAlerts: options.realTimeAlerts || false,
@@ -122,12 +117,12 @@ export class DeploymentAuditor {
       compliance: join(this.config.auditDir, 'compliance')
     };
 
-    // Create directory structure - moved to async initialize
-    // Object.values(this.paths).forEach(path => {
-    //   if (!existsSync(path)) {
-    //     mkdirSync(path, { recursive: true });
-    //   }
-    // });
+    // Create directory structure
+    Object.values(this.paths).forEach(path => {
+      if (!existsSync(path)) {
+        mkdirSync(path, { recursive: true });
+      }
+    });
 
     // Initialize log files
     this.logFiles = {
@@ -141,59 +136,6 @@ export class DeploymentAuditor {
 
     // Initialize session log
     this.sessionLogFile = join(this.paths.deployments, `session-${this.currentSession.sessionId}.log`);
-  }
-
-  /**
-   * Initialize the auditor asynchronously
-   */
-  async initialize() {
-    try {
-      // Load framework configuration
-      const { frameworkConfig } = await import('../utils/framework-config.js');
-      this.frameworkConfig = frameworkConfig;
-      
-      // Update paths with framework config
-      const configPaths = this.frameworkConfig.getPaths();
-      
-      this.config.auditDir = this.config.auditDir || configPaths.auditLogs;
-      this.config.backupDir = this.config.backupDir || configPaths.backups;
-      this.config.reportsDir = this.config.reportsDir || configPaths.auditReports;
-      
-      console.log(`📁 Audit directories configured: ${this.config.auditDir}, ${this.config.backupDir}, ${this.config.reportsDir}`);
-      
-    } catch (error) {
-      console.warn(`⚠️  Could not load framework config: ${error.message}. Using default paths.`);
-      // Use fallback defaults
-      this.config.auditDir = this.config.auditDir || 'audit-logs';
-      this.config.backupDir = this.config.backupDir || 'audit-backups';
-      this.config.reportsDir = this.config.reportsDir || 'audit-reports';
-    }
-
-    // Create directory structure with proper error handling
-    const directoriesToCreate = [
-      this.config.auditDir,
-      this.config.backupDir,
-      this.config.reportsDir,
-      join(this.config.auditDir, 'daily'),
-      join(this.config.auditDir, 'deployments'),
-      join(this.config.auditDir, 'compliance'),
-      join(this.config.auditDir, 'performance'),
-      join(this.config.auditDir, 'security')
-    ];
-
-    for (const dirPath of directoriesToCreate) {
-      try {
-        await mkdir(dirPath, { recursive: true });
-        console.log(`📁 Created directory: ${dirPath}`);
-      } catch (error) {
-        if (error.code !== 'EEXIST') {
-          console.error(`❌ Failed to create directory ${dirPath}: ${error.message}`);
-          throw error;
-        }
-      }
-    }
-    
-    console.log('✅ Audit system directories initialized successfully');
   }
 
   /**
@@ -529,45 +471,39 @@ export class DeploymentAuditor {
    * @param {string} logFile - Log file path
    * @param {Object} logEntry - Log entry object
    */
-  async writeToLogFile(logFile, logEntry) {
+  writeToLogFile(logFile, logEntry) {
     try {
       // Ensure directory exists
       const dir = dirname(logFile);
-      try {
-        await access(dir);
-      } catch {
-        await mkdir(dir, { recursive: true });
+      if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
       }
 
       // Check file size and rotate if needed
-      try {
-        const stats = await stat(logFile);
+      if (existsSync(logFile)) {
+        const stats = statSync(logFile);
         if (stats.size > this.config.maxLogSize) {
-          await this.rotateLogFile(logFile);
+          this.rotateLogFile(logFile);
         }
-      } catch {
-        // File doesn't exist, no rotation needed
       }
 
       // Write log entry based on format
       if (this.config.formats.includes('json')) {
-        await appendFile(logFile, JSON.stringify(logEntry) + '\n');
+        appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
       }
 
       if (this.config.formats.includes('plain')) {
         const plainEntry = `[${logEntry.timestamp?.toISOString() || new Date().toISOString()}] ${logEntry.eventType || 'LOG'}: ${JSON.stringify(logEntry.details || logEntry)}`;
         const plainFile = logFile.replace('.log', '.txt');
-        await appendFile(plainFile, plainEntry + '\n');
+        appendFileSync(plainFile, plainEntry + '\n');
       }
 
       if (this.config.formats.includes('csv')) {
         const csvFile = logFile.replace('.log', '.csv');
         const csvHeaders = 'timestamp,eventType,level,category,domain,details\n';
         
-        try {
-          await access(csvFile);
-        } catch {
-          await writeFile(csvFile, csvHeaders);
+        if (!existsSync(csvFile)) {
+          writeFileSync(csvFile, csvHeaders);
         }
         
         const csvEntry = [
@@ -579,7 +515,7 @@ export class DeploymentAuditor {
           JSON.stringify(logEntry.details || {}).replace(/"/g, '""')
         ].join(',');
         
-        await appendFile(csvFile, csvEntry + '\n');
+        appendFileSync(csvFile, csvEntry + '\n');
       }
 
     } catch (error) {
@@ -591,15 +527,15 @@ export class DeploymentAuditor {
    * Rotate log file when it exceeds size limit
    * @param {string} logFile - Log file to rotate
    */
-  async rotateLogFile(logFile) {
+  rotateLogFile(logFile) {
     try {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const rotatedFile = logFile.replace('.log', `-${timestamp}.log`);
       
       // Move current file
-      await execAsync(`move "${logFile}" "${rotatedFile}"`, { shell: true });
+      execSync(`move "${logFile}" "${rotatedFile}"`, { shell: true });
       
-      await this.logAuditEvent('AUDIT_LOG_ROTATED', 'SYSTEM', {
+      this.logAuditEvent('AUDIT_LOG_ROTATED', 'SYSTEM', {
         originalFile: logFile,
         rotatedFile: rotatedFile,
         timestamp: new Date()
@@ -615,7 +551,7 @@ export class DeploymentAuditor {
    * @param {string} deploymentId - Deployment identifier
    * @returns {Object} Generated report info
    */
-  async generateDeploymentReport(deploymentId) {
+  generateDeploymentReport(deploymentId) {
     const deployment = this.currentSession.deployments.get(deploymentId);
     
     if (!deployment) {
@@ -646,15 +582,15 @@ export class DeploymentAuditor {
     };
 
     // JSON report
-    await writeFile(reportFiles.json, JSON.stringify(reportData, null, 2));
+    writeFileSync(reportFiles.json, JSON.stringify(reportData, null, 2));
 
     // HTML report
     const htmlReport = this.generateHtmlReport(reportData);
-    await writeFile(reportFiles.html, htmlReport);
+    writeFileSync(reportFiles.html, htmlReport);
 
     // CSV report
     const csvReport = this.generateCsvReport(reportData);
-    await writeFile(reportFiles.csv, csvReport);
+    writeFileSync(reportFiles.csv, csvReport);
 
     console.log(`📊 Deployment report generated: ${deploymentId}`);
     if (this.config.auditLevel !== 'minimal') {
@@ -917,7 +853,7 @@ export class DeploymentAuditor {
    * Clean up old audit logs based on retention policy
    * @returns {Object} Cleanup results
    */
-  async cleanupAuditLogs() {
+  cleanupAuditLogs() {
     const cleanupResults = {
       filesRemoved: 0,
       spaceSaved: 0,
@@ -929,22 +865,18 @@ export class DeploymentAuditor {
       cutoffDate.setDate(cutoffDate.getDate() - this.config.retentionDays);
 
       // Scan audit directory for old files
-      const scanDirectory = async (dir) => {
-        try {
-          await access(dir);
-        } catch {
-          return;
-        }
+      const scanDirectory = (dir) => {
+        if (!existsSync(dir)) return;
 
-        const items = await readdir(dir);
-        for (const item of items) {
+        const items = readdirSync(dir);
+        items.forEach(item => {
           const itemPath = join(dir, item);
-          const stats = await stat(itemPath);
+          const stats = statSync(itemPath);
 
           if (stats.isFile() && stats.mtime < cutoffDate) {
             try {
               cleanupResults.spaceSaved += stats.size;
-              await execAsync(`del "${itemPath}"`, { shell: true });
+              execSync(`del "${itemPath}"`, { shell: true });
               cleanupResults.filesRemoved++;
             } catch (error) {
               cleanupResults.errors.push({
@@ -953,11 +885,11 @@ export class DeploymentAuditor {
               });
             }
           }
-        }
+        });
       };
 
-      await scanDirectory(this.paths.daily);
-      await scanDirectory(this.paths.deployments);
+      scanDirectory(this.paths.daily);
+      scanDirectory(this.paths.deployments);
 
       this.logAuditEvent('AUDIT_CLEANUP_COMPLETED', 'SYSTEM', cleanupResults);
 
