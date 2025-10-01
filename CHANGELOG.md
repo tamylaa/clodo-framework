@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/tamylaa/lego-framework/compare/v1.3.2...v1.3.3) (2025-10-01)
+
+
+### Bug Fixes
+
+* implement intelligent WranglerDeployer for actual Cloudflare deployments ([a656190](https://github.com/tamylaa/lego-framework/commit/a6561909753b5bcb7ece0a0159772daee28dd37c))
+
 ## [1.3.2](https://github.com/tamylaa/lego-framework/compare/v1.3.1...v1.3.2) (2025-10-01)
 
 
