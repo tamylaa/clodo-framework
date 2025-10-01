@@ -1,3 +1,11 @@
+## [1.3.2](https://github.com/tamylaa/lego-framework/compare/v1.3.1...v1.3.2) (2025-10-01)
+
+
+### Bug Fixes
+
+* major framework reorganization and robustness improvements ([7aed0b5](https://github.com/tamylaa/lego-framework/commit/7aed0b5b438bb02c081d533766951ccc89ff4d4c))
+* make database orchestrator dependency-aware ([051f722](https://github.com/tamylaa/lego-framework/commit/051f72269aab39d4e972cad8011430dfa86b3f7a))
+
 ## [1.3.1](https://github.com/tamylaa/lego-framework/compare/v1.3.0...v1.3.1) (2025-09-29)
 
 
