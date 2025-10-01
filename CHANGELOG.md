@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/tamylaa/lego-framework/compare/v1.3.0...v1.3.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* Windows compatibility and ES module issues ([7ed2588](https://github.com/tamylaa/lego-framework/commit/7ed2588d8ae2f706e5646813c1d1dad99944d50f))
+
 # Changelog
 
 All notable changes to the Lego Framework project will be documented in this file.
