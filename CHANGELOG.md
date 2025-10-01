@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/tamylaa/lego-framework/compare/v1.3.3...v1.3.4) (2025-10-01)
+
+
+### Bug Fixes
+
+* add missing environment parameter to WranglerDeployer validation call ([a833ca3](https://github.com/tamylaa/lego-framework/commit/a833ca3c1006953911453e1b383c602b96a16229))
+
 ## [1.3.3](https://github.com/tamylaa/lego-framework/compare/v1.3.2...v1.3.3) (2025-10-01)
 
 
