@@ -168,7 +168,7 @@ export class MultiDomainOrchestrator {
       domainState.phase = 'secrets-complete';
 
       // Phase 5: Worker deployment
-      await this.deployDomainWorker(domain);
+      const deploymentResult = await this.deployDomainWorker(domain);
       domainState.phase = 'deployment-complete';
 
       // Phase 6: Post-deployment validation
@@ -192,7 +192,9 @@ export class MultiDomainOrchestrator {
         domain,
         success: true,
         deploymentId: domainState.deploymentId,
-        duration: domainState.endTime - domainState.startTime
+        duration: domainState.endTime - domainState.startTime,
+        url: deploymentResult.url, // Include the actual deployment URL
+        environment: this.environment
       };
 
     } catch (error) {
@@ -424,8 +426,47 @@ export class MultiDomainOrchestrator {
   }
 
   async deployDomainWorker(domain) {
-    // Will integrate with cloudflare-ops module
-    console.log(`   ⚡ Deploying ${domain} worker...`);
+    // Use WranglerDeployer to execute actual deployment
+    console.log(`   ⚡ Deploying ${domain} worker via wrangler...`);
+
+    try {
+      // Import WranglerDeployer dynamically (only available at build time)
+      const { WranglerDeployer } = await import('../../../src/deployment/wrangler-deployer.js');
+
+      const deployer = new WranglerDeployer({
+        cwd: process.cwd(),
+        configPath: this.environment === 'production' ? 'wrangler.toml' : 'config/wrangler.toml'
+      });
+
+      // Validate wrangler setup first
+      const validation = await deployer.validateWranglerSetup();
+      if (!validation.valid) {
+        throw new Error(`Wrangler validation failed: ${validation.error}`);
+      }
+
+      // Execute deployment
+      const deploymentResult = await deployer.deploy(this.environment);
+
+      if (!deploymentResult.success) {
+        throw new Error(`Deployment failed: ${deploymentResult.error}`);
+      }
+
+      console.log(`   ✅ Worker deployed successfully`);
+      console.log(`   🌐 URL: ${deploymentResult.url}`);
+
+      // Return deployment result for use by caller
+      return {
+        success: true,
+        url: deploymentResult.url,
+        deploymentId: deploymentResult.deploymentId,
+        duration: deploymentResult.duration,
+        environment: this.environment
+      };
+
+    } catch (error) {
+      console.error(`   ❌ Worker deployment failed: ${error.message}`);
+      throw error;
+    }
   }
 
   async validateDomainDeployment(domain) {

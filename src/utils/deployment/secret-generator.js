@@ -11,7 +11,7 @@
  */
 
 import { randomBytes, createHash } from 'crypto';
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, appendFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
@@ -707,7 +707,7 @@ ${Object.entries(SECRET_CONFIGS).map(([key, config]) =>
       const logLine = JSON.stringify(logEntry) + '\n';
       
       if (existsSync(this.secretPaths.audit)) {
-        require('fs').appendFileSync(this.secretPaths.audit, logLine);
+        appendFileSync(this.secretPaths.audit, logLine);
       } else {
         writeFileSync(this.secretPaths.audit, logLine);
       }

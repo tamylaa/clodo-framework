@@ -395,9 +395,12 @@ export class DeploymentValidator {
       this.results.categories.deployment = 'passed';
       this.addResult('deployment', 'Deployment readiness confirmed', 'success');
       
+      return { valid: true };
+      
     } catch (error) {
       this.results.categories.deployment = 'failed';
-      throw new Error(`Deployment readiness validation failed: ${error.message}`);
+      this.addResult('deployment', `Deployment readiness failed: ${error.message}`, 'error');
+      return { valid: false, errors: [error.message] };
     }
   }
 

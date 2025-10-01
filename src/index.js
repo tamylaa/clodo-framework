@@ -17,6 +17,9 @@ export * from './modules/ModuleManager.js';
 export * from './routing/EnhancedRouter.js';
 export * from './handlers/GenericRouteHandler.js';
 
+// Deployment components (build-time only)
+export { WranglerDeployer } from './deployment/wrangler-deployer.js';
+
 // Framework version info
 export const FRAMEWORK_VERSION = '1.0.0';
 export const FRAMEWORK_NAME = 'Lego Framework';
