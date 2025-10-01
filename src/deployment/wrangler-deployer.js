@@ -1,9 +1,7 @@
 import { spawn } from 'child_process';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
 
 /**
  * WranglerDeployer - Executes actual Cloudflare Workers deployments using wrangler CLI

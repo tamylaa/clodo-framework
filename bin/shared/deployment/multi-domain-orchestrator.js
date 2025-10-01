@@ -439,7 +439,7 @@ export class MultiDomainOrchestrator {
       });
 
       // Validate wrangler setup first
-      const validation = await deployer.validateWranglerSetup();
+      const validation = await deployer.validateWranglerSetup(this.environment);
       if (!validation.valid) {
         throw new Error(`Wrangler validation failed: ${validation.error}`);
       }
