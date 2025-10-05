@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/tamylaa/lego-framework/compare/v2.0.0...v2.0.1) (2025-10-05)
+
+
+### Bug Fixes
+
+* allow tests to pass when no test files exist ([70bd5b8](https://github.com/tamylaa/lego-framework/commit/70bd5b8ee61fc7fb70e5015d1889e411c9e091b4))
+
 # [2.0.0](https://github.com/tamylaa/lego-framework/compare/v1.3.4...v2.0.0) (2025-10-05)
 
 
