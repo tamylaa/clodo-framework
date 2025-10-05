@@ -1,3 +1,29 @@
+# [2.0.0](https://github.com/tamylaa/lego-framework/compare/v1.3.4...v2.0.0) (2025-10-05)
+
+
+### Bug Fixes
+
+* major framework enhancement with enterprise features and TypeScript support ([53c94fb](https://github.com/tamylaa/lego-framework/commit/53c94fbc3adde14852ffaab9117eda09621f3a16))
+* resolve ESLint errors and warnings ([005b591](https://github.com/tamylaa/lego-framework/commit/005b5916faf6a57c0065d649979dcef84c466ce3))
+
+
+### BREAKING CHANGES
+
+* Enhanced framework with advanced caching, validation, and security features
+
+- Enhanced SchemaManager with comprehensive validation and SQL caching (~750 lines)
+- Enhanced GenericDataService with query caching and security controls (~580 lines)
+- Enhanced ModuleManager with enterprise hook execution (~650 lines)
+- Added FeatureManager for progressive enhancement with 20+ feature flags
+- Added VersionDetector for automatic configuration and migration
+- Added MigrationAdapters for backwards compatibility
+- Added comprehensive TypeScript definitions (500+ lines)
+- Enhanced build pipeline with TypeScript checking
+- Fixed critical parsing errors and linting issues
+- 60%+ code duplication reduction through framework consolidation
+
+All breaking changes include backwards compatibility via migration adapters.
+
 ## [2.0.0] (2025-10-05)
 
 ### 🚀 Major Framework Enhancement Release
