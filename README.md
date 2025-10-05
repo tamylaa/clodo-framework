@@ -30,7 +30,19 @@ Just like Lego bricks snap together to build anything you can imagine, this fram
 - **Production Testing**: Health checks, authentication flows, performance monitoring
 - **Audit & Compliance**: Detailed deployment logging and reporting
 
-## 🚀 Working Commands
+## � For Developers
+
+If you're building services with the Lego Framework, see our comprehensive [Developer Guide](./docs/guides/developer-guide.md) for:
+
+- Installation and setup instructions
+- Service creation and configuration
+- Best practices for using public APIs
+- Deployment patterns (embedding logic, not calling internal commands)
+- Troubleshooting and common issues
+
+> **Important**: The commands below are for framework development and internal use. External developers should embed deployment logic in their services rather than calling these scripts directly.
+
+## �🚀 Working Commands
 
 ### **Enterprise Deployment (Primary)**
 ```bash

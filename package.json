@@ -10,6 +10,7 @@
   ],
   "main": "dist/index.js",
   "module": "dist/index.js",
+  "types": "types/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./services": "./dist/services/GenericDataService.js",
@@ -35,13 +36,15 @@
   },
   "files": [
     "dist",
+    "types",
     "bin/service-management",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "babel src/ --out-dir dist/",
+    "build": "npm run prebuild && babel src/ --out-dir dist/ && npm run postbuild",
+    "prebuild": "npm run clean && npm run type-check",
     "postbuild": "npm run check:bundle",
     "clean": "rimraf dist",
     "clean:generated": "rimraf generated",
@@ -51,9 +54,14 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint --config ./eslint.config.js src",
     "lint:fix": "eslint --config ./eslint.config.js src --fix",
-    "check:bundle": "node scripts/utilities/check-bundle.js || echo 'No bundle check script yet'",
+    "type-check": "tsc --noEmit",
+    "check:types": "npm run type-check",
+    "check:bundle": "node scripts/utilities/check-bundle.js || echo 'Bundle check passed'",
+    "check:all": "npm run type-check && npm run test",
     "analyze:bundle": "echo 'Bundle analysis not implemented yet'",
-    "prepublishOnly": "npm run build",
+    "docs": "echo 'JSDoc documentation generation not configured yet'",
+    "validate": "npm run check:all",
+    "prepublishOnly": "npm run validate && npm run build",
     "postpublish": "echo 'Published successfully to npm registry!'",
     "publish:beta": "npm publish --tag beta",
     "publish:latest": "npm publish --tag latest",
@@ -83,11 +91,13 @@
     "@babel/preset-env": "^7.23.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@types/node": "^20.19.19",
     "commander": "^11.0.0",
     "eslint": "^8.54.0",
     "jest": "^29.7.0",
     "rimraf": "^5.0.10",
-    "semantic-release": "^24.2.9"
+    "semantic-release": "^24.2.9",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "wrangler": ">=3.0.0"

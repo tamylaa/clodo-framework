@@ -6,6 +6,7 @@
 
 ### **Getting Started**
 - **[Overview](./overview.md)** - Framework philosophy and core concepts
+- **[Developer Guide](./guides/developer-guide.md)** - Comprehensive guide for external developers
 - **[Quick Start Guide](./guides/getting-started.md)** - Build your first service in 5 minutes
 - **[Installation](./guides/installation.md)** - Setup and prerequisites
 
@@ -52,6 +53,7 @@
 | I want to... | Go to |
 |--------------|--------|
 | **Understand the framework** | [Overview](./overview.md) |
+| **Learn comprehensive usage** | [Developer Guide](./guides/developer-guide.md) |
 | **Build my first service** | [Getting Started](./guides/getting-started.md) |
 | **Configure domains** | [Domain Configuration](./guides/domain-configuration.md) |
 | **Deploy to production** | [Deployment Guide](./deployment/deployment-guide.md) |
