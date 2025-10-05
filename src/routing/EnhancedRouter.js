@@ -1,5 +1,4 @@
 import { createRouteHandlers } from '../handlers/GenericRouteHandler.js';
-import { moduleManager } from '../modules/ModuleManager.js';
 import { schemaManager } from '../schema/SchemaManager.js';
 
 /**

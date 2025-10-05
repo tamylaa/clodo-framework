@@ -9,11 +9,7 @@
  */
 
 import { randomBytes } from 'crypto';
-import { access, readFile, writeFile, mkdir } from 'fs/promises';
-import { promisify } from 'util';
-import { exec } from 'child_process';
-
-const execAsync = promisify(exec);
+import { access, writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
 /**

@@ -16,8 +16,8 @@
  * @version 2.0.0
  */
 
-import { existsSync, access } from 'fs';
-import { readFile, writeFile, appendFile, mkdir, readdir, stat } from 'fs/promises';
+import { access } from 'fs';
+import { writeFile, appendFile, mkdir, readdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -875,14 +875,6 @@ export class DeploymentAuditor {
       console.warn('⚠️  Security alert webhook not configured');
       return;
     }
-
-    const alert = {
-      type: 'security_alert',
-      severity: securityEvent.severity,
-      event: securityEvent,
-      timestamp: new Date(),
-      sessionId: this.currentSession.sessionId
-    };
 
     try {
       // In a real implementation, this would send to a webhook

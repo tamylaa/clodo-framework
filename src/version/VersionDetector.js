@@ -398,12 +398,8 @@ export class VersionDetector {
 
     // In a real implementation, this would check actual exports
     return enhancedIndicators.some(() => {
-      try {
-        // Simulate checking for method existence
-        return true; // Assume enhanced features are available
-      } catch (error) {
-        return false;
-      }
+      // Simulate checking for method existence
+      return true; // Assume enhanced features are available
     });
   }
 

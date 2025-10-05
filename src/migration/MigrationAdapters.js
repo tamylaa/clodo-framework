@@ -389,7 +389,6 @@ export class DataServiceAdapter {
   _recordPerformanceGain(methodName, duration) {
     // Record whether enhanced features provided performance benefits
     const usesCaching = featureManager.isEnabled(FEATURES.ENABLE_QUERY_CACHING);
-    const usesAdvancedPagination = featureManager.isEnabled(FEATURES.ENABLE_ADVANCED_PAGINATION);
     
     const existing = this.migrationState.performanceGains.get(methodName) || {
       cachedCalls: 0,

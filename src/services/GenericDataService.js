@@ -444,10 +444,9 @@ export function createDataService(d1Client, modelName) {
 
 /**
  * Get all available data services
- * @param {Object} d1Client - D1 database client
  * @returns {Object} Map of model names to service instances
  */
-export function getAllDataServices(d1Client) {
+export function getAllDataServices() {
   const services = {};
   // Note: This would require schemaManager to have getAllModels method
   // for (const [modelName] of schemaManager.getAllModels()) {

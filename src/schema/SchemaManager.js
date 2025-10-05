@@ -253,10 +253,9 @@ export class SchemaManager {
    * Enhanced validation with comprehensive error reporting
    * @param {string} modelName - Model name
    * @param {Object} data - Data to validate
-   * @param {Object} options - Validation options
    * @returns {Object} Detailed validation result
    */
-  validateData(modelName, data, options = {}) {
+  validateData(modelName, data) {
     const schema = this.getModel(modelName);
     if (!schema) {
       return {
@@ -337,11 +336,10 @@ export class SchemaManager {
    * @param {string} fieldName - Field name
    * @param {any} value - Field value
    * @param {Object} fieldConfig - Field configuration
-   * @param {Object} schema - Full schema
    * @returns {Object} Field validation result
    * @private
    */
-  _validateField(fieldName, value, fieldConfig, schema) {
+  _validateField(fieldName, value, fieldConfig) {
     const errors = [];
     let transformedValue = value;
 

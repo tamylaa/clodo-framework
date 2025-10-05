@@ -288,12 +288,8 @@ export class FeatureManager {
    * @private
    */
   _getFrameworkVersion() {
-    try {
-      // Try to get version from package.json if available
-      return '2.0.0'; // Placeholder - should be dynamically determined
-    } catch (error) {
-      return 'unknown';
-    }
+    // Try to get version from package.json if available
+    return '2.0.0'; // Placeholder - should be dynamically determined
   }
 
   /**

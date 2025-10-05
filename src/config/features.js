@@ -64,8 +64,8 @@ export class FeatureFlagManager {
     }
 
     return Object.entries(this.currentDomain.features)
-      .filter(([_, enabled]) => enabled === true)
-      .map(([feature, _]) => feature);
+      .filter(([, enabled]) => enabled === true)
+      .map(([feature]) => feature);
   }
 
   /**
@@ -78,8 +78,8 @@ export class FeatureFlagManager {
     }
 
     return Object.entries(this.currentDomain.features)
-      .filter(([_, enabled]) => enabled === false)
-      .map(([feature, _]) => feature);
+      .filter(([, enabled]) => enabled === false)
+      .map(([feature]) => feature);
   }
 
   /**

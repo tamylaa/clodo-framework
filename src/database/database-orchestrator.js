@@ -8,7 +8,7 @@
  */
 
 import { exec } from 'child_process';
-import { readFile, writeFile, access, mkdir, readdir, stat, appendFile } from 'fs/promises';
+import { writeFile, access, mkdir, stat, appendFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -335,10 +335,9 @@ export class DatabaseOrchestrator {
    * Apply migrations to specific environment
    * @param {string} environment - Environment name
    * @param {Array} domainConfigs - Domain configurations
-   * @param {Object} options - Migration options
    * @returns {Promise<Object>} Environment migration result
    */
-  async applyEnvironmentMigrations(environment, domainConfigs, options = {}) {
+  async applyEnvironmentMigrations(environment, domainConfigs) {
     const envConfig = this.environments[environment];
     const results = {
       environment,

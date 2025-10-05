@@ -17,8 +17,7 @@
  * @version 2.0.0
  */
 
-import { access, readFile, writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { access } from 'fs/promises';
 import { MultiDomainOrchestrator } from './multi-domain-orchestrator.js';
 import { DeploymentValidator } from '../deployment/deployment-validator.js';
 import { RollbackManager } from '../deployment/rollback-manager.js';
@@ -368,7 +367,7 @@ export class CrossDomainCoordinator {
 
       // Check for shared services
       if (domainInfo.services) {
-        for (const [serviceName, serviceConfig] of Object.entries(domainInfo.services)) {
+        for (const [, serviceConfig] of Object.entries(domainInfo.services)) {
           // Look for cross-domain dependencies
           if (serviceConfig.dependsOn) {
             domainDeps.push(...serviceConfig.dependsOn);
@@ -379,7 +378,7 @@ export class CrossDomainCoordinator {
       // Check for shared databases
       if (domainInfo.databases) {
         // Add database dependencies
-        for (const [env, dbConfig] of Object.entries(domainInfo.databases)) {
+        for (const [, dbConfig] of Object.entries(domainInfo.databases)) {
           if (dbConfig.sharedWith) {
             domainDeps.push(...dbConfig.sharedWith);
           }
@@ -526,8 +525,6 @@ export class CrossDomainCoordinator {
     // Validate each domain
     for (const domain of coordination.domains) {
       try {
-        const domainInfo = this.portfolio.domains.get(domain) || { name: domain };
-        
         // Individual domain validation
         const validation = await this.modules.validator.validateDeploymentReadiness(domain, {
           environment: coordination.options.environment,
@@ -804,7 +801,7 @@ export class CrossDomainCoordinator {
 
     for (const domain of coordination.domains) {
       try {
-        const config = await this.modules.configCache.getOrCreateDomainConfig(domain, {
+        await this.modules.configCache.getOrCreateDomainConfig(domain, {
           environment: coordination.options.environment,
           forceRefresh: coordination.options.forceRefresh || false
         });
@@ -961,9 +958,8 @@ export class CrossDomainCoordinator {
 
   /**
    * Run cross-domain integration tests
-   * @param {Object} coordination - Coordination object
    */
-  async runCrossDomainIntegrationTests(coordination) {
+  async runCrossDomainIntegrationTests() {
     console.log('     🔗 Running cross-domain integration tests...');
 
     const integrationTests = [
@@ -1140,18 +1136,16 @@ export class CrossDomainCoordinator {
 
   /**
    * Validate shared service compatibility
-   * @param {Object} coordination - Coordination object
    */
-  async validateSharedServiceCompatibility(coordination) {
+  async validateSharedServiceCompatibility() {
     // Implementation for shared service validation
     console.log('     🔗 Validating shared service compatibility...');
   }
 
   /**
    * Validate dependencies
-   * @param {Object} coordination - Coordination object
    */
-  async validateDependencies(coordination) {
+  async validateDependencies() {
     // Implementation for dependency validation
     console.log('     📋 Validating domain dependencies...');
   }

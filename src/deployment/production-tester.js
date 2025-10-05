@@ -19,12 +19,8 @@
 import fetch from 'node-fetch';
 import { access, writeFile, appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 
 import { frameworkConfig } from '../utils/framework-config.js';
-
-const execAsync = promisify(exec);
 
 export class ProductionTester {
   constructor(options = {}) {

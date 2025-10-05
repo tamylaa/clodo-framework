@@ -8,7 +8,6 @@
  */
 
 import { readFile, writeFile, access, mkdir, readdir } from 'fs/promises';
-import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -424,10 +423,8 @@ export class DomainDiscovery {
 
   /**
    * Discover KV namespaces (placeholder for future enhancement)
-   * @param {Object} config - Configuration object
-   * @param {string} apiToken - API token
    */
-  async discoverKVNamespaces(config, apiToken) {
+  async discoverKVNamespaces() {
     // Placeholder for KV namespace discovery if needed
     console.log('     🗂️ KV namespace discovery (not implemented)');
   }
