@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/tamylaa/lego-framework/compare/v3.0.2...v3.0.3) (2025-10-06)
+
+
+### Bug Fixes
+
+* comprehensive documentation update for framework capabilities ([65c0284](https://github.com/tamylaa/lego-framework/commit/65c0284e6bb916be2f5bd994d76aa198c77cf9fc))
+
 ## [3.0.2](https://github.com/tamylaa/lego-framework/compare/v3.0.1...v3.0.2) (2025-10-06)
 
 
