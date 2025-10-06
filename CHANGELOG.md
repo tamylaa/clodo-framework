@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/tamylaa/lego-framework/compare/v3.0.0...v3.0.1) (2025-10-06)
+
+
+### Bug Fixes
+
+* add customer configuration management ([ac7379b](https://github.com/tamylaa/lego-framework/commit/ac7379b41e584bed229cd3a3b8ccb532eed9dcb4))
+
 # [3.0.0](https://github.com/tamylaa/lego-framework/compare/v2.0.1...v3.0.0) (2025-10-06)
 
 
