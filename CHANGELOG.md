@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/tamylaa/lego-framework/compare/v2.0.1...v3.0.0) (2025-10-06)
+
+
+### Bug Fixes
+
+* add comprehensive security validation module ([ea6cbdf](https://github.com/tamylaa/lego-framework/commit/ea6cbdf07790266d8b2cd779f750b5e6ef622ba6))
+
+
+### BREAKING CHANGES
+
+* Deployments now require security validation by default
+
 ## [2.0.1](https://github.com/tamylaa/lego-framework/compare/v2.0.0...v2.0.1) (2025-10-05)
 
 
