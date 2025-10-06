@@ -43,6 +43,7 @@
     "types",
     "bin/service-management",
     "bin/security",
+    "docs",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
