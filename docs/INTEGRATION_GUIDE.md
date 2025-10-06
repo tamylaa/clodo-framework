@@ -4,6 +4,19 @@
 
 The Lego Framework enables **service autonomy** - each service can discover, validate, and deploy itself independently to Cloudflare Workers + D1. This guide explains how to properly integrate the framework into your services.
 
+### 🎉 Recent Enhancements: Customer Configuration Management
+
+The Lego Framework has successfully incorporated **enterprise-grade customer configuration management** capabilities:
+
+- **✅ Multi-Customer Support**: Isolated configuration management for multiple customers
+- **✅ Template-Based Onboarding**: Automated customer setup from reusable templates
+- **✅ Multi-Environment Configs**: Separate configurations for dev/staging/production
+- **✅ Framework Integration**: Seamless integration with existing domain and feature flag systems
+- **✅ CLI Tools**: Command-line interface for customer management (`lego-customer-config`)
+- **✅ Service Autonomy**: Customer configs can be embedded in individual service repositories
+
+**Migration Path**: Use framework tools during development, then copy generated configurations to your service repositories for production deployment.
+
 ## Architecture Overview
 
 ### Two Runtime Environments
@@ -119,7 +132,34 @@ schemaManager.registerModel('posts', {
 });
 ```
 
-**5. Cloudflare Worker (Runtime):**
+**5. Customer Configuration Management (Optional):**
+
+For services that need multi-customer support, you can integrate the Lego Framework's customer configuration system:
+
+```javascript
+// src/config/customers.js (Optional - for multi-customer services)
+import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+
+// Initialize customer manager for service environment
+const customerManager = new CustomerConfigurationManager();
+
+// Load existing customer configurations
+await customerManager.loadExistingCustomers();
+
+// Get current customer from environment
+const currentCustomer = process.env.CUSTOMER_NAME || 'default';
+
+// Get customer-specific configuration
+const customerConfig = customerManager.showConfig(currentCustomer, process.env.NODE_ENV || 'development');
+
+// Use customer configuration
+const dbUrl = customerConfig.variables.customer.DATABASE_URL;
+const jwtSecret = customerConfig.variables.customer.JWT_SECRET;
+```
+
+**Note**: Customer configurations are typically managed at the service level, not embedded in the framework. Use the framework's customer management tools during development, then copy the generated configurations to your service repositories.
+
+**6. Cloudflare Worker (Runtime):**
 ```javascript
 // src/worker/index.js
 import { initializeService, COMMON_FEATURES } from '@tamyla/lego-framework';
@@ -385,6 +425,27 @@ node -e "
 import { DeploymentValidator } from '@tamyla/lego-framework/orchestration';
 const validator = new DeploymentValidator();
 validator.validateDeploymentReadiness('my-service.com').then(console.log);
+"
+```
+
+### Customer Configuration Management
+
+For services that support multiple customers, integrate customer-specific configuration:
+
+```bash
+# During development, use framework tools to generate customer configs
+npx lego-customer-config create-customer mycompany mycompany.com
+
+# Copy generated configs to your service
+cp config/customers/mycompany/* src/config/customers/mycompany/
+
+# In production, load customer-specific configuration
+node -e "
+import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+const manager = new CustomerConfigurationManager();
+await manager.loadExistingCustomers();
+const config = manager.showConfig(process.env.CUSTOMER_NAME, process.env.NODE_ENV);
+console.log('Customer config loaded:', config.customer);
 "
 ```
 

@@ -32,7 +32,8 @@
   "bin": {
     "lego-create-service": "./bin/service-management/create-service.js",
     "lego-init-service": "./bin/service-management/init-service.js",
-    "lego-security": "./bin/security/security-cli.js"
+    "lego-security": "./bin/security/security-cli.js",
+    "lego-customer-config": "./bin/shared/config/customer-cli.js"
   },
   "publishConfig": {
     "access": "public"
@@ -70,7 +71,8 @@
     "publish:beta": "npm publish --tag beta",
     "publish:latest": "npm publish --tag latest",
     "create-service": "node bin/create-service.js",
-    "init-service": "node bin/init-service.js"
+    "init-service": "node bin/init-service.js",
+    "customer-config": "node bin/shared/config/customer-cli.js"
   },
   "keywords": [
     "cloudflare",

@@ -8,6 +8,46 @@ A comprehensive framework for building enterprise-grade software architecture on
 
 Just like Lego bricks snap together to build anything you can imagine, this framework provides the base components that your services snap into. Focus on your business logic while the framework handles the infrastructure, configuration, and deployment patterns.
 
+## 🔒 Security-First Architecture
+
+The Lego Framework implements **security-by-default** principles, ensuring that insecure configurations cannot reach production environments. Our comprehensive security validation framework automatically detects and prevents:
+
+- **Dummy API Keys**: Prevents deployment of development/test keys to production
+- **Weak Secrets**: Blocks passwords shorter than security requirements
+- **Insecure URLs**: Enforces HTTPS in production, blocks localhost in live environments
+- **JWT Security**: Validates JWT secret strength and entropy
+- **Environment Compliance**: Different security rules for dev/staging/production
+
+### Security Integration
+
+Security validation is **automatically applied** to all deployments through framework hooks:
+
+```javascript
+// Security validation runs automatically on every deployment
+hooks: {
+  'pre-deployment': async (context) => {
+    const issues = ConfigurationValidator.validate(config, environment);
+    if (criticalIssues.length > 0) {
+      throw new Error('🚫 Deployment blocked due to critical security issues');
+    }
+  }
+}
+```
+
+### Quick Security Setup
+
+```bash
+# Generate secure keys
+npx lego-security generate-key jwt
+npx lego-security generate-key api content-skimmer
+
+# Validate configuration security
+npx lego-security validate customer production
+
+# Deploy with automatic security validation
+npx lego-security deploy customer production
+```
+
 ## Current Status ✅
 
 ### **Working Features**
@@ -20,6 +60,12 @@ Just like Lego bricks snap together to build anything you can imagine, this fram
 - ✅ **Deployment Auditing**: Complete audit trails and logging
 - ✅ **Graceful Error Handling**: D1 permission graceful degradation
 - ✅ **Cross-Platform Support**: Windows PowerShell and Linux compatibility
+- ✅ **🔒 Security Validation Framework**: Automated security validation and deployment blocking
+- ✅ **🛡️ Cryptographic Key Generation**: Secure API key and JWT secret generation
+- ✅ **🚫 Deployment Security**: Pre-deployment validation that blocks insecure configurations
+- ✅ **👥 Customer Configuration Management**: Multi-environment, multi-customer configuration system
+- ✅ **🏗️ Template-Based Customer Onboarding**: Automated customer setup from reusable templates
+- ✅ **🔗 Framework Integration**: Customer configs integrate with domain and feature flag systems
 
 ### **Core Capabilities**
 - **Enterprise Deployment System**: Multi-domain deployment orchestration with validation
@@ -27,8 +73,14 @@ Just like Lego bricks snap together to build anything you can imagine, this fram
 - **API Token Security**: AES-256-CBC encrypted storage with automatic prompting
 - **Service Autonomy**: Each service can discover and deploy itself independently
 - **Comprehensive Validation**: Network, authentication, configuration, and endpoint validation
+- **🔒 Security-by-Default**: Automatic detection and prevention of insecure configurations
+- **🛡️ Production Security**: Environment-specific security requirements and validation
+- **🔐 Cryptographic Utilities**: Secure key generation and secret management
 - **Production Testing**: Health checks, authentication flows, performance monitoring
 - **Audit & Compliance**: Detailed deployment logging and reporting
+- **👥 Customer Configuration Management**: Multi-environment customer isolation and management
+- **🏗️ Template-Based Onboarding**: Automated customer setup with reusable configuration templates
+- **🔗 Framework Integration**: Seamless integration with existing domain and feature flag systems
 
 ## � For Developers
 
@@ -60,6 +112,40 @@ node bin/deployment/enterprise-deploy.js deploy --interactive --dry-run
 
 # Skip production tests
 node bin/deployment/enterprise-deploy.js deploy --interactive --no-tests
+```
+
+### **🔒 Security Validation (Critical)**
+```bash
+# Validate configuration security before deployment
+npx lego-security validate customer production
+
+# Generate cryptographically secure keys
+npx lego-security generate-key jwt 64
+npx lego-security generate-key api content-skimmer
+
+# Deploy with automatic security validation
+npx lego-security deploy customer production --dry-run
+
+# Check deployment readiness
+npx lego-security check-readiness customer production
+```
+
+### **👥 Customer Configuration Management**
+```bash
+# Create new customer configuration from templates
+npm run customer-config create-customer mycompany mycompany.com
+
+# List all configured customers
+npm run customer-config list
+
+# Show effective configuration for customer/environment
+npm run customer-config show mycompany production
+
+# Validate customer configuration structure
+npm run customer-config validate
+
+# Get deployment command for customer
+npm run customer-config deploy-command mycompany staging
 ```
 
 ### **Domain Management**
@@ -173,6 +259,8 @@ lego-framework/
 │   ├── database/                # Database management tools
 │   ├── portfolio/               # Multi-service portfolio management
 │   └── shared/                  # Shared utility modules
+│       └── config/              # Configuration management tools
+│           └── customer-cli.js  # Customer configuration CLI
 ├── scripts/                      # PowerShell scripts and utilities
 │   ├── service-management/       # Service setup scripts
 │   ├── deployment/              # Deployment scripts
@@ -190,8 +278,15 @@ lego-framework/
 ├── test/                        # Test suite
 │   └── integration/             # Integration tests
 ├── src/                         # Framework source code
+│   └── config/                  # Configuration management
+│       ├── customers.js         # Customer configuration manager
+│       ├── domains.js           # Domain configuration system
+│       └── features.js          # Feature flag system
 ├── templates/                   # Service templates
-└── config-templates/            # Configuration templates
+├── config-templates/            # Configuration templates
+└── config/                      # Framework configuration
+    └── customers/               # Customer configuration templates
+        └── template/            # Reusable customer config templates
 ```
 
 ## Enterprise Deployment & Orchestration
@@ -269,6 +364,30 @@ const discovery = new DomainDiscovery({
 // Discover and cache domain configurations
 await discovery.discoverDomains();
 const config = await discovery.getDomainConfig('my-domain');
+```
+
+### Customer Configuration Management
+
+```javascript
+import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+
+// Framework-mode customer management (uses mock values for testing)
+const customerManager = new CustomerConfigurationManager();
+
+// Create customer configuration from templates
+await customerManager.createCustomer('acmecorp', 'acmecorp.com', {
+  skipValidation: true,
+  isFrameworkMode: true
+});
+
+// Show effective configuration
+const config = customerManager.showConfig('acmecorp', 'production');
+
+// Validate customer configurations
+const validation = await customerManager.validateConfigs();
+
+// Get deployment commands
+const deployCmd = customerManager.getDeployCommand('acmecorp', 'staging');
 ```
 
 ### Deployment Utilities
@@ -729,6 +848,106 @@ This framework currently serves as:
 4. **Integration Standards**: Defining how autonomous services should operate
 
 **Next Evolution**: Extract successful patterns into lightweight libraries that individual services can import and use independently.
+
+## 🎉 **Recent Major Enhancement: Customer Configuration Management**
+
+The Lego Framework has successfully incorporated **enterprise-grade customer configuration management** capabilities, transforming it from a single-service framework into a **multi-customer, multi-environment enterprise platform**.
+
+### ✅ **Successfully Incorporated Features**
+
+#### **👥 Customer Isolation & Management**
+- **Multi-customer support** with isolated configuration namespaces
+- **Template-based customer onboarding** from reusable configuration templates
+- **Customer registry** with automatic domain registration
+- **Framework-safe design** using mock values for development/testing
+
+#### **🏗️ Template-Driven Architecture**
+- **Environment-specific templates** (development.env.template, staging.env.template, production.env.template)
+- **Variable substitution** with customer-specific placeholders (`{{CUSTOMER_NAME}}`, `{{DOMAIN}}`, etc.)
+- **Automated configuration generation** from templates to production-ready configs
+- **Template inheritance** supporting cross-customer and cross-environment patterns
+
+#### **🔗 Framework Integration**
+- **Domain system integration** - customers automatically registered as domains
+- **Feature flag integration** - customer-specific features managed through existing system
+- **Validation framework integration** - customer configs validated using existing patterns
+- **CLI tool integration** - customer management accessible via `npm run customer-config`
+
+#### **🛠️ Developer Experience**
+- **CLI tools**: `create-customer`, `show`, `validate`, `list`, `deploy-command`
+- **Programmatic API**: Full TypeScript/JavaScript API for customer management
+- **Framework mode**: Mock-friendly for development without real infrastructure
+- **Service migration path**: Generated configs can be copied to service repositories
+
+### 🚀 **Impact & Benefits**
+
+#### **For Framework Users**
+- **Zero breaking changes** - all existing functionality preserved
+- **Enhanced capabilities** - framework now supports enterprise customer scenarios
+- **Better testing** - customer scenarios can be tested in framework environment
+- **Migration ready** - smooth path from framework testing to service implementation
+
+#### **For Service Developers**
+- **Customer-ready services** - framework provides patterns for multi-customer support
+- **Automated onboarding** - customer setup becomes template-driven process
+- **Consistent patterns** - same customer management approach across all services
+- **Reduced duplication** - shared customer configuration logic
+
+#### **For Enterprise Teams**
+- **Multi-customer support** - single framework handles multiple customer deployments
+- **Environment isolation** - separate configs for dev/staging/production per customer
+- **Scalable architecture** - customer management scales with business growth
+- **Governance & compliance** - centralized customer configuration management
+
+### 📊 **Technical Implementation Highlights**
+
+#### **Clean Architecture**
+- **Separation of concerns**: Framework provides tools, services manage customer data
+- **Mock-friendly**: Framework mode uses placeholders, service mode uses real values
+- **Composable**: Customer management integrates with existing domain/feature systems
+- **Testable**: Full test coverage without requiring real Cloudflare infrastructure
+
+#### **Developer Workflow**
+```bash
+# Framework development/testing
+npm run customer-config create-customer testcorp testcorp.com
+npm run customer-config show testcorp production
+
+# Service implementation (copy generated configs)
+cp config/customers/testcorp/* my-service/src/config/customers/testcorp/
+# Then customize for production infrastructure
+```
+
+#### **API Design**
+```javascript
+// Framework mode (mock values)
+const customerManager = new CustomerConfigurationManager();
+await customerManager.createCustomer('acmecorp', 'acmecorp.com', {
+  skipValidation: true,
+  isFrameworkMode: true
+});
+
+// Service mode (real infrastructure)
+const customerManager = new CustomerConfigurationManager();
+await customerManager.createCustomer('acmecorp', 'acmecorp.com', {
+  accountId: 'real-cloudflare-account-id',
+  zoneId: 'real-cloudflare-zone-id'
+});
+```
+
+### 🎯 **Mission Accomplished**
+
+The Lego Framework has successfully evolved from a **single-service deployment framework** into a **comprehensive enterprise platform** that supports:
+
+- ✅ **Multi-service orchestration** (existing)
+- ✅ **Multi-environment deployment** (existing)  
+- ✅ **Multi-customer configuration** (newly added)
+- ✅ **Enterprise-grade security** (existing)
+- ✅ **Developer experience** (enhanced)
+
+This enhancement maintains backward compatibility while significantly expanding the framework's capabilities for enterprise scenarios. The customer configuration management system is now a core, production-ready feature that enables the framework to support complex, multi-customer enterprise deployments.
+
+**The Lego Framework is now ready to "snap together" not just services, but entire customer ecosystems! 🧱➡️🏢**
 
 ## Scripts and Tools
 

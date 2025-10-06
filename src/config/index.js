@@ -3,3 +3,4 @@
 
 export * from './domains.js';
 export * from './features.js';
+export * from './customers.js';
