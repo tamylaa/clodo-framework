@@ -27,11 +27,15 @@ This guide is designed for external developers who want to leverage the full pot
 - **npm**: 8.0.0 or later
 - **Cloudflare Account**: With API access
 - **Wrangler CLI**: For Cloudflare Workers development
+- **TypeScript**: 5.0.0 or later (recommended for enhanced development experience)
 
 ```bash
 # Install Wrangler globally
 npm install -g wrangler
 wrangler login
+
+# Optional: Install TypeScript for type safety
+npm install -g typescript
 ```
 
 ### Install Lego Framework
@@ -61,6 +65,50 @@ The Lego Framework operates in two distinct runtime environments:
 - **Limitations**: No filesystem, no child processes, limited network
 
 **Key Principle**: Each service should embed its deployment capabilities rather than relying on external CLI tools.
+
+## TypeScript Support
+
+The Lego Framework provides comprehensive TypeScript support with 500+ lines of type definitions for complete type safety and enhanced developer experience.
+
+### **TypeScript Benefits**
+- **Complete Type Coverage**: All APIs are fully typed with comprehensive interfaces
+- **IDE Integration**: Full IntelliSense, auto-completion, and refactoring support
+- **Enhanced Reliability**: Catch errors at compile-time rather than runtime
+- **Better Documentation**: Self-documenting code with type hints
+
+### **Using with TypeScript**
+```typescript
+import { 
+  SchemaManager, 
+  GenericDataService, 
+  EnhancedRouter,
+  CustomerConfigurationManager,
+  ValidationResult,
+  FieldConfig 
+} from '@tamyla/lego-framework';
+
+// Fully typed schema definition
+const userSchema: SchemaDefinition = {
+  tableName: 'users',
+  columns: {
+    id: { type: 'string', primaryKey: true },
+    email: { type: 'string', required: true, unique: true },
+    name: { type: 'string', required: true }
+  }
+};
+
+// Type-safe service instantiation
+const userService = new GenericDataService(d1Client, 'users');
+const router = new EnhancedRouter(d1Client);
+```
+
+### **Type Definitions Available**
+- `SchemaDefinition` - Data model schemas
+- `ValidationResult` - Validation outcomes with detailed errors
+- `FieldConfig` - Column/field configuration
+- `CacheEntry<T>` - Generic caching interface
+- `CustomerConfigurationManager` - Customer management API
+- And many more...
 
 ## Creating Your First Service
 

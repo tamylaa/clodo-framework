@@ -11,6 +11,7 @@ This guide will walk you through creating, configuring, and deploying your first
 - **npm**: 8.0.0 or later
 - **PowerShell**: 5.1 or later (Windows) or PowerShell Core (macOS/Linux)
 - **Git**: For version control
+- **TypeScript**: 5.0.0 or later (optional, for enhanced development experience)
 
 ### **Cloudflare Requirements**
 - **Cloudflare Account**: [Sign up free](https://dash.cloudflare.com/sign-up)
@@ -23,6 +24,15 @@ npm install -g wrangler
 
 # Login to Cloudflare
 wrangler login
+```
+
+### **Optional: TypeScript Setup**
+```bash
+# Install TypeScript globally for enhanced development
+npm install -g typescript
+
+# Verify installation
+tsc --version
 ```
 
 ## 🏗️ Step 1: Install the Framework

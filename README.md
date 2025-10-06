@@ -66,6 +66,9 @@ npx lego-security deploy customer production
 - ✅ **👥 Customer Configuration Management**: Multi-environment, multi-customer configuration system
 - ✅ **🏗️ Template-Based Customer Onboarding**: Automated customer setup from reusable templates
 - ✅ **🔗 Framework Integration**: Customer configs integrate with domain and feature flag systems
+- ✅ **📘 TypeScript Support**: Comprehensive type definitions with 500+ lines of TypeScript interfaces
+- ✅ **⚡ Performance Caching**: Schema caching, SQL query caching, and validation result caching
+- ✅ **🔄 Enhanced Data Services**: Advanced pagination, relationship loading, and query optimization
 
 ### **Core Capabilities**
 - **Enterprise Deployment System**: Multi-domain deployment orchestration with validation
@@ -81,6 +84,9 @@ npx lego-security deploy customer production
 - **👥 Customer Configuration Management**: Multi-environment customer isolation and management
 - **🏗️ Template-Based Onboarding**: Automated customer setup with reusable configuration templates
 - **🔗 Framework Integration**: Seamless integration with existing domain and feature flag systems
+- **📘 TypeScript First**: Complete type safety with comprehensive type definitions and IDE support
+- **⚡ Performance Optimized**: Intelligent caching system for schemas, SQL queries, and validation results
+- **🔄 Advanced Data Operations**: Enhanced CRUD with relationships, advanced pagination, and query optimization
 
 ## � For Developers
 
@@ -91,6 +97,33 @@ If you're building services with the Lego Framework, see our comprehensive [Deve
 - Best practices for using public APIs
 - Deployment patterns (embedding logic, not calling internal commands)
 - Troubleshooting and common issues
+
+## 📘 TypeScript Support
+
+The Lego Framework provides comprehensive TypeScript support with 500+ lines of type definitions for complete type safety and enhanced developer experience.
+
+### **TypeScript Setup**
+```typescript
+// types/index.d.ts provides complete type coverage
+import { 
+  SchemaManager, 
+  GenericDataService, 
+  EnhancedRouter,
+  CustomerConfigurationManager 
+} from '@tamyla/lego-framework';
+
+// Full IntelliSense and type checking
+const schemaManager = new SchemaManager();
+const service = new GenericDataService(d1Client, 'users');
+```
+
+### **Key TypeScript Features**
+- **Complete API Coverage**: Every exported function and class is fully typed
+- **Advanced Generic Types**: Complex data structures with proper generic constraints
+- **Validation Types**: Type-safe schema definitions and validation results
+- **Cache Types**: Typed caching interfaces with TTL and statistics
+- **Security Types**: Comprehensive security validation and key generation types
+- **IDE Integration**: Full IntelliSense, auto-completion, and refactoring support
 
 > **Important**: The commands below are for framework development and internal use. External developers should embed deployment logic in their services rather than calling these scripts directly.
 
