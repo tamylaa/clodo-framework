@@ -25,11 +25,14 @@
     "./utils/deployment": "./dist/utils/deployment/index.js",
     "./orchestration": "./dist/orchestration/index.js",
     "./deployment": "./dist/deployment/index.js",
-    "./database": "./dist/database/index.js"
+    "./database": "./dist/database/index.js",
+    "./security": "./dist/security/index.js",
+    "./modules/security": "./dist/modules/security.js"
   },
   "bin": {
     "lego-create-service": "./bin/service-management/create-service.js",
-    "lego-init-service": "./bin/service-management/init-service.js"
+    "lego-init-service": "./bin/service-management/init-service.js",
+    "lego-security": "./bin/security/security-cli.js"
   },
   "publishConfig": {
     "access": "public"
@@ -38,6 +41,7 @@
     "dist",
     "types",
     "bin/service-management",
+    "bin/security",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
