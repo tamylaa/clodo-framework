@@ -7,6 +7,8 @@
 
 import { exec, execSync } from 'child_process';
 import { promisify } from 'util';
+import https from 'https';
+import http from 'http';
 
 const execAsync = promisify(exec);
 
@@ -14,32 +16,87 @@ const execAsync = promisify(exec);
 const { frameworkConfig } = await import('../../../src/utils/framework-config.js');
 const timing = frameworkConfig.getTiming();
 
+function makeHttpRequest(url, method = 'GET', timeout = 5000) {
+  return new Promise((resolve, reject) => {
+    const protocol = url.startsWith('https:') ? https : http;
+    const req = protocol.request(url, { method, timeout }, (res) => {
+      let data = '';
+      res.on('data', (chunk) => data += chunk);
+      res.on('end', () => {
+        resolve({ data, statusCode: res.statusCode });
+      });
+    });
+
+    req.on('error', (err) => {
+      reject(err);
+    });
+
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('Request timed out'));
+    });
+
+    req.end();
+  });
+}
+
 export async function checkHealth(url, timeout = timing.healthCheckTimeout) {
-  try {
-    const command = process.platform === 'win32' 
-      ? `powershell -Command "try { (Invoke-RestMethod -Uri '${url}/health' -TimeoutSec ${timeout/1000}).Content } catch { exit 1 }"`
-      : `curl -f -m ${timeout/1000} "${url}/health"`;
+  return new Promise((resolve, reject) => {
+    const protocol = url.startsWith('https:') ? https : http;
+    const healthUrl = `${url}/health`;
     
-    const { stdout: result } = await execAsync(command, { encoding: 'utf8' });
-    
-    // Handle PowerShell vs curl responses
-    let healthData;
-    if (process.platform === 'win32') {
-      // PowerShell might return the object directly or as JSON string
-      healthData = typeof result === 'string' ? JSON.parse(result) : result;
-    } else {
-      healthData = JSON.parse(result);
-    }
-    
-    return {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      url: `${url}/health`,
-      ...healthData
-    };
-  } catch (error) {
-    throw new Error(`Health check failed for ${url}: ${error.message}`);
-  }
+    const req = protocol.get(healthUrl, { timeout }, (res) => {
+      let data = '';
+      res.on('data', (chunk) => data += chunk);
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          if (response.status === 'healthy' || response.status === 'ok') {
+            resolve({ 
+              status: 'ok', 
+              framework: response.framework,
+              message: 'Service is healthy',
+              url: healthUrl,
+              timestamp: new Date().toISOString()
+            });
+          } else {
+            resolve({ 
+              status: 'error', 
+              message: `Service reported unhealthy: ${response.status}`,
+              url: healthUrl,
+              timestamp: new Date().toISOString()
+            });
+          }
+        } catch (e) {
+          resolve({ 
+            status: 'error', 
+            message: 'Invalid JSON response from health endpoint',
+            url: healthUrl,
+            timestamp: new Date().toISOString()
+          });
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      reject({ 
+        status: 'error', 
+        message: `Health check failed: ${err.message}`,
+        url: healthUrl,
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    req.on('timeout', () => {
+      req.destroy();
+      reject({ 
+        status: 'error', 
+        message: 'Health check timed out',
+        url: healthUrl,
+        timestamp: new Date().toISOString()
+      });
+    });
+  });
 }
 
 export async function waitForDeployment(url, maxWaitTime = timing.deploymentTimeout, interval = timing.deploymentInterval) {
@@ -78,17 +135,13 @@ export async function validateEndpoints(baseUrl, endpoints = [], timeout = timin
       const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
       console.log(`   Testing: ${endpoint}`);
       
-      const command = process.platform === 'win32'
-        ? `powershell -Command "try { Invoke-RestMethod -Uri '${url}' -TimeoutSec ${timeout/1000} -Method Get } catch { exit 1 }"`
-        : `curl -f -m ${timeout/1000} "${url}"`;
-      
-      const response = execSync(command, { encoding: 'utf8', stdio: 'pipe' });
+      const result = await makeHttpRequest(url, 'GET', timeout);
       
       results.push({ 
         endpoint, 
         url,
         status: 'ok', 
-        response: response.substring(0, 200) + (response.length > 200 ? '...' : '')
+        response: result.data.substring(0, 200) + (result.data.length > 200 ? '...' : '')
       });
       
       console.log(`      ✅ OK`);
@@ -156,19 +209,11 @@ export async function comprehensiveHealthCheck(url) {
       const endpoint = `${url}${config.endpoint}`;
       const method = config.method || 'GET';
       
-      let command;
-      if (process.platform === 'win32') {
-        command = `powershell -Command "Invoke-RestMethod -Uri '${endpoint}' -Method ${method} -TimeoutSec 5"`;
-      } else {
-        const curlMethod = method === 'POST' ? '-X POST' : '';
-        command = `curl -f -m 5 ${curlMethod} "${endpoint}"`;
-      }
-      
-      const response = execSync(command, { encoding: 'utf8', stdio: 'pipe' });
+      const response = await makeHttpRequest(endpoint, method, 5000);
       results[name] = { 
         status: 'ok', 
         endpoint: config.endpoint,
-        response: response.substring(0, 100) + (response.length > 100 ? '...' : '')
+        response: response.data.substring(0, 100) + (response.data.length > 100 ? '...' : '')
       };
       
       console.log(`      ✅ ${config.description} - OK`);

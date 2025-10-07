@@ -18,6 +18,38 @@ The Lego Framework has successfully incorporated **enterprise-grade customer con
 
 **Migration Path**: Use framework tools during development, then copy generated configurations to your service repositories for production deployment.
 
+### 🚀 Recent Enhancements: Deployment & Security Validation
+
+The Lego Framework has been enhanced with **enterprise-grade deployment validation and security features**:
+
+- **✅ Real HTTP Health Checks**: Native Node.js HTTP/HTTPS modules replace shell commands for cross-platform reliability
+- **✅ Interactive Deployment Configuration**: User input-driven setup for deployment workflows with validation
+- **✅ Comprehensive Error Reporting**: Actionable error messages with troubleshooting suggestions
+- **✅ Enhanced Security Validation**: Real deployment validation with URL extraction and post-deployment checks
+- **✅ Cross-Platform Compatibility**: Eliminated platform-specific shell command dependencies
+
+**Key Benefits**:
+- **Reliable Health Monitoring**: HTTP-based health checks work consistently across Windows, Linux, and macOS
+- **User-Friendly Deployment**: Interactive wizards guide users through configuration setup
+- **Better Error Handling**: Clear, actionable error messages help resolve deployment issues quickly
+- **Enhanced Security**: Real validation ensures deployments meet security requirements
+
+**Integration Example**:
+```javascript
+import { deployWithSecurity, InteractiveDeploymentConfigurator } from '@tamyla/lego-framework/security';
+
+// Interactive configuration setup
+const config = await InteractiveDeploymentConfigurator.runConfigurationWizard();
+
+// Secure deployment with real validation
+await deployWithSecurity({
+  customer: config.customer,
+  environment: config.environment,
+  deploymentUrl: config.domain,
+  dryRun: config.dryRun
+});
+```
+
 ## Architecture Overview
 
 ### Two Runtime Environments

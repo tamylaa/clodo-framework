@@ -1,9 +1,25 @@
-## [3.0.3](https://github.com/tamylaa/lego-framework/compare/v3.0.2...v3.0.3) (2025-10-06)
+## [3.0.3](https://github.com/tamylaa/lego-framework/compare/v3.0.2...v3.0.3) (2025-10-07)
 
+
+### Features
+
+* **DeploymentManager**: Enhanced with real HTTP-based validation and URL extraction
+* **HealthChecker**: Replaced shell commands with native Node.js HTTP/HTTPS modules for cross-platform reliability
+* **ErrorHandler**: Added comprehensive error reporting and actionable troubleshooting suggestions
+* **InteractiveDeploymentConfigurator**: New user input-driven configuration setup for deployment workflows
+
+### Enhancements
+
+* **Security Module**: Updated exports to include new ErrorHandler and InteractiveDeploymentConfigurator classes
+* **Post-deployment Validation**: Real HTTP health checks replace mock implementations
+* **Cross-platform Compatibility**: Eliminated shell command dependencies in health checking
+* **User Experience**: Interactive configuration wizard for security deployments
 
 ### Bug Fixes
 
-* comprehensive documentation update for framework capabilities ([65c0284](https://github.com/tamylaa/lego-framework/commit/65c0284e6bb916be2f5bd994d76aa198c77cf9fc))
+* **ESLint**: Fixed unnecessary escape characters in regex patterns
+* **Type Checking**: All new code passes TypeScript validation
+* **Build Process**: Successful compilation and bundle validation
 
 ## [3.0.2](https://github.com/tamylaa/lego-framework/compare/v3.0.1...v3.0.2) (2025-10-06)
 

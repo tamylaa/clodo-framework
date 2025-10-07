@@ -1,5 +1,6 @@
 import { ConfigurationValidator } from './ConfigurationValidator.js';
 import { SecretGenerator } from './SecretGenerator.js';
+import { checkHealth } from '../../bin/shared/monitoring/health-checker.js';
 
 /**
  * Secure Deployment Manager
@@ -17,7 +18,8 @@ export class DeploymentManager {
       environment,
       skipValidation = false,
       allowInsecure = false,
-      dryRun = false
+      dryRun = false,
+      deploymentUrl // New parameter for real URL extraction
     } = options;
 
     console.log(`\n🚀 Secure Deployment: ${customer}/${environment}`);
@@ -68,13 +70,14 @@ export class DeploymentManager {
         console.log('\n✅ Dry run completed successfully');
       } else {
         console.log('\n🚀 Step 4: Deploying');
-        await this.performDeployment(customer, environment);
+        const deployResult = await this.performDeployment(customer, environment);
+        console.log(`   ✅ Deployment URL: ${deployResult.url}`);
       }
 
-      // Step 5: Post-deployment validation
-      if (!dryRun) {
+      // Step 5: Post-deployment validation (real implementation)
+      if (!dryRun && deploymentUrl) {
         console.log('\n🔍 Step 5: Post-deployment Validation');
-        await this.performPostDeploymentChecks(customer, environment);
+        await this.performPostDeploymentChecks(customer, environment, deploymentUrl);
       }
 
       console.log('\n🎉 Deployment completed successfully!');
@@ -135,22 +138,33 @@ export class DeploymentManager {
     console.log(`   ✓ Deploying to Cloudflare Workers`);
     await this.delay(2000);
     console.log(`   ✓ Deployment completed`);
+
+    // Return deployment result with URL
+    const deploymentUrl = `https://${_customer}-${_environment}.workers.dev`;
+    return {
+      url: deploymentUrl,
+      customer: _customer,
+      environment: _environment,
+      timestamp: new Date().toISOString()
+    };
   }
 
   /**
-   * Perform post-deployment checks
+   * Perform post-deployment checks (real HTTP-based validation)
    */
-  static async performPostDeploymentChecks(_customer, _environment) {
-    const checks = [
-      'Service health check',
-      'API endpoints validation',
-      'Security headers verification',
-      'Logging functionality'
-    ];
+  static async performPostDeploymentChecks(customer, environment, deploymentUrl) {
+    console.log(`   🔍 Validating deployment at ${deploymentUrl}`);
 
-    for (const check of checks) {
-      console.log(`   ✓ ${check}`);
-      // Add actual check logic here
+    try {
+      // Real health check using HTTP
+      const healthResult = await checkHealth(deploymentUrl);
+      if (healthResult.status !== 'ok') {
+        throw new Error(`Health check failed: ${healthResult.message}`);
+      }
+      console.log(`   ✅ Health check passed for ${customer}/${environment}`);
+    } catch (error) {
+      console.error(`   ❌ Post-deployment validation failed: ${error.message}`);
+      throw error;
     }
   }
 

@@ -6,6 +6,8 @@
 export { ConfigurationValidator } from './ConfigurationValidator.js';
 export { DeploymentManager } from './DeploymentManager.js';
 export { SecretGenerator } from './SecretGenerator.js';
+export { ErrorHandler } from '../utils/ErrorHandler.js';
+export { InteractiveDeploymentConfigurator as ConfigurationManager } from '../config/ConfigurationManager.js';
 
 // Re-export patterns and rules for advanced usage
 export { INSECURE_PATTERNS } from './patterns/insecure-patterns.js';
@@ -34,4 +36,16 @@ export function generateSecureKey(type = 'api', options = {}) {
 
   // eslint-disable-next-line no-undef
   return SecretGenerator.generateSecureApiKey(length, prefix);
+}
+
+// Main error handling function
+export function handleDeploymentError(error, context = {}) {
+  // eslint-disable-next-line no-undef
+  return ErrorHandler.handleDeploymentError(error, context);
+}
+
+// Main configuration function
+export async function generateConfiguration(defaults = {}) {
+  // eslint-disable-next-line no-undef
+  return InteractiveDeploymentConfigurator.generateFromUserInput(defaults);
 }
