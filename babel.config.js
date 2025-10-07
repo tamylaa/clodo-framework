@@ -6,7 +6,7 @@ export default {
         targets: {
           node: '18'
         },
-        modules: 'auto'
+        modules: false  // Preserve ESM modules
       }
     ]
   ]
