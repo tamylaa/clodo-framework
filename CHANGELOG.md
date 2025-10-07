@@ -1,3 +1,10 @@
+## [3.0.5](https://github.com/tamylaa/lego-framework/compare/v3.0.4...v3.0.5) (2025-10-07)
+
+
+### Bug Fixes
+
+* resolve ESM packaging conflict by preserving ES modules in build output ([0d13422](https://github.com/tamylaa/lego-framework/commit/0d13422e5c7800006369b157b57d9440805d14dd))
+
 ## [3.0.4](https://github.com/tamylaa/lego-framework/compare/v3.0.3...v3.0.4) (2025-10-07)
 
 
