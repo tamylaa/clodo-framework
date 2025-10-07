@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/lego-framework",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Reusable framework for Lego-style software architecture on Cloudflare Workers + D1",
   "type": "module",
   "sideEffects": [

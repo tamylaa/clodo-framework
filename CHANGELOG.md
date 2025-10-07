@@ -1,3 +1,10 @@
+## [3.0.4](https://github.com/tamylaa/lego-framework/compare/v3.0.3...v3.0.4) (2025-10-07)
+
+
+### Bug Fixes
+
+* enhance deployment framework with HTTP validation, error handling, and interactive configuration ([7698f56](https://github.com/tamylaa/lego-framework/commit/7698f56108c0b90809eaaa55e7335ac89e6dce49))
+
 ## [3.0.3](https://github.com/tamylaa/lego-framework/compare/v3.0.2...v3.0.3) (2025-10-07)
 
 
