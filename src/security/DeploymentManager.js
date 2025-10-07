@@ -1,6 +1,6 @@
 import { ConfigurationValidator } from './ConfigurationValidator.js';
 import { SecretGenerator } from './SecretGenerator.js';
-import { checkHealth } from '../../bin/shared/monitoring/health-checker.js';
+import { checkHealth } from '../utils/health-checker.js';
 
 /**
  * Secure Deployment Manager
