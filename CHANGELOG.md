@@ -1,3 +1,10 @@
+## [3.0.6](https://github.com/tamylaa/lego-framework/compare/v3.0.5...v3.0.6) (2025-10-07)
+
+
+### Bug Fixes
+
+* resolve missing health-checker dependency by moving to src/utils ([64d429b](https://github.com/tamylaa/lego-framework/commit/64d429be674855539e5f77413d9a14151d1b0ef8))
+
 ## [3.0.5](https://github.com/tamylaa/lego-framework/compare/v3.0.4...v3.0.5) (2025-10-07)
 
 
