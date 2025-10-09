@@ -50,6 +50,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Sync with remote
+        run: |
+          git fetch origin master
+          git reset --hard origin/master
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
