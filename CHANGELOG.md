@@ -1,3 +1,61 @@
+# 1.0.0 (2025-10-09)
+
+
+### Bug Fixes
+
+* add comprehensive security validation module ([ea6cbdf](https://github.com/tamylaa/clodo-framework/commit/ea6cbdf07790266d8b2cd779f750b5e6ef622ba6))
+* add customer configuration management ([ac7379b](https://github.com/tamylaa/clodo-framework/commit/ac7379b41e584bed229cd3a3b8ccb532eed9dcb4))
+* add missing environment parameter to WranglerDeployer validation call ([a833ca3](https://github.com/tamylaa/clodo-framework/commit/a833ca3c1006953911453e1b383c602b96a16229))
+* allow tests to pass when no test files exist ([70bd5b8](https://github.com/tamylaa/clodo-framework/commit/70bd5b8ee61fc7fb70e5015d1889e411c9e091b4))
+* complete rebranding from lego-framework to clodo-framework ([1a704ba](https://github.com/tamylaa/clodo-framework/commit/1a704ba0bdd4b649c412a8b8cc202138d64c79e2))
+* comprehensive documentation update for framework capabilities ([65c0284](https://github.com/tamylaa/clodo-framework/commit/65c0284e6bb916be2f5bd994d76aa198c77cf9fc))
+* comprehensive framework improvements and enterprise documentation ([e77b046](https://github.com/tamylaa/clodo-framework/commit/e77b046cca0dc6ed7afc16479e588d2dece333f3))
+* enhance deployment framework with HTTP validation, error handling, and interactive configuration ([7698f56](https://github.com/tamylaa/clodo-framework/commit/7698f56108c0b90809eaaa55e7335ac89e6dce49))
+* ensure semantic-release works on latest commit ([5d59903](https://github.com/tamylaa/clodo-framework/commit/5d59903cab1c74266373bd6066b045da75256645))
+* implement intelligent WranglerDeployer for actual Cloudflare deployments ([a656190](https://github.com/tamylaa/clodo-framework/commit/a6561909753b5bcb7ece0a0159772daee28dd37c))
+* include documentation in package files ([550a734](https://github.com/tamylaa/clodo-framework/commit/550a734ef9de3f4e4afc35e85226216649e84332))
+* Initial release of Lego Framework v1.0.0 ([6994efd](https://github.com/tamylaa/clodo-framework/commit/6994efdf0be3508ae7fe54c6d71f161d56cafef8))
+* major framework enhancement with enterprise features and TypeScript support ([53c94fb](https://github.com/tamylaa/clodo-framework/commit/53c94fbc3adde14852ffaab9117eda09621f3a16))
+* major framework reorganization and robustness improvements ([7aed0b5](https://github.com/tamylaa/clodo-framework/commit/7aed0b5b438bb02c081d533766951ccc89ff4d4c))
+* make database orchestrator dependency-aware ([051f722](https://github.com/tamylaa/clodo-framework/commit/051f72269aab39d4e972cad8011430dfa86b3f7a))
+* resolve ESLint errors and warnings ([005b591](https://github.com/tamylaa/clodo-framework/commit/005b5916faf6a57c0065d649979dcef84c466ce3))
+* resolve ESLint warnings to enable automated release ([200dd82](https://github.com/tamylaa/clodo-framework/commit/200dd8267af2629f3cb3a1a3a30cbc96ea5bbee9))
+* resolve ESM packaging conflict by preserving ES modules in build output ([0d13422](https://github.com/tamylaa/clodo-framework/commit/0d13422e5c7800006369b157b57d9440805d14dd))
+* resolve GitHub Actions workflow permissions and NPM token issues ([cd53e55](https://github.com/tamylaa/clodo-framework/commit/cd53e55702e0c249e26884304115537c8a3345cf))
+* resolve linting and type checking issues ([598e699](https://github.com/tamylaa/clodo-framework/commit/598e6999be93025d7a35c59df55c6606a59c98ac))
+* resolve missing health-checker dependency by moving to src/utils ([64d429b](https://github.com/tamylaa/clodo-framework/commit/64d429be674855539e5f77413d9a14151d1b0ef8))
+* update repository URLs to correct GitHub username (tamylaa) ([791ae3f](https://github.com/tamylaa/clodo-framework/commit/791ae3ff76589851a0ba09cef58d955272c6b343))
+* Windows compatibility and ES module issues ([7ed2588](https://github.com/tamylaa/clodo-framework/commit/7ed2588d8ae2f706e5646813c1d1dad99944d50f))
+
+
+### Features
+
+* Add additional documentation and development tools ([0c6ca0d](https://github.com/tamylaa/clodo-framework/commit/0c6ca0d18ac7bdeef17587a592b8e7e1c549c87b))
+* add GitHub Actions workflow for semantic release ([e097070](https://github.com/tamylaa/clodo-framework/commit/e0970708b454d87dd124371840d0eb1c91c7641c))
+* implement comprehensive production hardening ([4a4c391](https://github.com/tamylaa/clodo-framework/commit/4a4c3917fc3ba624ff61ac79cde1df7c40b6aa33))
+* initial commercial release of Clodo Framework ([647e271](https://github.com/tamylaa/clodo-framework/commit/647e271dd0718b8a5fc4082bc1ac9be1216f9fe2))
+* Rebrand to Clodo Framework v3.0.6 ([03e6923](https://github.com/tamylaa/clodo-framework/commit/03e69232dc60e139601320fce7c1c88c55d6254f))
+* trigger initial Clodo Framework v1.0.0 release ([98bcd76](https://github.com/tamylaa/clodo-framework/commit/98bcd764a1aa1cfe4199d820e02be584619ea11c))
+
+
+### BREAKING CHANGES
+
+* Deployments now require security validation by default
+* Enhanced framework with advanced caching, validation, and security features
+
+- Enhanced SchemaManager with comprehensive validation and SQL caching (~750 lines)
+- Enhanced GenericDataService with query caching and security controls (~580 lines)
+- Enhanced ModuleManager with enterprise hook execution (~650 lines)
+- Added FeatureManager for progressive enhancement with 20+ feature flags
+- Added VersionDetector for automatic configuration and migration
+- Added MigrationAdapters for backwards compatibility
+- Added comprehensive TypeScript definitions (500+ lines)
+- Enhanced build pipeline with TypeScript checking
+- Fixed critical parsing errors and linting issues
+- 60%+ code duplication reduction through framework consolidation
+
+All breaking changes include backwards compatibility via migration adapters.
+
 ## [3.0.6](https://github.com/tamylaa/clodo-framework/compare/v3.0.5...v3.0.6) (2025-10-07)
 
 
