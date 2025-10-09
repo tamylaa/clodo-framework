@@ -19,7 +19,7 @@
     "clean": "rimraf dist/ coverage/"
   },
   "dependencies": {
-    "@tamyla/lego-framework": "^3.0.0",
+    "@tamyla/clodo-framework": "^3.0.0",
     "wrangler": "^3.0.0"
   },
   "devDependencies": {
@@ -36,7 +36,7 @@
     "type": "git"
   },
   "keywords": [
-    "lego-framework",
+    "clodo-framework",
     "generic",
     "cloudflare",
     "serverless"

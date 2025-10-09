@@ -1,6 +1,6 @@
-# Lego Framework Binaries
+# Clodo Framework Binaries
 
-This directory contains executable scripts and command-line tools for the Lego Framework.
+This directory contains executable scripts and command-line tools for the Clodo Framework.
 
 ## Categories
 

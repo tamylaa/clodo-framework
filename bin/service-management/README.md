@@ -1,6 +1,6 @@
 # Service Management Tools
 
-Command-line tools for creating and initializing Lego Framework services.
+Command-line tools for creating and initializing Clodo Framework services.
 
 ## Tools
 

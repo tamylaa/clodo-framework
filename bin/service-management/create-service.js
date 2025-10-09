@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Lego Framework - Service Template Generator
- * Creates new services from predefined templates
+ * Clodo Framework - Service Template Generator
+ * Creates new ser    console.log(`✓ Using Clodo Framework ServiceCreator module`);ices from predefined templates
  */
 
 import { ServiceCreator } from '../../src/service-management/ServiceCreator.js';
@@ -11,9 +11,9 @@ const SERVICE_TYPES = ['data-service', 'auth-service', 'content-service', 'api-g
 
 function showUsage() {
   console.log(`
-Lego Framework - Service Template Generator
+Clodo Framework - Service Template Generator
 
-Usage: lego-create-service <service-name> [options]
+Usage: clodo-create-service <service-name> [options]
 
 Arguments:
   service-name    Name of the service to create (required)
@@ -25,9 +25,9 @@ Options:
   -h, --help           Show this help message
 
 Examples:
-  lego-create-service my-data-service --type data-service
-  lego-create-service auth-api --type auth-service --output ./services
-  lego-create-service my-service --force
+  clodo-create-service my-data-service --type data-service
+  clodo-create-service auth-api --type auth-service --output ./services
+  clodo-create-service my-service --force
 `);
 }
 
@@ -93,7 +93,7 @@ async function main() {
     const { serviceName, options } = parseArgs(args);
 
     console.log(`🚀 Creating ${options.type} service: ${serviceName}`);
-    console.log(`� Using Lego Framework ServiceCreator module`);
+    console.log(`✓ Using Clodo Framework ServiceCreator module`);
     console.log('');
 
     const creator = new ServiceCreator();

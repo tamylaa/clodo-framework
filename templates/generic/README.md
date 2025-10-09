@@ -192,7 +192,7 @@ This service is built on the Lego Framework v{{FRAMEWORK_VERSION}}. The framewor
 - **Feature Management**: Runtime feature toggling
 - **Cross-Service Communication**: Service registry and communication patterns
 
-Learn more: [Lego Framework Documentation](../../packages/lego-framework/README.md)
+Learn more: [Clodo Framework Documentation](../../packages/clodo-framework/README.md)
 
 ## Contributing
 

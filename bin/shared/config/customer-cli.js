@@ -3,7 +3,7 @@
 /**
  * Customer Configuration Management CLI
  * Manages multi-environment, multi-customer configuration structure
- * Integrates with Lego Framework domain and feature flag systems
+ * Integrates with Clodo Framework domain and feature flag systems
  */
 
 import { CustomerConfigCLI } from '../../../src/config/CustomerConfigCLI.js';
@@ -128,12 +128,12 @@ async function main() {
         console.log('  deploy-command <customer> <env>  - Get deployment command');
         console.log('  list                             - List all configured customers');
         console.log('\nExamples:');
-        console.log('  lego-customer-config create-customer acmecorp acmecorp.com');
-        console.log('  lego-customer-config validate');
-        console.log('  lego-customer-config show acmecorp production');
-        console.log('  lego-customer-config list');
+        console.log('  clodo-customer-config create-customer acmecorp acmecorp.com');
+        console.log('  clodo-customer-config validate');
+        console.log('  clodo-customer-config show acmecorp production');
+        console.log('  clodo-customer-config list');
         console.log('\nIntegration:');
-        console.log('  This tool integrates with Lego Framework domain and feature flag systems.');
+        console.log('  This tool integrates with Clodo Framework domain and feature flag systems.');
         console.log('  Customer configurations are automatically registered as domains.');
         break;
     }
@@ -283,7 +283,7 @@ function showHelp() {
   console.log('  customer-config show acmecorp production');
   console.log('  customer-config list');
   console.log('\nIntegration:');
-  console.log('  This tool integrates with Lego Framework domain and feature flag systems.');
+  console.log('  This tool integrates with Clodo Framework domain and feature flag systems.');
   console.log('  Customer configurations are automatically registered as domains.');
 }
 

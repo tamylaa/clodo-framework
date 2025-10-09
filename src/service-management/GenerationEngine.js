@@ -310,7 +310,7 @@ export class GenerationEngine {
         clean: "rimraf dist/ coverage/"
       },
       dependencies: {
-        "@tamyla/lego-framework": "^3.0.0",
+        "@tamyla/clodo-framework": "^3.0.0",
         "wrangler": "^3.0.0"
       },
       devDependencies: {
@@ -328,7 +328,7 @@ export class GenerationEngine {
         url: confirmedValues.gitRepositoryUrl
       },
       keywords: [
-        "lego-framework",
+        "clodo-framework",
         coreInputs.serviceType,
         "cloudflare",
         "serverless"
@@ -405,7 +405,7 @@ ${Object.entries(confirmedValues.features)
    * Generate domains.js configuration
    */
   generateDomainsConfig(coreInputs, confirmedValues, servicePath) {
-    const domainsConfig = `import { createDomainConfigSchema } from '@tamyla/lego-framework';
+    const domainsConfig = `import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 /**
  * Domain configuration for ${confirmedValues.displayName}

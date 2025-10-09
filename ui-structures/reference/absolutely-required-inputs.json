@@ -1,7 +1,7 @@
 {
   "metadata": {
     "version": "1.0.0",
-    "description": "Three-tier categorization of LEGO Framework inputs with service manifest generation",
+    "description": "Three-tier categorization of CLODO Framework inputs with service manifest generation",
     "created": "2025-10-08",
     "categories": {
       "absolutelyRequired": 6,
@@ -140,8 +140,8 @@
         "customization": "users may want custom branding"
       },
       "description": {
-        "logic": "template: 'A {service-type} service built with LEGO Framework'",
-        "example": "A api service built with LEGO Framework",
+        "logic": "template: 'A {service-type} service built with CLODO Framework'",
+        "example": "A api service built with CLODO Framework",
         "customization": "users may want specific descriptions"
       },
       "version": {
@@ -151,7 +151,7 @@
       },
       "author": {
         "logic": "process.env.USER or git config user.name",
-        "fallback": "LEGO Framework",
+        "fallback": "CLODO Framework",
         "customization": "users may want to specify team/organization"
       },
       "production-url": {

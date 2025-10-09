@@ -539,7 +539,7 @@ export class ServiceOrchestrator {
           diagnosis.warnings.push({
             message: 'Domain configuration may not be using Lego Framework schema',
             location: 'src/config/domains.js',
-            suggestion: 'Ensure domain config uses createDomainConfigSchema from @tamyla/lego-framework'
+            suggestion: 'Ensure domain config uses createDomainConfigSchema from @tamyla/clodo-framework'
           });
         }
       } catch (error) {

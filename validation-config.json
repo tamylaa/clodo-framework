@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Lego Framework Enhanced Configuration",
+  "title": "Clodo Framework Enhanced Configuration",
   "description": "Comprehensive configuration for flexible service deployment and validation",
   
   "commands": {

@@ -471,7 +471,7 @@ This service uses the Lego Framework for:
 - **Deployment Automation**: One-command deployment
 - **Service Registry**: Cross-service communication
 
-Learn more: [Lego Framework Documentation](../../packages/lego-framework/README.md)
+Learn more: [Clodo Framework Documentation](../../packages/clodo-framework/README.md)
 
 ## Contributing
 

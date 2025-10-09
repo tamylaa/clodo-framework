@@ -372,7 +372,7 @@ function New-ServiceConfiguration {
             setup = "powershell .\scripts\setup.ps1"
         }
         dependencies = @{
-            "@tamyla/lego-framework" = "^1.0.0"
+            "@tamyla/clodo-framework" = "^1.0.0"
             "wrangler" = "^3.0.0"
         }
         devDependencies = @{
@@ -389,7 +389,7 @@ function New-ServiceConfiguration {
     # Generate domain configuration
     $featureString = ($FeatureInfo.GetEnumerator() | Where-Object { $_.Value } | ForEach-Object { "      $($_.Name): true," }) -join "`n"
     $domainConfig = @"
-import { createDomainConfigSchema } from '@tamyla/lego-framework';
+import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 export const domains = {
   '$($DomainInfo.Name)': {
@@ -434,7 +434,7 @@ name = "$($ServiceInfo.Name)-production"
 
     # Generate main worker file
     $workerCode = @"
-import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/lego-framework';
+import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/clodo-framework';
 import { domains } from './config/domains.js';
 
 export default {

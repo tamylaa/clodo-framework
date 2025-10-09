@@ -76,7 +76,7 @@ export class ValidationHandler {
       }
 
       // Check for required dependencies
-      const requiredDeps = ['@tamyla/lego-framework'];
+      const requiredDeps = ['@tamyla/clodo-framework'];
       const deps = { ...packageJson.dependencies, ...packageJson.devDependencies };
       
       requiredDeps.forEach(dep => {

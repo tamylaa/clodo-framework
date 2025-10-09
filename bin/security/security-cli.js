@@ -72,7 +72,7 @@ async function main() {
       break;
 
     default:
-      console.log('Lego Framework Security CLI');
+      console.log('Clodo Framework Security CLI');
       console.log('');
       console.log('Commands:');
       console.log('  validate <customer> <environment>    - Validate configuration security');
@@ -82,10 +82,10 @@ async function main() {
       console.log('  check-readiness <customer> <env>     - Check deployment readiness');
       console.log('');
       console.log('Examples:');
-      console.log('  lego-security validate tamyla production');
-      console.log('  lego-security generate-key jwt 64');
-      console.log('  lego-security generate-key content-skimmer');
-      console.log('  lego-security deploy tamyla staging --dry-run');
+      console.log('  clodo-security validate tamyla production');
+      console.log('  clodo-security generate-key jwt 64');
+      console.log('  clodo-security generate-key content-skimmer');
+      console.log('  clodo-security deploy tamyla staging --dry-run');
       break;
   }
 }

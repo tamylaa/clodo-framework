@@ -134,7 +134,7 @@ class IntegrationTester {
       // Try to import the framework
       const testScript = `
 try {
-  const { initializeService } = await import('@tamyla/lego-framework');
+  const { initializeService } = await import('@tamyla/clodo-framework');
   console.log('Framework import successful');
 } catch (error) {
   console.error('Framework import failed:', error.message);

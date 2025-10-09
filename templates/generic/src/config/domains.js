@@ -1,4 +1,4 @@
-import { createDomainConfigSchema } from '@tamyla/lego-framework';
+import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 /**
  * Domain configuration for {{SERVICE_DISPLAY_NAME}}

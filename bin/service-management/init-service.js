@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Lego Framework - Service Initializer
+ * Clodo Framework - Service Initializer
  *
  * Initializes a new service with auto-generated configurations,
  * eliminating the need for manual wrangler.toml and domains.js setup.
@@ -22,8 +22,8 @@ class ServiceInitializerCLI {
 
   setupCLI() {
     program
-      .name('lego-init-service')
-      .description('Initialize a Lego Framework service with auto-generated configurations')
+      .name('clodo-init-service')
+      .description('Initialize a Clodo Framework service with auto-generated configurations')
       .version('1.0.0')
       .argument('<service-name>', 'Name of the service to initialize')
       .option('-t, --type <type>', 'Service type', 'generic')
@@ -42,9 +42,9 @@ class ServiceInitializerCLI {
 
     program.on('--help', () => {
       console.log('\nExamples:');
-      console.log('  lego-init-service my-api --type api-gateway --domains "api.example.com,staging.example.com"');
-      console.log('  lego-init-service data-service --type data-service --api-token $CF_TOKEN');
-      console.log('  lego-init-service my-service --env production --account-id $CF_ACCOUNT_ID');
+      console.log('  clodo-init-service my-api --type api-gateway --domains "api.example.com,staging.example.com"');
+      console.log('  clodo-init-service data-service --type data-service --api-token $CF_TOKEN');
+      console.log('  clodo-init-service my-service --env production --account-id $CF_ACCOUNT_ID');
       console.log('\nServices are created in: ./services/{service-name}/');
       console.log('\nEnvironment Variables:');
       console.log('  CLOUDFLARE_API_TOKEN    - API token for domain discovery');
@@ -55,9 +55,9 @@ class ServiceInitializerCLI {
 
   async initializeService(serviceName, options) {
     try {
-      console.log('🚀 Lego Framework - Service Initializer');
+      console.log('🚀 Clodo Framework - Service Initializer');
       console.log('=' .repeat(50));
-      console.log('📦 Using Lego Framework ServiceInitializer module');
+      console.log('📦 Using Clodo Framework ServiceInitializer module');
       console.log('');
 
       const initializer = new ServiceInitializer();

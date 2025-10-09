@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Lego Framework - Unified Three-Tier Service Management CLI
+ * Clodo Framework - Unified Three-Tier Service Management CLI
  *
  * This tool provides a conversational interface for complete service lifecycle management
  * combining service creation, initialization, and deployment preparation.
@@ -21,14 +21,14 @@ import { InputCollector } from '../src/service-management/InputCollector.js';
 const program = new Command();
 
 program
-  .name('lego-service')
-  .description('Unified conversational CLI for Lego Framework service lifecycle management')
+  .name('clodo-service')
+  .description('Unified conversational CLI for Clodo Framework service lifecycle management')
   .version('1.0.0');
 
 // Main interactive command
 program
   .command('create')
-  .description('Create a new Lego service with conversational setup')
+  .description('Create a new Clodo service with conversational setup')
   .option('-n, --non-interactive', 'Run in non-interactive mode with all required parameters')
   .option('--service-name <name>', 'Service name (required in non-interactive mode)')
   .option('--service-type <type>', 'Service type: data-service, auth-service, content-service, api-gateway, generic', 'generic')
@@ -95,7 +95,7 @@ program
   .command('create-service')
   .description('Legacy alias for create command')
   .action(async (options) => {
-    console.log(chalk.yellow('This command is deprecated. Use "lego-service create" instead.'));
+    console.log(chalk.yellow('This command is deprecated. Use "clodo-service create" instead.'));
     const createCommand = program.commands.find(cmd => cmd.name() === 'create');
     if (createCommand && createCommand._actionHandler) {
       await createCommand._actionHandler(options || {});
@@ -106,7 +106,7 @@ program
   .command('init-service')
   .description('Legacy alias for create command')
   .action(async (options) => {
-    console.log(chalk.yellow('This command is deprecated. Use "lego-service create" instead.'));
+    console.log(chalk.yellow('This command is deprecated. Use "clodo-service create" instead.'));
     const createCommand = program.commands.find(cmd => cmd.name() === 'create');
     if (createCommand && createCommand._actionHandler) {
       await createCommand._actionHandler(options || {});
@@ -118,7 +118,7 @@ program
   .command('list-types')
   .description('List available service types and their features')
   .action(() => {
-    console.log(chalk.cyan('Available Lego Framework Service Types:'));
+    console.log(chalk.cyan('Available Clodo Framework Service Types:'));
     console.log('');
 
     const types = {
@@ -137,6 +137,118 @@ program
       console.log('');
     });
   });
+
+// Show usage statistics and plan information
+/*
+program
+  .command('usage')
+  .description('Show usage statistics and subscription information')
+  .action(() => {
+    const stats = usageTracker.getUsageStats();
+    const license = usageTracker.getLicense();
+    const plan = usageTracker.isPaidUser() ? 'Paid' : 'Free';
+
+    console.log(chalk.cyan('\n📊 Clodo Framework Usage Statistics'));
+    console.log('='.repeat(50));
+
+    if (license && (license.plan === 'founder' || license.plan === 'admin')) {
+      console.log(chalk.magenta(`👑 Plan: ${license.plan.charAt(0).toUpperCase() + license.plan.slice(1)} (Unlimited)`));
+      console.log(chalk.magenta(`👤 User: ${license.userName} <${license.userEmail}>`));
+    } else {
+      console.log(chalk.white(`Plan: ${plan}`));
+    }
+
+    console.log(chalk.white(`Services Created: ${stats.currentUsage}${stats.limit !== -1 ? `/${stats.limit}` : ''}`));
+    console.log(chalk.white(`Environments: ${stats.environments.join(', ')}`));
+    console.log(chalk.white(`Premium Features: ${stats.premiumFeatures ? '✅' : '❌'}`));
+
+    if (stats.daysUntilExpiry && stats.daysUntilExpiry < 36500) { // Not showing expiry for founder licenses
+      console.log(chalk.white(`Days Until Expiry: ${stats.daysUntilExpiry}`));
+    } else if (license && (license.plan === 'founder' || license.plan === 'admin')) {
+      console.log(chalk.magenta(`⏰ Status: Never Expires`));
+    }
+
+    if (!usageTracker.isPaidUser()) {
+      console.log(chalk.yellow('\n🚀 Upgrade to unlock unlimited usage!'));
+      console.log(chalk.white('Visit: https://clodo-framework.com/pricing'));
+    } else if (license && (license.plan === 'founder' || license.plan === 'admin')) {
+      console.log(chalk.magenta('\n🎉 You have unlimited founder access!'));
+      console.log(chalk.white('Thank you for building Clodo Framework!'));
+    }
+
+    console.log('');
+  });
+*/
+
+// Upgrade to paid plan (simulated for now)
+/*
+program
+  .command('upgrade')
+  .description('Upgrade to a paid plan')
+  .option('--plan <plan>', 'Plan type: monthly, annual, lifetime', 'monthly')
+  .option('--simulate', 'Simulate upgrade without actual payment')
+  .action((options) => {
+    if (options.simulate) {
+      // Simulate license activation
+      const license = usageTracker.activateLicense(options.plan, 'simulated');
+      console.log(chalk.green('\n🎉 Successfully upgraded to Clodo Framework!'));
+      console.log('='.repeat(50));
+      console.log(chalk.white(`Plan: ${options.plan.charAt(0).toUpperCase() + options.plan.slice(1)}`));
+      console.log(chalk.white(`License ID: ${license.id}`));
+      console.log(chalk.white(`Expires: ${new Date(license.expiry).toLocaleDateString()}`));
+      console.log(chalk.green('\n✅ You now have unlimited access to all features!'));
+      console.log(chalk.cyan('Run "clodo-service usage" to see your new limits.'));
+    } else {
+      console.log(chalk.cyan('\n🚀 Ready to upgrade to Clodo Framework?'));
+      console.log('='.repeat(50));
+      console.log(chalk.white('Choose your plan:'));
+      console.log(chalk.white('• Monthly: $19/month'));
+      console.log(chalk.white('• Annual: $189/year (save 17%)'));
+      console.log(chalk.white('• Lifetime: $999 (one-time payment)'));
+      console.log('');
+      console.log(chalk.yellow('For testing, use: clodo-service upgrade --simulate --plan annual'));
+      console.log(chalk.cyan('Real payments coming soon at: https://clodo-framework.com/pricing'));
+    }
+    console.log('');
+  });
+*/
+
+// Generate founder license (for framework builder and selected team)
+/*
+program
+  .command('generate-founder-license')
+  .description('Generate unlimited founder license (admin only)')
+  .option('--email <email>', 'User email address', 'founder@clodo-framework.com')
+  .option('--name <name>', 'User display name', 'Framework Builder')
+  .option('--admin', 'Generate admin license instead of founder')
+  .action((options) => {
+    try {
+      let license;
+      if (options.admin) {
+        license = usageTracker.generateAdminLicense(options.email, options.name);
+        console.log(chalk.green('\n🔑 Admin License Generated Successfully!'));
+        console.log('='.repeat(50));
+        console.log(chalk.white(`License Type: Admin (Unlimited Access)`));
+      } else {
+        license = usageTracker.generateFounderLicense(options.email, options.name);
+        console.log(chalk.green('\n👑 Founder License Generated Successfully!'));
+        console.log('='.repeat(50));
+        console.log(chalk.white(`License Type: Founder (Unlimited Access)`));
+      }
+
+      console.log(chalk.white(`License ID: ${license.id}`));
+      console.log(chalk.white(`User: ${license.userName} <${license.userEmail}>`));
+      console.log(chalk.white(`Generated: ${new Date(license.generated).toLocaleString()}`));
+      console.log(chalk.green('\n✅ Unlimited access granted - never expires!'));
+      console.log(chalk.cyan('Run "clodo-service usage" to verify your access.'));
+
+    } catch (error) {
+      console.error(chalk.red(`\n❌ Error generating license: ${error.message}`));
+      process.exit(1);
+    }
+    console.log('');
+  });
+*/
 
 // Validate service configuration
 program

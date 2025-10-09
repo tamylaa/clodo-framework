@@ -88,8 +88,8 @@
         "rows": 3
       },
       "generation": {
-        "logic": "template: 'A {service-type} service built with LEGO Framework'",
-        "example": "A api service built with LEGO Framework"
+        "logic": "template: 'A {service-type} service built with CLODO Framework'",
+        "example": "A api service built with CLODO Framework"
       },
       "validation": {
         "minLength": 10,
@@ -139,7 +139,7 @@
       },
       "generation": {
         "logic": "process.env.USER or git config user.name",
-        "fallback": "LEGO Framework"
+        "fallback": "CLODO Framework"
       },
       "validation": {
         "minLength": 2,

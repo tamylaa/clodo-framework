@@ -1,7 +1,7 @@
 {
   "template": {
     "name": "core-inputs-ui",
-    "description": "UI template for collecting the 6 absolutely required LEGO Framework inputs",
+    "description": "UI template for collecting the 6 absolutely required CLODO Framework inputs",
     "version": "1.0.0",
     "category": "absolutely-required",
     "inputCount": 6,
@@ -11,7 +11,7 @@
   "collectionStrategy": {
     "phase": 1,
     "title": "Core Service Configuration",
-    "description": "Please provide the fundamental information needed to create your LEGO Framework service",
+    "description": "Please provide the fundamental information needed to create your CLODO Framework service",
     "progressIndicator": "Step 1 of 3: Core Information",
     "validationMode": "strict",
     "allowBackNavigation": false,

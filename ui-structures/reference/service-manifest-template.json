@@ -1,19 +1,19 @@
 {
   "template": {
     "name": "service-manifest",
-    "description": "Comprehensive service configuration and history file generated during LEGO Framework service creation",
+    "description": "Comprehensive service configuration and history file generated during CLODO Framework service creation",
     "version": "1.0.0",
     "purpose": "Complete audit trail, service consumption, and rectification support"
   },
   "metadata": {
     "serviceId": "auto-generated-uuid",
     "createdAt": "2025-10-08T10:30:00Z",
-    "createdBy": "LEGO Framework v2.0.0",
+    "createdBy": "CLODO Framework v2.0.0",
     "creationMethod": "three-phase-collection",
     "frameworkVersion": "2.0.0",
     "nodeVersion": "18.17.0",
     "platform": "windows",
-    "workingDirectory": "C:\\Users\\Admin\\Documents\\coding\\tamyla\\lego-framework"
+    "workingDirectory": "C:\\Users\\Admin\\Documents\\coding\\tamyla\\clodo-framework"
   },
   "coreInputs": {
     "description": "The 6 absolutely required inputs provided by the user",
@@ -35,9 +35,9 @@
     "acceptances": 12,
     "inputs": {
       "display-name": "User Service",
-      "description": "A api service built with LEGO Framework for user management",
+      "description": "A api service built with CLODO Framework for user management",
       "version": "1.0.0",
-      "author": "LEGO Framework",
+      "author": "CLODO Framework",
       "production-url": "api.mycompany.com",
       "staging-url": "staging-api.mycompany.com",
       "development-url": "dev-api.mycompany.com",
@@ -52,8 +52,8 @@
       {
         "field": "description",
         "action": "customized",
-        "original": "A api service built with LEGO Framework",
-        "final": "A api service built with LEGO Framework for user management",
+        "original": "A api service built with CLODO Framework",
+        "final": "A api service built with CLODO Framework for user management",
         "reason": "Added specific functionality description"
       },
       {
@@ -94,7 +94,7 @@
           "cloudflareZoneId": "fedcba0987654321",
           "d1DatabaseId": "user-service-db-uuid",
           "workerDeploymentUrl": "https://user-service.mycompany.com",
-          "gitRepositoryUrl": "https://github.com/tamylaa/lego-framework",
+          "gitRepositoryUrl": "https://github.com/tamylaa/clodo-framework",
           "gitBranch": "master",
           "gitCommitHash": "a1b2c3d4e5f6",
           "npmRegistry": "https://registry.npmjs.org",
@@ -130,7 +130,7 @@
           "documentationFormat": "openapi-3.0",
           "testingFramework": "jest",
           "codeCoverage": "80%",
-          "lintingRules": "lego-standard",
+          "lintingRules": "clodo-standard",
           "buildTool": "esbuild",
           "packageManager": "npm",
           "ciCdPipeline": "github-actions",
@@ -173,11 +173,11 @@
       "service": {
         "name": "user-service",
         "displayName": "User Service",
-        "description": "A api service built with LEGO Framework for user management",
+        "description": "A api service built with CLODO Framework for user management",
         "version": "1.0.0",
         "type": "api",
         "environment": "development",
-        "author": "LEGO Framework"
+        "author": "CLODO Framework"
       },
       "networking": {
         "domain": "mycompany.com",
@@ -271,7 +271,7 @@
       {
         "timestamp": "2025-10-08T10:28:00Z",
         "action": "service-generated",
-        "actor": "LEGO Framework",
+        "actor": "CLODO Framework",
         "details": "Successfully generated service with 66 auto-generated configurations"
       }
     ]
@@ -316,7 +316,7 @@
       "rollbackCommand": "npm run rollback"
     },
     "recreation": {
-      "command": "lego recreate user-service --from-manifest",
+      "command": "clodo recreate user-service --from-manifest",
       "requiredInputs": "All inputs stored in this manifest",
       "validationSteps": [
         "Verify Cloudflare credentials",

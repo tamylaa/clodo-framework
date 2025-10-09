@@ -13,7 +13,7 @@ Just like Lego bricks snap together to build anything you can imagine, this fram
 Already have an existing project? The Lego Framework is designed for **gradual integration** - you don't need to rewrite everything at once. Start with individual components and scale up as needed.
 
 ### **Quick Start Options**
-- **Greenfield Development**: Use `npx @tamyla/lego-framework lego-service` for new projects
+- **Greenfield Development**: Use `npx @tamyla/clodo-framework clodo-service` for new projects
 - **Existing Projects**: Import individual utilities, then add configuration management, then full deployment automation
 - **Migration Path**: Follow our [Integration Guide](./docs/INTEGRATION_GUIDE.md) for step-by-step migration strategies
 
@@ -55,14 +55,14 @@ hooks: {
 
 ```bash
 # Generate secure keys
-npx @tamyla/lego-framework security generate-key jwt
-npx @tamyla/lego-framework security generate-key api content-skimmer
+npx @tamyla/clodo-framework security generate-key jwt
+npx @tamyla/clodo-framework security generate-key api content-skimmer
 
 # Validate configuration security
-npx @tamyla/lego-framework security validate customer production
+npx @tamyla/clodo-framework security validate customer production
 
 # Deploy with automatic security validation
-npx @tamyla/lego-framework security deploy customer production
+npx @tamyla/clodo-framework security deploy customer production
 ```
 
 ## Current Status ✅
@@ -113,7 +113,7 @@ The LEGO Framework provides comprehensive capabilities for testing, validating, 
 Test deployed services across any Cloudflare account:
 
 ```javascript
-import { ProductionTester } from '@tamyla/lego-framework/deployment';
+import { ProductionTester } from '@tamyla/clodo-framework/deployment';
 
 const tester = new ProductionTester({
   verbose: true,
@@ -138,7 +138,7 @@ For granular control, use individual testing modules:
 
 ```javascript
 // Test only what you need
-import { ApiTester, AuthTester, DatabaseTester } from '@tamyla/lego-framework/deployment/testers';
+import { ApiTester, AuthTester, DatabaseTester } from '@tamyla/clodo-framework/deployment/testers';
 
 // API testing only
 const apiResults = await new ApiTester().runApiTests('production');
@@ -161,7 +161,7 @@ const dbResults = await new DatabaseTester().runDatabaseTests('production');
 Comprehensive validation before deployment:
 
 ```javascript
-import { DeploymentValidator } from '@tamyla/lego-framework/deployment';
+import { DeploymentValidator } from '@tamyla/clodo-framework/deployment';
 
 const validator = new DeploymentValidator({
   validationLevel: 'comprehensive'
@@ -185,7 +185,7 @@ const result = await validator.validateDeployment(['your-service.com'], {
 Deploy and manage services across multiple Cloudflare accounts:
 
 ```javascript
-import { CloudflareDomainManager } from '@tamyla/lego-framework/deployment';
+import { CloudflareDomainManager } from '@tamyla/clodo-framework/deployment';
 
 const manager = new CloudflareDomainManager({
   apiToken: process.env.CUSTOMER_CLOUDFLARE_TOKEN
@@ -227,7 +227,7 @@ const authChoice = await askChoice(
 Automatic security validation prevents insecure deployments:
 
 ```javascript
-import { deployWithSecurity } from '@tamyla/lego-framework/security';
+import { deployWithSecurity } from '@tamyla/clodo-framework/security';
 
 await deployWithSecurity({
   customer: 'your-customer',
@@ -301,7 +301,7 @@ import {
   GenericDataService, 
   EnhancedRouter,
   CustomerConfigurationManager 
-} from '@tamyla/lego-framework';
+} from '@tamyla/clodo-framework';
 
 // Full IntelliSense and type checking
 const schemaManager = new SchemaManager();
@@ -520,7 +520,7 @@ The Lego Framework now includes comprehensive enterprise-grade deployment and or
 ### Orchestration Modules
 
 ```javascript
-import { MultiDomainOrchestrator, CrossDomainCoordinator } from '@tamyla/lego-framework/orchestration';
+import { MultiDomainOrchestrator, CrossDomainCoordinator } from '@tamyla/clodo-framework/orchestration';
 
 // Multi-domain deployment orchestration
 const orchestrator = new MultiDomainOrchestrator({
@@ -540,7 +540,7 @@ const coordinator = new CrossDomainCoordinator({
 ### Deployment Management
 
 ```javascript
-import { DeploymentValidator, RollbackManager, ProductionTester, DeploymentAuditor } from '@tamyla/lego-framework/deployment';
+import { DeploymentValidator, RollbackManager, ProductionTester, DeploymentAuditor } from '@tamyla/clodo-framework/deployment';
 
 // Pre-deployment validation
 const validator = new DeploymentValidator();
@@ -562,7 +562,7 @@ auditor.logDeployment(deploymentId, 'started', { domains: ['api', 'auth'] });
 ### Database Orchestration
 
 ```javascript
-import { DatabaseOrchestrator } from '@tamyla/lego-framework/database';
+import { DatabaseOrchestrator } from '@tamyla/clodo-framework/database';
 
 // Multi-environment database management
 const dbOrchestrator = new DatabaseOrchestrator({
@@ -578,7 +578,7 @@ await dbOrchestrator.createBackup('production');
 ### Domain Discovery
 
 ```javascript
-import { DomainDiscovery } from '@tamyla/lego-framework/config/discovery';
+import { DomainDiscovery } from '@tamyla/clodo-framework/config/discovery';
 
 // Runtime domain discovery and configuration
 const discovery = new DomainDiscovery({
@@ -593,7 +593,7 @@ const config = await discovery.getDomainConfig('my-domain');
 ### Customer Configuration Management
 
 ```javascript
-import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+import { CustomerConfigurationManager } from '@tamyla/clodo-framework/config';
 
 // Framework-mode customer management (uses mock values for testing)
 const customerManager = new CustomerConfigurationManager();
@@ -617,7 +617,7 @@ const deployCmd = customerManager.getDeployCommand('acmecorp', 'staging');
 ### Deployment Utilities
 
 ```javascript
-import { EnhancedSecretManager, ConfigurationCacheManager, askUser, askYesNo } from '@tamyla/lego-framework/utils/deployment';
+import { EnhancedSecretManager, ConfigurationCacheManager, askUser, askYesNo } from '@tamyla/clodo-framework/utils/deployment';
 
 // Advanced secret management
 const secretManager = new EnhancedSecretManager();
@@ -639,9 +639,9 @@ The Lego Framework now includes powerful command-line tools for enterprise deplo
 ### Installation
 
 ```bash
-npm install -g @tamyla/lego-framework
+npm install -g @tamyla/clodo-framework
 # or
-npx @tamyla/lego-framework --help
+npx @tamyla/clodo-framework --help
 ```
 
 ### Available CLI Tools
@@ -730,7 +730,7 @@ npx lego-secrets --types database,api-keys,jwt --persist
 ### Install the Framework
 
 ```bash
-npm install @tamyla/lego-framework
+npm install @tamyla/clodo-framework
 ```
 
 ### Create a New Service
@@ -742,7 +742,7 @@ npx create-lego-service my-new-service --type data-service
 ### Basic Usage
 
 ```javascript
-import { initializeService, createFeatureGuard, FeatureFlagManager } from '@tamyla/lego-framework';
+import { initializeService, createFeatureGuard, FeatureFlagManager } from '@tamyla/clodo-framework';
 
 export default {
   async fetch(request, env, ctx) {
@@ -847,7 +847,7 @@ services/my-service/
 
 ```javascript
 // config/domains.js
-import { createDomainConfigSchema } from '@tamyla/lego-framework';
+import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 export const domains = {
   'my-domain': {
@@ -1043,7 +1043,7 @@ import {
   CloudflareManager, 
   DeploymentValidator,
   ProductionTester 
-} from '@tamyla/lego-framework';
+} from '@tamyla/clodo-framework';
 
 // Each service imports only what it needs
 const discovery = new DomainDiscovery({ domain: 'my-service.domain.com' });

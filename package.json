@@ -1,7 +1,7 @@
 {
-  "name": "@tamyla/lego-framework",
+  "name": "@tamyla/clodo-framework",
   "version": "3.0.6",
-  "description": "Reusable framework for Lego-style software architecture on Cloudflare Workers + D1",
+  "description": "Reusable framework for Clodo-style software architecture on Cloudflare Workers + D1",
   "type": "module",
   "sideEffects": [
     "**/worker/**",
@@ -41,11 +41,11 @@
     "./modules/security": "./dist/modules/security.js"
   },
   "bin": {
-    "lego-service": "./bin/lego-service.js",
-    "lego-create-service": "./bin/service-management/create-service.js",
-    "lego-init-service": "./bin/service-management/init-service.js",
-    "lego-security": "./bin/security/security-cli.js",
-    "lego-customer-config": "./bin/shared/config/customer-cli.js"
+    "clodo-service": "./bin/clodo-service.js",
+    "clodo-create-service": "./bin/service-management/create-service.js",
+    "clodo-init-service": "./bin/service-management/init-service.js",
+    "clodo-security": "./bin/security/security-cli.js",
+    "clodo-customer-config": "./bin/shared/config/customer-cli.js"
   },
   "publishConfig": {
     "access": "public"
@@ -88,11 +88,11 @@
     "postpublish": "echo 'Published successfully to npm registry!'",
     "publish:beta": "npm publish --tag beta",
     "publish:latest": "npm publish --tag latest",
-    "create-service": "node bin/create-service.js",
-    "init-service": "node bin/init-service.js",
-    "update-service": "node bin/lego-service.js update",
-    "diagnose-service": "node bin/lego-service.js diagnose",
-    "validate-service": "node bin/lego-service.js validate",
+    "create-service": "node bin/service-management/create-service.js",
+    "init-service": "node bin/service-management/init-service.js",
+    "update-service": "node bin/clodo-service.js update",
+    "diagnose-service": "node bin/clodo-service.js diagnose",
+    "validate-service": "node bin/clodo-service.js validate",
     "customer-config": "node bin/shared/config/customer-cli.js"
   },
   "keywords": [
@@ -102,13 +102,13 @@
     "framework",
     "reusable",
     "microservices",
-    "lego-architecture",
+    "clodo-architecture",
     "serverless",
     "edge-computing",
     "modular"
   ],
   "author": "Tamyla",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "wrangler": ">=3.0.0"
   },
@@ -134,12 +134,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tamylaa/lego-framework.git"
+    "url": "git+https://github.com/tamylaa/clodo-framework.git"
   },
   "bugs": {
-    "url": "https://github.com/tamylaa/lego-framework/issues"
+    "url": "https://github.com/tamylaa/clodo-framework/issues"
   },
-  "homepage": "https://lego-framework.tamyla.com",
+  "homepage": "https://clodo-framework.tamyla.com",
   "release": {
     "branches": [
       "master"
@@ -172,8 +172,5 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
-  },
-  "directories": {
-    "example": "templates"
   }
 }

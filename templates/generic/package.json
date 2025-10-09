@@ -13,7 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@tamyla/lego-framework": "^1.0.0",
+    "@tamyla/clodo-framework": "^1.0.0",
     "wrangler": "^3.0.0"
   },
   "devDependencies": {
