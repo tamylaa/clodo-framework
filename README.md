@@ -1,4 +1,4 @@
-# Lego Framework
+# Clodo Framework
 
 A comprehensive framework for building enterprise-grade software architecture on Cloudflare Workers + D1. This framework enables rapid development of autonomous, domain-specific services while maintaining consistency and reusability across your entire ecosystem.
 
@@ -10,7 +10,7 @@ Just like Lego bricks snap together to build anything you can imagine, this fram
 
 ## � Incremental Adoption
 
-Already have an existing project? The Lego Framework is designed for **gradual integration** - you don't need to rewrite everything at once. Start with individual components and scale up as needed.
+Already have an existing project? The Clodo Framework is designed for **gradual integration** - you don't need to rewrite everything at once. Start with individual components and scale up as needed.
 
 ### **Quick Start Options**
 - **Greenfield Development**: Use `npx @tamyla/clodo-framework clodo-service` for new projects
@@ -19,15 +19,15 @@ Already have an existing project? The Lego Framework is designed for **gradual i
 
 ### **Adoption Phases**
 1. **Phase 1**: Import core utilities (logging, validation, error handling)
-2. **Phase 2**: Add configuration management and environment handling  
+2. **Phase 2**: Add configuration management and environment handling
 3. **Phase 3**: Integrate deployment automation and security validation
 4. **Phase 4**: Full framework adoption with orchestration and monitoring
 
-> **Pro Tip**: Most teams start with Phase 1 utilities and gradually adopt more features. See [Adopting LEGO Framework in Existing Projects](./docs/INTEGRATION_GUIDE.md#incremental-adoption) for detailed guidance.
+> **Pro Tip**: Most teams start with Phase 1 utilities and gradually adopt more features. See [Adopting Clodo Framework in Existing Projects](./docs/INTEGRATION_GUIDE.md#incremental-adoption) for detailed guidance.
 
 ## �🔒 Security-First Architecture
 
-The Lego Framework implements **security-by-default** principles, ensuring that insecure configurations cannot reach production environments. Our comprehensive security validation framework automatically detects and prevents:
+The Clodo Framework implements **security-by-default** principles, ensuring that insecure configurations cannot reach production environments. Our comprehensive security validation framework automatically detects and prevents:
 
 - **Dummy API Keys**: Prevents deployment of development/test keys to production
 - **Weak Secrets**: Blocks passwords shorter than security requirements

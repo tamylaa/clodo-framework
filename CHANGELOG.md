@@ -3,7 +3,143 @@
 
 ### Bug Fixes
 
-* resolve missing health-checker dependency by moving to src/utils ([64d429b](https://github.com/tamylaa/lego-framework/commit/64d429be674855539e5f77413d9a14151d1b0ef8))
+* resolve missing health-checker dependency by moving to src/utils (# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0](https://github.com/tamylaa/clodo-framework/compare/v3.0.6...v1.0.0) (2025-10-09)
+
+### 🎉 Major Release: Clodo Framework Commercial Launch
+
+**Clodo Framework** is a comprehensive, enterprise-grade framework for building microservices on Cloudflare Workers + D1. This 1.0.0 release marks the transition from the open-source LEGO Framework to a commercially licensed product with professional licensing infrastructure.
+
+### 🚀 What is Clodo Framework?
+
+Clodo Framework provides a **"snap-together" architecture** where standardized, reusable components combine to rapidly build and deploy domain-specific services. Just like Lego bricks create complex structures, Clodo Framework components create enterprise applications.
+
+#### Core Capabilities
+
+**🏗️ Service Architecture**
+- **GenericDataService**: Full CRUD operations with automatic schema management
+- **EnhancedRouter**: RESTful routing with middleware support and validation
+- **SchemaManager**: Dynamic schema management with migration support
+- **ConfigurationCacheManager**: Multi-tenant configuration with domain-specific settings
+
+**🔧 Development Tools**
+- **Interactive CLI**: `clodo-service create` for conversational service creation
+- **Service Templates**: Pre-built templates for data services, auth services, API gateways
+- **Auto-Configuration**: Automatic wrangler.toml and domain configuration generation
+- **Multi-Domain Support**: Single service instance serving multiple domains
+
+**🚀 Deployment & Orchestration**
+- **Multi-Domain Orchestrator**: Deploy services across multiple domains simultaneously
+- **Health Monitoring**: Automated health checks and validation
+- **Security Validation**: Pre-deployment security checks and compliance
+- **Portfolio Management**: Manage entire service portfolios as single units
+
+**🔒 Enterprise Features**
+- **Professional Licensing**: Integration-ready for enterprise licensing platforms
+- **Security-First**: Built-in security validation and compliance checks
+- **Audit Trails**: Comprehensive logging and monitoring
+- **Production-Ready**: Optimized for high-performance, scalable deployments
+
+### 📋 Key Features
+
+#### For Developers
+```javascript
+import { GenericDataService, SchemaManager } from '@tamyla/clodo-framework';
+
+// Create a data service in minutes
+const dataService = new GenericDataService({
+  schema: 'users',
+  operations: ['create', 'read', 'update', 'delete']
+});
+
+// Automatic schema management
+const schemaManager = new SchemaManager();
+await schemaManager.registerModel('users', userSchema);
+```
+
+#### For DevOps/Platform Teams
+```bash
+# Interactive service creation
+npx @tamyla/clodo-framework clodo-service create
+
+# Multi-domain deployment
+clodo-service deploy --portfolio --domains "api.example.com,app.example.com"
+
+# Health monitoring
+clodo-service diagnose --comprehensive
+```
+
+### 🏢 Use Cases
+
+**SaaS Platforms**: Build multi-tenant applications serving multiple customers from single codebases
+**API Gateways**: Create scalable API gateways with automatic routing and validation
+**Data Services**: Build CRUD services with automatic schema management and migrations
+**Microservices**: Deploy domain-specific services with consistent patterns and tooling
+**Edge Computing**: Leverage Cloudflare's global network for low-latency, high-performance applications
+
+### 🔄 Migration from LEGO Framework
+
+This release includes a complete rebrand and commercial licensing preparation:
+
+- **Package Name**: `@tamyla/clodo-framework` (was `@tamyla/lego-framework`)
+- **CLI Commands**: `clodo-service` (was `lego-service`)
+- **Licensing**: Removed local file licensing, ready for professional licensing integration
+- **Documentation**: Updated for commercial use and enterprise deployment patterns
+
+### 📚 Documentation
+
+- **Framework Overview**: Comprehensive architecture documentation
+- **Integration Guide**: Step-by-step migration and adoption strategies
+- **API Reference**: Complete API documentation with examples
+- **Deployment Guide**: Production deployment and scaling strategies
+- **Security Guide**: Security best practices and compliance
+
+### 🔧 Technical Specifications
+
+- **Runtime**: Node.js 18+, Cloudflare Workers
+- **Database**: Cloudflare D1 (SQLite-compatible)
+- **Deployment**: Cloudflare Workers platform
+- **Package Manager**: NPM
+- **License**: Commercial (contact for licensing terms)
+
+### 🎯 Getting Started
+
+```bash
+# Install the framework
+npm install @tamyla/clodo-framework
+
+# Create your first service
+npx @tamyla/clodo-framework clodo-service create
+
+# Follow the interactive setup
+# Deploy to Cloudflare Workers
+npm run deploy
+```
+
+### 📞 Commercial Support
+
+This is a commercially licensed product. For:
+- **Licensing inquiries**: Visit https://clodo-framework.com/pricing
+- **Enterprise support**: Contact enterprise@clodo-framework.com
+- **Documentation**: https://docs.clodo-framework.com
+- **Community**: https://github.com/tamylaa/clodo-framework
+
+### 🤝 Contributing
+
+While the framework is commercially licensed, we welcome community contributions for:
+- Bug reports and feature requests
+- Documentation improvements
+- Community examples and templates
+
+---
+
+**Previous LEGO Framework versions remain available under open-source license for existing users.**9b](https://github.com/tamylaa/lego-framework/commit/64d429be674855539e5f77413d9a14151d1b0ef8))
 
 ## [3.0.5](https://github.com/tamylaa/lego-framework/compare/v3.0.4...v3.0.5) (2025-10-07)
 
