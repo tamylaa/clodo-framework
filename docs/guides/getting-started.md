@@ -38,8 +38,8 @@ tsc --version
 ## 🏗️ Step 1: Install the Framework
 
 ```bash
-# Install the Lego Framework CLI
-npm install -g @tamyla/lego-framework
+# Install the Clodo Framework CLI
+npm install -g @tamyla/clodo-framework
 
 # Verify installation
 create-lego-service --version
@@ -79,7 +79,7 @@ my-first-service/
 Edit `src/config/domains.js`:
 
 ```javascript
-import { createDomainConfigSchema } from '@tamyla/lego-framework';
+import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 export const domains = {
   'my-first-service': {
@@ -162,7 +162,7 @@ curl http://localhost:8787/info
 Create `src/models/users.js`:
 
 ```javascript
-import { schemaManager } from '@tamyla/lego-framework';
+import { schemaManager } from '@tamyla/clodo-framework';
 
 // Define user schema
 const userSchema = {
@@ -190,7 +190,7 @@ export { userSchema };
 Update `src/worker/index.js` to include the model:
 
 ```javascript
-import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/lego-framework';
+import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/clodo-framework';
 import { domains } from '../config/domains.js';
 import '../models/users.js'; // Import to register the model
 
@@ -296,7 +296,7 @@ return createFeatureGuard('authentication')(
 
 ### **Add Custom Routes**
 ```javascript
-import { EnhancedRouter } from '@tamyla/lego-framework';
+import { EnhancedRouter } from '@tamyla/clodo-framework';
 
 const router = new EnhancedRouter(env.DB);
 router.registerRoute('GET', '/api/custom', customHandler);

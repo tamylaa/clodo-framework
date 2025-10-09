@@ -15,7 +15,7 @@ The Security Module provides comprehensive security validation and management ca
 ### Basic Usage
 
 ```javascript
-import { validateSecurity, generateSecureKey } from '@tamyla/lego-framework/security';
+import { validateSecurity, generateSecureKey } from '@tamyla/clodo-framework/security';
 
 // Validate configuration
 const config = {
@@ -36,7 +36,7 @@ const jwtSecret = generateSecureKey('jwt', { length: 64 });
 ### Module Integration
 
 ```javascript
-import { securityModule } from '@tamyla/lego-framework/modules/security';
+import { securityModule } from '@tamyla/clodo-framework/modules/security';
 
 // The security module automatically registers with the framework
 // and provides pre-deployment validation hooks
@@ -87,7 +87,7 @@ The security validator detects:
 ### ConfigurationValidator
 
 ```javascript
-import { ConfigurationValidator } from '@tamyla/lego-framework/security';
+import { ConfigurationValidator } from '@tamyla/clodo-framework/security';
 
 // Validate configuration object
 const issues = ConfigurationValidator.validate(config, environment);
@@ -99,7 +99,7 @@ const result = ConfigurationValidator.validateConfiguration(customer, environmen
 ### SecretGenerator
 
 ```javascript
-import { SecretGenerator } from '@tamyla/lego-framework/security';
+import { SecretGenerator } from '@tamyla/clodo-framework/security';
 
 // Generate API key
 const apiKey = SecretGenerator.generateSecureApiKey(length, prefix);
@@ -114,7 +114,7 @@ const serviceKey = SecretGenerator.generateServiceKey('content-skimmer', 'prod')
 ### DeploymentManager
 
 ```javascript
-import { DeploymentManager } from '@tamyla/lego-framework/security';
+import { DeploymentManager } from '@tamyla/clodo-framework/security';
 
 // Deploy with security validation
 await DeploymentManager.deployWithSecurity({
@@ -142,7 +142,7 @@ When using the Lego Framework, security validation is automatically applied:
 For services not using the full framework:
 
 ```javascript
-import { securityModule } from '@tamyla/lego-framework/modules/security';
+import { securityModule } from '@tamyla/clodo-framework/modules/security';
 
 // Register security hooks
 moduleManager.registerModule('security', securityModule);
@@ -168,7 +168,7 @@ The module maintains a comprehensive database of insecure patterns:
 You can extend the security patterns:
 
 ```javascript
-import { INSECURE_PATTERNS } from '@tamyla/lego-framework/security';
+import { INSECURE_PATTERNS } from '@tamyla/clodo-framework/security';
 
 // Add custom insecure patterns
 INSECURE_PATTERNS.DUMMY_API_KEYS.push('my-custom-dummy-key');
@@ -219,7 +219,7 @@ If migrating from the data-service security implementation:
    const { ConfigurationSecurityValidator } = require('./tools/security-validator');
 
    // After
-   const { ConfigurationValidator } = require('@tamyla/lego-framework/security');
+   const { ConfigurationValidator } = require('@tamyla/clodo-framework/security');
    ```
 
 2. Update CLI commands:

@@ -17,7 +17,7 @@ import {
   SchemaManager,
   CrossDomainCoordinator,
   ConfigurationCacheManager
-} from '@tamyla/lego-framework';
+} from '@tamyla/clodo-framework';
 ```
 
 **Key Components:**
@@ -75,7 +75,7 @@ Services automatically find and coordinate with each other through:
 
 ```javascript
 // Direct component usage
-import { GenericDataService, SchemaManager } from '@tamyla/lego-framework';
+import { GenericDataService, SchemaManager } from '@tamyla/clodo-framework';
 
 const service = new GenericDataService(d1Client, 'users');
 const users = await service.findAll({ limit: 10 });
@@ -146,7 +146,7 @@ Most teams use both: CLI tools for development/administration, library component
 ## Getting Started
 
 ### For Service Developers
-1. **Install**: `npm install @tamyla/lego-framework`
+1. **Install**: `npm install @tamyla/clodo-framework`
 2. **Import components** you need for your service
 3. **Configure** domains, features, and database connections
 4. **Deploy** using CLI tools or embed deployment logic
@@ -175,7 +175,7 @@ Most teams use both: CLI tools for development/administration, library component
 
 ### Basic CRUD Service
 ```javascript
-import { GenericDataService, SchemaManager } from '@tamyla/lego-framework';
+import { GenericDataService, SchemaManager } from '@tamyla/clodo-framework';
 
 export default {
   async fetch(request, env) {
@@ -188,7 +188,7 @@ export default {
 
 ### Multi-Domain Orchestration
 ```javascript
-import { CrossDomainCoordinator } from '@tamyla/lego-framework';
+import { CrossDomainCoordinator } from '@tamyla/clodo-framework';
 
 const coordinator = new CrossDomainCoordinator({
   domains: ['api.example.com', 'auth.example.com'],

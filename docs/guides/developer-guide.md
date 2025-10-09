@@ -42,10 +42,10 @@ npm install -g typescript
 
 ```bash
 # Install as a dependency in your project
-npm install @tamyla/lego-framework
+npm install @tamyla/clodo-framework
 
 # Or install globally for CLI tools
-npm install -g @tamyla/lego-framework
+npm install -g @tamyla/clodo-framework
 ```
 
 ## Architecture Overview
@@ -85,7 +85,7 @@ import {
   CustomerConfigurationManager,
   ValidationResult,
   FieldConfig 
-} from '@tamyla/lego-framework';
+} from '@tamyla/clodo-framework';
 
 // Fully typed schema definition
 const userSchema: SchemaDefinition = {

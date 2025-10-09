@@ -26,10 +26,10 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 // Enterprise module imports
-import { DatabaseOrchestrator } from '@tamyla/lego-framework/database';
-import { DeploymentAuditor } from '@tamyla/lego-framework/deployment';
-import { CrossDomainCoordinator } from '@tamyla/lego-framework/orchestration';
-import { ConfigurationCacheManager } from '@tamyla/lego-framework/utils/deployment';
+import { DatabaseOrchestrator } from '@tamyla/clodo-framework/database';
+import { DeploymentAuditor } from '@tamyla/clodo-framework/deployment';
+import { CrossDomainCoordinator } from '@tamyla/clodo-framework/orchestration';
+import { ConfigurationCacheManager } from '@tamyla/clodo-framework/utils/deployment';
 
 class EnterpriseDatabaseManagerCLI {
   constructor() {
