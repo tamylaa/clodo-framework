@@ -33,3 +33,6 @@ export const createLogger = (prefix = 'LegoFramework') => {
 
 // Health checking utilities
 export * from './health-checker.js';
+
+// Deployment utilities
+export * from './deployment/index.js';

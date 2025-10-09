@@ -1,0 +1,246 @@
+{
+  "template": {
+    "name": "automated-generation-ui",
+    "description": "Transparency template showing what will be automatically generated from core inputs",
+    "version": "1.0.0",
+    "category": "absolutely-generatable",
+    "inputCount": 67,
+    "estimatedTime": "30 seconds",
+    "uiType": "transparency-display"
+  },
+  "collectionStrategy": {
+    "phase": 3,
+    "title": "Automatic Generation",
+    "description": "The following configurations will be generated automatically from your inputs",
+    "progressIndicator": "Step 3 of 3: Automatic Setup",
+    "validationMode": "none",
+    "allowBackNavigation": true,
+    "allowSkip": false,
+    "automationLevel": "full"
+  },
+  "generationOverview": {
+    "totalGenerated": 67,
+    "categories": {
+      "fileDiscovery": 8,
+      "apiResolution": 12,
+      "conventionBased": 28,
+      "contextInference": 19
+    },
+    "estimatedTime": "5-10 seconds",
+    "reliability": "99.9%",
+    "fallbackHandling": "Smart defaults with error recovery"
+  },
+  "generatedCategories": [
+    {
+      "id": "file-discovery",
+      "title": "File System Discovery",
+      "description": "Automatically locate and read configuration files",
+      "count": 8,
+      "transparencyLevel": "high",
+      "generatedItems": [
+        {
+          "name": "package.json location",
+          "logic": "Recursive search from project root",
+          "fallback": "Create default package.json",
+          "impact": "Dependency management, scripts, metadata"
+        },
+        {
+          "name": "wrangler.toml location",
+          "logic": "Find Cloudflare configuration file",
+          "fallback": "Generate from templates",
+          "impact": "Cloudflare Workers deployment"
+        },
+        {
+          "name": "tsconfig.json location",
+          "logic": "Locate TypeScript configuration",
+          "fallback": "Use default TypeScript config",
+          "impact": "TypeScript compilation settings"
+        },
+        {
+          "name": "eslint.config.js location",
+          "logic": "Find ESLint configuration",
+          "fallback": "Apply standard LEGO rules",
+          "impact": "Code quality and linting"
+        }
+      ]
+    },
+    {
+      "id": "api-resolution",
+      "title": "API-Based Resolution",
+      "description": "Fetch information from external APIs",
+      "count": 12,
+      "transparencyLevel": "medium",
+      "generatedItems": [
+        {
+          "name": "Cloudflare Account ID",
+          "logic": "API call: GET /accounts using token",
+          "fallback": "Environment variable lookup",
+          "impact": "Infrastructure management"
+        },
+        {
+          "name": "Cloudflare Zone ID",
+          "logic": "API call: match domain to zone",
+          "fallback": "Manual zone lookup",
+          "impact": "DNS and domain management"
+        },
+        {
+          "name": "D1 Database ID",
+          "logic": "API call: find database by name pattern",
+          "fallback": "Create new database",
+          "impact": "Database connections"
+        },
+        {
+          "name": "Git Repository Info",
+          "logic": "Execute: git config --get remote.origin.url",
+          "fallback": "Current directory name",
+          "impact": "Version control integration"
+        }
+      ]
+    },
+    {
+      "id": "convention-based",
+      "title": "Convention-Based Generation",
+      "description": "Apply naming and structural conventions",
+      "count": 28,
+      "transparencyLevel": "high",
+      "generatedItems": [
+        {
+          "name": "Service Template Selection",
+          "logic": "Map service-type to template directory",
+          "fallback": "Generic template",
+          "impact": "Code structure and patterns"
+        },
+        {
+          "name": "Deployment Strategy",
+          "logic": "service-type + environment rules",
+          "fallback": "Standard deployment",
+          "impact": "CI/CD pipeline configuration"
+        },
+        {
+          "name": "Monitoring Configuration",
+          "logic": "Apply service-type monitoring profiles",
+          "fallback": "Basic health checks",
+          "impact": "Observability and alerting"
+        },
+        {
+          "name": "Security Policies",
+          "logic": "Environment-based security templates",
+          "fallback": "Default security settings",
+          "impact": "Authentication and authorization"
+        },
+        {
+          "name": "Resource Limits",
+          "logic": "Service-type resource allocation",
+          "fallback": "Standard limits",
+          "impact": "Performance and cost optimization"
+        },
+        {
+          "name": "Environment Variables",
+          "logic": "Generate prefixed variable names",
+          "fallback": "Standard environment vars",
+          "impact": "Configuration management"
+        }
+      ]
+    },
+    {
+      "id": "context-inference",
+      "title": "Context-Aware Inference",
+      "description": "Derive settings from environment and context",
+      "count": 18,
+      "transparencyLevel": "high",
+      "generatedItems": [
+        {
+          "name": "Debug Mode",
+          "logic": "environment === 'development'",
+          "fallback": "false",
+          "impact": "Development tooling and logging"
+        },
+        {
+          "name": "Node Environment",
+          "logic": "Direct mapping from environment",
+          "fallback": "production",
+          "impact": "Runtime behavior"
+        },
+        {
+          "name": "Cache Settings",
+          "logic": "Environment-based cache profiles",
+          "fallback": "Conservative caching",
+          "impact": "Performance optimization"
+        },
+        {
+          "name": "Backup Configurations",
+          "logic": "Service-type backup policies",
+          "fallback": "Standard backup schedule",
+          "impact": "Data protection"
+        },
+        {
+          "name": "Health Check Endpoints",
+          "logic": "Service-type health patterns",
+          "fallback": "/health endpoint",
+          "impact": "Monitoring and load balancing"
+        },
+        {
+          "name": "Service Manifest",
+          "logic": "Create comprehensive service-manifest.json with all inputs and configurations",
+          "fallback": "Generate minimal manifest",
+          "impact": "Complete audit trail, service consumption, and rectification support",
+          "file": "{service-directory}/service-manifest.json"
+        }
+      ]
+    }
+  ],
+  "transparencyDisplay": {
+    "showGenerationProcess": true,
+    "showFallbacks": true,
+    "showImpact": true,
+    "allowInspection": true,
+    "estimatedCompletionTime": "5-10 seconds"
+  },
+  "errorHandling": {
+    "generationErrors": {
+      "continueOnFailure": true,
+      "useFallbacks": true,
+      "logIssues": true,
+      "userNotification": "non-blocking"
+    },
+    "apiFailures": {
+      "retryAttempts": 3,
+      "fallbackToManual": false,
+      "degradedMode": true
+    }
+  },
+  "completion": {
+    "message": "Service generation complete! 🚀",
+    "summary": "Successfully generated {successfulCount} of {totalCount} configurations",
+    "generatedFiles": "Auto-created directories, config files, infrastructure, and service manifest",
+    "nextSteps": [
+      "Review generated code in {service-directory}",
+      "Check service-manifest.json for complete configuration details",
+      "Test the service with: npm run dev",
+      "Deploy with: npm run deploy"
+    ],
+    "support": {
+      "documentation": "See generated README.md for details",
+      "serviceManifest": "Complete audit trail in {service-directory}/service-manifest.json",
+      "troubleshooting": "Check logs/ directory for any issues",
+      "customization": "Modify generated files as needed"
+    }
+  },
+  "inspectionTools": {
+    "viewGeneratedFiles": {
+      "label": "View Generated Files",
+      "description": "Browse the auto-created files and directories",
+      "action": "openFileExplorer"
+    },
+    "showGenerationLog": {
+      "label": "Generation Log",
+      "description": "See detailed log of what was generated and why",
+      "action": "displayLog"
+    },
+    "validateConfiguration": {
+      "label": "Validate Setup",
+      "description": "Run automated checks on the generated configuration",
+      "action": "runValidation"
+    }
+  }
+}

@@ -1,6 +1,10 @@
 /**
  * TypeScript Definitions for Enhanced LEGO Framework
  * Provides type safety and better IDE support
+ *
+ * NOTE: These types represent the intended API surface. Some advanced features
+ * may not be fully implemented in the current runtime. Check runtime exports
+ * in src/index.js for available functionality.
  */
 
 /**
@@ -182,6 +186,8 @@ export interface PaginatedResult<T = any> {
 
 /**
  * Enhanced GenericDataService
+ * NOTE: Some advanced features like security config and audit logging
+ * may not be fully implemented in current runtime.
  */
 export declare class GenericDataService {
   d1Client: any; // D1 client interface
@@ -302,6 +308,7 @@ export interface ModuleConfig {
 
 /**
  * Enhanced ModuleManager
+ * NOTE: Advanced hook execution features may not be fully implemented.
  */
 export declare class ModuleManager {
   modules: Map<string, ModuleConfig>;

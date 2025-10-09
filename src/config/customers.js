@@ -1,11 +1,10 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
 import { resolve, dirname, join } from 'path';
-import { fileURLToPath } from 'url';
 import { createDomainConfigSchema, validateDomainConfig, createDomainRegistry } from './domains.js';
 import { createLogger } from '../utils/index.js';
+import { getDirname } from '../utils/esm-helper.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = getDirname(import.meta.url, 'src/config');
 
 const logger = createLogger('CustomerConfig');
 

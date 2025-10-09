@@ -6,41 +6,135 @@
  * Integrates with Lego Framework domain and feature flag systems
  */
 
-import { CustomerConfigurationManager } from '../../../src/config/customers.js';
+import { CustomerConfigCLI } from '../../../src/config/CustomerConfigCLI.js';
 
 const command = process.argv[2];
 const args = process.argv.slice(3);
 
-const customerManager = new CustomerConfigurationManager();
-
 async function main() {
-  try {
-    // Load existing customers from filesystem
-    await customerManager.loadExistingCustomers();
+  const cli = new CustomerConfigCLI();
+  await cli.initialize();
 
+  try {
     switch (command) {
       case 'create-customer':
-        await handleCreateCustomer(args);
+        const [customerName, domain] = args;
+        const result = await cli.createCustomer(customerName, domain);
+        if (result.success) {
+          console.log(`\n🎉 Customer ${customerName} configuration created successfully!`);
+          console.log(`\n📋 Customer Details:`);
+          console.log(`   Name: ${result.customer.name}`);
+          console.log(`   Domain: ${result.customer.domain || 'Not specified'}`);
+          console.log(`   Config Path: ${result.customer.configPath}`);
+          console.log(`   Environments: ${result.customer.environments.join(', ')}`);
+          console.log(`\n📋 Next steps:`);
+          console.log(`1. Review generated configs in: config/customers/${customerName}/`);
+          console.log(`2. Update domain-specific URLs if needed`);
+          console.log(`3. Generate production secrets: npm run security:generate-key ${customerName}`);
+          console.log(`4. Set production secrets: wrangler secret put KEY_NAME --env production`);
+        } else {
+          console.error(`❌ Failed to create customer: ${result.error}`);
+          process.exit(1);
+        }
         break;
 
       case 'validate':
-        await handleValidate();
+        const validateResult = await cli.validateConfigurations();
+        if (validateResult.valid) {
+          console.log('✅ All customer configurations are valid');
+        } else {
+          console.log('❌ Configuration validation failed');
+          validateResult.errors.forEach(error => console.log(`   - ${error}`));
+          process.exit(1);
+        }
         break;
 
       case 'show':
-        await handleShow(args);
+        const [customerNameShow, environment] = args;
+        const showResult = cli.showConfiguration(customerNameShow, environment);
+        if (showResult.success) {
+          console.log(`🔍 Effective configuration: ${customerNameShow}/${environment}\n`);
+          if (showResult.config.variables?.base) {
+            console.log('📋 Base variables:');
+            Object.entries(showResult.config.variables.base).slice(0, 10).forEach(([key, value]) => {
+              console.log(`   ${key}=${value}`);
+            });
+            if (Object.keys(showResult.config.variables.base).length > 10) {
+              console.log('   ...');
+            }
+            console.log('');
+          }
+          if (showResult.config.variables?.customer) {
+            console.log(`📋 Customer ${environment} variables:`);
+            Object.entries(showResult.config.variables.customer).slice(0, 15).forEach(([key, value]) => {
+              console.log(`   ${key}=${value}`);
+            });
+            if (Object.keys(showResult.config.variables.customer).length > 15) {
+              console.log('   ...');
+            }
+            console.log('');
+          }
+          if (showResult.config.features && Object.keys(showResult.config.features).length > 0) {
+            console.log('🚩 Customer features:');
+            Object.entries(showResult.config.features).forEach(([feature, enabled]) => {
+              console.log(`   ${feature}: ${enabled ? '✅' : '❌'}`);
+            });
+          }
+        } else {
+          console.error(`❌ Failed to show configuration: ${showResult.error}`);
+          process.exit(1);
+        }
         break;
 
       case 'deploy-command':
-        await handleDeployCommand(args);
+        const [customerNameDeploy, environmentDeploy] = args;
+        const deployResult = cli.getDeployCommand(customerNameDeploy, environmentDeploy);
+        if (deployResult.success) {
+          console.log(`📋 Deploy command for ${customerNameDeploy}/${environmentDeploy}:`);
+          console.log(`   ${deployResult.command}`);
+          console.log(`\n💡 Ensure customer config is loaded: ${deployResult.configPath}`);
+        } else {
+          console.error(`❌ Failed to get deploy command: ${deployResult.error}`);
+          process.exit(1);
+        }
         break;
 
       case 'list':
-        await handleList();
+        const listResult = cli.listCustomers();
+        if (listResult.success && listResult.customers.length > 0) {
+          console.log('📋 Configured customers:\n');
+          listResult.customers.forEach(customer => {
+            console.log(`🏢 ${customer.name}`);
+            console.log(`   Domain: ${customer.domain || 'Not specified'}`);
+            console.log(`   Environments: ${customer.environments.join(', ')}`);
+            console.log(`   Created: ${customer.createdAt}`);
+            console.log(`   Config: config/customers/${customer.name}/`);
+            console.log('');
+          });
+        } else if (listResult.success) {
+          console.log('📋 No customers configured');
+        } else {
+          console.error(`❌ Failed to list customers: ${listResult.error}`);
+          process.exit(1);
+        }
         break;
 
       default:
-        showHelp();
+        console.log('Customer Configuration Management Tool\n');
+        console.log('Available commands:');
+        console.log('  create-customer <name> [domain]  - Create new customer config from template');
+        console.log('  validate                         - Validate configuration structure');
+        console.log('  show <customer> <environment>    - Show effective configuration');
+        console.log('  deploy-command <customer> <env>  - Get deployment command');
+        console.log('  list                             - List all configured customers');
+        console.log('\nExamples:');
+        console.log('  lego-customer-config create-customer acmecorp acmecorp.com');
+        console.log('  lego-customer-config validate');
+        console.log('  lego-customer-config show acmecorp production');
+        console.log('  lego-customer-config list');
+        console.log('\nIntegration:');
+        console.log('  This tool integrates with Lego Framework domain and feature flag systems.');
+        console.log('  Customer configurations are automatically registered as domains.');
         break;
     }
   } catch (error) {
@@ -48,6 +142,11 @@ async function main() {
     process.exit(1);
   }
 }
+
+main().catch(error => {
+  console.error(`❌ Unexpected error: ${error.message}`);
+  process.exit(1);
+});
 
 async function handleCreateCustomer(args) {
   const [customerName, domain] = args;

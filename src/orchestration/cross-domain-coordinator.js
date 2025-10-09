@@ -19,13 +19,13 @@
 
 import { access } from 'fs/promises';
 import { MultiDomainOrchestrator } from './multi-domain-orchestrator.js';
-import { DeploymentValidator } from '../deployment/deployment-validator.js';
-import { RollbackManager } from '../deployment/rollback-manager.js';
-import { DomainDiscovery } from '../config/discovery/domain-discovery.js';
+import { DeploymentValidator } from '../../bin/shared/deployment/validator.js';
+import { RollbackManager } from '../../bin/shared/deployment/rollback-manager.js';
+import { DomainDiscovery } from '../../bin/shared/cloudflare/domain-discovery.js';
 import { DatabaseOrchestrator } from '../database/database-orchestrator.js';
 import { EnhancedSecretManager } from '../utils/deployment/secret-generator.js';
-import { ProductionTester } from '../deployment/production-tester.js';
-import { DeploymentAuditor } from '../deployment/deployment-auditor.js';
+import { ProductionTester } from '../../bin/shared/production-tester/index.js';
+import { DeploymentAuditor } from '../../bin/shared/deployment/auditor.js';
 import { ConfigurationCacheManager } from '../utils/deployment/config-cache.js';
 
 export class CrossDomainCoordinator {

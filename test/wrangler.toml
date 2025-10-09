@@ -1,0 +1,44 @@
+# Cloudflare Workers Configuration for undefined
+name = "undefined"
+main = "src/worker/index.js"
+compatibility_date = "2025-10-08"
+compatibility_flags = ["nodejs_compat"]
+
+# Account configuration
+account_id = "acc"
+
+# Environment configurations
+[env.development]
+name = "undefined-dev"
+
+[env.staging]
+name = "undefined-staging"
+
+[env.production]
+name = "undefined"
+
+# Database bindings
+[[d1_databases]]
+binding = "DB"
+database_name = "undefined"
+database_id = ""  # To be configured during setup
+
+# Environment variables
+[vars]
+SERVICE_NAME = "test"
+SERVICE_TYPE = "generic"
+DOMAIN_NAME = "test.com"
+ENVIRONMENT = "dev"
+API_BASE_PATH = "undefined"
+HEALTH_CHECK_PATH = "undefined"
+
+# Domain-specific variables
+PRODUCTION_URL = "undefined"
+STAGING_URL = "undefined"
+DEVELOPMENT_URL = "undefined"
+
+# Feature flags
+
+
+# Custom environment variables (configure as needed)
+# CUSTOM_VAR = "value"

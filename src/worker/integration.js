@@ -252,16 +252,21 @@ export const createCorsMiddleware = (options = {}) => {
 
         // Check if origin is allowed
         const isWildcard = origins.includes('*');
-        const allowedOrigin = isWildcard || origins.includes(origin) ? origin : null;
+        const isOriginAllowed = isWildcard || (origin && origins.includes(origin));
 
-        if (!allowedOrigin && !isWildcard) {
-          return new Response('Forbidden', { status: 403 });
+        if (!isOriginAllowed) {
+          return new Response('CORS policy violation: Origin not allowed', {
+            status: 403,
+            headers: { 'Content-Type': 'text/plain' }
+          });
         }
+
+        const allowedOrigin = isWildcard ? '*' : origin;
 
         return new Response(null, {
           status: 200,
           headers: {
-            'Access-Control-Allow-Origin': allowedOrigin || origins[0],
+            'Access-Control-Allow-Origin': allowedOrigin,
             'Access-Control-Allow-Methods': methods.join(', '),
             'Access-Control-Allow-Headers': headers.join(', '),
             'Access-Control-Max-Age': maxAge.toString(),
@@ -274,12 +279,13 @@ export const createCorsMiddleware = (options = {}) => {
       const response = await handler(request, env, ctx);
       const origin = request.headers.get('Origin');
 
-      // Add CORS headers to response
+      // Add CORS headers to response only if origin is allowed
       const isWildcard = origins.includes('*');
-      const allowedOrigin = isWildcard || origins.includes(origin) ? origin : null;
+      const isOriginAllowed = isWildcard || (origin && origins.includes(origin));
 
-      if (allowedOrigin || isWildcard) {
-        response.headers.set('Access-Control-Allow-Origin', allowedOrigin || '*');
+      if (isOriginAllowed) {
+        const allowedOrigin = isWildcard ? '*' : origin;
+        response.headers.set('Access-Control-Allow-Origin', allowedOrigin);
         response.headers.set('Access-Control-Allow-Methods', methods.join(', '));
         response.headers.set('Access-Control-Allow-Headers', headers.join(', '));
 

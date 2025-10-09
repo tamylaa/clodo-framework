@@ -31,14 +31,14 @@ import { join } from 'path';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 
 const execAsync = promisify(exec);
-import { MultiDomainOrchestrator } from '../shared/deployment/multi-domain-orchestrator.js';
-import { CrossDomainCoordinator } from '../shared/deployment/cross-domain-coordinator.js';
+import { MultiDomainOrchestrator } from '../../src/orchestration/multi-domain-orchestrator.js';
+import { CrossDomainCoordinator } from '../../src/orchestration/cross-domain-coordinator.js';
 import { RollbackManager } from '../shared/deployment/rollback-manager.js';
 import { ProductionTester } from '../shared/production-tester/index.js';
 import { DeploymentAuditor } from '../shared/deployment/auditor.js';
 import { DeploymentValidator } from '../shared/deployment/validator.js';
 import { DomainDiscovery } from '../shared/cloudflare/domain-discovery.js';
-import { DatabaseOrchestrator } from '../shared/database/orchestrator.js';
+import { DatabaseOrchestrator } from '../../src/database/database-orchestrator.js';
 
 // Updated imports for fixed shared module structure
 import { 

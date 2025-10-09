@@ -748,7 +748,10 @@ export class DatabaseOrchestrator {
 
   async executeWithRetry(command, timeout = null) {
     const actualTimeout = timeout || (this.config ? this.config.executionTimeout : 30000);
-    for (let attempt = 1; attempt <= (this.config ? this.config.retryAttempts : 3); attempt++) {
+    const maxAttempts = this.config ? this.config.retryAttempts : 3;
+    const retryDelay = this.config ? this.config.retryDelay : 1000;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const { stdout } = await execAsync(command, {
           encoding: 'utf8',
@@ -757,12 +760,12 @@ export class DatabaseOrchestrator {
         });
         return stdout;
       } catch (error) {
-        if (attempt === this.retryAttempts) {
+        if (attempt === maxAttempts) {
           throw error;
         }
-        
+
         console.log(`     ⚠️ Attempt ${attempt} failed, retrying...`);
-        await new Promise(resolve => setTimeout(resolve, this.retryDelay));
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
       }
     }
   }

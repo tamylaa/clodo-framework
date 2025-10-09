@@ -3,7 +3,7 @@
  * Specialized module for database connectivity and operations testing
  */
 
-import { executeSql } from '../cloudflare/ops.js';
+import { executeSql } from '../../shared/cloudflare/ops.js';
 
 export class DatabaseTester {
   constructor(config) {

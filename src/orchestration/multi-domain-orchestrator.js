@@ -5,16 +5,18 @@
  * Enterprise-grade deployment orchestration with state management, 
  * rollback capabilities, and portfolio-wide coordination
  * 
- * Extracted from bulletproof-deploy.js with enhancements
+ * Now uses modular architecture for improved maintainability and testability
  */
 
-import { randomBytes } from 'crypto';
-import { access, writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { DomainResolver } from './modules/DomainResolver.js';
+import { DeploymentCoordinator } from './modules/DeploymentCoordinator.js';
+import { StateManager } from './modules/StateManager.js';
 
 /**
  * Multi-Domain Deployment Orchestrator
  * Manages enterprise-level deployments across multiple domains with comprehensive state tracking
+ * 
+ * REFACTORED: Now uses modular components for domain resolution, deployment coordination, and state management
  */
 export class MultiDomainOrchestrator {
   constructor(options = {}) {
@@ -24,107 +26,100 @@ export class MultiDomainOrchestrator {
     this.skipTests = options.skipTests || false;
     this.parallelDeployments = options.parallelDeployments || 3;
     
-    // Portfolio-wide state tracking
-    this.portfolioState = {
-      orchestrationId: this.generateOrchestrationId(),
-      startTime: new Date(),
-      totalDomains: this.domains.length,
-      completedDomains: 0,
-      failedDomains: 0,
-      domainStates: new Map(),
-      rollbackPlan: [],
-      auditLog: []
-    };
+    // Initialize modular components
+    this.domainResolver = new DomainResolver({
+      environment: this.environment,
+      validationLevel: options.validationLevel || 'basic',
+      cacheEnabled: options.cacheEnabled !== false
+    });
+    
+    this.deploymentCoordinator = new DeploymentCoordinator({
+      parallelDeployments: this.parallelDeployments,
+      skipTests: this.skipTests,
+      dryRun: this.dryRun,
+      environment: this.environment,
+      batchPauseMs: options.batchPauseMs || 2000
+    });
+    
+    this.stateManager = new StateManager({
+      environment: this.environment,
+      dryRun: this.dryRun,
+      domains: this.domains,
+      enablePersistence: options.enablePersistence !== false,
+      rollbackEnabled: options.rollbackEnabled !== false
+    });
+
+    // Legacy compatibility: expose portfolioState for backward compatibility
+    this.portfolioState = this.stateManager.portfolioState;
 
     // Note: Async initialization required - call initialize() after construction
   }
 
   /**
    * Initialize the orchestrator asynchronously
+   * Uses modular components for domain resolution and state initialization
    */
   async initialize() {
-    await this.initializePortfolioState();
-  }
-
-  /**
-   * Generate unique orchestration ID for tracking portfolio deployments
-   * @returns {string} Unique orchestration identifier
-   */
-  generateOrchestrationId() {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const random = randomBytes(6).toString('hex');
-    return `orchestration-${timestamp}-${random}`;
-  }
-
-  /**
-   * Generate deployment ID for individual domain
-   * @param {string} domain - Domain name
-   * @returns {string} Unique deployment identifier
-   */
-  generateDeploymentId(domain) {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const random = randomBytes(4).toString('hex');
-    return `deploy-${domain}-${timestamp}-${random}`;
-  }
-
-  /**
-   * Initialize portfolio state tracking
-   */
-  async initializePortfolioState() {
-    console.log('🌐 Multi-Domain Orchestrator v1.0');
-    console.log('==================================');
+    console.log('🌐 Multi-Domain Orchestrator v2.0 (Modular)');
+    console.log('===========================================');
     console.log(`📊 Portfolio: ${this.domains.length} domains`);
     console.log(`🌍 Environment: ${this.environment}`);
     console.log(`🆔 Orchestration ID: ${this.portfolioState.orchestrationId}`);
     console.log(`🔍 Mode: ${this.dryRun ? 'DRY RUN' : 'LIVE DEPLOYMENT'}`);
     console.log(`⚡ Parallel Deployments: ${this.parallelDeployments}`);
+    console.log('🧩 Modular Components: DomainResolver, DeploymentCoordinator, StateManager');
     console.log('');
 
-    // Initialize individual domain states
-    this.domains.forEach(domain => {
-      this.portfolioState.domainStates.set(domain, {
-        domain,
-        deploymentId: this.generateDeploymentId(domain),
-        phase: 'pending',
-        status: 'pending',
-        startTime: null,
-        endTime: null,
-        error: null,
-        rollbackActions: [],
-        config: this.generateDomainConfig(domain)
-      });
+    // Initialize all modular components
+    await this.stateManager.initializeDomainStates(this.domains);
+    
+    // Pre-resolve all domain configurations if domains are specified
+    if (this.domains.length > 0) {
+      const configs = await this.domainResolver.resolveMultipleDomains(this.domains);
+      
+      // Update domain states with resolved configurations
+      for (const [domain, config] of Object.entries(configs)) {
+        const domainState = this.portfolioState.domainStates.get(domain);
+        if (domainState) {
+          domainState.config = config;
+          this.stateManager.updateDomainState(domain, { config });
+        }
+      }
+    }
+
+    await this.stateManager.logAuditEvent('orchestrator_initialized', {
+      domains: this.domains,
+      environment: this.environment,
+      modularComponents: ['DomainResolver', 'DeploymentCoordinator', 'StateManager']
     });
   }
 
   /**
-   * Generate standardized domain configuration
-   * @param {string} domain - Domain name
-   * @returns {Object} Domain configuration object
+   * Legacy method for backward compatibility
+   * @deprecated Use stateManager.generateOrchestrationId() instead
    */
-  generateDomainConfig(domain) {
-    const cleanDomain = domain.replace(/\./g, '-').replace(/[^a-zA-Z0-9-]/g, '');
-    
-    return {
-      name: domain,
-      cleanName: cleanDomain,
-      productionName: `${cleanDomain}-data-service`,
-      database: {
-        name: `${cleanDomain}-auth-db`,
-        id: null // Will be discovered/created
-      },
-      worker: {
-        name: `${cleanDomain}-data-service`
-      },
-      environments: {
-        production: domain,
-        staging: `staging.${domain}`,
-        development: `dev.${domain}`
-      }
-    };
+  generateOrchestrationId() {
+    return this.stateManager.generateOrchestrationId();
   }
 
   /**
-   * Deploy to single domain with comprehensive state management
+   * Legacy method for backward compatibility
+   * @deprecated Use stateManager.generateDeploymentId() instead
+   */
+  generateDeploymentId(domain) {
+    return this.stateManager.generateDeploymentId(domain);
+  }
+
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use domainResolver.generateDomainConfig() instead
+   */
+  generateDomainConfig(domain) {
+    return this.domainResolver.generateDomainConfig(domain);
+  }
+
+  /**
+   * Deploy to single domain using modular deployment coordinator
    * @param {string} domain - Domain to deploy
    * @returns {Promise<Object>} Deployment result
    */
@@ -134,280 +129,135 @@ export class MultiDomainOrchestrator {
       throw new Error(`Domain ${domain} not found in portfolio`);
     }
 
-    try {
-      domainState.startTime = new Date();
-      domainState.status = 'deploying';
-      
-      this.logAuditEvent('DEPLOYMENT_START', domain, {
-        deploymentId: domainState.deploymentId,
-        environment: this.environment
-      });
+    // Create handlers that delegate to our legacy methods for backward compatibility
+    const handlers = {
+      validation: (d) => this.validateDomainPrerequisites(d),
+      initialization: (d) => this.initializeDomainDeployment(d),
+      database: (d) => this.setupDomainDatabase(d),
+      secrets: (d) => this.handleDomainSecrets(d),
+      deployment: (d) => this.deployDomainWorker(d),
+      'post-validation': (d) => this.validateDomainDeployment(d)
+    };
 
-      console.log(`\n🚀 Deploying ${domain}`);
-      console.log(`   Deployment ID: ${domainState.deploymentId}`);
-      console.log(`   Environment: ${this.environment}`);
-
-      // Phase 1: Pre-deployment validation
-      await this.validateDomainPrerequisites(domain);
-      domainState.phase = 'validation-complete';
-
-      // Phase 2: Initialize domain deployment
-      await this.initializeDomainDeployment(domain);
-      domainState.phase = 'initialization-complete';
-
-      // Phase 3: Database setup
-      await this.setupDomainDatabase(domain);
-      domainState.phase = 'database-complete';
-
-      // Phase 4: Secret management
-      await this.handleDomainSecrets(domain);
-      domainState.phase = 'secrets-complete';
-
-      // Phase 5: Worker deployment
-      await this.deployDomainWorker(domain);
-      domainState.phase = 'deployment-complete';
-
-      // Phase 6: Post-deployment validation
-      if (!this.skipTests) {
-        await this.validateDomainDeployment(domain);
-        domainState.phase = 'validation-complete';
-      }
-
-      domainState.status = 'completed';
-      domainState.endTime = new Date();
-      this.portfolioState.completedDomains++;
-
-      this.logAuditEvent('DEPLOYMENT_SUCCESS', domain, {
-        duration: domainState.endTime - domainState.startTime,
-        phase: domainState.phase
-      });
-
-      console.log(`   ✅ ${domain} deployed successfully`);
-      
-      return {
-        domain,
-        success: true,
-        deploymentId: domainState.deploymentId,
-        duration: domainState.endTime - domainState.startTime
-      };
-
-    } catch (error) {
-      domainState.status = 'failed';
-      domainState.error = error.message;
-      domainState.endTime = new Date();
-      this.portfolioState.failedDomains++;
-
-      this.logAuditEvent('DEPLOYMENT_FAILED', domain, {
-        error: error.message,
-        phase: domainState.phase
-      });
-
-      console.error(`   ❌ ${domain} deployment failed: ${error.message}`);
-      
-      // Add to rollback plan if needed
-      if (!this.dryRun) {
-        this.portfolioState.rollbackPlan.push({
-          domain,
-          actions: domainState.rollbackActions
-        });
-      }
-
-      throw error;
-    }
+    return await this.deploymentCoordinator.deploySingleDomain(domain, domainState, handlers);
   }
 
   /**
-   * Deploy to multiple domains with orchestrated coordination
+   * Deploy to multiple domains using modular deployment coordinator
    * @returns {Promise<Object>} Portfolio deployment results
    */
   async deployPortfolio() {
-    const startTime = Date.now();
-    const results = {
-      orchestrationId: this.portfolioState.orchestrationId,
-      successful: [],
-      failed: [],
-      totalDuration: 0,
-      summary: {}
+    // Create handlers that delegate to our legacy methods for backward compatibility
+    const handlers = {
+      validation: (d) => this.validateDomainPrerequisites(d),
+      initialization: (d) => this.initializeDomainDeployment(d),
+      database: (d) => this.setupDomainDatabase(d),
+      secrets: (d) => this.handleDomainSecrets(d),
+      deployment: (d) => this.deployDomainWorker(d),
+      'post-validation': (d) => this.validateDomainDeployment(d)
     };
 
-    try {
-      console.log('🌐 Starting Portfolio Deployment');
-      console.log(`📊 Total Domains: ${this.domains.length}`);
-      console.log(`⚡ Parallel Limit: ${this.parallelDeployments}`);
-      console.log('');
-
-      // Deploy domains in batches based on parallel limit
-      const batches = this.createDeploymentBatches();
-      
-      for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
-        const batch = batches[batchIndex];
-        console.log(`📦 Batch ${batchIndex + 1}/${batches.length}: ${batch.join(', ')}`);
-
-        // Deploy batch in parallel
-        const batchResults = await Promise.allSettled(
-          batch.map(domain => this.deploySingleDomain(domain))
-        );
-
-        // Process batch results
-        batchResults.forEach((result, index) => {
-          const domain = batch[index];
-          
-          if (result.status === 'fulfilled') {
-            results.successful.push({
-              domain,
-              ...result.value
-            });
-          } else {
-            results.failed.push({
-              domain,
-              error: result.reason.message
-            });
-          }
-        });
-
-        // Brief pause between batches
-        if (batchIndex < batches.length - 1) {
-          console.log('   ⏳ Pausing between batches...\n');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-      }
-
-      results.totalDuration = Date.now() - startTime;
-      results.summary = {
-        total: this.domains.length,
-        successful: results.successful.length,
-        failed: results.failed.length,
-        successRate: (results.successful.length / this.domains.length * 100).toFixed(1)
-      };
-
-      this.portfolioState.endTime = new Date();
-      this.logAuditEvent('PORTFOLIO_COMPLETE', 'ALL', results.summary);
-
-      console.log('\n🎉 PORTFOLIO DEPLOYMENT COMPLETE');
-      console.log('================================');
-      console.log(`✅ Successful: ${results.summary.successful}/${results.summary.total}`);
-      console.log(`❌ Failed: ${results.summary.failed}/${results.summary.total}`);
-      console.log(`📊 Success Rate: ${results.summary.successRate}%`);
-      console.log(`⏱️ Total Duration: ${(results.totalDuration / 1000).toFixed(1)}s`);
-
-      if (results.failed.length > 0) {
-        console.log('\n❌ Failed Domains:');
-        results.failed.forEach(failure => {
-          console.log(`   - ${failure.domain}: ${failure.error}`);
-        });
-      }
-
-      return results;
-
-    } catch (error) {
-      this.logAuditEvent('PORTFOLIO_FAILED', 'ALL', { error: error.message });
-      throw error;
-    }
+    return await this.deploymentCoordinator.deployPortfolio(
+      this.domains,
+      this.portfolioState.domainStates,
+      handlers
+    );
   }
 
   /**
-   * Create deployment batches based on parallel limit
-   * @returns {Array<Array<string>>} Batches of domains
+   * Legacy method for backward compatibility
+   * @deprecated Use deploymentCoordinator.createDeploymentBatches() instead
    */
   createDeploymentBatches() {
-    const batches = [];
-    for (let i = 0; i < this.domains.length; i += this.parallelDeployments) {
-      batches.push(this.domains.slice(i, i + this.parallelDeployments));
-    }
-    return batches;
+    return this.deploymentCoordinator.createDeploymentBatches(this.domains);
   }
 
   /**
-   * Log audit event for tracking
-   * @param {string} event - Event type
-   * @param {string} domain - Domain or 'ALL' for portfolio events
-   * @param {Object} details - Event details
+   * Legacy method for backward compatibility  
+   * @deprecated Use stateManager.logAuditEvent() instead
    */
   logAuditEvent(event, domain, details = {}) {
-    const auditEntry = {
-      timestamp: new Date().toISOString(),
-      orchestrationId: this.portfolioState.orchestrationId,
-      event,
-      domain,
-      details
-    };
-
-    this.portfolioState.auditLog.push(auditEntry);
-
-    // Save to file for persistence (fire and forget)
-    if (!this.dryRun) {
-      (async () => {
-        try {
-          await this.saveAuditLog();
-        } catch (error) {
-          console.warn(`⚠️ Failed to save audit log: ${error.message}`);
-        }
-      })();
-    }
+    return this.stateManager.logAuditEvent(event, domain, details);
   }
 
   /**
-   * Save audit log to file
+   * Legacy method for backward compatibility
+   * @deprecated Use stateManager.saveAuditLog() instead
    */
   async saveAuditLog() {
-    try {
-      const logDir = 'deployments';
-      try {
-        await access(logDir);
-      } catch {
-        await mkdir(logDir, { recursive: true });
-      }
-
-      const logFile = join(logDir, `${this.portfolioState.orchestrationId}.json`);
-      const logData = {
-        orchestrationId: this.portfolioState.orchestrationId,
-        environment: this.environment,
-        startTime: this.portfolioState.startTime,
-        endTime: this.portfolioState.endTime,
-        domains: this.domains,
-        summary: {
-          total: this.portfolioState.totalDomains,
-          completed: this.portfolioState.completedDomains,
-          failed: this.portfolioState.failedDomains
-        },
-        auditLog: this.portfolioState.auditLog
-      };
-
-      await writeFile(logFile, JSON.stringify(logData, null, 2));
-    } catch (error) {
-      console.warn(`⚠️ Failed to save audit log: ${error.message}`);
-    }
+    return await this.stateManager.saveAuditLog();
   }
 
-  // Placeholder methods for domain-specific operations (to be implemented with other modules)
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use domainResolver.validateDomainPrerequisites() instead  
+   */
   async validateDomainPrerequisites(domain) {
-    // Will integrate with deployment-validator module
-    console.log(`   🔍 Validating ${domain} prerequisites...`);
+    return await this.domainResolver.validateDomainPrerequisites(domain);
   }
 
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use deploymentCoordinator.initializeDomainDeployment() instead
+   */
   async initializeDomainDeployment(domain) {
-    // Will integrate with config and setup modules
-    console.log(`   🔧 Initializing ${domain} deployment...`);
+    return await this.deploymentCoordinator.initializeDomainDeployment(domain);
   }
 
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use deploymentCoordinator.setupDomainDatabase() instead
+   */
   async setupDomainDatabase(domain) {
-    // Will integrate with database-orchestrator module
-    console.log(`   🗄️ Setting up ${domain} database...`);
+    return await this.deploymentCoordinator.setupDomainDatabase(domain);
   }
 
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use deploymentCoordinator.handleDomainSecrets() instead
+   */
   async handleDomainSecrets(domain) {
-    // Will integrate with enhanced secret-generator module
-    console.log(`   🔐 Managing ${domain} secrets...`);
+    return await this.deploymentCoordinator.handleDomainSecrets(domain);
   }
 
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use deploymentCoordinator.deployDomainWorker() instead
+   */
   async deployDomainWorker(domain) {
-    // Will integrate with cloudflare-ops module
-    console.log(`   ⚡ Deploying ${domain} worker...`);
+    return await this.deploymentCoordinator.deployDomainWorker(domain);
   }
 
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use deploymentCoordinator.validateDomainDeployment() instead
+   */
   async validateDomainDeployment(domain) {
-    // Will integrate with production-tester module
-    console.log(`   🧪 Validating ${domain} deployment...`);
+    return await this.deploymentCoordinator.validateDomainDeployment(domain);
+  }
+
+  /**
+   * Get rollback plan using state manager
+   * @returns {Array} Rollback plan from state manager
+   */
+  getRollbackPlan() {
+    return this.stateManager.portfolioState.rollbackPlan;
+  }
+
+  /**
+   * Execute rollback using state manager  
+   * @returns {Promise<Object>} Rollback result
+   */
+  async executeRollback() {
+    return await this.stateManager.executeRollback();
+  }
+
+  /**
+   * Get portfolio statistics from state manager
+   * @returns {Object} Portfolio statistics
+   */
+  getPortfolioStats() {
+    return this.stateManager.getPortfolioSummary();
   }
 }
 

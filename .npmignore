@@ -1,0 +1,66 @@
+# NPM Package Ignore File
+# Excludes internal files from published package
+
+# Internal documentation (not for downstream users)
+docs/FRAMEWORK-ARCHITECTURE-ANALYSIS.md
+docs/FRAMEWORK-EXTRACTION-PLAN.md
+docs/INTEGRATION_PROMPT.md
+docs/LEGO-OF-SOFTWARE-ARCHITECTURE.md
+docs/WORKFLOW-ORDER-ANALYSIS.md
+docs/REUSABLE-FRAMEWORK-COMPONENTS.md
+docs/decision-framework.md
+docs/customer-config-framework.md
+docs/customer-config.md
+docs/deployment-requirements.md
+
+# Development and build files
+.github/
+.git/
+.gitignore
+babel.config.js
+eslint.config.js
+jest.config.js
+jsdoc.conf.json
+tsconfig.json
+validation-config.json
+
+# Development directories
+audit-backups/
+audit-logs/
+audit-reports/
+backups/
+config-cache/
+config-templates/
+examples/
+generated/
+logs/
+migrations/
+scripts/
+src/
+templates/
+test/
+types/
+
+# Development CLI tools (only include specific ones in package.json)
+bin/
+!bin/service-management/
+!bin/security/
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

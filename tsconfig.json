@@ -6,7 +6,7 @@
     "allowJs": true,
     "checkJs": false,
     "declaration": true,
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -29,7 +29,9 @@
   "exclude": [
     "node_modules",
     "dist",
-    "test",
+    "bin/**/*",
+    "test/**/*",
+    "scripts/**/*",
     "**/*.test.js",
     "**/*.spec.js"
   ]

@@ -104,6 +104,59 @@ export class GenericDataService {
       this.queryCache.clear();
     }
   }
+  
+  /**
+   * Format validation errors into a human-readable message
+   * @param {Array} errors - Validation errors array
+   * @returns {string} Formatted error message
+   */
+  formatValidationErrors(errors = []) {
+    if (!Array.isArray(errors) || errors.length === 0) {
+      return 'Unknown validation error';
+    }
+
+    const details = errors
+      .map((error) => {
+        if (!error) {
+          return null;
+        }
+
+        if (typeof error === 'string') {
+          return error;
+        }
+
+        if (Array.isArray(error)) {
+          return error.map((item) => this.formatValidationErrors([item])).join('; ');
+        }
+
+        if (typeof error === 'object') {
+          const field = error.field || error.path || error.name || 'field';
+
+          if (error.message) {
+            return `${field}: ${error.message}`;
+          }
+
+          if (error.reason) {
+            return `${field}: ${error.reason}`;
+          }
+
+          if (error.code) {
+            return `${field}: ${error.code}`;
+          }
+
+          try {
+            return `${field}: ${JSON.stringify(error)}`;
+          } catch {
+            return `${field}: ${String(error)}`;
+          }
+        }
+
+        return String(error);
+      })
+      .filter(Boolean);
+
+    return details.length > 0 ? details.join('; ') : 'Unknown validation error';
+  }
 
   /**
    * Create a new record
@@ -114,7 +167,8 @@ export class GenericDataService {
     // Validate data
     const validation = schemaManager.validateData(this.modelName, data);
     if (!validation.valid) {
-      throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
+      const errorMessage = this.formatValidationErrors(validation.errors);
+      throw new Error(`Validation failed: ${errorMessage}`);
     }
 
     // Generate ID if not provided
@@ -140,35 +194,13 @@ export class GenericDataService {
 
     if (result.success) {
       // Clear relevant caches after successful creation
-      this.clearCache('findAll'); // Clear findAll cache
-      this.clearCache('find'); // Clear any find caches that might be affected
+      this.clearCache('findAll');
+      this.clearCache('find');
       
       return { ...recordData, id: recordData.id };
-    } else {
-      throw new Error('Failed to create record');
-    }
-  }
-
-  /**
-   * Find a record by ID with caching
-   * @param {string} id - Record ID
-   * @returns {Promise<Object|null>} Found record or null
-   */
-  async findById(id) {
-    const cacheKey = this.generateCacheKey('findById', { id });
-    const cached = this.getCachedResult(cacheKey);
-    
-    if (cached !== null) {
-      return cached;
     }
 
-    const { sql, params } = schemaManager.generateSQL(this.modelName, 'read', { id });
-    const result = await this.d1Client.first(sql, params);
-    
-    // Cache the result (null results are also cached to avoid repeated DB hits)
-    this.setCachedResult(cacheKey, result);
-    
-    return result;
+    throw new Error('Failed to create record');
   }
 
   /**
@@ -315,7 +347,9 @@ export class GenericDataService {
     // Validate updates
     const validation = schemaManager.validateData(this.modelName, updates);
     if (!validation.valid) {
-      throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
+      const errorMessage = this.formatValidationErrors(validation.errors);
+
+      throw new Error(`Validation failed: ${errorMessage}`);
     }
 
     // Set updated timestamp

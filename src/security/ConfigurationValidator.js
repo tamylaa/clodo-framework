@@ -1,11 +1,18 @@
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { getDirname, getFilename } from '../utils/dirname-helper.js';
 import { INSECURE_PATTERNS } from './patterns/insecure-patterns.js';
 import { ENVIRONMENT_REQUIREMENTS, getEnvironmentRequirements } from './patterns/environment-rules.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+let __filename, __dirname;
+try {
+  __filename = getFilename(import.meta.url);
+  __dirname = getDirname(import.meta.url);
+} catch {
+  // Fallback for CommonJS environment (Jest)
+  __filename = getFilename();
+  __dirname = getDirname();
+}
 
 /**
  * Configuration Security Validator

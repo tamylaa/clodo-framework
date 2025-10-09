@@ -11,7 +11,8 @@
 - **[Installation](./guides/installation.md)** - Setup and prerequisites
 
 ### **Architecture**
-- **[Framework Architecture](./architecture/README.md)** - High-level architecture overview
+- **[Framework Architecture Overview](./FRAMEWORK-ARCHITECTURE-OVERVIEW.md)** - User-friendly architecture guide
+- **[Framework Architecture Analysis](./FRAMEWORK-ARCHITECTURE-ANALYSIS.md)** - Detailed technical analysis (internal)
 - **[Core Components](./architecture/components.md)** - Deep dive into framework modules
 - **[Configuration System](./architecture/configuration.md)** - Domain and feature management
 - **[Data Layer](./architecture/data-layer.md)** - Services, schemas, and database integration

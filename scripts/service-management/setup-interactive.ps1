@@ -20,8 +20,8 @@ param(
 )
 
 # Import Lego Framework utilities
-. "$PSScriptRoot\..\src\utils\deployment-helpers.ps1"
-. "$PSScriptRoot\..\src\utils\setup-helpers.ps1"
+. "$PSScriptRoot\..\utilities\deployment-helpers.ps1"
+. "$PSScriptRoot\..\utilities\setup-helpers.ps1"
 
 # Configuration
 $ErrorActionPreference = "Stop"

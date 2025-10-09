@@ -482,6 +482,157 @@ console.log('Customer config loaded:', config.customer);
 "
 ```
 
+## 🔧 Modular CLI Capabilities
+
+The LEGO Framework provides **modular CLI capabilities** that can be imported and used programmatically in your services, enabling seamless integration of CLI functionality into your deployment and management workflows.
+
+### Service Management Modules
+
+**Programmatic Service Creation:**
+```javascript
+import { ServiceCreator } from '@tamyla/lego-framework/service-management';
+
+const creator = new ServiceCreator();
+
+// Create a new service from template
+await creator.createService({
+  name: 'my-new-service',
+  template: 'data-service',
+  domain: 'api.mycompany.com',
+  features: ['authentication', 'logging']
+});
+```
+
+**Programmatic Service Initialization:**
+```javascript
+import { ServiceInitializer } from '@tamyla/lego-framework/service-management';
+
+const initializer = new ServiceInitializer();
+
+// Initialize service with configuration
+await initializer.initializeService({
+  serviceName: 'my-service',
+  environment: 'production',
+  customer: 'mycompany',
+  configOverrides: {
+    databaseUrl: 'https://prod-db.mycompany.com'
+  }
+});
+```
+
+### Security CLI Module
+
+**Programmatic Security Operations:**
+```javascript
+import { SecurityCLI } from '@tamyla/lego-framework/security';
+
+const security = new SecurityCLI();
+
+// Validate security configuration
+const issues = await security.validateConfig('mycompany', 'production');
+if (issues.length > 0) {
+  console.error('Security issues found:', issues);
+}
+
+// Generate secure keys
+const apiKey = await security.generateApiKey();
+const jwtSecret = await security.generateJwtSecret();
+
+// Deploy with security validation
+await security.deployWithValidation({
+  customer: 'mycompany',
+  environment: 'production',
+  domain: 'api.mycompany.com'
+});
+```
+
+### Customer Configuration CLI Module
+
+**Programmatic Customer Management:**
+```javascript
+import { CustomerConfigCLI } from '@tamyla/lego-framework/config';
+
+const customerConfig = new CustomerConfigCLI();
+
+// Create new customer configuration
+await customerConfig.createCustomer({
+  name: 'newcustomer',
+  domain: 'api.newcustomer.com',
+  environment: 'production'
+});
+
+// Show customer configuration
+const config = await customerConfig.showConfig('newcustomer', 'production');
+console.log('Customer config:', config);
+
+// Update customer settings
+await customerConfig.updateCustomer('newcustomer', {
+  features: { analytics: true, notifications: false }
+});
+```
+
+### Integration in Deployment Scripts
+
+**Combine modular CLI capabilities in your deployment pipeline:**
+```javascript
+// scripts/deploy-and-configure.js
+import { ServiceCreator, ServiceInitializer } from '@tamyla/lego-framework/service-management';
+import { SecurityCLI } from '@tamyla/lego-framework/security';
+import { CustomerConfigCLI } from '@tamyla/lego-framework/config';
+
+async function deployAndConfigure() {
+  const creator = new ServiceCreator();
+  const initializer = new ServiceInitializer();
+  const security = new SecurityCLI();
+  const customerConfig = new CustomerConfigCLI();
+
+  try {
+    // Create service if it doesn't exist
+    await creator.createService({
+      name: process.env.SERVICE_NAME,
+      domain: process.env.DOMAIN
+    });
+
+    // Configure customer settings
+    await customerConfig.createCustomer({
+      name: process.env.CUSTOMER_NAME,
+      domain: process.env.DOMAIN
+    });
+
+    // Initialize with secure configuration
+    await initializer.initializeService({
+      serviceName: process.env.SERVICE_NAME,
+      environment: process.env.NODE_ENV,
+      customer: process.env.CUSTOMER_NAME
+    });
+
+    // Deploy with security validation
+    await security.deployWithValidation({
+      customer: process.env.CUSTOMER_NAME,
+      environment: process.env.NODE_ENV,
+      domain: process.env.DOMAIN
+    });
+
+    console.log('✅ Service deployed and configured successfully');
+
+  } catch (error) {
+    console.error('❌ Deployment failed:', error.message);
+    throw error;
+  }
+}
+
+deployAndConfigure();
+```
+
+### Benefits of Modular CLI Integration
+
+- **🔧 Programmatic Control**: Use CLI functionality directly in your code without shell commands
+- **🔄 Pipeline Integration**: Seamlessly integrate framework capabilities into CI/CD workflows  
+- **🧪 Testable Operations**: Test CLI operations programmatically in your test suites
+- **📦 Bundle Optimization**: Import only the CLI modules you need
+- **🔒 Type Safety**: Full TypeScript support for all CLI operations
+- **⚡ Performance**: Direct imports avoid shell command overhead
+
 ## Common Mistakes to Avoid
 
 ### 1. Don't Call Bin Scripts Externally
@@ -678,6 +829,1197 @@ wrangler init  # Creates basic wrangler.toml
 ### "URL extraction failed"
 - **Cause**: Wrangler output format changed or no valid URL found
 - **Fix**: Check wrangler output manually or ensure routes are defined in wrangler.toml
+
+## 🧪 Production Testing Suite
+
+The `ProductionTester` provides comprehensive post-deployment validation to ensure your Cloudflare Workers are functioning correctly in downstream environments.
+
+### **Core Testing Capabilities**
+
+```javascript
+import { ProductionTester } from '@tamyla/lego-framework/deployment';
+
+const tester = new ProductionTester({
+  verbose: true,
+  generateReport: true,
+  exportMetrics: true,
+  timeout: 30000,
+  responseTimeThreshold: 2000
+});
+
+// Run comprehensive production tests
+const results = await tester.runProductionTests('https://your-service.workers.dev', {
+  testSuites: ['health', 'authentication', 'endpoints', 'database', 'performance']
+});
+```
+
+### **Available Test Suites**
+
+#### **Health Checks** 🏥
+- **Endpoint Availability**: Verifies service is responding
+- **Response Time Validation**: Ensures acceptable performance
+- **Status Code Validation**: Confirms proper HTTP responses
+- **Basic Connectivity**: Network reachability testing
+
+```javascript
+// Quick health check
+const healthResult = await tester.runProductionTests(baseUrl, {
+  testSuites: ['health']
+});
+// Returns: { passed: 2, failed: 0, checks: [...] }
+```
+
+#### **Authentication Flow Testing** 🔐
+- **JWT Token Validation**: Tests authentication endpoints
+- **API Key Verification**: Validates key-based authentication
+- **Session Management**: Tests login/logout flows
+- **Authorization Checks**: Verifies access control
+
+```javascript
+// Test authentication flows
+const authResult = await tester.runProductionTests(baseUrl, {
+  testSuites: ['authentication'],
+  testUser: {
+    email: 'test@example.com',
+    password: 'testpass123'
+  }
+});
+```
+
+#### **API Endpoint Testing** 🌐
+- **CRUD Operations**: Tests Create, Read, Update, Delete
+- **Error Handling**: Validates proper error responses
+- **Data Validation**: Ensures API contracts are met
+- **Rate Limiting**: Tests throttling behavior
+
+#### **Database Connectivity** 🗄️
+- **D1 Connection**: Validates Cloudflare D1 database access
+- **Query Execution**: Tests SQL operations
+- **Transaction Handling**: Verifies ACID compliance
+- **Connection Pooling**: Tests connection management
+
+#### **Performance Monitoring** ⚡
+- **Response Times**: Measures API latency
+- **Throughput Testing**: Validates concurrent requests
+- **Memory Usage**: Monitors resource consumption
+- **Error Rates**: Tracks failure percentages
+
+### **Advanced Testing Features**
+
+#### **Custom Test Configuration**
+```javascript
+const tester = new ProductionTester({
+  retryAttempts: 3,
+  retryDelay: 1000,
+  timeout: 30000,
+  concurrent: true,  // Run tests in parallel
+  responseTimeThreshold: 2000,  // Max acceptable response time
+  healthCheckThreshold: 500,    // Health check timeout
+  authFlowThreshold: 5000       // Auth flow timeout
+});
+```
+
+#### **Environment-Specific Testing**
+```javascript
+// Test different environments
+const prodResults = await tester.runProductionTests('https://api.company.com', {
+  environment: 'production'
+});
+
+const stagingResults = await tester.runProductionTests('https://staging-api.company.com', {
+  environment: 'staging'
+});
+```
+
+#### **Regression Testing**
+```javascript
+// Compare against baseline metrics
+const results = await tester.runProductionTests(baseUrl, {
+  testSuites: ['regression'],
+  baselineMetrics: './test-baselines/production.json'
+});
+```
+
+### **Test Result Analysis**
+
+#### **Structured Results**
+```javascript
+{
+  environment: 'production',
+  timestamp: '2025-10-08T10:30:00.000Z',
+  tests: {
+    health: { passed: 3, failed: 0, checks: [...] },
+    authentication: { passed: 5, failed: 1, checks: [...] },
+    database: { passed: 4, failed: 0, checks: [...] }
+  },
+  summary: {
+    passed: 12,
+    failed: 1,
+    total: 13,
+    successRate: 92.3
+  }
+}
+```
+
+#### **Report Generation**
+```javascript
+const tester = new ProductionTester({
+  generateReport: true,
+  exportMetrics: true,
+  reportPath: './test-reports',
+  metricsPath: './test-metrics'
+});
+
+// Generates:
+// - test-reports/production-2025-10-08.json
+// - test-metrics/performance-trends.csv
+```
+
+### **Integration with Deployment Pipeline**
+
+```javascript
+// Post-deployment validation
+const deployAndTest = async (serviceConfig) => {
+  // Deploy the service
+  const deployment = await deployer.deploy(serviceConfig);
+  
+  // Run production tests
+  const testResults = await tester.runProductionTests(deployment.url, {
+    testSuites: ['health', 'authentication', 'endpoints']
+  });
+  
+  // Validate results
+  if (testResults.summary.failed > 0) {
+    console.error('❌ Deployment validation failed');
+    // Trigger rollback or alert
+    await rollbackManager.rollback(deployment.id);
+    return { success: false, issues: testResults };
+  }
+  
+  return { success: true, deployment, tests: testResults };
+};
+```
+
+### **Third-Party Environment Testing**
+
+The ProductionTester works seamlessly in any Cloudflare account:
+
+```javascript
+// Test service in customer environment
+const customerTest = await tester.runProductionTests(
+  'https://customer-service.workers.dev',
+  {
+    testSuites: ['health', 'database'],
+    // Uses customer's API keys/tokens from environment
+    apiToken: process.env.CUSTOMER_CLOUDFLARE_TOKEN
+  }
+);
+```
+
+## � Individual Testing Modules
+
+For more granular control, you can import and use individual testing modules instead of the monolithic ProductionTester:
+
+### **API Testing Only**
+```javascript
+import { ApiTester } from '@tamyla/lego-framework/deployment/testers';
+
+const apiTester = new ApiTester({
+  timeout: 5000,
+  responseTimeThreshold: 1000
+});
+
+const results = await apiTester.runApiTests('production');
+// Tests only API endpoints, not auth or database
+```
+
+### **Authentication Testing Only**
+```javascript
+import { AuthTester } from '@tamyla/lego-framework/deployment/testers';
+
+const authTester = new AuthTester({
+  timeout: 10000
+});
+
+const results = await authTester.runAuthTests('https://api.company.com', {
+  testUser: { email: 'test@example.com', password: 'test123' }
+});
+// Tests only authentication flows
+```
+
+### **Database Testing Only**
+```javascript
+import { DatabaseTester } from '@tamyla/lego-framework/deployment/testers';
+
+const dbTester = new DatabaseTester({
+  timeout: 30000
+});
+
+const results = await dbTester.runDatabaseTests('production');
+// Tests only D1 database connectivity and queries
+```
+
+### **Performance Testing Only**
+```javascript
+import { PerformanceTester } from '@tamyla/lego-framework/deployment/testers';
+
+const perfTester = new PerformanceTester({
+  responseTimeThreshold: 500,
+  concurrentRequests: 10
+});
+
+const results = await perfTester.runPerformanceTests('https://api.company.com');
+// Tests only performance metrics and response times
+```
+
+### **Load Testing Only**
+```javascript
+import { LoadTester } from '@tamyla/lego-framework/deployment/testers';
+
+const loadTester = new LoadTester({
+  maxConcurrentUsers: 100,
+  testDuration: 60000, // 1 minute
+  rampUpTime: 10000    // 10 seconds
+});
+
+const results = await loadTester.runLoadTests('https://api.company.com');
+// Tests only load handling and scalability
+```
+
+### **Custom Testing Combinations**
+```javascript
+import { ApiTester, AuthTester, DatabaseTester } from '@tamyla/lego-framework/deployment/testers';
+
+// Run only the tests you need
+const apiResults = await new ApiTester().runApiTests('production');
+const authResults = await new AuthTester().runAuthTests(baseUrl, testUser);
+const dbResults = await new DatabaseTester().runDatabaseTests('production');
+
+// Combine results as needed
+const combinedResults = {
+  api: apiResults,
+  auth: authResults,
+  database: dbResults,
+  summary: {
+    passed: apiResults.passed + authResults.passed + dbResults.passed,
+    failed: apiResults.failed + authResults.failed + dbResults.failed
+  }
+};
+```
+
+## �🔍 Deployment Validator
+
+The `DeploymentValidator` provides enterprise-grade pre-deployment validation to ensure your services are ready for production deployment and can operate correctly in downstream environments.
+
+### **Comprehensive Validation Pipeline**
+
+```javascript
+import { DeploymentValidator } from '@tamyla/lego-framework/deployment';
+
+const validator = new DeploymentValidator({
+  validationLevel: 'comprehensive',
+  strictMode: true,
+  timeout: 30000,
+  retryAttempts: 3
+});
+
+// Validate deployment readiness
+const result = await validator.validateDeployment(['your-service.com'], {
+  environment: 'production'
+});
+
+if (!result.valid) {
+  console.error('❌ Validation failed:', result.errors);
+  // Involves developer to fix issues
+}
+```
+
+### **Validation Categories**
+
+#### **Prerequisites Validation** 📋
+- **Node.js Version**: Ensures compatible Node.js version (16+)
+- **Required Commands**: Validates wrangler, npm, node availability
+- **File System**: Checks for required files (package.json, wrangler.toml)
+- **Permissions**: Verifies file/directory access permissions
+
+#### **Authentication Validation** 🔐
+- **Cloudflare Tokens**: Validates API token presence and format
+- **Account Access**: Verifies account permissions and access
+- **Token Expiration**: Checks for expired credentials
+- **Multi-Account Support**: Handles different accounts per environment
+
+#### **Network Validation** 🌐
+- **Cloudflare API**: Tests connectivity to Cloudflare services
+- **DNS Resolution**: Validates domain name resolution
+- **SSL/TLS**: Checks certificate validity and configuration
+- **Firewall Rules**: Verifies network access rules
+
+#### **Configuration Validation** ⚙️
+- **Environment Variables**: Validates required env vars
+- **Wrangler Config**: Checks wrangler.toml syntax and settings
+- **Domain Configuration**: Verifies domain-to-service mapping
+- **Feature Flags**: Validates feature flag configurations
+
+#### **Endpoint Validation** 🎯
+- **Service URLs**: Tests endpoint accessibility
+- **HTTP Methods**: Validates supported operations
+- **Response Formats**: Checks API response structure
+- **CORS Settings**: Verifies cross-origin configurations
+
+#### **Deployment Readiness** 🚀
+- **Build Process**: Validates build pipeline success
+- **Disk Space**: Checks available storage for deployment
+- **Memory Usage**: Monitors resource consumption
+- **Dependency Checks**: Verifies all dependencies are available
+
+### **Interactive Developer Involvement**
+
+When validation issues are detected, the framework **actively involves developers** to resolve problems:
+
+```javascript
+// Automatic issue detection and resolution guidance
+const result = await validator.validateDeploymentReadiness();
+
+if (!result.valid) {
+  // Framework provides specific guidance
+  for (const issue of result.issues) {
+    console.log(`❌ ${issue.category}: ${issue.message}`);
+    console.log(`💡 Fix: ${issue.suggestion}`);
+    
+    // For critical issues, prompt for immediate resolution
+    if (issue.severity === 'critical') {
+      const fix = await promptUser(`How would you like to fix: ${issue.message}?`);
+      await applyFix(issue, fix);
+    }
+  }
+}
+```
+
+#### **Common Validation Issues & Fixes**
+
+##### **Authentication Issues**
+```javascript
+// Issue: "Cloudflare authentication required"
+const authChoice = await askChoice(
+  'Cloudflare authentication needed. What would you like to do?',
+  [
+    'Login to Cloudflare now',
+    'Provide API token manually', 
+    'Skip Cloudflare verification (limited features)',
+    'Cancel deployment'
+  ]
+);
+
+// Framework guides through resolution
+if (authChoice === 0) {
+  await runCommand('wrangler login');
+  await validator.revalidateAuthentication();
+}
+```
+
+##### **Configuration Issues**
+```javascript
+// Issue: "Missing required environment variables"
+// Framework identifies missing vars and suggests fixes
+const missing = ['CLOUDFLARE_API_TOKEN', 'DATABASE_URL'];
+console.log('Missing environment variables:');
+missing.forEach(var => console.log(`  - ${var}`));
+
+// Interactive resolution
+for (const var of missing) {
+  const value = await askUser(`Enter value for ${var}:`);
+  await setEnvironmentVariable(var, value);
+}
+```
+
+##### **Network Issues**
+```javascript
+// Issue: "Cannot reach Cloudflare API"
+// Framework tests connectivity and provides diagnostics
+const networkTest = await validator.testNetworkConnectivity();
+if (!networkTest.cloudflare) {
+  console.log('❌ Cannot reach Cloudflare API');
+  console.log('💡 Check your internet connection and firewall settings');
+  console.log('💡 Verify API token permissions');
+}
+```
+
+### **Third-Party Environment Validation**
+
+The DeploymentValidator works across different Cloudflare accounts and environments:
+
+```javascript
+// Validate deployment in customer environment
+const customerValidation = await validator.validateDeployment(
+  ['customer-service.com'], 
+  {
+    environment: 'production',
+    accountId: 'customer-account-id',
+    apiToken: process.env.CUSTOMER_CLOUDFLARE_TOKEN
+  }
+);
+
+// Cross-account validation
+const multiAccountResult = await validator.validateMultiAccountDeployment([
+  { domain: 'service1.company.com', accountId: 'account1' },
+  { domain: 'service2.company.com', accountId: 'account2' }
+]);
+```
+
+### **Integration with CI/CD Pipelines**
+
+```javascript
+// Pre-deployment validation in CI/CD
+const validateBeforeDeploy = async () => {
+  console.log('🚀 Starting pre-deployment validation...');
+  
+  const validator = new DeploymentValidator({
+    validationLevel: 'comprehensive',
+    strictMode: true
+  });
+  
+  try {
+    const result = await validator.validateDeploymentReadiness();
+    
+    if (!result.valid) {
+      console.error('❌ Validation failed - blocking deployment');
+      result.issues.forEach(issue => {
+        console.error(`  ${issue.severity.toUpperCase()}: ${issue.message}`);
+      });
+      process.exit(1);
+    }
+    
+    console.log('✅ All validations passed - proceeding with deployment');
+    return true;
+    
+  } catch (error) {
+    console.error('💥 Validation error:', error.message);
+    process.exit(1);
+  }
+};
+```
+
+### **Advanced Validation Features**
+
+#### **Custom Validation Rules**
+```javascript
+class CustomValidator extends DeploymentValidator {
+  async validateCustomRules() {
+    // Add organization-specific validation
+    const customChecks = [
+      this.validateSecurityCompliance(),
+      this.validatePerformanceRequirements(),
+      this.validateBusinessRules()
+    ];
+    
+    return await Promise.all(customChecks);
+  }
+}
+```
+
+#### **Validation Result Analysis**
+```javascript
+{
+  overall: 'passed|failed',
+  categories: {
+    prerequisites: 'passed',
+    authentication: 'passed', 
+    network: 'failed',
+    configuration: 'passed',
+    endpoints: 'passed',
+    deployment: 'passed'
+  },
+  details: [
+    {
+      category: 'network',
+      severity: 'error',
+      message: 'Cannot reach Cloudflare API',
+      suggestion: 'Check internet connection and API token'
+    }
+  ],
+  startTime: '2025-10-08T10:00:00.000Z',
+  endTime: '2025-10-08T10:02:30.000Z'
+}
+```
+
+#### **Validation Reporting**
+```javascript
+const validator = new DeploymentValidator({
+  generateReport: true,
+  reportPath: './validation-reports'
+});
+
+// Generates detailed validation reports
+const result = await validator.validateDeployment(domains, options);
+// Creates: validation-reports/deployment-2025-10-08.json
+```
+
+## ☁️ Cloudflare Account Management
+
+The `CloudflareDomainManager` enables seamless operation across multiple Cloudflare accounts and environments, making it perfect for third-party downstream deployments and multi-tenant architectures.
+
+### **Multi-Account Operations**
+
+```javascript
+import { CloudflareDomainManager } from '@tamyla/lego-framework/deployment';
+
+const manager = new CloudflareDomainManager({
+  apiToken: process.env.CLOUDFLARE_API_TOKEN,
+  accountId: process.env.CLOUDFLARE_ACCOUNT_ID
+});
+
+// Verify authentication across accounts
+await manager.verifyAuthentication();
+
+// Discover available domains in any account
+const domains = await manager.discoverDomains();
+
+// Validate deployment permissions
+const canDeploy = await manager.validateDeploymentPermissions('customer-service.com');
+```
+
+### **Authentication Handling**
+
+#### **Interactive Authentication Resolution**
+```javascript
+// When authentication issues occur, framework involves developer
+async handleAuthenticationRequired() {
+  console.log('   ❌ Cloudflare authentication required');
+  
+  const authChoice = await askChoice(
+    'Cloudflare authentication needed. What would you like to do?',
+    [
+      'Login to Cloudflare now',
+      'Provide API token manually', 
+      'Skip Cloudflare verification (limited features)',
+      'Cancel deployment'
+    ]
+  );
+  
+  switch (authChoice) {
+    case 0:
+      // Guide developer through wrangler login
+      await runCommand('wrangler login');
+      await this.verifyAuthentication();
+      break;
+    case 1:
+      // Prompt for manual token entry
+      const token = await askUser('Enter Cloudflare API token:');
+      await this.setApiToken(token);
+      break;
+    case 2:
+      // Limited functionality mode
+      console.log('⚠️ Skipping Cloudflare features - limited functionality');
+      break;
+    default:
+      throw new Error('Authentication cancelled by user');
+  }
+}
+```
+
+#### **Token Management**
+```javascript
+// Secure token storage and validation
+const tokenManager = new CloudflareTokenManager();
+
+// Store tokens securely
+await tokenManager.storeToken('production', apiToken);
+
+// Validate token permissions
+const permissions = await tokenManager.validatePermissions(apiToken);
+
+// Check token expiration
+const isValid = await tokenManager.isTokenValid(apiToken);
+```
+
+### **Domain Discovery & Management**
+
+#### **Automatic Domain Discovery**
+```javascript
+// Discover all domains in an account
+const discovery = await manager.discoverDomains();
+
+// Returns structured domain information
+{
+  accountId: 'account-123',
+  domains: [
+    {
+      name: 'api.company.com',
+      zoneId: 'zone-456',
+      status: 'active',
+      sslStatus: 'active',
+      nameservers: ['ns1.cloudflare.com', 'ns2.cloudflare.com']
+    }
+  ],
+  workers: [
+    {
+      name: 'data-service',
+      routes: ['api.company.com/api/*'],
+      environment: 'production'
+    }
+  ]
+}
+```
+
+#### **Service Matching & Discovery**
+```javascript
+// Find existing services by domain
+const existingServices = await manager.findServicesByDomain('api.company.com');
+
+// Intelligent service discovery
+const serviceMatch = await manager.matchServiceToDomain({
+  domain: 'new-service.company.com',
+  serviceName: 'data-service'
+});
+```
+
+### **Third-Party Account Operations**
+
+#### **Cross-Account Deployment**
+```javascript
+// Deploy to customer account
+const customerManager = new CloudflareDomainManager({
+  apiToken: process.env.CUSTOMER_CLOUDFLARE_TOKEN,
+  accountId: process.env.CUSTOMER_ACCOUNT_ID
+});
+
+// Validate customer environment
+await customerManager.verifyAuthentication();
+await customerManager.validateDeploymentPermissions('customer-service.com');
+
+// Deploy service to customer account
+const deployment = await customerManager.deployService({
+  serviceName: 'data-service',
+  domain: 'customer-service.com',
+  environment: 'production'
+});
+```
+
+#### **Multi-Tenant Deployments**
+```javascript
+// Deploy across multiple customer accounts
+const multiTenantDeployment = async (customers) => {
+  const results = [];
+  
+  for (const customer of customers) {
+    const manager = new CloudflareDomainManager({
+      apiToken: customer.apiToken,
+      accountId: customer.accountId
+    });
+    
+    try {
+      // Verify customer account access
+      await manager.verifyAuthentication();
+      
+      // Deploy service to customer environment
+      const result = await manager.deployService({
+        serviceName: 'shared-service',
+        domain: customer.domain,
+        environment: 'production'
+      });
+      
+      results.push({ customer: customer.name, success: true, result });
+      
+    } catch (error) {
+      results.push({ 
+        customer: customer.name, 
+        success: false, 
+        error: error.message 
+      });
+    }
+  }
+  
+  return results;
+};
+```
+
+### **Permission & Access Control**
+
+#### **Deployment Permission Validation**
+```javascript
+// Comprehensive permission checking
+const permissions = await manager.validateDeploymentPermissions('service.domain.com');
+
+// Checks for:
+// - Account ownership of domain
+// - Worker deployment permissions
+// - Zone/DNS management access
+// - SSL certificate permissions
+// - API token scope validation
+
+if (!permissions.canDeploy) {
+  console.error('❌ Insufficient permissions for deployment');
+  permissions.missing.forEach(perm => {
+    console.log(`  Missing: ${perm}`);
+  });
+}
+```
+
+#### **Environment-Specific Permissions**
+```javascript
+// Validate permissions per environment
+const envPermissions = await manager.validateEnvironmentPermissions({
+  domain: 'service.domain.com',
+  environment: 'production'
+});
+
+// Production environment requires stricter permissions
+if (envPermissions.production) {
+  console.log('✅ Production deployment authorized');
+} else {
+  console.log('❌ Production deployment not authorized');
+  console.log('Required permissions:', envPermissions.required);
+}
+```
+
+### **Integration with Orchestration**
+
+#### **Multi-Domain Coordination**
+```javascript
+import { MultiDomainOrchestrator } from '@tamyla/lego-framework/deployment';
+
+const orchestrator = new MultiDomainOrchestrator({
+  maxConcurrentDeployments: 3,
+  crossDomainCoordination: true
+});
+
+// Coordinate deployments across accounts
+await orchestrator.deployMultipleDomains([
+  {
+    domain: 'service1.company.com',
+    accountId: 'account-1',
+    apiToken: 'token-1'
+  },
+  {
+    domain: 'service2.customer.com', 
+    accountId: 'account-2',
+    apiToken: 'token-2'
+  }
+]);
+```
+
+#### **Account-Aware Rollback**
+```javascript
+// Rollback with account context
+const rollbackManager = new RollbackManager();
+
+await rollbackManager.rollbackDeployment(deploymentId, {
+  accountId: targetAccountId,
+  apiToken: accountToken,
+  preserveCustomerData: true  // Don't affect customer data
+});
+```
+
+### **Security & Compliance**
+
+#### **Account Isolation**
+```javascript
+// Ensure proper account isolation
+const isolationCheck = await manager.validateAccountIsolation({
+  sourceAccount: 'your-account',
+  targetAccount: 'customer-account'
+});
+
+if (!isolationCheck.isolated) {
+  throw new Error('Account isolation violation detected');
+}
+```
+
+#### **Audit Logging**
+```javascript
+// Comprehensive audit trails
+const auditor = new DeploymentAuditor({
+  auditLevel: 'detailed'
+});
+
+await auditor.logAccountOperation({
+  operation: 'deploy',
+  accountId: targetAccountId,
+  domain: deployedDomain,
+  timestamp: new Date(),
+  operator: process.env.USER,
+  permissions: validatedPermissions
+});
+```
+
+## 🏗️ Adopting LEGO Framework in Existing Projects
+
+Most developers have existing codebases and want to **gradually integrate** the LEGO Framework rather than starting from scratch. This section covers **incremental adoption strategies** for brownfield projects.
+
+### 🎯 Understanding Incremental Adoption
+
+The LEGO Framework is designed for **modular adoption** - you can start with individual components and progressively adopt more features:
+
+```mermaid
+graph LR
+    A[Existing Service] --> B[Add Core Utilities]
+    B --> C[Configuration Management]
+    C --> D[Schema Validation]
+    D --> E[Deployment & Security]
+    E --> F[Full Framework Integration]
+```
+
+### 📦 Phase 1: Core Utilities (Lowest Risk)
+
+**Start with error handling, logging, and basic utilities:**
+
+```javascript
+// Your existing service
+import express from 'express';
+const app = express();
+
+// Add LEGO error handling (no breaking changes)
+import { ErrorHandler } from '@tamyla/lego-framework';
+
+app.use((err, req, res, next) => {
+  ErrorHandler.handleDeploymentError(err, {
+    customer: 'my-company',
+    environment: process.env.NODE_ENV,
+    phase: 'api'
+  });
+  // Your existing error handling continues...
+});
+```
+
+**Benefits:**
+- ✅ Zero breaking changes to existing code
+- ✅ Immediate improvement in error reporting
+- ✅ Easy rollback if needed
+
+### 🔧 Phase 2: Data Service Integration
+
+**Wrap existing database operations with LEGO components:**
+
+```javascript
+// Before: Direct database calls
+class MyDataService {
+  async getUsers() {
+    return db.query('SELECT * FROM users');
+  }
+}
+
+// After: LEGO-wrapped with validation
+import { GenericDataService, SchemaManager } from '@tamyla/lego-framework';
+
+class EnhancedDataService extends GenericDataService {
+  constructor(existingDb) {
+    super({ d1Database: existingDb });
+    this.existing = existingDb;
+  }
+
+  async getUsers(query = {}) {
+    // LEGO validation + your existing logic
+    const validatedQuery = this.validateQuery(query);
+    return this.existing.query('SELECT * FROM users WHERE ?', validatedQuery);
+  }
+}
+```
+
+### ⚙️ Phase 3: Configuration Management
+
+**Replace hardcoded configurations with LEGO's system:**
+
+```javascript
+// Before: Hardcoded configuration
+const config = {
+  apiVersion: 'v1',
+  corsOrigins: ['https://myapp.com'],
+  databaseUrl: process.env.DATABASE_URL
+};
+
+// After: LEGO domain configuration
+import { createDomainConfigSchema } from '@tamyla/lego-framework';
+
+export const domains = {
+  'my-existing-api': {
+    ...createDomainConfigSchema(),
+    name: 'my-existing-api',
+    displayName: 'My Existing API Service',
+    accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
+    apiVersion: process.env.API_VERSION || 'v1',
+    corsOrigins: process.env.CORS_ORIGINS?.split(',') || ['https://myapp.com'],
+    features: {
+      logging: true,
+      cors: true,
+      authentication: true
+    }
+  }
+};
+```
+
+### 🚀 Phase 4: Deployment Integration
+
+**Add LEGO deployment capabilities to your existing CI/CD:**
+
+```javascript
+// scripts/deploy.js
+import { deployWithSecurity } from '@tamyla/lego-framework/security';
+import { domains } from '../src/config/domains.js';
+
+async function deploy() {
+  const domain = domains['my-existing-api'];
+
+  await deployWithSecurity({
+    customer: 'my-company',
+    environment: process.env.NODE_ENV || 'staging',
+    deploymentUrl: domain.domains.production,
+    dryRun: process.argv.includes('--dry-run')
+  });
+}
+
+deploy().catch(console.error);
+```
+
+### 🎨 Customizing Generated Services
+
+Services created with `lego-create-service` are **starting templates**, not final products. Here's how to customize them:
+
+#### **1. Replace Generic Logic with Your Business Logic**
+
+```javascript
+// Generated: src/worker/index.js (REPLACE THIS)
+export default {
+  async fetch(request, env) {
+    // Generic placeholder code - replace with your logic
+    return new Response('Hello from LEGO service');
+  }
+};
+
+// Customized: Your actual service logic
+import { GenericDataService } from '@tamyla/lego-framework';
+
+export default {
+  async fetch(request, env) {
+    const dataService = new GenericDataService({ d1Database: env.DB });
+
+    if (request.method === 'GET' && new URL(request.url).pathname === '/users') {
+      const users = await dataService.find('users');
+      return Response.json(users);
+    }
+
+    return new Response('Not found', { status: 404 });
+  }
+};
+```
+
+#### **2. Update Domain Configuration**
+
+```javascript
+// src/config/domains.js - Customize for your domains
+export const domains = {
+  'my-custom-service': {
+    ...createDomainConfigSchema(),
+    name: 'my-custom-service',
+    displayName: 'My Custom API Service',
+    accountId: 'your-actual-cloudflare-account-id',
+    zoneId: 'your-actual-cloudflare-zone-id',
+    domains: {
+      production: 'api.mycompany.com',
+      staging: 'staging-api.mycompany.com',
+      development: 'dev-api.mycompany.com'
+    },
+    features: {
+      authentication: true,
+      logging: true,
+      cors: true,
+      rateLimiting: false  // Your custom features
+    }
+  }
+};
+```
+
+#### **3. Add Your Dependencies**
+
+```json
+// package.json - Add your specific dependencies
+{
+  "name": "my-custom-service",
+  "dependencies": {
+    "@tamyla/lego-framework": "^3.0.5",
+    "stripe": "^12.0.0",           // Your payment processing
+    "jsonwebtoken": "^9.0.0",      // Your auth library
+    "redis": "^4.6.0"              // Your caching layer
+  }
+}
+```
+
+### 🔄 Migration Patterns
+
+#### **Pattern 1: Wrapper Approach (Safest)**
+
+```javascript
+// Keep existing service intact
+class MyLegacyService {
+  async processData(data) {
+    // Your existing business logic
+    return this.legacyProcessing(data);
+  }
+}
+
+// Add LEGO capabilities via composition
+import { GenericDataService } from '@tamyla/lego-framework';
+
+class LegoEnhancedService {
+  constructor(legacyService) {
+    this.legacy = legacyService;
+    this.dataService = new GenericDataService();
+  }
+
+  async processData(data) {
+    // LEGO validation
+    const validated = this.dataService.validateData(data);
+
+    // Your existing logic
+    const result = await this.legacy.processData(validated);
+
+    // LEGO error handling
+    return this.dataService.handleResponse(result);
+  }
+}
+```
+
+#### **Pattern 2: Gradual Replacement**
+
+```javascript
+// Phase 1: Add logging
+import { ErrorHandler } from '@tamyla/lego-framework';
+app.use((err, req, res, next) => {
+  ErrorHandler.handleDeploymentError(err, { phase: 'api' });
+  // existing error handling
+});
+
+// Phase 2: Add validation
+import { SchemaManager } from '@tamyla/lego-framework';
+const schema = new SchemaManager();
+app.post('/users', (req, res) => {
+  const validated = schema.validate('users', req.body);
+  // existing logic with validated data
+});
+
+// Phase 3: Full migration
+// Replace entire routes with LEGO components
+```
+
+#### **Pattern 3: Feature Flags for Gradual Rollout**
+
+```javascript
+import { isFeatureEnabled } from '@tamyla/lego-framework';
+
+app.get('/api/users', async (req, res) => {
+  if (isFeatureEnabled('lego-data-service')) {
+    // Use LEGO data service
+    const dataService = new GenericDataService();
+    const users = await dataService.find('users');
+    res.json(users);
+  } else {
+    // Use existing implementation
+    const users = await legacyUserService.getAll();
+    res.json(users);
+  }
+});
+```
+
+### 🧪 Testing Integration
+
+**Add tests that validate LEGO integration:**
+
+```javascript
+// test/integration.test.js
+import { GenericDataService, ErrorHandler } from '@tamyla/lego-framework';
+
+describe('LEGO Framework Integration', () => {
+  test('should enhance existing data operations', async () => {
+    const service = new GenericDataService({ d1Database: mockDb });
+
+    // Your existing test data
+    const result = await service.find('users', { active: true });
+
+    expect(result).toBeDefined();
+    // LEGO adds validation, error handling, etc.
+  });
+
+  test('should handle errors with LEGO reporting', () => {
+    const error = new Error('Database connection failed');
+
+    expect(() => {
+      ErrorHandler.handleDeploymentError(error, {
+        customer: 'test-customer',
+        phase: 'database'
+      });
+    }).not.toThrow();
+  });
+});
+```
+
+### 🚨 Common Migration Challenges
+
+#### **1. Import Path Changes**
+```javascript
+// Old: Direct database calls
+const users = await db.query('SELECT * FROM users');
+
+// New: LEGO-wrapped with validation
+const dataService = new GenericDataService({ d1Database: db });
+const users = await dataService.find('users');
+```
+
+#### **2. Configuration Structure**
+```javascript
+// Old: Flat config object
+const config = { apiUrl: 'https://api.com', timeout: 5000 };
+
+// New: Domain-based configuration
+export const domains = {
+  'my-service': {
+    ...createDomainConfigSchema(),
+    apiUrl: 'https://api.com',
+    timeout: 5000
+  }
+};
+```
+
+#### **3. Error Handling**
+```javascript
+// Old: Basic error handling
+try {
+  await operation();
+} catch (error) {
+  console.error(error);
+}
+
+// New: LEGO error reporting
+try {
+  await operation();
+} catch (error) {
+  ErrorHandler.handleDeploymentError(error, {
+    customer: 'my-company',
+    environment: 'production',
+    phase: 'operation'
+  });
+}
+```
+
+### 📋 Migration Checklist
+
+- [ ] **Phase 1**: Add LEGO as dependency, import core utilities
+- [ ] **Phase 1**: Integrate error handling and logging
+- [ ] **Phase 2**: Wrap data operations with GenericDataService
+- [ ] **Phase 2**: Add schema validation for data models
+- [ ] **Phase 3**: Replace hardcoded configs with domain configuration
+- [ ] **Phase 3**: Add feature flags for conditional logic
+- [ ] **Phase 4**: Integrate deployment and security validation
+- [ ] **Phase 4**: Update CI/CD to use LEGO deployment scripts
+- [ ] **Testing**: Add integration tests for LEGO components
+- [ ] **Documentation**: Update API docs to reflect LEGO integration
+
+### 🎯 Success Metrics
+
+**Track your migration progress:**
+- ✅ **Error reduction**: Fewer production incidents due to better error handling
+- ✅ **Deployment reliability**: More successful deployments with validation
+- ✅ **Development speed**: Faster feature development with reusable components
+- ✅ **Code consistency**: Standardized patterns across services
+- ✅ **Security compliance**: Automatic security validation prevents issues
 
 ## Best Practices
 

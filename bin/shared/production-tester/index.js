@@ -6,6 +6,13 @@
 // Re-export the core ProductionTester class
 export { ProductionTester } from './core.js';
 
+// Export individual testing modules for granular usage
+export { ApiTester } from './api-tester.js';
+export { AuthTester } from './auth-tester.js';
+export { DatabaseTester } from './database-tester.js';
+export { PerformanceTester } from './performance-tester.js';
+export { LoadTester } from './load-tester.js';
+
 // ESLint doesn't recognize re-exported classes in function scope
 /* eslint-disable no-undef */
 

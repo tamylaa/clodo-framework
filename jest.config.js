@@ -1,17 +1,17 @@
 export default {
   preset: null,
+  testEnvironment: 'node',
   transform: {
     '^.+\\.js$': 'babel-jest',
   },
-  testEnvironment: 'node',
-  globals: {
-    'babel-jest': {
-      useESM: true,
-    },
-  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@babel|babel-jest|chalk)/)'
+  ],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  setupFilesAfterEnv: [],
+  forceExit: true,
   collectCoverageFrom: [
     'src/**/*.{js,ts}',
     '!src/**/*.d.ts',

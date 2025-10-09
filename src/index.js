@@ -4,10 +4,11 @@
 export * from './config/index.js';
 export * from './worker/index.js';
 export * from './utils/index.js';
+export * from './orchestration/index.js';
 
 // Core framework classes and utilities
 export { FeatureFlagManager } from './config/features.js';
-export { createDomainConfigSchema, validateDomainConfig, mergeDomainConfigs } from './config/domains.js';
+export { createDomainConfigSchema, validateDomainConfig, createDefaultDomainConfig } from './utils/domain-config.js';
 export { initializeService, createFeatureGuard } from './worker/integration.js';
 
 // Core data and schema components

@@ -24,8 +24,17 @@ export class FrameworkConfig {
    * Find the configuration file in standard locations
    */
   findConfigFile() {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
+    let __filename, __dirname;
+    
+    // Handle test environment where import.meta might be transformed
+    try {
+      __filename = fileURLToPath(import.meta.url);
+      __dirname = dirname(__filename);
+    } catch (error) {
+      // Fallback for test environment
+      __dirname = process.cwd();
+      __filename = join(__dirname, 'src', 'utils', 'framework-config.js');
+    }
     
     const possiblePaths = [
       './validation-config.json',

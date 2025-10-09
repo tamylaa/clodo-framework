@@ -16,8 +16,17 @@ import { join, dirname } from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+let __filename, __dirname;
+
+// Handle test environment where import.meta might be transformed
+try {
+  __filename = fileURLToPath(import.meta.url);
+  __dirname = dirname(__filename);
+} catch (error) {
+  // Fallback for test environment
+  __dirname = join(process.cwd(), 'src', 'utils', 'deployment');
+  __filename = join(__dirname, 'secret-generator.js');
+}
 
 const SECRET_CONFIGS = {
   'AUTH_JWT_SECRET': { length: 64, description: 'JWT token signing secret', scope: 'critical' },
