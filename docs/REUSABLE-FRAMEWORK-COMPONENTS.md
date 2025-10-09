@@ -114,7 +114,7 @@ if (isFeatureEnabled(CONTENT_FEATURES.IMAGE_PROCESSING)) {
 ## Package Structure
 
 ```
-lego-framework/
+clodo-framework/
 ├── src/
 │   ├── config/
 │   │   ├── domains.js          # Base domain config framework
@@ -192,7 +192,7 @@ npm run domain:setup -- myservice.com
 
 ## Implementation Plan
 
-1. **Extract Framework**: Create separate `lego-framework` package
+1. **Extract Framework**: Create separate `clodo-framework` package
 2. **Template Generation**: Create service starter templates
 3. **Documentation**: Comprehensive setup and usage guides
 4. **Migration Path**: Migrate existing services to use framework

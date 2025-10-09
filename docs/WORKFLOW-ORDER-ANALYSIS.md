@@ -33,10 +33,10 @@ Reality: Unknown domains → Manual config scaling → Maintenance nightmare
 ### Phase 1: Service Discovery & Planning
 ```bash
 # Auto-discover available domains and capabilities
-lego-framework discover-domains --api-token $CF_TOKEN
+clodo-framework discover-domains --api-token $CF_TOKEN
 
 # Generate service templates based on requirements
-lego-framework plan-service my-service --type api-gateway --domains 5
+clodo-framework plan-service my-service --type api-gateway --domains 5
 ```
 
 ### Phase 2: Configuration Generation

@@ -529,7 +529,7 @@ This service is built using the Lego Framework, which provides:
 - Deployment automation
 - Consistent service patterns
 
-Learn more: [Lego Framework Documentation](../packages/lego-framework/README.md)
+Learn more: [Clodo Framework Documentation](../packages/clodo-framework/README.md)
 "@
 
     $readme | Out-File (Join-Path $ServicePath "README.md") -Encoding UTF8

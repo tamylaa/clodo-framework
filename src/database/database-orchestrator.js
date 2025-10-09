@@ -175,7 +175,7 @@ export class DatabaseOrchestrator {
 
     // Try multiple strategies to detect project root
     let candidates = [
-      // Standard lego-framework structure
+      // Standard clodo-framework structure
       join(__dirname, '..', '..'),
       // Alternative if running from dist/
       join(__dirname, '..', '..', '..'),

@@ -435,7 +435,7 @@ services/
 ```bash
 # Clone the framework
 git clone <repository-url>
-cd lego-framework
+cd clodo-framework
 
 # Install dependencies
 npm install
@@ -476,7 +476,7 @@ The deployment will output the worker URL. Visit it to confirm it's working:
 ## Project Structure
 
 ```
-lego-framework/
+clodo-framework/
 ├── bin/                          # Executable scripts and CLI tools
 │   ├── service-management/       # Service creation and initialization
 │   ├── deployment/              # Enterprise deployment tools
@@ -1349,10 +1349,10 @@ The LEGO Framework provides comprehensive documentation designed for different l
 
 ### 🆘 **Need Help?**
 
-- **🐛 Found an issue?** [Report a bug](https://github.com/tamyla/lego-framework/issues/new?template=bug-report.md)
-- **💡 Have a suggestion?** [Request a feature](https://github.com/tamyla/lego-framework/issues/new?template=feature-request.md)
-- **❓ Need specific example?** [Request documentation](https://github.com/tamyla/lego-framework/issues/new?template=example-request.md)
-- **💬 Want to discuss?** [Start a discussion](https://github.com/tamyla/lego-framework/discussions)
+- **🐛 Found an issue?** [Report a bug](https://github.com/tamyla/clodo-framework/issues/new?template=bug-report.md)
+- **💡 Have a suggestion?** [Request a feature](https://github.com/tamyla/clodo-framework/issues/new?template=feature-request.md)
+- **❓ Need specific example?** [Request documentation](https://github.com/tamyla/clodo-framework/issues/new?template=example-request.md)
+- **💬 Want to discuss?** [Start a discussion](https://github.com/tamyla/clodo-framework/discussions)
 
 > **🎯 Pro Tip**: Bookmark the [API Reference](./docs/api-reference.md) and [Code Examples Gallery](./docs/examples-gallery.md) - they're designed as quick-reference resources you'll return to frequently during development.
 

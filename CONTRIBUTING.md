@@ -27,8 +27,8 @@ Thank you for your interest in contributing to the Lego Framework! This document
 ### Local Development
 ```bash
 # Clone the repository
-git clone https://github.com/tamyla/lego-framework.git
-cd lego-framework
+git clone https://github.com/tamyla/clodo-framework.git
+cd clodo-framework
 
 # Install dependencies
 npm install
