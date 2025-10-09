@@ -1,5 +1,5 @@
 /**
- * Version Detection System for LEGO Framework
+ * Version Detection System for CLODO Framework
  * Automatically detects framework versions and chooses appropriate implementations
  */
 

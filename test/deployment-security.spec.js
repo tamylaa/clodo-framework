@@ -1,5 +1,5 @@
 /**
- * Unit Tests for LEGO Framework Deployment and Security Features v3.0.3
+ * Unit Tests for CLODO Framework Deployment and Security Features v3.0.3
  *
  * Tests the enhanced deployment configuration, security validation,
  * and error handling functionality that was previously demonstrated in examples.
@@ -8,7 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 
-describe('LEGO Framework Deployment & Security Features v3.0.3', () => {
+describe('CLODO Framework Deployment & Security Features v3.0.3', () => {
 
   test('should validate framework version and enhancements', () => {
     // Test that the framework version includes the v3.0.3 enhancements

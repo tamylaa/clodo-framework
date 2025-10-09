@@ -1,6 +1,6 @@
-# Lego Framework Documentation
+# Clodo Framework Documentation
 
-> A comprehensive framework for building Lego-style microservices on Cloudflare Workers + D1
+> A comprehensive framework for building Clodo-style microservices on Cloudflare Workers + D1
 
 ## 📚 Documentation Structure
 

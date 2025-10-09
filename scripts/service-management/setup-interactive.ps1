@@ -19,7 +19,7 @@ param(
     [string]$OutputPath = "."
 )
 
-# Import Lego Framework utilities
+# Import Clodo Framework utilities
 . "$PSScriptRoot\..\utilities\deployment-helpers.ps1"
 . "$PSScriptRoot\..\utilities\setup-helpers.ps1"
 
@@ -68,8 +68,8 @@ function Exit-WithError {
 
 # Main setup function
 function Invoke-InteractiveSetup {
-    Write-Step "Lego Framework - Interactive Service Setup"
-    Write-Host "Welcome to the Lego Framework service setup wizard!" -ForegroundColor $Cyan
+    Write-Step "Clodo Framework - Interactive Service Setup"
+    Write-Host "Welcome to the Clodo Framework service setup wizard!" -ForegroundColor $Cyan
     Write-Host "This wizard will help you create a new service with proper configuration.`n" -ForegroundColor $White
 
     # Gather service information
@@ -123,7 +123,7 @@ function Invoke-InteractiveSetup {
     Show-NextSteps -ServiceInfo $serviceInfo -ServicePath $servicePath
 
     Write-Step "Service setup completed successfully!"
-    Write-Host "`n[SUCCESS] Your new Lego service is ready to go!" -ForegroundColor $Green
+    Write-Host "`n[SUCCESS] Your new Clodo service is ready to go!" -ForegroundColor $Green
 }
 
 # Gather service information
@@ -146,7 +146,7 @@ function Get-ServiceInformation {
     }
 
     $displayName = Get-UserInput "Display name" "$($name -replace '-', ' ' | ForEach-Object { (Get-Culture).TextInfo.ToTitleCase($_) })"
-    $description = Get-UserInput "Description" "A Lego Framework service"
+    $description = Get-UserInput "Description" "A Clodo Framework service"
     $version = Get-UserInput "Initial version" "1.0.0"
     $author = Get-UserInput "Author" $env:USERNAME
 
@@ -440,7 +440,7 @@ import { domains } from './config/domains.js';
 export default {
   async fetch(request, env, ctx) {
     try {
-      // Initialize service with Lego Framework
+      // Initialize service with Clodo Framework
       const service = initializeService(env, domains);
 
       // Route handling based on service type: $($ServiceInfo.Type)
@@ -464,7 +464,7 @@ export default {
       //   return handleApiRequest(request, env, ctx);
       // }
 
-      return new Response('Lego Service: $($ServiceInfo.DisplayName)', {
+      return new Response('Clodo Service: $($ServiceInfo.DisplayName)', {
         headers: { 'Content-Type': 'text/plain' }
       });
 
@@ -521,9 +521,9 @@ $featureList
 - Deploy to staging: `npm run deploy -- --Environment staging`
 - Deploy to production: `npm run deploy -- --Environment production`
 
-## Lego Framework
+## Clodo Framework
 
-This service is built using the Lego Framework, which provides:
+This service is built using the Clodo Framework, which provides:
 - Domain configuration management
 - Feature flag system
 - Deployment automation
@@ -564,7 +564,7 @@ coverage/
 
         # Create initial .env.example
         $envExample = @"
-# Lego Framework Environment Variables
+# Clodo Framework Environment Variables
 DOMAIN_NAME=$($ServiceInfo.Name)
 ENVIRONMENT=development
 

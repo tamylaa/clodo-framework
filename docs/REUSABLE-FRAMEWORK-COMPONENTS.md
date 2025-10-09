@@ -1,4 +1,4 @@
-# Reusable Lego Framework Package
+# Reusable Clodo Framework Package
 
 ## Overview
 A framework package that enables any service to implement the same domain configuration, feature flags, and deployment automation pattern we've built for the data service.
@@ -134,13 +134,13 @@ clodo-framework/
 
 ### 1. Install Framework
 ```bash
-npm install @yourcompany/lego-framework
+npm install @yourcompany/clodo-framework
 ```
 
 ### 2. Extend Configuration
 ```javascript
 // In new service: src/config/domains.js
-import { DOMAIN_CONFIGS, getDomainConfig } from '@yourcompany/lego-framework';
+import { DOMAIN_CONFIGS, getDomainConfig } from '@yourcompany/clodo-framework';
 
 export const MY_SERVICE_CONFIGS = {
   ...DOMAIN_CONFIGS,
@@ -151,7 +151,7 @@ export const MY_SERVICE_CONFIGS = {
 ### 3. Define Features
 ```javascript
 // In new service: src/config/features.js
-import { isFeatureEnabled } from '@yourcompany/lego-framework';
+import { isFeatureEnabled } from '@yourcompany/clodo-framework';
 
 export const MY_FEATURES = {
   FEATURE_ONE: 'featureOne',
@@ -162,7 +162,7 @@ export const MY_FEATURES = {
 ### 4. Use in Worker
 ```javascript
 // In new service: src/worker/index.js
-import { initializeFeatureFlags, isFeatureEnabled } from '@yourcompany/lego-framework';
+import { initializeFeatureFlags, isFeatureEnabled } from '@yourcompany/clodo-framework';
 import { MY_FEATURES } from '../config/features.js';
 
 export default {

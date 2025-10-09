@@ -1,8 +1,8 @@
-# LEGO Framework Service Manifest
+# Clodo Framework Service Manifest
 
 ## 📋 **Overview**
 
-Every service created with the LEGO Framework includes a comprehensive `service-manifest.json` file that captures the complete history and configuration of that service. This manifest serves as the single source of truth for:
+Every service created with the CLODO Framework includes a comprehensive `service-manifest.json` file that captures the complete history and configuration of that service. This manifest serves as the single source of truth for:
 
 - **Service History**: Complete audit trail of what went into creating the service
 - **Service Consumption**: All information needed for other tools/services to interact with it
@@ -26,7 +26,7 @@ Example: `./services/user-service/service-manifest.json`
   "metadata": {
     "serviceId": "unique-uuid",
     "createdAt": "2025-10-08T10:30:00Z",
-    "createdBy": "LEGO Framework v2.0.0",
+    "createdBy": "CLODO Framework v2.0.0",
     "creationMethod": "three-phase-collection",
     "frameworkVersion": "2.0.0"
   }
@@ -151,7 +151,7 @@ const logs = manifest.rectification.troubleshooting.logs;
 ### **Recreating a Service**
 ```bash
 # Use the manifest to recreate the service
-lego recreate user-service --from-manifest ./service-manifest.json
+clodo recreate user-service --from-manifest ./service-manifest.json
 ```
 
 ### **Fixing Configuration Issues**
@@ -189,7 +189,7 @@ The manifest maintains a complete history:
       {
         "timestamp": "2025-10-08T10:28:00Z",
         "action": "service-generated",
-        "actor": "LEGO Framework",
+        "actor": "CLODO Framework",
         "details": "Successfully generated service with 67 auto-generated configurations"
       }
     ]
@@ -306,4 +306,4 @@ generateApiDocs(service, api);
 
 ---
 
-The service manifest transforms each LEGO Framework service into a **self-documenting, self-healing, and self-integrating** component that can be easily consumed, monitored, and maintained throughout its lifecycle.
+The service manifest transforms each CLODO Framework service into a **self-documenting, self-healing, and self-integrating** component that can be easily consumed, monitored, and maintained throughout its lifecycle.

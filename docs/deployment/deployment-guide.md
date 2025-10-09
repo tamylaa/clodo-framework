@@ -2,7 +2,7 @@
 
 ## 🚀 Production Deployment Strategy
 
-This guide covers comprehensive deployment strategies for Lego Framework services, from development to production environments.
+This guide covers comprehensive deployment strategies for Clodo Framework services, from development to production environments.
 
 ## 📋 Prerequisites
 

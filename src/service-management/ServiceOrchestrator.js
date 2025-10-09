@@ -46,7 +46,7 @@ export class ServiceOrchestrator {
    * Run the complete three-tier service creation process interactively
    */
   async runInteractive() {
-    console.log(chalk.cyan('🚀 Lego Framework - Interactive Service Creator'));
+    console.log(chalk.cyan('🚀 Clodo Framework - Interactive Service Creator'));
     console.log(chalk.white('Welcome to the unified service creation wizard!\n'));
 
     try {
@@ -79,7 +79,7 @@ export class ServiceOrchestrator {
    * Run service creation in non-interactive mode with provided inputs
    */
   async runNonInteractive(coreInputs) {
-    console.log(chalk.cyan('🚀 Lego Framework - Non-Interactive Service Creator'));
+    console.log(chalk.cyan('🚀 Clodo Framework - Non-Interactive Service Creator'));
 
     try {
       // Validate inputs
@@ -152,7 +152,7 @@ export class ServiceOrchestrator {
       try {
         const domainConfig = await fs.readFile(path.join(servicePath, 'src/config/domains.js'), 'utf8');
         if (!domainConfig.includes('createDomainConfigSchema')) {
-          issues.push('Domain configuration missing Lego Framework integration');
+          issues.push('Domain configuration missing Clodo Framework integration');
         }
       } catch {
         issues.push('Cannot read domain configuration');
@@ -186,7 +186,7 @@ export class ServiceOrchestrator {
       });
 
       console.log(chalk.cyan('\n📋 Service Manifest:'));
-      console.log(chalk.white(`  Location: lego-service-manifest.json`));
+      console.log(chalk.white(`  Location: clodo-service-manifest.json`));
     } else {
       // Legacy format (for backward compatibility)
       console.log(chalk.white(`Service: ${generationResult.serviceName}`));
@@ -238,7 +238,7 @@ export class ServiceOrchestrator {
   }
 
   /**
-   * Check if a directory is a Lego service
+   * Check if a directory is a Clodo service
    */
   async isServiceDirectory(dirPath) {
     try {
@@ -509,7 +509,7 @@ export class ServiceOrchestrator {
           diagnosis.errors.push({
             message: `Missing required file: ${file}`,
             location: servicePath,
-            suggestion: `Run 'lego-service update --regenerate-configs' to recreate missing files`
+            suggestion: `Run 'clodo-service update --regenerate-configs' to recreate missing files`
           });
         }
       }
@@ -537,7 +537,7 @@ export class ServiceOrchestrator {
         const domainConfig = await fs.readFile(path.join(servicePath, 'src/config/domains.js'), 'utf8');
         if (!domainConfig.includes('createDomainConfigSchema')) {
           diagnosis.warnings.push({
-            message: 'Domain configuration may not be using Lego Framework schema',
+            message: 'Domain configuration may not be using Clodo Framework schema',
             location: 'src/config/domains.js',
             suggestion: 'Ensure domain config uses createDomainConfigSchema from @tamyla/clodo-framework'
           });

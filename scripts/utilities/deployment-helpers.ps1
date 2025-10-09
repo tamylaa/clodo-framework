@@ -1,5 +1,5 @@
 # PowerShell Deployment Helper Functions
-# Common utilities for Lego Framework deployment scripts
+# Common utilities for Clodo Framework deployment scripts
 
 function Write-DeploymentLog {
     param(

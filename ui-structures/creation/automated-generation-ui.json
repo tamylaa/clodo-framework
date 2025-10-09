@@ -59,7 +59,7 @@
         {
           "name": "eslint.config.js location",
           "logic": "Find ESLint configuration",
-          "fallback": "Apply standard LEGO rules",
+          "fallback": "Apply standard CLODO rules",
           "impact": "Code quality and linting"
         }
       ]

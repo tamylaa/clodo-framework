@@ -1,10 +1,10 @@
 # {{SERVICE_DISPLAY_NAME}}
 
-A Lego Framework {{SERVICE_TYPE}} service generated on {{CURRENT_DATE}}.
+A Clodo Framework {{SERVICE_TYPE}} service generated on {{CURRENT_DATE}}.
 
 ## Overview
 
-This service was created using the Lego Framework template generator. It includes:
+This service was created using the Clodo Framework template generator. It includes:
 
 - Domain configuration management
 - Feature flag system
@@ -151,7 +151,7 @@ npm run deploy -- --DryRun
 
 ## Features
 
-This service includes these Lego Framework features:
+This service includes these Clodo Framework features:
 
 - **Domain Configuration**: Centralized configuration management
 - **Feature Flags**: Runtime feature toggling
@@ -182,9 +182,9 @@ Returns service health status and configuration information.
 }
 ```
 
-## Lego Framework
+## Clodo Framework
 
-This service is built on the Lego Framework v{{FRAMEWORK_VERSION}}. The framework provides:
+This service is built on the Clodo Framework v{{FRAMEWORK_VERSION}}. The framework provides:
 
 - **Reusable Components**: Pre-built utilities and patterns
 - **Consistent Architecture**: Standardized service structure
@@ -199,7 +199,7 @@ Learn more: [Clodo Framework Documentation](../../packages/clodo-framework/READM
 1. Follow the established code patterns
 2. Add tests for new features
 3. Update documentation as needed
-4. Use the Lego Framework utilities
+4. Use the Clodo Framework utilities
 
 ## License
 

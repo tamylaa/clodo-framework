@@ -1,5 +1,5 @@
 /**
- * Lego Framework - Customer Configuration CLI
+ * Clodo Framework - Customer Configuration CLI
  * Programmatic API for customer configuration management
  */
 
@@ -207,7 +207,7 @@ Examples:
   list
 
 Integration:
-  This tool integrates with Lego Framework domain and feature flag systems.
+  This tool integrates with Clodo Framework domain and feature flag systems.
   Customer configurations are automatically registered as domains.`;
   }
 }

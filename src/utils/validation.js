@@ -1,5 +1,5 @@
 /**
- * Validation utilities for Lego Framework service creation
+ * Validation utilities for Clodo Framework service creation
  */
 
 /**

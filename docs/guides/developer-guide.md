@@ -1,10 +1,10 @@
-# Lego Framework - Comprehensive Developer Guide
+# Clodo Framework - Comprehensive Developer Guide
 
 ## Overview
 
-The Lego Framework is a comprehensive toolkit for building enterprise-grade software architecture on Cloudflare Workers + D1. It enables rapid development of autonomous, domain-specific services while maintaining consistency and reusability across your ecosystem.
+The Clodo Framework is a comprehensive toolkit for building enterprise-grade software architecture on Cloudflare Workers + D1. It enables rapid development of autonomous, domain-specific services while maintaining consistency and reusability across your ecosystem.
 
-This guide is designed for external developers who want to leverage the full potential of the Lego Framework in their applications. It focuses on public APIs and best practices, while avoiding internal implementation details that could cause confusion.
+This guide is designed for external developers who want to leverage the full potential of the Clodo Framework in their applications. It focuses on public APIs and best practices, while avoiding internal implementation details that could cause confusion.
 
 ## Table of Contents
 
@@ -38,7 +38,7 @@ wrangler login
 npm install -g typescript
 ```
 
-### Install Lego Framework
+### Install Clodo Framework
 
 ```bash
 # Install as a dependency in your project
@@ -50,7 +50,7 @@ npm install -g @tamyla/clodo-framework
 
 ## Architecture Overview
 
-The Lego Framework operates in two distinct runtime environments:
+The Clodo Framework operates in two distinct runtime environments:
 
 ### 🚀 Deployment Time (Your Development Machine)
 - **Environment**: Node.js with full filesystem and network access
@@ -68,7 +68,7 @@ The Lego Framework operates in two distinct runtime environments:
 
 ## TypeScript Support
 
-The Lego Framework provides comprehensive TypeScript support with 500+ lines of type definitions for complete type safety and enhanced developer experience.
+The Clodo Framework provides comprehensive TypeScript support with 500+ lines of type definitions for complete type safety and enhanced developer experience.
 
 ### **TypeScript Benefits**
 - **Complete Type Coverage**: All APIs are fully typed with comprehensive interfaces
@@ -116,7 +116,7 @@ const router = new EnhancedRouter(d1Client);
 
 ```bash
 # Create a new service
-lego-create-service my-awesome-service --type data-service
+clodo-create-service my-awesome-service --type data-service
 
 # Navigate to the service
 cd my-awesome-service
@@ -134,7 +134,7 @@ If you prefer manual setup:
 mkdir my-awesome-service
 cd my-awesome-service
 npm init -y
-npm install @tamyla/lego-framework
+npm install @tamyla/clodo-framework
 ```
 
 Create the basic structure:
@@ -161,7 +161,7 @@ Domain configuration defines your service's identity, environment, and capabilit
 
 ```javascript
 // src/config/domains.js
-import { createDomainConfigSchema } from '@tamyla/lego-framework/config';
+import { createDomainConfigSchema } from '@tamyla/clodo-framework/config';
 
 export const domains = {
   'my-awesome-service.com': {
@@ -219,7 +219,7 @@ Define your data models using the Schema Manager:
 
 ```javascript
 // src/config/schema.js
-import { schemaManager } from '@tamyla/lego-framework/schema';
+import { schemaManager } from '@tamyla/clodo-framework/schema';
 
 // User model
 schemaManager.registerModel('users', {
@@ -263,10 +263,10 @@ Your Cloudflare Worker handles all runtime logic:
 
 ```javascript
 // src/worker/index.js
-import { initializeService, COMMON_FEATURES } from '@tamyla/lego-framework';
-import { GenericDataService } from '@tamyla/lego-framework/services';
-import { EnhancedRouter } from '@tamyla/lego-framework/routing';
-import { GenericRouteHandler } from '@tamyla/lego-framework/handlers';
+import { initializeService, COMMON_FEATURES } from '@tamyla/clodo-framework';
+import { GenericDataService } from '@tamyla/clodo-framework/services';
+import { EnhancedRouter } from '@tamyla/clodo-framework/routing';
+import { GenericRouteHandler } from '@tamyla/clodo-framework/handlers';
 import { domains } from '../config/domains.js';
 import '../config/schema.js'; // Register schemas
 
@@ -455,14 +455,14 @@ Create `scripts/deploy.js`:
 
 ```javascript
 // scripts/deploy.js
-import { MultiDomainOrchestrator, DeploymentValidator, WranglerDeployer } from '@tamyla/lego-framework/orchestration';
-import { DomainDiscovery } from '@tamyla/lego-framework/config/discovery';
-import { askChoice, askUser } from '@tamyla/lego-framework/utils/interactive';
+import { MultiDomainOrchestrator, DeploymentValidator, WranglerDeployer } from '@tamyla/clodo-framework/orchestration';
+import { DomainDiscovery } from '@tamyla/clodo-framework/config/discovery';
+import { askChoice, askUser } from '@tamyla/clodo-framework/utils/interactive';
 import { domains } from '../src/config/domains.js';
 
 async function deploy() {
   try {
-    console.log('🚀 Lego Framework Deployment');
+    console.log('🚀 Clodo Framework Deployment');
     console.log('==========================');
 
     // Interactive environment selection
@@ -566,7 +566,7 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-console.log('🚀 Starting Lego Framework Development Server');
+console.log('🚀 Starting Clodo Framework Development Server');
 console.log('===========================================');
 
 // Start Wrangler development server
@@ -627,7 +627,7 @@ vars.ENVIRONMENT = "development"
     "test": "echo 'Add your tests here'"
   },
   "dependencies": {
-    "@tamyla/lego-framework": "^1.3.3"
+    "@tamyla/clodo-framework": "^1.3.3"
   }
 }
 ```
@@ -673,10 +673,10 @@ vars.ENVIRONMENT = "development"
 ### ❌ Don't Call Internal Bin Scripts Directly
 ```bash
 # WRONG - Don't do this
-npm install @tamyla/lego-framework
+npm install @tamyla/clodo-framework
 # Then in package.json:
 "scripts": {
-  "deploy": "node node_modules/@tamyla/lego-framework/bin/deployment/enterprise-deploy.js deploy --interactive"
+  "deploy": "node node_modules/@tamyla/clodo-framework/bin/deployment/enterprise-deploy.js deploy --interactive"
 }
 ```
 
@@ -684,14 +684,14 @@ npm install @tamyla/lego-framework
 ```bash
 # WRONG - Don't do this
 "scripts": {
-  "deploy": "lego-deploy my-service"
+  "deploy": "clodo-deploy my-service"
 }
 ```
 
 ### ✅ Do Embed Deployment Logic
 ```javascript
 // scripts/deploy.js
-import { MultiDomainOrchestrator } from '@tamyla/lego-framework/orchestration';
+import { MultiDomainOrchestrator } from '@tamyla/clodo-framework/orchestration';
 // ... embed the logic
 ```
 
@@ -755,13 +755,13 @@ import { MultiDomainOrchestrator } from '@tamyla/lego-framework/orchestration';
 ### Exported Paths
 
 ```javascript
-import { GenericDataService } from '@tamyla/lego-framework/services';
-import { EnhancedRouter } from '@tamyla/lego-framework/routing';
-import { schemaManager } from '@tamyla/lego-framework/schema';
-import { initializeService } from '@tamyla/lego-framework';
-import { MultiDomainOrchestrator } from '@tamyla/lego-framework/orchestration';
-import { DomainDiscovery } from '@tamyla/lego-framework/config/discovery';
+import { GenericDataService } from '@tamyla/clodo-framework/services';
+import { EnhancedRouter } from '@tamyla/clodo-framework/routing';
+import { schemaManager } from '@tamyla/clodo-framework/schema';
+import { initializeService } from '@tamyla/clodo-framework';
+import { MultiDomainOrchestrator } from '@tamyla/clodo-framework/orchestration';
+import { DomainDiscovery } from '@tamyla/clodo-framework/config/discovery';
 ```
 
-This guide covers the essential aspects of using the Lego Framework effectively. Remember to always embed deployment logic in your services and leverage the framework's public APIs for maximum benefit and maintainability.</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\guides\developer-guide.md
+This guide covers the essential aspects of using the Clodo Framework effectively. Remember to always embed deployment logic in your services and leverage the framework's public APIs for maximum benefit and maintainability.</content>
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\guides\developer-guide.md

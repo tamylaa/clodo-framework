@@ -1,8 +1,8 @@
-# LEGO Framework Architecture Overview
+# CLODO Framework Architecture Overview
 
 ## Framework Philosophy
 
-The LEGO Framework implements a sophisticated **component-based architecture** where reusable "Lego bricks" can be snapped together to build complex enterprise applications. Each component handles one concern perfectly, enabling rapid development of autonomous, domain-specific services.
+The CLODO Framework implements a sophisticated **component-based architecture** where reusable "Clodo bricks" can be snapped together to build complex enterprise applications. Each component handles one concern perfectly, enabling rapid development of autonomous, domain-specific services.
 
 ## Core Architecture
 
@@ -123,7 +123,7 @@ Most teams use both: CLI tools for development/administration, library component
 
 ## Design Principles
 
-### 🎪 **Lego Architecture**
+### 🎪 **Clodo Architecture**
 - **Single Responsibility**: Each component has one clear purpose
 - **Composability**: Components combine in any configuration
 - **Reusability**: Components work across different contexts
@@ -200,7 +200,7 @@ await coordinator.deployAll();
 
 ## Conclusion
 
-The LEGO Framework provides a sophisticated yet approachable way to build enterprise-grade applications. By combining reusable components with intelligent orchestration, it enables both rapid development and enterprise reliability. The dual interface (library + CLI) serves different user needs while maintaining architectural integrity.
+The CLODO Framework provides a sophisticated yet approachable way to build enterprise-grade applications. By combining reusable components with intelligent orchestration, it enables both rapid development and enterprise reliability. The dual interface (library + CLI) serves different user needs while maintaining architectural integrity.
 
 Whether you're building a simple CRUD service or a complex multi-domain enterprise application, the framework provides the components and intelligence to get you there efficiently and reliably.</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\FRAMEWORK-ARCHITECTURE-OVERVIEW.md
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\FRAMEWORK-ARCHITECTURE-OVERVIEW.md

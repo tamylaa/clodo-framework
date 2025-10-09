@@ -53,7 +53,7 @@ import { MultiDomainOrchestrator } from '../../../src/orchestration/multi-domain
 All critical bin/ scripts now successfully load:
 - ✅ `bin/deployment/master-deploy.js --help` - Working
 - ✅ `bin/deployment/enterprise-deploy.js --help` - Working  
-- ✅ `bin/lego-service.js --help` - Working (unchanged)
+- ✅ `bin/clodo-service.js --help` - Working (unchanged)
 
 ### 🎯 **APPROVED IMPORT PATTERNS**
 
@@ -92,7 +92,7 @@ import { MultiDomainOrchestrator } from '../orchestration/multi-domain-orchestra
 
 With standardized imports, we can now safely:
 1. Create bridge pattern interface without import conflicts
-2. Add optional integration features to lego-service CLI  
+2. Add optional integration features to clodo-service CLI  
 3. Ensure all integration components use canonical src/ imports
 4. Prevent accidental use of duplicate bin/shared/ modules
 

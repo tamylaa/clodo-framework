@@ -1,6 +1,6 @@
-# Contributing to Lego Framework
+# Contributing to Clodo Framework
 
-Thank you for your interest in contributing to the Lego Framework! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to the Clodo Framework! This document provides guidelines and information for contributors.
 
 ## 🤝 How to Contribute
 
@@ -228,4 +228,4 @@ Contributors will be recognized in:
 - Project README
 - Special thanks for significant contributions
 
-Thank you for helping make the Lego Framework better! 🚀
+Thank you for helping make the Clodo Framework better! 🚀

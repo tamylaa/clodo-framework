@@ -25,7 +25,7 @@ Orchestration Layer
 Define standard service manifest format for bridge communication:
 
 ```javascript
-// Service Manifest Schema (lego-service-manifest.json)
+// Service Manifest Schema (clodo-service-manifest.json)
 {
   "serviceName": "my-api-service",
   "serviceType": "data-service", 
@@ -45,7 +45,7 @@ Define standard service manifest format for bridge communication:
   "features": ["auth", "database", "caching"],
   "metadata": {
     "created": "2025-10-09T19:30:00Z",
-    "framework": "@tamyla/lego-framework@3.0.5"
+    "framework": "@tamyla/clodo-framework@3.0.5"
   }
 }
 ```
@@ -189,7 +189,7 @@ export class ServiceDeploymentBridge {
    * Read service manifest safely
    */
   async readServiceManifest(servicePath) {
-    const manifestPath = join(servicePath, 'lego-service-manifest.json');
+    const manifestPath = join(servicePath, 'clodo-service-manifest.json');
     
     try {
       await access(manifestPath);
@@ -229,10 +229,10 @@ export class ServiceDeploymentBridge {
 }
 ```
 
-#### **2. Enhanced lego-service CLI Integration**
+#### **2. Enhanced clodo-service CLI Integration**
 
 ```javascript
-// Enhanced bin/lego-service.js with optional integration
+// Enhanced bin/clodo-service.js with optional integration
 import { ServiceDeploymentBridge } from '../src/integration/ServiceDeploymentBridge.js';
 
 program
@@ -314,8 +314,8 @@ program
 ### 📊 **Integration Benefits**
 
 #### **Customer Experience**
-- Optional unified workflow: `lego-service create --validate-deployment`
-- Optional deployment command: `lego-service deploy`  
+- Optional unified workflow: `clodo-service create --validate-deployment`
+- Optional deployment command: `clodo-service deploy`  
 - Service-aware deployment validation
 - Consistent configuration between creation and deployment
 
@@ -335,7 +335,7 @@ program
 
 #### **Phase 2: CLI Integration (Week 2)**  
 - Add optional `--validate-deployment` flag to `create`
-- Add new `lego-service deploy` command
+- Add new `clodo-service deploy` command
 - Test backwards compatibility
 - Add integration documentation
 

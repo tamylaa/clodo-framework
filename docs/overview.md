@@ -1,8 +1,8 @@
-# Lego Framework Overview
+# Clodo Framework Overview
 
-## 🧱 What is the Lego Framework?
+## 🧱 What is the Clodo Framework?
 
-The **Lego Framework** is a comprehensive development framework for building microservices on Cloudflare's edge computing platform. Just like Lego bricks snap together to create complex structures, this framework provides standardized, reusable components that developers can combine to rapidly build and deploy domain-specific services.
+The **Clodo Framework** is a comprehensive development framework for building microservices on Cloudflare's edge computing platform. Just like Clodo bricks snap together to create complex structures, this framework provides standardized, reusable components that developers can combine to rapidly build and deploy domain-specific services.
 
 ## 🎯 Core Philosophy
 
@@ -32,7 +32,7 @@ The **Lego Framework** is a comprehensive development framework for building mic
 // Different auth patterns, logging, error handling...
 
 // With Framework: Consistent patterns
-import { initializeService } from '@tamyla/lego-framework';
+import { initializeService } from '@tamyla/clodo-framework';
 export default { async fetch(request, env, ctx) { /* standardized */ } };
 ```
 
@@ -61,7 +61,7 @@ npm init
 # Hours or days of setup
 
 # With Framework: Instant service generation
-npx create-lego-service new-service --type data-service
+npx create-clodo-service new-service --type data-service
 # Complete service ready in seconds
 ```
 
@@ -128,7 +128,7 @@ export default {
 ### **1. Service Creation**
 ```bash
 # Generate a new service from template
-npx create-lego-service my-api --type data-service
+npx create-clodo-service my-api --type data-service
 
 # Service structure created:
 my-api/
@@ -251,7 +251,7 @@ export default {
 };
 
 // Migrated to Framework
-import { initializeService } from '@tamyla/lego-framework';
+import { initializeService } from '@tamyla/clodo-framework';
 export default {
   async fetch(request, env, ctx) {
     const service = initializeService(env, domains);

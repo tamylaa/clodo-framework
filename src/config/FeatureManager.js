@@ -1,5 +1,5 @@
 /**
- * Feature Flag System for LEGO Framework
+ * Feature Flag System for CLODO Framework
  * Enables gradual migration and progressive enhancement
  */
 
@@ -298,7 +298,7 @@ export class FeatureManager {
    */
   _getEnvironmentOverride(featureName) {
     if (typeof process !== 'undefined' && process.env) {
-      const envVar = `LEGO_${featureName}`;
+      const envVar = `CLODO_${featureName}`;
       if (process.env[envVar] !== undefined) {
         return process.env[envVar] === 'true';
       }
@@ -314,7 +314,7 @@ export class FeatureManager {
     // Check for URL parameters in browser environment
     if (typeof URLSearchParams !== 'undefined' && typeof globalThis !== 'undefined' && globalThis.location) {
       const params = new URLSearchParams(globalThis.location.search);
-      const override = params.get(`lego_${featureName.toLowerCase()}`);
+      const override = params.get(`clodo_${featureName.toLowerCase()}`);
       if (override !== null) {
         return override === 'true';
       }
@@ -328,7 +328,7 @@ export class FeatureManager {
    */
   _logFeatureState() {
     if (this.isEnabled('ENABLE_DEBUG_LOGGING')) {
-      console.log('LEGO Framework Feature Flags:', {
+      console.log('CLODO Framework Feature Flags:', {
         context: this.context,
         features: this.getAllFeatures()
       });

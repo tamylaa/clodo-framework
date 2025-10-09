@@ -1,5 +1,5 @@
 /**
- * Migration Adapters for LEGO Framework
+ * Migration Adapters for CLODO Framework
  * Maintains backwards compatibility while enabling enhanced features
  */
 

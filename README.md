@@ -6,7 +6,7 @@ A comprehensive framework for building enterprise-grade software architecture on
 
 ## Philosophy
 
-Just like Lego bricks snap together to build anything you can imagine, this framework provides the base components that your services snap into. Focus on your business logic while the framework handles the infrastructure, configuration, and deployment patterns.
+Just like Clodo bricks snap together to build anything you can imagine, this framework provides the base components that your services snap into. Focus on your business logic while the framework handles the infrastructure, configuration, and deployment patterns.
 
 ## � Incremental Adoption
 
@@ -107,7 +107,7 @@ npx @tamyla/clodo-framework security deploy customer production
 
 ## 🧪 Downstream Service Testing & Validation
 
-The LEGO Framework provides comprehensive capabilities for testing, validating, and deploying Cloudflare Workers in downstream environments - perfect for ensuring services work correctly in third-party accounts and production environments.
+The CLODO Framework provides comprehensive capabilities for testing, validating, and deploying Cloudflare Workers in downstream environments - perfect for ensuring services work correctly in third-party accounts and production environments.
 
 ### **Production Testing Suite** 🧪
 Test deployed services across any Cloudflare account:
@@ -271,7 +271,7 @@ const results = await Promise.allSettled(
 
 ## � For Developers
 
-If you're building services with the Lego Framework, see our comprehensive [Developer Guide](./docs/guides/developer-guide.md) for:
+If you're building services with the Clodo Framework, see our comprehensive [Developer Guide](./docs/guides/developer-guide.md) for:
 
 - Installation and setup instructions
 - Service creation and configuration
@@ -291,7 +291,7 @@ For an overview of the framework's architecture and design philosophy, see our [
 
 ## 📘 TypeScript Support
 
-The Lego Framework provides comprehensive TypeScript support with 500+ lines of type definitions for complete type safety and enhanced developer experience.
+The Clodo Framework provides comprehensive TypeScript support with 500+ lines of type definitions for complete type safety and enhanced developer experience.
 
 ### **TypeScript Setup**
 ```typescript
@@ -341,17 +341,17 @@ node bin/deployment/enterprise-deploy.js deploy --interactive --no-tests
 ### **🔒 Security Validation (Critical)**
 ```bash
 # Validate configuration security before deployment
-npx lego-security validate customer production
+npx clodo-security validate customer production
 
 # Generate cryptographically secure keys
-npx lego-security generate-key jwt 64
-npx lego-security generate-key api content-skimmer
+npx clodo-security generate-key jwt 64
+npx clodo-security generate-key api content-skimmer
 
 # Deploy with automatic security validation
-npx lego-security deploy customer production --dry-run
+npx clodo-security deploy customer production --dry-run
 
 # Check deployment readiness
-npx lego-security check-readiness customer production
+npx clodo-security check-readiness customer production
 ```
 
 ### **👥 Customer Configuration Management**
@@ -515,7 +515,7 @@ clodo-framework/
 
 ## Enterprise Deployment & Orchestration
 
-The Lego Framework now includes comprehensive enterprise-grade deployment and orchestration capabilities, extracted from production systems and made reusable across all services.
+The Clodo Framework now includes comprehensive enterprise-grade deployment and orchestration capabilities, extracted from production systems and made reusable across all services.
 
 ### Orchestration Modules
 
@@ -634,7 +634,7 @@ const confirmed = await askYesNo('Deploy to production?');
 
 ## Enterprise CLI Tools
 
-The Lego Framework now includes powerful command-line tools for enterprise deployment and portfolio management.
+The Clodo Framework now includes powerful command-line tools for enterprise deployment and portfolio management.
 
 ### Installation
 
@@ -646,83 +646,83 @@ npx @tamyla/clodo-framework --help
 
 ### Available CLI Tools
 
-#### `lego-deploy` - Enterprise Deployment CLI
+#### `clodo-deploy` - Enterprise Deployment CLI
 Advanced deployment system with multi-domain orchestration, validation, and rollback capabilities.
 
 ```bash
 # Deploy a single domain
-npx lego-deploy deploy my-domain --environment production
+npx clodo-deploy deploy my-domain --environment production
 
 # Deploy multiple domains with coordination
-npx lego-deploy deploy-multi api auth data --parallel
+npx clodo-deploy deploy-multi api auth data --parallel
 
 # Validate deployment readiness
-npx lego-deploy validate my-domain
+npx clodo-deploy validate my-domain
 
 # Run production tests
-npx lego-deploy test my-domain
+npx clodo-deploy test my-domain
 
 # Rollback deployment
-npx lego-deploy rollback my-domain
+npx clodo-deploy rollback my-domain
 ```
 
-#### `lego-master-deploy` - Master Deployment Orchestrator
+#### `clodo-master-deploy` - Master Deployment Orchestrator
 Comprehensive deployment orchestrator with enterprise features and portfolio management.
 
 ```bash
 # Deploy with full orchestration
-npx lego-master-deploy orchestrate --domains api,auth,data
+npx clodo-master-deploy orchestrate --domains api,auth,data
 
 # Run pre-deployment validation
-npx lego-master-deploy validate --portfolio
+npx clodo-master-deploy validate --portfolio
 
 # Monitor deployment progress
-npx lego-master-deploy monitor
+npx clodo-master-deploy monitor
 ```
 
-#### `lego-portfolio` - Portfolio Management CLI
+#### `clodo-portfolio` - Portfolio Management CLI
 Multi-domain portfolio operations with bulk management and analytics.
 
 ```bash
 # Initialize portfolio
-npx lego-portfolio init --portfolio-name my-enterprise
+npx clodo-portfolio init --portfolio-name my-enterprise
 
 # Discover all domains
-npx lego-portfolio discover
+npx clodo-portfolio discover
 
 # Deploy entire portfolio
-npx lego-portfolio deploy
+npx clodo-portfolio deploy
 
 # Get portfolio health status
-npx lego-portfolio health
+npx clodo-portfolio health
 
 # Generate portfolio analytics
-npx lego-portfolio analytics
+npx clodo-portfolio analytics
 ```
 
-#### `lego-db` - Database Management CLI
+#### `clodo-db` - Database Management CLI
 Enterprise database operations across multiple environments.
 
 ```bash
 # Run migrations for domain
-npx lego-db migrate my-domain --environment production
+npx clodo-db migrate my-domain --environment production
 
 # Synchronize schemas across portfolio
-npx lego-db sync --portfolio
+npx clodo-db sync --portfolio
 
 # Create backups
-npx lego-db backup my-domain
+npx clodo-db backup my-domain
 ```
 
-#### `lego-secrets` - Secret Generation Utility
+#### `clodo-secrets` - Secret Generation Utility
 Cryptographically secure secret generation for production deployments.
 
 ```bash
 # Generate secrets for domain
-npx lego-secrets --domain my-domain --environment production
+npx clodo-secrets --domain my-domain --environment production
 
 # Generate specific secret types
-npx lego-secrets --types database,api-keys,jwt --persist
+npx clodo-secrets --types database,api-keys,jwt --persist
 ```
 
 ## Quick Start
@@ -736,7 +736,7 @@ npm install @tamyla/clodo-framework
 ### Create a New Service
 
 ```bash
-npx create-lego-service my-new-service --type data-service
+npx create-clodo-service my-new-service --type data-service
 ```
 
 ### Basic Usage
@@ -763,7 +763,7 @@ export default {
 
 ## Deployment Workflow
 
-The Lego Framework provides a clear **setup-first, deploy-second** workflow to avoid configuration dependency issues.
+The Clodo Framework provides a clear **setup-first, deploy-second** workflow to avoid configuration dependency issues.
 
 ### Phase 1: Service Initialization (Setup)
 
@@ -771,7 +771,7 @@ Before deployment, initialize your service to generate required configuration fi
 
 ```bash
 # Initialize a new service with configuration generation
-npx lego-init my-service --type api-gateway --env development
+npx clodo-init my-service --type api-gateway --env development
 
 # This creates:
 # - wrangler.toml (Cloudflare Workers config)
@@ -786,13 +786,13 @@ Once initialized, deploy using the enterprise deployment system:
 
 ```bash
 # Deploy to production
-npx lego-deploy my-service --env production
+npx clodo-deploy my-service --env production
 
 # Multi-domain deployment
-npx lego-deploy-multi api auth data --env staging
+npx clodo-deploy-multi api auth data --env staging
 
 # Portfolio deployment (all domains)
-npx lego-deploy-portfolio --env production
+npx clodo-deploy-portfolio --env production
 ```
 
 ### Environment Variables Required
@@ -1033,7 +1033,7 @@ service-repo/
 │   ├── config.js          # Service deployment config
 │   └── validators.js      # Service validation logic
 ├── src/config/domains.js  # Multi-domain configuration
-└── package.json           # Includes lego-framework as dependency
+└── package.json           # Includes clodo-framework as dependency
 ```
 
 #### **Reusable Component Library**
@@ -1075,7 +1075,7 @@ This framework currently serves as:
 
 ## 🎉 **Recent Major Enhancement: Customer Configuration Management**
 
-The Lego Framework has successfully incorporated **enterprise-grade customer configuration management** capabilities, transforming it from a single-service framework into a **multi-customer, multi-environment enterprise platform**.
+The Clodo Framework has successfully incorporated **enterprise-grade customer configuration management** capabilities, transforming it from a single-service framework into a **multi-customer, multi-environment enterprise platform**.
 
 ### ✅ **Successfully Incorporated Features**
 
@@ -1161,7 +1161,7 @@ await customerManager.createCustomer('acmecorp', 'acmecorp.com', {
 
 ### 🎯 **Mission Accomplished**
 
-The Lego Framework has successfully evolved from a **single-service deployment framework** into a **comprehensive enterprise platform** that supports:
+The Clodo Framework has successfully evolved from a **single-service deployment framework** into a **comprehensive enterprise platform** that supports:
 
 - ✅ **Multi-service orchestration** (existing)
 - ✅ **Multi-environment deployment** (existing)  
@@ -1171,11 +1171,11 @@ The Lego Framework has successfully evolved from a **single-service deployment f
 
 This enhancement maintains backward compatibility while significantly expanding the framework's capabilities for enterprise scenarios. The customer configuration management system is now a core, production-ready feature that enables the framework to support complex, multi-customer enterprise deployments.
 
-**The Lego Framework is now ready to "snap together" not just services, but entire customer ecosystems! 🧱➡️🏢**
+**The Clodo Framework is now ready to "snap together" not just services, but entire customer ecosystems! 🧱➡️🏢**
 
 ## Scripts and Tools
 
-The Lego Framework includes a comprehensive set of scripts and command-line tools, organized by functionality.
+The Clodo Framework includes a comprehensive set of scripts and command-line tools, organized by functionality.
 
 ### Directory Structure
 
@@ -1250,7 +1250,7 @@ node bin/portfolio/portfolio-manager.js deploy --portfolio my-portfolio --enviro
 
 ## 📚 Documentation & Learning Resources
 
-The LEGO Framework provides comprehensive documentation designed for different learning styles and experience levels. Whether you prefer hands-on tutorials, detailed reference materials, or quick-start templates, we've got you covered.
+The CLODO Framework provides comprehensive documentation designed for different learning styles and experience levels. Whether you prefer hands-on tutorials, detailed reference materials, or quick-start templates, we've got you covered.
 
 ### 🚀 **Quick Start Resources**
 
@@ -1301,7 +1301,7 @@ The LEGO Framework provides comprehensive documentation designed for different l
 </tr>
 <tr>
 <td><strong><a href="./docs/INTEGRATION_GUIDE.md">🔗 Integration Guide</a></strong></td>
-<td>Adding LEGO Framework to existing projects incrementally</td>
+<td>Adding CLODO Framework to existing projects incrementally</td>
 <td>Teams with existing codebases</td>
 </tr>
 <tr>
@@ -1313,7 +1313,7 @@ The LEGO Framework provides comprehensive documentation designed for different l
 
 ### 🎯 **Choose Your Learning Path**
 
-**👨‍💻 I'm new to LEGO Framework**
+**👨‍💻 I'm new to CLODO Framework**
 1. Start with [Getting Started Guide](./docs/getting-started.md) (10 min interactive tutorial)
 2. Try a [Quick Start Template](./docs/quickstart-templates/) for your use case
 3. Explore the [Code Examples Gallery](./docs/examples-gallery.md) for patterns

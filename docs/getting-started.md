@@ -1,6 +1,6 @@
-# 🚀 Getting Started with LEGO Framework
+# 🚀 Getting Started with CLODO Framework
 
-Welcome to LEGO Framework! This interactive guide will get you from zero to deploying your first service in under 10 minutes.
+Welcome to CLODO Framework! This interactive guide will get you from zero to deploying your first service in under 10 minutes.
 
 ## 📋 Prerequisites
 
@@ -23,8 +23,8 @@ By the end of this tutorial, you'll have:
 ### Install the Framework
 ```bash
 # Clone or install the framework
-git clone https://github.com/tamylaa/lego-framework.git
-cd lego-framework
+git clone https://github.com/tamylaa/clodo-framework.git
+cd clodo-framework
 npm install
 
 # Verify installation
@@ -88,7 +88,7 @@ src/
 Edit `src/schema/models.js`:
 
 ```javascript
-import { schemaManager } from '@tamyla/lego-framework';
+import { schemaManager } from '@tamyla/clodo-framework';
 
 // Define your blog models
 schemaManager.registerModel('posts', {
@@ -119,7 +119,7 @@ schemaManager.registerModel('authors', {
 Edit `src/config/domains.js`:
 
 ```javascript
-import { createDomainConfigSchema } from '@tamyla/lego-framework';
+import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 export const domains = createDomainConfigSchema({
   'my-blog-api': {
@@ -146,7 +146,7 @@ export const domains = createDomainConfigSchema({
 Edit `src/handlers/blog-handlers.js`:
 
 ```javascript
-import { GenericDataService } from '@tamyla/lego-framework';
+import { GenericDataService } from '@tamyla/clodo-framework';
 
 export function createBlogHandlers(config, env) {
   const postsService = new GenericDataService(env.DB, 'posts');
@@ -189,7 +189,7 @@ export function createBlogHandlers(config, env) {
 Edit `src/worker/index.js`:
 
 ```javascript
-import { initializeService } from '@tamyla/lego-framework';
+import { initializeService } from '@tamyla/clodo-framework';
 import { domains } from '../config/domains.js';
 import { createBlogHandlers } from '../handlers/blog-handlers.js';
 
@@ -304,8 +304,8 @@ node ../../bin/security/security-cli.js generate-key jwt
 
 ### **Join the Community**:
 - 📖 [Full Documentation](../README.md)
-- 🐛 [Report Issues](https://github.com/tamylaa/lego-framework/issues)
-- 💬 [Discussions](https://github.com/tamylaa/lego-framework/discussions)
+- 🐛 [Report Issues](https://github.com/tamylaa/clodo-framework/issues)
+- 💬 [Discussions](https://github.com/tamylaa/clodo-framework/discussions)
 
 ---
 

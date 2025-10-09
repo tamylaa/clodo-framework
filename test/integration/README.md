@@ -1,6 +1,6 @@
 # Integration Tests
 
-This directory contains integration test scripts that validate the Lego Framework's functionality across multiple components.
+This directory contains integration test scripts that validate the Clodo Framework's functionality across multiple components.
 
 ## Files
 

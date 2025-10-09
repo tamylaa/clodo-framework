@@ -2,7 +2,7 @@
 
 ## Current Architecture Overview
 
-The Lego Framework currently has a **dual-tool CLI architecture** with separate tools for service creation and initialization, plus comprehensive PowerShell automation scripts.
+The Clodo Framework currently has a **dual-tool CLI architecture** with separate tools for service creation and initialization, plus comprehensive PowerShell automation scripts.
 
 ### CLI Tools (bin/service-management/)
 
@@ -123,4 +123,4 @@ The Lego Framework currently has a **dual-tool CLI architecture** with separate 
 6. **Add comprehensive validation** and error recovery
 
 This analysis provides the foundation for building the unified three-tier input collection system while preserving all existing functionality and patterns.</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\architecture\PHASE1_ANALYSIS.md
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\architecture\PHASE1_ANALYSIS.md

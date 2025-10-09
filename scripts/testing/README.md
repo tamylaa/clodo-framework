@@ -1,6 +1,6 @@
 # Testing Scripts
 
-Scripts for testing Lego Framework services and functionality.
+Scripts for testing Clodo Framework services and functionality.
 
 ## Scripts
 

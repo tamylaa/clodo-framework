@@ -2,7 +2,7 @@
  * ErrorTracker - Comprehensive Error Handling and Recovery System
  *
  * Captures failures, tracks input states, and provides recovery mechanisms
- * for the Lego Framework service lifecycle management.
+ * for the Clodo Framework service lifecycle management.
  */
 
 import fs from 'fs/promises';
@@ -12,7 +12,7 @@ import chalk from 'chalk';
 export class ErrorTracker {
   constructor() {
     this.errors = [];
-    this.errorLogPath = './lego-service-errors.log';
+    this.errorLogPath = './clodo-service-errors.log';
     this.maxErrors = 100; // Keep last 100 errors
   }
 
@@ -84,13 +84,13 @@ export class ErrorTracker {
     // Validation errors
     if (error.message.includes('validation') || error.message.includes('invalid')) {
       suggestions.push('Review input values for correctness');
-      suggestions.push('Use lego-service validate <path> to check service configuration');
-      suggestions.push('Run lego-service diagnose <path> for detailed issue analysis');
+      suggestions.push('Use clodo-service validate <path> to check service configuration');
+      suggestions.push('Run clodo-service diagnose <path> for detailed issue analysis');
     }
 
     // Configuration errors
     if (error.message.includes('config') || error.message.includes('configuration')) {
-      suggestions.push('Run lego-service update --fix-errors to attempt automatic fixes');
+      suggestions.push('Run clodo-service update --fix-errors to attempt automatic fixes');
       suggestions.push('Check domain configuration in src/config/domains.js');
       suggestions.push('Verify package.json has all required fields');
     }
@@ -99,13 +99,13 @@ export class ErrorTracker {
     if (error.message.includes('template') || error.message.includes('variable')) {
       suggestions.push('Check that all required template variables are provided');
       suggestions.push('Verify template files exist and are readable');
-      suggestions.push('Regenerate service with lego-service update --regenerate-configs');
+      suggestions.push('Regenerate service with clodo-service update --regenerate-configs');
     }
 
     // Service creation/update specific
     if (context.action === 'create' || context.action === 'update') {
       suggestions.push('Try running the command again with --non-interactive flag');
-      suggestions.push('Use lego-service diagnose to identify specific issues');
+      suggestions.push('Use clodo-service diagnose to identify specific issues');
       suggestions.push('Check that service name follows naming conventions (lowercase, hyphens only)');
     }
 
@@ -119,7 +119,7 @@ export class ErrorTracker {
     // Add generic suggestions if none specific found
     if (suggestions.length === 0) {
       suggestions.push('Check the error message for specific details');
-      suggestions.push('Review the Lego Framework documentation');
+      suggestions.push('Review the Clodo Framework documentation');
       suggestions.push('Try the operation again after reviewing inputs');
       suggestions.push('Contact support if the issue persists');
     }
@@ -300,7 +300,7 @@ export class ErrorTracker {
 
       if (errorEntry.context.action === 'validate' || errorEntry.context.action === 'create') {
         // Try to validate/fix configuration
-        recoveries.push('Consider running lego-service update --fix-errors');
+        recoveries.push('Consider running clodo-service update --fix-errors');
       }
 
     } catch (recoveryError) {

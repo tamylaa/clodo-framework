@@ -1,18 +1,18 @@
-# Lego Framework - Integration Guide for Service Developers
+# Clodo Framework - Integration Guide for Service Developers
 
 ## Overview
 
-The Lego Framework enables **service autonomy** - each service can discover, validate, and deploy itself independently to Cloudflare Workers + D1. This guide explains how to properly integrate the framework into your services.
+The Clodo Framework enables **service autonomy** - each service can discover, validate, and deploy itself independently to Cloudflare Workers + D1. This guide explains how to properly integrate the framework into your services.
 
 ### 🎉 Recent Enhancements: Customer Configuration Management
 
-The Lego Framework has successfully incorporated **enterprise-grade customer configuration management** capabilities:
+The Clodo Framework has successfully incorporated **enterprise-grade customer configuration management** capabilities:
 
 - **✅ Multi-Customer Support**: Isolated configuration management for multiple customers
 - **✅ Template-Based Onboarding**: Automated customer setup from reusable templates
 - **✅ Multi-Environment Configs**: Separate configurations for dev/staging/production
 - **✅ Framework Integration**: Seamless integration with existing domain and feature flag systems
-- **✅ CLI Tools**: Command-line interface for customer management (`lego-customer-config`)
+- **✅ CLI Tools**: Command-line interface for customer management (`clodo-customer-config`)
 - **✅ Service Autonomy**: Customer configs can be embedded in individual service repositories
 - **✅ TypeScript Support**: Comprehensive type definitions with 500+ lines of TypeScript interfaces
 
@@ -20,7 +20,7 @@ The Lego Framework has successfully incorporated **enterprise-grade customer con
 
 ### 🚀 Recent Enhancements: Deployment & Security Validation
 
-The Lego Framework has been enhanced with **enterprise-grade deployment validation and security features**:
+The Clodo Framework has been enhanced with **enterprise-grade deployment validation and security features**:
 
 - **✅ Real HTTP Health Checks**: Native Node.js HTTP/HTTPS modules replace shell commands for cross-platform reliability
 - **✅ Interactive Deployment Configuration**: User input-driven setup for deployment workflows with validation
@@ -36,7 +36,7 @@ The Lego Framework has been enhanced with **enterprise-grade deployment validati
 
 **Integration Example**:
 ```javascript
-import { deployWithSecurity, InteractiveDeploymentConfigurator } from '@tamyla/lego-framework/security';
+import { deployWithSecurity, InteractiveDeploymentConfigurator } from '@tamyla/clodo-framework/security';
 
 // Interactive configuration setup
 const config = await InteractiveDeploymentConfigurator.runConfigurationWizard();
@@ -77,10 +77,10 @@ Your service should **embed deployment capabilities**, not call external CLI too
 ### ❌ WRONG: Calling Bin Scripts Externally
 ```bash
 # DON'T DO THIS - Bin scripts have import issues when called from node_modules
-npm install @tamyla/lego-framework
+npm install @tamyla/clodo-framework
 # Then in package.json:
 "scripts": {
-  "deploy": "node node_modules/@tamyla/lego-framework/bin/enterprise-deploy.js deploy --interactive"
+  "deploy": "node node_modules/@tamyla/clodo-framework/bin/enterprise-deploy.js deploy --interactive"
 }
 ```
 
@@ -92,7 +92,7 @@ npm install @tamyla/lego-framework
 {
   "name": "my-data-service",
   "dependencies": {
-    "@tamyla/lego-framework": "^1.3.2"
+    "@tamyla/clodo-framework": "^1.3.2"
   },
   "scripts": {
     "deploy": "node scripts/deploy.js",
@@ -142,7 +142,7 @@ export const domains = {
 **4. Schema Definition:**
 ```javascript
 // src/config/schema.js
-import { schemaManager } from '@tamyla/lego-framework/schema';
+import { schemaManager } from '@tamyla/clodo-framework/schema';
 
 schemaManager.registerModel('users', {
   columns: {
@@ -167,11 +167,11 @@ schemaManager.registerModel('posts', {
 
 **5. Customer Configuration Management (Optional):**
 
-For services that need multi-customer support, you can integrate the Lego Framework's customer configuration system:
+For services that need multi-customer support, you can integrate the Clodo Framework's customer configuration system:
 
 ```javascript
 // src/config/customers.js (Optional - for multi-customer services)
-import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+import { CustomerConfigurationManager } from '@tamyla/clodo-framework/config';
 
 // Initialize customer manager for service environment
 const customerManager = new CustomerConfigurationManager();
@@ -195,9 +195,9 @@ const jwtSecret = customerConfig.variables.customer.JWT_SECRET;
 **6. Cloudflare Worker (Runtime):**
 ```javascript
 // src/worker/index.js
-import { initializeService, COMMON_FEATURES } from '@tamyla/lego-framework';
-import { GenericDataService } from '@tamyla/lego-framework/services';
-import { EnhancedRouter } from '@tamyla/lego-framework/routing';
+import { initializeService, COMMON_FEATURES } from '@tamyla/clodo-framework';
+import { GenericDataService } from '@tamyla/clodo-framework/services';
+import { EnhancedRouter } from '@tamyla/clodo-framework/routing';
 import { domains } from '../config/domains.js';
 import '../config/schema.js'; // Register schemas
 
@@ -283,14 +283,14 @@ export default {
 **6. Deployment Script (Build Time):**
 ```javascript
 // scripts/deploy.js
-import { MultiDomainOrchestrator, DeploymentValidator, WranglerDeployer } from '@tamyla/lego-framework/orchestration';
-import { DomainDiscovery } from '@tamyla/lego-framework/config/discovery';
-import { askChoice, askUser } from '@tamyla/lego-framework/utils/interactive';
+import { MultiDomainOrchestrator, DeploymentValidator, WranglerDeployer } from '@tamyla/clodo-framework/orchestration';
+import { DomainDiscovery } from '@tamyla/clodo-framework/config/discovery';
+import { askChoice, askUser } from '@tamyla/clodo-framework/utils/interactive';
 import { domains } from '../src/config/domains.js';
 
 async function deploy() {
   try {
-    console.log('🚀 Lego Framework Deployment');
+    console.log('🚀 Clodo Framework Deployment');
     console.log('==========================');
 
     // Select environment
@@ -379,7 +379,7 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-console.log('🚀 Starting Lego Framework Development Server');
+console.log('🚀 Starting Clodo Framework Development Server');
 console.log('===========================================');
 
 // Start Wrangler dev server
@@ -455,7 +455,7 @@ ENVIRONMENT=staging npm run deploy
 ```bash
 # Validate configuration
 node -e "
-import { DeploymentValidator } from '@tamyla/lego-framework/orchestration';
+import { DeploymentValidator } from '@tamyla/clodo-framework/orchestration';
 const validator = new DeploymentValidator();
 validator.validateDeploymentReadiness('my-service.com').then(console.log);
 "
@@ -467,14 +467,14 @@ For services that support multiple customers, integrate customer-specific config
 
 ```bash
 # During development, use framework tools to generate customer configs
-npx lego-customer-config create-customer mycompany mycompany.com
+npx clodo-customer-config create-customer mycompany mycompany.com
 
 # Copy generated configs to your service
 cp config/customers/mycompany/* src/config/customers/mycompany/
 
 # In production, load customer-specific configuration
 node -e "
-import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+import { CustomerConfigurationManager } from '@tamyla/clodo-framework/config';
 const manager = new CustomerConfigurationManager();
 await manager.loadExistingCustomers();
 const config = manager.showConfig(process.env.CUSTOMER_NAME, process.env.NODE_ENV);
@@ -484,13 +484,13 @@ console.log('Customer config loaded:', config.customer);
 
 ## 🔧 Modular CLI Capabilities
 
-The LEGO Framework provides **modular CLI capabilities** that can be imported and used programmatically in your services, enabling seamless integration of CLI functionality into your deployment and management workflows.
+The CLODO Framework provides **modular CLI capabilities** that can be imported and used programmatically in your services, enabling seamless integration of CLI functionality into your deployment and management workflows.
 
 ### Service Management Modules
 
 **Programmatic Service Creation:**
 ```javascript
-import { ServiceCreator } from '@tamyla/lego-framework/service-management';
+import { ServiceCreator } from '@tamyla/clodo-framework/service-management';
 
 const creator = new ServiceCreator();
 
@@ -505,7 +505,7 @@ await creator.createService({
 
 **Programmatic Service Initialization:**
 ```javascript
-import { ServiceInitializer } from '@tamyla/lego-framework/service-management';
+import { ServiceInitializer } from '@tamyla/clodo-framework/service-management';
 
 const initializer = new ServiceInitializer();
 
@@ -524,7 +524,7 @@ await initializer.initializeService({
 
 **Programmatic Security Operations:**
 ```javascript
-import { SecurityCLI } from '@tamyla/lego-framework/security';
+import { SecurityCLI } from '@tamyla/clodo-framework/security';
 
 const security = new SecurityCLI();
 
@@ -550,7 +550,7 @@ await security.deployWithValidation({
 
 **Programmatic Customer Management:**
 ```javascript
-import { CustomerConfigCLI } from '@tamyla/lego-framework/config';
+import { CustomerConfigCLI } from '@tamyla/clodo-framework/config';
 
 const customerConfig = new CustomerConfigCLI();
 
@@ -576,9 +576,9 @@ await customerConfig.updateCustomer('newcustomer', {
 **Combine modular CLI capabilities in your deployment pipeline:**
 ```javascript
 // scripts/deploy-and-configure.js
-import { ServiceCreator, ServiceInitializer } from '@tamyla/lego-framework/service-management';
-import { SecurityCLI } from '@tamyla/lego-framework/security';
-import { CustomerConfigCLI } from '@tamyla/lego-framework/config';
+import { ServiceCreator, ServiceInitializer } from '@tamyla/clodo-framework/service-management';
+import { SecurityCLI } from '@tamyla/clodo-framework/security';
+import { CustomerConfigCLI } from '@tamyla/clodo-framework/config';
 
 async function deployAndConfigure() {
   const creator = new ServiceCreator();
@@ -639,7 +639,7 @@ deployAndConfigure();
 ```javascript
 // ❌ WRONG
 "scripts": {
-  "deploy": "node node_modules/@tamyla/lego-framework/bin/enterprise-deploy.js deploy --interactive"
+  "deploy": "node node_modules/@tamyla/clodo-framework/bin/enterprise-deploy.js deploy --interactive"
 }
 
 // ✅ CORRECT
@@ -651,7 +651,7 @@ deployAndConfigure();
 ### 2. Don't Use Deployment Components in Workers
 ```javascript
 // ❌ WRONG - Won't work in Cloudflare Workers
-import { MultiDomainOrchestrator } from '@tamyla/lego-framework/orchestration';
+import { MultiDomainOrchestrator } from '@tamyla/clodo-framework/orchestration';
 
 export default {
   fetch(request, env) {
@@ -660,7 +660,7 @@ export default {
 }
 
 // ✅ CORRECT - Use only runtime components
-import { GenericDataService } from '@tamyla/lego-framework/services';
+import { GenericDataService } from '@tamyla/clodo-framework/services';
 ```
 
 ### 3. Always Handle Async Operations
@@ -762,7 +762,7 @@ const validation = await deployer.validateWranglerSetup('production');
 ## Intelligent Deployment Example
 
 ```javascript
-import { WranglerDeployer } from '@tamyla/lego-framework/deployment';
+import { WranglerDeployer } from '@tamyla/clodo-framework/deployment';
 
 async function deploy() {
   // Create deployer - automatically detects environment and service info
@@ -837,7 +837,7 @@ The `ProductionTester` provides comprehensive post-deployment validation to ensu
 ### **Core Testing Capabilities**
 
 ```javascript
-import { ProductionTester } from '@tamyla/lego-framework/deployment';
+import { ProductionTester } from '@tamyla/clodo-framework/deployment';
 
 const tester = new ProductionTester({
   verbose: true,
@@ -1022,7 +1022,7 @@ For more granular control, you can import and use individual testing modules ins
 
 ### **API Testing Only**
 ```javascript
-import { ApiTester } from '@tamyla/lego-framework/deployment/testers';
+import { ApiTester } from '@tamyla/clodo-framework/deployment/testers';
 
 const apiTester = new ApiTester({
   timeout: 5000,
@@ -1035,7 +1035,7 @@ const results = await apiTester.runApiTests('production');
 
 ### **Authentication Testing Only**
 ```javascript
-import { AuthTester } from '@tamyla/lego-framework/deployment/testers';
+import { AuthTester } from '@tamyla/clodo-framework/deployment/testers';
 
 const authTester = new AuthTester({
   timeout: 10000
@@ -1049,7 +1049,7 @@ const results = await authTester.runAuthTests('https://api.company.com', {
 
 ### **Database Testing Only**
 ```javascript
-import { DatabaseTester } from '@tamyla/lego-framework/deployment/testers';
+import { DatabaseTester } from '@tamyla/clodo-framework/deployment/testers';
 
 const dbTester = new DatabaseTester({
   timeout: 30000
@@ -1061,7 +1061,7 @@ const results = await dbTester.runDatabaseTests('production');
 
 ### **Performance Testing Only**
 ```javascript
-import { PerformanceTester } from '@tamyla/lego-framework/deployment/testers';
+import { PerformanceTester } from '@tamyla/clodo-framework/deployment/testers';
 
 const perfTester = new PerformanceTester({
   responseTimeThreshold: 500,
@@ -1074,7 +1074,7 @@ const results = await perfTester.runPerformanceTests('https://api.company.com');
 
 ### **Load Testing Only**
 ```javascript
-import { LoadTester } from '@tamyla/lego-framework/deployment/testers';
+import { LoadTester } from '@tamyla/clodo-framework/deployment/testers';
 
 const loadTester = new LoadTester({
   maxConcurrentUsers: 100,
@@ -1088,7 +1088,7 @@ const results = await loadTester.runLoadTests('https://api.company.com');
 
 ### **Custom Testing Combinations**
 ```javascript
-import { ApiTester, AuthTester, DatabaseTester } from '@tamyla/lego-framework/deployment/testers';
+import { ApiTester, AuthTester, DatabaseTester } from '@tamyla/clodo-framework/deployment/testers';
 
 // Run only the tests you need
 const apiResults = await new ApiTester().runApiTests('production');
@@ -1114,7 +1114,7 @@ The `DeploymentValidator` provides enterprise-grade pre-deployment validation to
 ### **Comprehensive Validation Pipeline**
 
 ```javascript
-import { DeploymentValidator } from '@tamyla/lego-framework/deployment';
+import { DeploymentValidator } from '@tamyla/clodo-framework/deployment';
 
 const validator = new DeploymentValidator({
   validationLevel: 'comprehensive',
@@ -1361,7 +1361,7 @@ The `CloudflareDomainManager` enables seamless operation across multiple Cloudfl
 ### **Multi-Account Operations**
 
 ```javascript
-import { CloudflareDomainManager } from '@tamyla/lego-framework/deployment';
+import { CloudflareDomainManager } from '@tamyla/clodo-framework/deployment';
 
 const manager = new CloudflareDomainManager({
   apiToken: process.env.CLOUDFLARE_API_TOKEN,
@@ -1576,7 +1576,7 @@ if (envPermissions.production) {
 
 #### **Multi-Domain Coordination**
 ```javascript
-import { MultiDomainOrchestrator } from '@tamyla/lego-framework/deployment';
+import { MultiDomainOrchestrator } from '@tamyla/clodo-framework/deployment';
 
 const orchestrator = new MultiDomainOrchestrator({
   maxConcurrentDeployments: 3,
@@ -1642,13 +1642,13 @@ await auditor.logAccountOperation({
 });
 ```
 
-## 🏗️ Adopting LEGO Framework in Existing Projects
+## 🏗️ Adopting CLODO Framework in Existing Projects
 
-Most developers have existing codebases and want to **gradually integrate** the LEGO Framework rather than starting from scratch. This section covers **incremental adoption strategies** for brownfield projects.
+Most developers have existing codebases and want to **gradually integrate** the CLODO Framework rather than starting from scratch. This section covers **incremental adoption strategies** for brownfield projects.
 
 ### 🎯 Understanding Incremental Adoption
 
-The LEGO Framework is designed for **modular adoption** - you can start with individual components and progressively adopt more features:
+The CLODO Framework is designed for **modular adoption** - you can start with individual components and progressively adopt more features:
 
 ```mermaid
 graph LR
@@ -1668,8 +1668,8 @@ graph LR
 import express from 'express';
 const app = express();
 
-// Add LEGO error handling (no breaking changes)
-import { ErrorHandler } from '@tamyla/lego-framework';
+// Add CLODO error handling (no breaking changes)
+import { ErrorHandler } from '@tamyla/clodo-framework';
 
 app.use((err, req, res, next) => {
   ErrorHandler.handleDeploymentError(err, {
@@ -1688,7 +1688,7 @@ app.use((err, req, res, next) => {
 
 ### 🔧 Phase 2: Data Service Integration
 
-**Wrap existing database operations with LEGO components:**
+**Wrap existing database operations with CLODO components:**
 
 ```javascript
 // Before: Direct database calls
@@ -1698,8 +1698,8 @@ class MyDataService {
   }
 }
 
-// After: LEGO-wrapped with validation
-import { GenericDataService, SchemaManager } from '@tamyla/lego-framework';
+// After: CLODO-wrapped with validation
+import { GenericDataService, SchemaManager } from '@tamyla/clodo-framework';
 
 class EnhancedDataService extends GenericDataService {
   constructor(existingDb) {
@@ -1708,7 +1708,7 @@ class EnhancedDataService extends GenericDataService {
   }
 
   async getUsers(query = {}) {
-    // LEGO validation + your existing logic
+    // CLODO validation + your existing logic
     const validatedQuery = this.validateQuery(query);
     return this.existing.query('SELECT * FROM users WHERE ?', validatedQuery);
   }
@@ -1717,7 +1717,7 @@ class EnhancedDataService extends GenericDataService {
 
 ### ⚙️ Phase 3: Configuration Management
 
-**Replace hardcoded configurations with LEGO's system:**
+**Replace hardcoded configurations with CLODO's system:**
 
 ```javascript
 // Before: Hardcoded configuration
@@ -1727,8 +1727,8 @@ const config = {
   databaseUrl: process.env.DATABASE_URL
 };
 
-// After: LEGO domain configuration
-import { createDomainConfigSchema } from '@tamyla/lego-framework';
+// After: CLODO domain configuration
+import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 export const domains = {
   'my-existing-api': {
@@ -1749,11 +1749,11 @@ export const domains = {
 
 ### 🚀 Phase 4: Deployment Integration
 
-**Add LEGO deployment capabilities to your existing CI/CD:**
+**Add CLODO deployment capabilities to your existing CI/CD:**
 
 ```javascript
 // scripts/deploy.js
-import { deployWithSecurity } from '@tamyla/lego-framework/security';
+import { deployWithSecurity } from '@tamyla/clodo-framework/security';
 import { domains } from '../src/config/domains.js';
 
 async function deploy() {
@@ -1772,7 +1772,7 @@ deploy().catch(console.error);
 
 ### 🎨 Customizing Generated Services
 
-Services created with `lego-create-service` are **starting templates**, not final products. Here's how to customize them:
+Services created with `clodo-create-service` are **starting templates**, not final products. Here's how to customize them:
 
 #### **1. Replace Generic Logic with Your Business Logic**
 
@@ -1781,12 +1781,12 @@ Services created with `lego-create-service` are **starting templates**, not fina
 export default {
   async fetch(request, env) {
     // Generic placeholder code - replace with your logic
-    return new Response('Hello from LEGO service');
+    return new Response('Hello from CLODO service');
   }
 };
 
 // Customized: Your actual service logic
-import { GenericDataService } from '@tamyla/lego-framework';
+import { GenericDataService } from '@tamyla/clodo-framework';
 
 export default {
   async fetch(request, env) {
@@ -1835,7 +1835,7 @@ export const domains = {
 {
   "name": "my-custom-service",
   "dependencies": {
-    "@tamyla/lego-framework": "^3.0.5",
+    "@tamyla/clodo-framework": "^3.0.5",
     "stripe": "^12.0.0",           // Your payment processing
     "jsonwebtoken": "^9.0.0",      // Your auth library
     "redis": "^4.6.0"              // Your caching layer
@@ -1856,23 +1856,23 @@ class MyLegacyService {
   }
 }
 
-// Add LEGO capabilities via composition
-import { GenericDataService } from '@tamyla/lego-framework';
+// Add CLODO capabilities via composition
+import { GenericDataService } from '@tamyla/clodo-framework';
 
-class LegoEnhancedService {
+class ClodoEnhancedService {
   constructor(legacyService) {
     this.legacy = legacyService;
     this.dataService = new GenericDataService();
   }
 
   async processData(data) {
-    // LEGO validation
+    // CLODO validation
     const validated = this.dataService.validateData(data);
 
     // Your existing logic
     const result = await this.legacy.processData(validated);
 
-    // LEGO error handling
+    // CLODO error handling
     return this.dataService.handleResponse(result);
   }
 }
@@ -1882,14 +1882,14 @@ class LegoEnhancedService {
 
 ```javascript
 // Phase 1: Add logging
-import { ErrorHandler } from '@tamyla/lego-framework';
+import { ErrorHandler } from '@tamyla/clodo-framework';
 app.use((err, req, res, next) => {
   ErrorHandler.handleDeploymentError(err, { phase: 'api' });
   // existing error handling
 });
 
 // Phase 2: Add validation
-import { SchemaManager } from '@tamyla/lego-framework';
+import { SchemaManager } from '@tamyla/clodo-framework';
 const schema = new SchemaManager();
 app.post('/users', (req, res) => {
   const validated = schema.validate('users', req.body);
@@ -1897,17 +1897,17 @@ app.post('/users', (req, res) => {
 });
 
 // Phase 3: Full migration
-// Replace entire routes with LEGO components
+// Replace entire routes with CLODO components
 ```
 
 #### **Pattern 3: Feature Flags for Gradual Rollout**
 
 ```javascript
-import { isFeatureEnabled } from '@tamyla/lego-framework';
+import { isFeatureEnabled } from '@tamyla/clodo-framework';
 
 app.get('/api/users', async (req, res) => {
-  if (isFeatureEnabled('lego-data-service')) {
-    // Use LEGO data service
+  if (isFeatureEnabled('clodo-data-service')) {
+    // Use CLODO data service
     const dataService = new GenericDataService();
     const users = await dataService.find('users');
     res.json(users);
@@ -1921,13 +1921,13 @@ app.get('/api/users', async (req, res) => {
 
 ### 🧪 Testing Integration
 
-**Add tests that validate LEGO integration:**
+**Add tests that validate CLODO integration:**
 
 ```javascript
 // test/integration.test.js
-import { GenericDataService, ErrorHandler } from '@tamyla/lego-framework';
+import { GenericDataService, ErrorHandler } from '@tamyla/clodo-framework';
 
-describe('LEGO Framework Integration', () => {
+describe('CLODO Framework Integration', () => {
   test('should enhance existing data operations', async () => {
     const service = new GenericDataService({ d1Database: mockDb });
 
@@ -1935,10 +1935,10 @@ describe('LEGO Framework Integration', () => {
     const result = await service.find('users', { active: true });
 
     expect(result).toBeDefined();
-    // LEGO adds validation, error handling, etc.
+    // CLODO adds validation, error handling, etc.
   });
 
-  test('should handle errors with LEGO reporting', () => {
+  test('should handle errors with CLODO reporting', () => {
     const error = new Error('Database connection failed');
 
     expect(() => {
@@ -1958,7 +1958,7 @@ describe('LEGO Framework Integration', () => {
 // Old: Direct database calls
 const users = await db.query('SELECT * FROM users');
 
-// New: LEGO-wrapped with validation
+// New: CLODO-wrapped with validation
 const dataService = new GenericDataService({ d1Database: db });
 const users = await dataService.find('users');
 ```
@@ -1987,7 +1987,7 @@ try {
   console.error(error);
 }
 
-// New: LEGO error reporting
+// New: CLODO error reporting
 try {
   await operation();
 } catch (error) {
@@ -2001,16 +2001,16 @@ try {
 
 ### 📋 Migration Checklist
 
-- [ ] **Phase 1**: Add LEGO as dependency, import core utilities
+- [ ] **Phase 1**: Add CLODO as dependency, import core utilities
 - [ ] **Phase 1**: Integrate error handling and logging
 - [ ] **Phase 2**: Wrap data operations with GenericDataService
 - [ ] **Phase 2**: Add schema validation for data models
 - [ ] **Phase 3**: Replace hardcoded configs with domain configuration
 - [ ] **Phase 3**: Add feature flags for conditional logic
 - [ ] **Phase 4**: Integrate deployment and security validation
-- [ ] **Phase 4**: Update CI/CD to use LEGO deployment scripts
-- [ ] **Testing**: Add integration tests for LEGO components
-- [ ] **Documentation**: Update API docs to reflect LEGO integration
+- [ ] **Phase 4**: Update CI/CD to use CLODO deployment scripts
+- [ ] **Testing**: Add integration tests for CLODO components
+- [ ] **Documentation**: Update API docs to reflect CLODO integration
 
 ### 🎯 Success Metrics
 
@@ -2041,5 +2041,5 @@ If you're currently calling bin scripts externally:
 5. **Update import statements** to use framework modules
 6. **Test deployment** from your service directory
 
-This approach gives you full control over deployment logic while maintaining the benefits of the Lego Framework's enterprise features.</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\INTEGRATION_GUIDE.md
+This approach gives you full control over deployment logic while maintaining the benefits of the Clodo Framework's enterprise features.</content>
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\INTEGRATION_GUIDE.md

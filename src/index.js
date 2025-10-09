@@ -1,5 +1,5 @@
-// Lego Framework - Main Entry Point
-// Reusable components for Lego-style software architecture
+// Clodo Framework - Main Entry Point
+// Reusable components for Clodo-style software architecture
 
 export * from './config/index.js';
 export * from './worker/index.js';
@@ -26,7 +26,7 @@ export * from './security/index.js';
 
 // Framework version info
 export const FRAMEWORK_VERSION = '1.0.0';
-export const FRAMEWORK_NAME = 'Lego Framework';
+export const FRAMEWORK_NAME = 'Clodo Framework';
 
 // Helper for framework initialization
 export const initializeFramework = (options = {}) => {

@@ -1,6 +1,6 @@
 # Service Management Scripts
 
-Scripts for creating, initializing, and setting up Lego Framework services.
+Scripts for creating, initializing, and setting up Clodo Framework services.
 
 ## Scripts
 

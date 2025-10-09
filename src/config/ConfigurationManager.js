@@ -157,7 +157,7 @@ export class InteractiveDeploymentConfigurator {
    * @returns {Promise<Object>} Complete configuration object
    */
   static async runConfigurationWizard(defaults = {}) {
-    console.log('\n🚀 LEGO Framework Deployment Configuration Wizard');
+    console.log('\n🚀 CLODO Framework Deployment Configuration Wizard');
     console.log('================================================\n');
 
     let config;

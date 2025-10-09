@@ -1,6 +1,6 @@
 # 🚀 Quick Start Templates
 
-Ready-to-use project templates for common LEGO Framework use cases. Each template includes complete working code, configuration, and deployment instructions.
+Ready-to-use project templates for common CLODO Framework use cases. Each template includes complete working code, configuration, and deployment instructions.
 
 ## 📋 Available Templates
 
@@ -360,6 +360,6 @@ After using a template:
 - **📖 Full Documentation**: [../README.md](../README.md)
 - **🔧 API Reference**: [./api-reference.md](./api-reference.md)
 - **🔐 Security Guide**: [../SECURITY.md](../SECURITY.md)
-- **🐛 Issues**: [GitHub Issues](https://github.com/tamylaa/lego-framework/issues)
+- **🐛 Issues**: [GitHub Issues](https://github.com/tamylaa/clodo-framework/issues)
 
-**🎯 Missing a template?** [Request a new template](https://github.com/tamylaa/lego-framework/issues/new?template=template-request.md) or contribute one!
+**🎯 Missing a template?** [Request a new template](https://github.com/tamylaa/clodo-framework/issues/new?template=template-request.md) or contribute one!

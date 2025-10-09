@@ -1,8 +1,8 @@
-# Getting Started with Lego Framework
+# Getting Started with Clodo Framework
 
 ## 🚀 Build Your First Service in 5 Minutes
 
-This guide will walk you through creating, configuring, and deploying your first Lego Framework service.
+This guide will walk you through creating, configuring, and deploying your first Clodo Framework service.
 
 ## 📋 Prerequisites
 
@@ -42,14 +42,14 @@ tsc --version
 npm install -g @tamyla/clodo-framework
 
 # Verify installation
-create-lego-service --version
+create-clodo-service --version
 ```
 
 ## 🎯 Step 2: Create Your First Service
 
 ```bash
 # Create a new data service
-create-lego-service my-first-service --type data-service
+create-clodo-service my-first-service --type data-service
 
 # Navigate to the service
 cd my-first-service
@@ -197,7 +197,7 @@ import '../models/users.js'; // Import to register the model
 export default {
   async fetch(request, env, ctx) {
     try {
-      // Initialize service with Lego Framework
+      // Initialize service with Clodo Framework
       const service = initializeService(env, domains);
 
       const url = new URL(request.url);
@@ -273,7 +273,7 @@ curl https://staging-api.yourdomain.com/api/users/{user-id}
 ## 🎉 Congratulations!
 
 You've successfully:
-- ✅ Created a Lego Framework service
+- ✅ Created a Clodo Framework service
 - ✅ Configured domain settings
 - ✅ Added a data model with automatic CRUD API
 - ✅ Deployed to Cloudflare Workers
@@ -369,4 +369,4 @@ wrangler d1 execute my-first-service-db --command "SELECT * FROM users"
 
 ---
 
-**Need Help?** Check our [troubleshooting guide](../troubleshooting.md) or [open an issue](https://github.com/tamyla/lego-framework/issues).
+**Need Help?** Check our [troubleshooting guide](../troubleshooting.md) or [open an issue](https://github.com/tamyla/clodo-framework/issues).

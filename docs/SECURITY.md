@@ -1,6 +1,6 @@
-# Lego Framework Security Module
+# Clodo Framework Security Module
 
-The Security Module provides comprehensive security validation and management capabilities for Lego Framework services, preventing insecure configurations from reaching production environments.
+The Security Module provides comprehensive security validation and management capabilities for Clodo Framework services, preventing insecure configurations from reaching production environments.
 
 ## Features
 
@@ -46,20 +46,20 @@ import { securityModule } from '@tamyla/clodo-framework/modules/security';
 
 ```bash
 # Validate configuration security
-npx lego-security validate customer production
+npx clodo-security validate customer production
 
 # Generate secure keys
-npx lego-security generate-key api
-npx lego-security generate-key jwt 64
+npx clodo-security generate-key api
+npx clodo-security generate-key jwt 64
 
 # Deploy with security validation
-npx lego-security deploy customer production
+npx clodo-security deploy customer production
 
 # Generate secure configuration
-npx lego-security generate-config customer production
+npx clodo-security generate-config customer production
 
 # Check deployment readiness
-npx lego-security check-readiness customer production
+npx clodo-security check-readiness customer production
 ```
 
 ## Security Validation
@@ -131,7 +131,7 @@ const config = DeploymentManager.generateSecureConfig(customer, environment);
 
 ### Automatic Security Validation
 
-When using the Lego Framework, security validation is automatically applied:
+When using the Clodo Framework, security validation is automatically applied:
 
 1. **Pre-deployment Hook**: Configuration is validated before deployment
 2. **Critical Issue Blocking**: Deployments are blocked if critical security issues are found
@@ -200,8 +200,8 @@ INSECURE_PATTERNS.DUMMY_API_KEYS.push('my-custom-dummy-key');
 - Verify HTTPS URLs are used in production
 
 **"Deployment blocked by security validation"**
-- Run `npx lego-security validate <customer> <environment>` to see issues
-- Generate secure keys with `npx lego-security generate-key`
+- Run `npx clodo-security validate <customer> <environment>` to see issues
+- Generate secure keys with `npx clodo-security generate-key`
 - Update configuration with secure values
 
 **"Weak secret detected"**
@@ -228,7 +228,7 @@ If migrating from the data-service security implementation:
    npm run security:validate
 
    # After
-   npx lego-security validate customer environment
+   npx clodo-security validate customer environment
    ```
 
 3. Update deployment scripts to use framework security module

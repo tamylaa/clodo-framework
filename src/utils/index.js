@@ -22,7 +22,7 @@ export const validateRequired = (obj, requiredFields) => {
   }
 };
 
-export const createLogger = (prefix = 'LegoFramework') => {
+export const createLogger = (prefix = 'ClodoFramework') => {
   return {
     info: (message, ...args) => console.log(`[${prefix}] ${message}`, ...args),
     warn: (message, ...args) => console.warn(`[${prefix}] ${message}`, ...args),

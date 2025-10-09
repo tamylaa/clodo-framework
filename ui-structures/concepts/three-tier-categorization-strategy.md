@@ -1,8 +1,8 @@
-# LEGO Framework: Three-Tier Input Categorization Strategy
+# Clodo Framework: Three-Tier Input Categorization Strategy
 
 ## 🎯 **The Three Categories You Identified**
 
-You are absolutely correct! The LEGO Framework's input collection needs a **three-tier categorization** that respects user agency and reduces cognitive load:
+You are absolutely correct! The Clodo Framework currently collects **87 inputs** across its scripts, but **only 6 are absolutely necessary**. The remaining **81 inputs** are "second-order information" that can be **derived, auto-generated, or discovered** from these core inputs through smart conventions and intelligent defaults.
 
 ### **1. Absolutely Required User Inputs** (6 inputs - 6.9%)
 **Core inputs that cannot be derived or assumed**
@@ -228,4 +228,4 @@ This approach respects that users want both **convenience** and **agency** - the
 
 ---
 
-*This three-tier categorization transforms the LEGO Framework from an overwhelming manual process to an intelligent, user-centric experience that respects human decision-making while maximizing automation.*
+*This three-tier categorization transforms the Clodo Framework from an overwhelming manual process to an intelligent, user-centric experience that respects human decision-making while maximizing automation.*

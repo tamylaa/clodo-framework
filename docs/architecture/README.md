@@ -2,7 +2,7 @@
 
 ## 🏛️ Framework Architecture
 
-The Lego Framework follows a **layered architecture** designed for scalability, maintainability, and developer productivity. Each layer has specific responsibilities and provides clear interfaces to adjacent layers.
+The Clodo Framework follows a **layered architecture** designed for scalability, maintainability, and developer productivity. Each layer has specific responsibilities and provides clear interfaces to adjacent layers.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

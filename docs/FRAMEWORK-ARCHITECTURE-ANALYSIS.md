@@ -1,4 +1,4 @@
-# LEGO Framework: Comprehensive Architecture Analysis
+# CLODO Framework: Comprehensive Architecture Analysis
 
 > **⚠️ INTERNAL MAINTAINER DOCUMENTATION**
 > This document contains detailed technical analysis, internal implementation details, and architectural deep-dives intended for framework maintainers and contributors. For user-facing architecture information, see [FRAMEWORK-ARCHITECTURE-OVERVIEW.md](./FRAMEWORK-ARCHITECTURE-OVERVIEW.md).
@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-This document provides a complete technical analysis of the LEGO Framework architecture, file organization, execution algorithms, and intelligent features. The framework implements a sophisticated Lego-based software architecture where components serve as reusable "bricks" that can be assembled for complex enterprise applications.
+This document provides a complete technical analysis of the CLODO Framework architecture, file organization, execution algorithms, and intelligent features. The framework implements a sophisticated Clodo-based software architecture where components serve as reusable "bricks" that can be assembled for complex enterprise applications.
 
 **Key Insights:**
 - Dual interface design: Library components (src/) for programmatic use + CLI tools (bin/) for development
@@ -30,10 +30,10 @@ This document provides a complete technical analysis of the LEGO Framework archi
 
 ## Framework Architecture Overview
 
-The LEGO Framework implements a sophisticated microservices architecture with three distinct layers:
+The CLODO Framework implements a sophisticated microservices architecture with three distinct layers:
 
 ### 🎯 **Core Framework Layer (src/) - User Imports**
-Published package components that downstream applications import directly. These are the "Lego bricks" that users snap together to build applications.
+Published package components that downstream applications import directly. These are the "Clodo bricks" that users snap together to build applications.
 
 ### 🎯 **CLI Tools Layer (bin/ - non-shared) - Development Interfaces**
 Command-line tools for development, administration, and deployment operations. These provide convenient interfaces for common tasks.
@@ -360,7 +360,7 @@ Enterprise-grade reliability features:
 
 ```javascript
 // Direct component usage
-import { GenericDataService, SchemaManager } from '@tamyla/lego-framework';
+import { GenericDataService, SchemaManager } from '@tamyla/clodo-framework';
 
 const service = new GenericDataService(d1Client, 'users');
 const users = await service.findAll({ limit: 10 });
@@ -401,8 +401,8 @@ Many teams use both approaches:
 
 ## Design Philosophy & Principles
 
-### 🎪 **Lego Architecture Philosophy**
-The framework embodies "Lego Architecture": snap components together, each brick handles one concern perfectly, combinations create complex systems.
+### 🎪 **Clodo Architecture Philosophy**
+The framework embodies "Clodo Architecture": snap components together, each brick handles one concern perfectly, combinations create complex systems.
 
 **Core Principles**:
 1. **Single Responsibility**: Each component has one clear purpose
@@ -444,7 +444,7 @@ Moved shared utilities from `bin/shared/` to `src/shared/` to expose them, but t
 Analysis revealed shared utilities were internal CLI helpers, not public APIs. CLI tools were the intended user interface.
 
 ### Circular Dependency Issue
-Some CLI tools imported from published package (`@tamyla/lego-framework/...`) instead of internal paths, creating architectural confusion.
+Some CLI tools imported from published package (`@tamyla/clodo-framework/...`) instead of internal paths, creating architectural confusion.
 
 ### Final Resolution
 - **Exposed orchestration utilities** as legitimate public APIs (CrossDomainCoordinator, ConfigurationCacheManager)
@@ -480,6 +480,6 @@ This architecture provides clear separation between user-facing APIs, developmen
 
 ## Conclusion
 
-The LEGO Framework represents a sophisticated implementation of component-based software architecture. Through careful analysis and iterative refinement, we've established clear boundaries between public APIs, development tools, and internal utilities. The framework's intelligent execution model, based on graph theory and dependency resolution, enables complex enterprise applications to be built from composable, reusable components.
+The CLODO Framework represents a sophisticated implementation of component-based software architecture. Through careful analysis and iterative refinement, we've established clear boundaries between public APIs, development tools, and internal utilities. The framework's intelligent execution model, based on graph theory and dependency resolution, enables complex enterprise applications to be built from composable, reusable components.
 
 The dual interface approach (library + CLI) serves different user needs while maintaining architectural integrity. The intelligent features built into the framework - from auto-discovery to adaptive caching - demonstrate advanced software engineering principles applied to real-world enterprise challenges.

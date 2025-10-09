@@ -1,10 +1,10 @@
-# Decision Framework: When to Use Lego Framework
+# Decision Framework: When to Use Clodo Framework
 
 ## 🎯 Executive Summary
 
-The **Lego Framework** is a powerful tool for rapid microservices development on Cloudflare Workers, but it's not suitable for every project. This guide provides a comprehensive decision framework to help you determine if the Lego Framework aligns with your needs.
+The **Clodo Framework** is a powerful tool for rapid microservices development on Cloudflare Workers, but it's not suitable for every project. This guide provides a comprehensive decision framework to help you determine if the Clodo Framework aligns with your needs.
 
-## ✅ **Use Lego Framework When:**
+## ✅ **Use Clodo Framework When:**
 
 ### **1. Rapid Development is Critical**
 - **Startup MVP Development**: Need to validate ideas quickly with production-ready services
@@ -54,7 +54,7 @@ The **Lego Framework** is a powerful tool for rapid microservices development on
 
 **Example**: A new social media app with uncertain user growth patterns.
 
-## ❌ **Avoid Lego Framework When:**
+## ❌ **Avoid Clodo Framework When:**
 
 ### **1. Complex Business Logic Requirements**
 ```javascript
@@ -285,7 +285,7 @@ app.post('/users', createUserHandler);
 
 ## 🏁 **Final Recommendations**
 
-### **✅ Use Lego Framework If:**
+### **✅ Use Clodo Framework If:**
 - Building **multiple similar services** quickly
 - Need **multi-tenant SaaS** capabilities  
 - Team is **new to Cloudflare Workers**
@@ -302,7 +302,7 @@ app.post('/users', createUserHandler);
 - Need **advanced debugging** and observability
 
 ### **🤔 Hybrid Approach:**
-Start with Lego Framework for rapid development, then:
+Start with Clodo Framework for rapid development, then:
 1. **Identify limitations** as requirements evolve
 2. **Extract services** that outgrow the framework
 3. **Maintain framework** for simple CRUD services
@@ -310,7 +310,7 @@ Start with Lego Framework for rapid development, then:
 
 ## 📝 **Decision Checklist**
 
-Before choosing Lego Framework, answer these questions:
+Before choosing Clodo Framework, answer these questions:
 
 **✅ Development Context**
 - [ ] Do we need to build services quickly (weeks, not months)?
@@ -331,7 +331,7 @@ Before choosing Lego Framework, answer these questions:
 - [ ] Do the benefits outweigh the hidden costs?
 
 **Scoring**: 
-- **8+ Yes**: Lego Framework likely a good fit
+- **8+ Yes**: Clodo Framework likely a good fit
 - **4-7 Yes**: Consider carefully, maybe hybrid approach
 - **<4 Yes**: Probably avoid the framework
 

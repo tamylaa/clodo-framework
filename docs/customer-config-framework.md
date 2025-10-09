@@ -1,6 +1,6 @@
 # Customer Configuration Management - Framework Mode
 
-The Lego Framework now includes customer-specific configuration management that integrates with the existing domain and feature flag systems.
+The Clodo Framework now includes customer-specific configuration management that integrates with the existing domain and feature flag systems.
 
 ## ⚠️ Framework vs Service Environment
 
@@ -66,7 +66,7 @@ When moving from framework testing to service implementation:
 ## API Reference
 
 ```javascript
-import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+import { CustomerConfigurationManager } from '@tamyla/clodo-framework/config';
 
 const customerManager = new CustomerConfigurationManager();
 
@@ -79,4 +79,4 @@ await customerManager.createCustomer('customer', 'domain.com', {
 // Show configuration
 const config = customerManager.showConfig('customer', 'production');
 ```</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\customer-config-framework.md
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\customer-config-framework.md

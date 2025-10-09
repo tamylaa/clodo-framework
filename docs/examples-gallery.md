@@ -1,6 +1,6 @@
 # 💻 Code Examples Gallery
 
-Real-world code snippets and patterns for common LEGO Framework use cases. Copy, paste, and customize for your projects.
+Real-world code snippets and patterns for common CLODO Framework use cases. Copy, paste, and customize for your projects.
 
 ## 📋 Categories
 
@@ -20,7 +20,7 @@ Real-world code snippets and patterns for common LEGO Framework use cases. Copy,
 ### **Basic CRUD Service**
 ```javascript
 // src/services/product-service.js
-import { GenericDataService, schemaManager } from '@tamyla/lego-framework';
+import { GenericDataService, schemaManager } from '@tamyla/clodo-framework';
 
 // Register the model
 schemaManager.registerModel('products', {
@@ -87,7 +87,7 @@ export class ProductService {
 ### **Advanced Database Relationships**
 ```javascript
 // src/services/order-service.js
-import { GenericDataService, schemaManager } from '@tamyla/lego-framework';
+import { GenericDataService, schemaManager } from '@tamyla/clodo-framework';
 
 // Register related models
 schemaManager.registerModel('orders', {
@@ -216,7 +216,7 @@ export const migration_001 = {
 ### **JWT Authentication Handler**
 ```javascript
 // src/middleware/auth-middleware.js
-import { validateJWT } from '@tamyla/lego-framework/security';
+import { validateJWT } from '@tamyla/clodo-framework/security';
 
 export function createAuthMiddleware(jwtSecret) {
   return async function authMiddleware(request, next) {
@@ -259,8 +259,8 @@ if (path.startsWith('/api/protected/')) {
 ### **User Registration & Login**
 ```javascript
 // src/handlers/auth-handlers.js
-import { GenericDataService } from '@tamyla/lego-framework';
-import { generateJWT, hashPassword, verifyPassword } from '@tamyla/lego-framework/security';
+import { GenericDataService } from '@tamyla/clodo-framework';
+import { generateJWT, hashPassword, verifyPassword } from '@tamyla/clodo-framework/security';
 
 export function createAuthHandlers(config, env) {
   const userService = new GenericDataService(env.DB, 'users');
@@ -780,7 +780,7 @@ const config = getConfig(env.ENVIRONMENT || 'development');
 ### **Feature Flags System**
 ```javascript
 // src/config/feature-flags.js
-import { FeatureManager } from '@tamyla/lego-framework';
+import { FeatureManager } from '@tamyla/clodo-framework';
 
 export class CustomFeatureManager extends FeatureManager {
   constructor(env) {
@@ -926,7 +926,7 @@ const appConfigs = await configManager.loadConfigs([
 ### **Blue-Green Deployment Script**
 ```javascript
 // scripts/blue-green-deploy.js
-import { MultiDomainOrchestrator } from '@tamyla/lego-framework/orchestration';
+import { MultiDomainOrchestrator } from '@tamyla/clodo-framework/orchestration';
 
 export class BlueGreenDeployer {
   constructor(config) {
@@ -1344,7 +1344,7 @@ describe('API Integration Tests', () => {
 ### **Load Testing Script**
 ```javascript
 // test/load/load-test.js
-import { PerformanceTester } from '@tamyla/lego-framework/deployment';
+import { PerformanceTester } from '@tamyla/clodo-framework/deployment';
 
 class LoadTestRunner {
   constructor(config) {
@@ -1683,7 +1683,7 @@ try {
 
 ---
 
-This comprehensive code examples gallery provides real-world, production-ready patterns that developers can immediately use in their LEGO Framework projects. Each example is complete and demonstrates best practices for the framework's capabilities.
+This comprehensive code examples gallery provides real-world, production-ready patterns that developers can immediately use in their CLODO Framework projects. Each example is complete and demonstrates best practices for the framework's capabilities.
 
 ## 📚 Additional Resources
 
@@ -1692,4 +1692,4 @@ This comprehensive code examples gallery provides real-world, production-ready p
 - **🛠️ CLI Tutorial**: [./cli-tutorial.md](./cli-tutorial.md)
 - **🏗️ Templates**: [./quickstart-templates/](./quickstart-templates/)
 
-**🎯 Need a specific example?** [Request it here](https://github.com/tamylaa/lego-framework/issues/new?template=example-request.md) or contribute your own!
+**🎯 Need a specific example?** [Request it here](https://github.com/tamylaa/clodo-framework/issues/new?template=example-request.md) or contribute your own!

@@ -1,8 +1,8 @@
-# LEGO OF SOFTWARE: A Microservices Platform Architecture
+# CLODO OF SOFTWARE: A Microservices Platform Architecture
 
 ## Executive Summary
 
-This document outlines a **small business software revolution** where software is built as composable, reusable "Lego blocks" that can be assembled for different #### ✅ **What Works for Small Businesses**
+This document outlines a **small business software revolution** where software is built as composable, reusable "Clodo blocks" that can be assembled for different #### ✅ **What Works for Small Businesses**
 
 1. **Cost Democratization**: Generic services = affordable custom software
 2. **Speed to Market**: Feature configuration instead of custom development
@@ -46,7 +46,7 @@ Small businesses need **custom software** but face:
 - **Maintenance complexity** (managing custom codebases)
 - **Scalability challenges** (growing beyond initial requirements)
 
-### Our Solution: Lego Software
+### Our Solution: Clodo Software
 
 **Generic Services** (Reusable Building Blocks):
 - ✅ Authentication & user management
@@ -87,9 +87,9 @@ bakeryConfig: {
 
 ---
 
-### The Lego Metaphor
+### The Clodo Metaphor
 
-Software development as **Lego construction**:
+Software development as **Clodo construction**:
 
 - **Generic Blocks**: Reusable components (authentication, data storage, file handling) that work across all domains
 - **Specialized Blocks**: Domain-specific components (auto-email, content-skimmer, business logic) built for specific needs
@@ -279,7 +279,7 @@ npm run domain:setup -- greatidude.com
 - Development time: 3-9 months
 - Maintenance: $10K-30K/year ongoing
 
-**Lego Platform Approach:**
+**Clodo Platform Approach:**
 - Generic services: $500-2K/month (subscription)
 - Custom development: $5K-20K for specific needs
 - Deployment time: 1-4 weeks
@@ -420,4 +420,4 @@ The data service we've built is the **perfect embodiment** of this vision:
 ---
 
 *Document Version: 1.1 | Date: September 26, 2025 | Author: AI System Architect*</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\data-service\LEGO-OF-SOFTWARE-ARCHITECTURE.md
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\data-service\CLODO-OF-SOFTWARE-ARCHITECTURE.md

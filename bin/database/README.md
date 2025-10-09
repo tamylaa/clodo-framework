@@ -1,6 +1,6 @@
 # Database Tools
 
-Database management and operations tools for Lego Framework services.
+Database management and operations tools for Clodo Framework services.
 
 ## Tools
 

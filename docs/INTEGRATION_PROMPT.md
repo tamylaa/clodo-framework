@@ -1,7 +1,7 @@
-# Lego Framework Integration Prompt
+# Clodo Framework Integration Prompt
 
 ## Context
-You are helping a developer integrate the Lego Framework into their Cloudflare Worker service. The Lego Framework enables "service autonomy" where each service can discover, validate, and deploy itself independently.
+You are helping a developer integrate the Clodo Framework into their Cloudflare Worker service. The Clodo Framework enables "service autonomy" where each service can discover, validate, and deploy itself independently.
 
 ## Key Principles
 1. **Service Autonomy**: Services embed deployment logic internally, not call external CLI tools
@@ -31,7 +31,7 @@ Create this directory structure in the user's service:
 │   ├── deploy.js          # Internal deployment script
 │   └── dev.js            # Development server script
 ├── wrangler.toml         # Cloudflare Workers config
-└── package.json          # Updated with Lego Framework dependency
+└── package.json          # Updated with Clodo Framework dependency
 ```
 
 ### 2. Package.json Updates
@@ -39,7 +39,7 @@ Add to package.json:
 ```json
 {
   "dependencies": {
-    "@tamyla/lego-framework": "^1.3.2"
+    "@tamyla/clodo-framework": "^1.3.2"
   },
   "scripts": {
     "deploy": "node scripts/deploy.js",
@@ -69,7 +69,7 @@ export const domains = {
 
 ### 4. Schema Definitions (src/config/schema.js)
 ```javascript
-import { schemaManager } from '@tamyla/lego-framework/schema';
+import { schemaManager } from '@tamyla/clodo-framework/schema';
 
 // Register each model from USER_MODELS
 schemaManager.registerModel('[MODEL_NAME]', {
@@ -84,9 +84,9 @@ schemaManager.registerModel('[MODEL_NAME]', {
 
 ### 5. Cloudflare Worker (src/worker/index.js)
 ```javascript
-import { initializeService, COMMON_FEATURES } from '@tamyla/lego-framework';
-import { GenericDataService } from '@tamyla/lego-framework/services';
-import { EnhancedRouter } from '@tamyla/lego-framework/routing';
+import { initializeService, COMMON_FEATURES } from '@tamyla/clodo-framework';
+import { GenericDataService } from '@tamyla/clodo-framework/services';
+import { EnhancedRouter } from '@tamyla/clodo-framework/routing';
 import { domains } from '../config/domains.js';
 import '../config/schema.js';
 
@@ -140,14 +140,14 @@ export default {
 
 ### 6. Deployment Script (scripts/deploy.js)
 ```javascript
-import { MultiDomainOrchestrator, DeploymentValidator } from '@tamyla/lego-framework/orchestration';
-import { DomainDiscovery } from '@tamyla/lego-framework/config/discovery';
-import { askChoice } from '@tamyla/lego-framework/utils/interactive';
+import { MultiDomainOrchestrator, DeploymentValidator } from '@tamyla/clodo-framework/orchestration';
+import { DomainDiscovery } from '@tamyla/clodo-framework/config/discovery';
+import { askChoice } from '@tamyla/clodo-framework/utils/interactive';
 import { domains } from '../src/config/domains.js';
 
 async function deploy() {
   try {
-    console.log('🚀 Lego Framework Deployment');
+    console.log('🚀 Clodo Framework Deployment');
 
     // Environment selection
     const environment = await askChoice(
@@ -307,5 +307,5 @@ npm run deploy
 5. **Verify production deployment** works correctly
 6. **Set up monitoring** and logging as needed
 
-This implementation provides a complete, autonomous service that can discover, validate, and deploy itself using the Lego Framework's enterprise capabilities.</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\INTEGRATION_PROMPT.md
+This implementation provides a complete, autonomous service that can discover, validate, and deploy itself using the Clodo Framework's enterprise capabilities.</content>
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\INTEGRATION_PROMPT.md

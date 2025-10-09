@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Lego Framework Integration Test Runner
+ * Clodo Framework Integration Test Runner
  *
  * This script simulates a complete deployment workflow to identify
  * missing dependencies, configuration issues, and practical limitations
@@ -245,7 +245,7 @@ try {
   }
 
   async runAllTests() {
-    this.log('🚀 Starting Lego Framework Integration Test Suite');
+    this.log('🚀 Starting Clodo Framework Integration Test Suite');
     this.log('=' .repeat(60));
 
     await this.testStep('Configuration Files Check', () => this.testConfigurationFiles());

@@ -1,8 +1,8 @@
-# LEGO Framework: Complete Service Lifecycle Management
+# CLODO Framework: Complete Service Lifecycle Management
 
 ## 🎯 **The Service Manifest Revolution**
 
-You've identified a critical missing piece in the LEGO Framework architecture! The **service manifest** is the key that transforms individual service creation into a **complete service lifecycle management system**.
+You've identified a critical missing piece in the CLODO Framework architecture! The **service manifest** is the key that transforms individual service creation into a **complete service lifecycle management system**.
 
 ## 📋 **What the Service Manifest Solves**
 
@@ -60,10 +60,10 @@ const requiredEnvVars = manifest.consumption.environmentVariables;
 ### **2. Service Rectification**
 ```bash
 # Diagnose issues with complete context
-lego diagnose user-service --manifest ./service-manifest.json
+clodo diagnose user-service --manifest ./service-manifest.json
 
 # Recreate service with identical configuration
-lego recreate user-service --from-manifest
+clodo recreate user-service --from-manifest
 ```
 
 ### **3. Service Evolution**
@@ -130,7 +130,7 @@ const history = manifest.auditTrail.entries;
 
 ## 🎯 **The Complete Picture**
 
-Your insight about the service manifest completes the LEGO Framework's transformation:
+Your insight about the service manifest completes the CLODO Framework's transformation:
 
 1. **Three-Tier Input Collection**: Intelligent, user-centric input gathering
 2. **Service Manifest Generation**: Complete record of all decisions and configurations
@@ -140,7 +140,7 @@ This creates a **self-managing, self-documenting, self-healing** service ecosyst
 
 ## 🌟 **Vision Realized**
 
-The LEGO Framework evolves from a **service creation tool** to a **complete service lifecycle platform** where:
+The CLODO Framework evolves from a **service creation tool** to a **complete service lifecycle platform** where:
 
 - Services are **self-aware** (manifest contains complete knowledge)
 - Services are **self-integrating** (manifest enables automatic consumption)

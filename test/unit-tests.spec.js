@@ -1,10 +1,10 @@
 /**
- * Basic Unit Tests for LEGO Framework Enhancements v3.0.3
+ * Basic Unit Tests for CLODO Framework Enhancements v3.0.3
  *
  * Simple tests to validate the enhancements work
  */
 
-describe('LEGO Framework Enhancements v3.0.3', () => {
+describe('CLODO Framework Enhancements v3.0.3', () => {
 
   test('should have basic test structure', () => {
     expect(true).toBe(true);

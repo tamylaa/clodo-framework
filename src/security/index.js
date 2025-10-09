@@ -1,6 +1,6 @@
 /**
- * Lego Framework Security Module
- * Comprehensive security validation and management for Lego services
+ * Clodo Framework Security Module
+ * Comprehensive security validation and management for Clodo services
  */
 
 import { ConfigurationValidator } from './ConfigurationValidator.js';

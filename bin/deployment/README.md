@@ -1,6 +1,6 @@
 # Deployment Tools
 
-Enterprise deployment and orchestration tools for Lego Framework services.
+Enterprise deployment and orchestration tools for Clodo Framework services.
 
 ## Tools
 

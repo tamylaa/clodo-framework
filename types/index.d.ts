@@ -1,5 +1,5 @@
 /**
- * TypeScript Definitions for Enhanced LEGO Framework
+ * TypeScript Definitions for Enhanced CLODO Framework
  * Provides type safety and better IDE support
  *
  * NOTE: These types represent the intended API surface. Some advanced features

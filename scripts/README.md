@@ -1,6 +1,6 @@
-# Lego Framework Scripts
+# Clodo Framework Scripts
 
-This directory contains organized scripts for the Lego Framework, categorized by functionality.
+This directory contains organized scripts for the Clodo Framework, categorized by functionality.
 
 ## Categories
 

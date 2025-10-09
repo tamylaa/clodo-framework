@@ -1,5 +1,5 @@
 /**
- * Lego Framework - Service Creator
+ * Clodo Framework - Service Creator
  * Programmatic API for creating services from templates
  */
 

@@ -1,6 +1,6 @@
 # Deployment Scripts
 
-Scripts for deploying Lego Framework services to various environments and platforms.
+Scripts for deploying Clodo Framework services to various environments and platforms.
 
 ## Scripts
 

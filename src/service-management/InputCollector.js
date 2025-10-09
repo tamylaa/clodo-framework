@@ -31,7 +31,7 @@ export class InputCollector {
     const inputs = {};
 
     console.log(chalk.cyan('📝 Collecting Core Service Information'));
-    console.log(chalk.white('These 6 inputs are required to create your Lego service.\n'));
+    console.log(chalk.white('These 6 inputs are required to create your Clodo service.\n'));
 
     // 1. Service Name
     inputs.serviceName = await this.collectServiceName();
@@ -116,7 +116,7 @@ export class InputCollector {
       'auth-service': 'Authentication and authorization service',
       'content-service': 'Content management with file storage and search',
       'api-gateway': 'API gateway with rate limiting and routing',
-      'generic': 'Basic service with core Lego Framework features'
+      'generic': 'Basic service with core Clodo Framework features'
     };
 
     console.log(chalk.cyan('Available Service Types:'));

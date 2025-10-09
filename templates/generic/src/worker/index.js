@@ -2,7 +2,7 @@ import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/
 import { domains } from './config/domains.js';
 
 /**
- * {{SERVICE_DISPLAY_NAME}} - Lego Framework Service
+ * {{SERVICE_DISPLAY_NAME}} - Clodo Framework Service
  *
  * Generated on: {{CURRENT_DATE}}
  * Service Type: {{SERVICE_TYPE}}
@@ -11,7 +11,7 @@ import { domains } from './config/domains.js';
 export default {
   async fetch(request, env, ctx) {
     try {
-      // Initialize service with Lego Framework
+      // Initialize service with Clodo Framework
       const service = initializeService(env, domains);
 
       // Log request (if logging is enabled)
@@ -47,7 +47,7 @@ export default {
           displayName: '{{SERVICE_DISPLAY_NAME}}',
           type: '{{SERVICE_TYPE}}',
           version: '1.0.0',
-          framework: 'Lego Framework',
+          framework: 'Clodo Framework',
           frameworkVersion: '{{FRAMEWORK_VERSION}}',
           domain: service.domain,
           environment: service.environment,

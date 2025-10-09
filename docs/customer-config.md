@@ -1,6 +1,6 @@
 # Customer Configuration Management
 
-The Lego Framework now includes customer-specific configuration management that integrates with the existing domain and feature flag systems.
+The Clodo Framework now includes customer-specific configuration management that integrates with the existing domain and feature flag systems.
 
 ## Overview
 
@@ -95,7 +95,7 @@ The following variables are automatically replaced in templates:
 Customers are automatically registered as domains in the framework:
 
 ```javascript
-import { createDomainRegistry } from '@tamyla/lego-framework/config';
+import { createDomainRegistry } from '@tamyla/clodo-framework/config';
 
 // Customer domains are available in the domain registry
 const domainConfig = domainRegistry.get('acmecorp');
@@ -106,7 +106,7 @@ const domainConfig = domainRegistry.get('acmecorp');
 Customer-specific features are automatically configured:
 
 ```javascript
-import { featureManager } from '@tamyla/lego-framework/config';
+import { featureManager } from '@tamyla/clodo-framework/config';
 
 // Check customer-specific features
 const hasCustomDomain = featureManager.isEnabled('customDomain', false);
@@ -116,7 +116,7 @@ const isIsolated = featureManager.isEnabled('customerIsolation', false);
 ### Programmatic Usage
 
 ```javascript
-import { CustomerConfigurationManager } from '@tamyla/lego-framework/config';
+import { CustomerConfigurationManager } from '@tamyla/clodo-framework/config';
 
 const customerManager = new CustomerConfigurationManager();
 

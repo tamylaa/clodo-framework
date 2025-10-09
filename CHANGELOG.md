@@ -1,4 +1,4 @@
-## [3.0.6](https://github.com/tamylaa/lego-framework/compare/v3.0.5...v3.0.6) (2025-10-07)
+## [3.0.6](https://github.com/tamylaa/clodo-framework/compare/v3.0.5...v3.0.6) (2025-10-07)
 
 
 ### Bug Fixes
@@ -14,11 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Major Release: Clodo Framework Commercial Launch
 
-**Clodo Framework** is a comprehensive, enterprise-grade framework for building microservices on Cloudflare Workers + D1. This 1.0.0 release marks the transition from the open-source LEGO Framework to a commercially licensed product with professional licensing infrastructure.
+**Clodo Framework** is a comprehensive, enterprise-grade framework for building microservices on Cloudflare Workers + D1. This 1.0.0 release marks the transition from the open-source CLODO Framework to a commercially licensed product with professional licensing infrastructure.
 
 ### 🚀 What is Clodo Framework?
 
-Clodo Framework provides a **"snap-together" architecture** where standardized, reusable components combine to rapidly build and deploy domain-specific services. Just like Lego bricks create complex structures, Clodo Framework components create enterprise applications.
+Clodo Framework provides a **"snap-together" architecture** where standardized, reusable components combine to rapidly build and deploy domain-specific services. Just like Clodo bricks create complex structures, Clodo Framework components create enterprise applications.
 
 #### Core Capabilities
 
@@ -83,12 +83,12 @@ clodo-service diagnose --comprehensive
 **Microservices**: Deploy domain-specific services with consistent patterns and tooling
 **Edge Computing**: Leverage Cloudflare's global network for low-latency, high-performance applications
 
-### 🔄 Migration from LEGO Framework
+### 🔄 Migration from CLODO Framework
 
 This release includes a complete rebrand and commercial licensing preparation:
 
-- **Package Name**: `@tamyla/clodo-framework` (was `@tamyla/lego-framework`)
-- **CLI Commands**: `clodo-service` (was `lego-service`)
+- **Package Name**: `@tamyla/clodo-framework` (was `@tamyla/clodo-framework`)
+- **CLI Commands**: `clodo-service` (was `clodo-service`)
 - **Licensing**: Removed local file licensing, ready for professional licensing integration
 - **Documentation**: Updated for commercial use and enterprise deployment patterns
 
@@ -139,23 +139,23 @@ While the framework is commercially licensed, we welcome community contributions
 
 ---
 
-**Previous LEGO Framework versions remain available under open-source license for existing users.**9b](https://github.com/tamylaa/lego-framework/commit/64d429be674855539e5f77413d9a14151d1b0ef8))
+**Previous CLODO Framework versions remain available under open-source license for existing users.**9b](https://github.com/tamylaa/clodo-framework/commit/64d429be674855539e5f77413d9a14151d1b0ef8))
 
-## [3.0.5](https://github.com/tamylaa/lego-framework/compare/v3.0.4...v3.0.5) (2025-10-07)
-
-
-### Bug Fixes
-
-* resolve ESM packaging conflict by preserving ES modules in build output ([0d13422](https://github.com/tamylaa/lego-framework/commit/0d13422e5c7800006369b157b57d9440805d14dd))
-
-## [3.0.4](https://github.com/tamylaa/lego-framework/compare/v3.0.3...v3.0.4) (2025-10-07)
+## [3.0.5](https://github.com/tamylaa/clodo-framework/compare/v3.0.4...v3.0.5) (2025-10-07)
 
 
 ### Bug Fixes
 
-* enhance deployment framework with HTTP validation, error handling, and interactive configuration ([7698f56](https://github.com/tamylaa/lego-framework/commit/7698f56108c0b90809eaaa55e7335ac89e6dce49))
+* resolve ESM packaging conflict by preserving ES modules in build output ([0d13422](https://github.com/tamylaa/clodo-framework/commit/0d13422e5c7800006369b157b57d9440805d14dd))
 
-## [3.0.3](https://github.com/tamylaa/lego-framework/compare/v3.0.2...v3.0.3) (2025-10-07)
+## [3.0.4](https://github.com/tamylaa/clodo-framework/compare/v3.0.3...v3.0.4) (2025-10-07)
+
+
+### Bug Fixes
+
+* enhance deployment framework with HTTP validation, error handling, and interactive configuration ([7698f56](https://github.com/tamylaa/clodo-framework/commit/7698f56108c0b90809eaaa55e7335ac89e6dce49))
+
+## [3.0.3](https://github.com/tamylaa/clodo-framework/compare/v3.0.2...v3.0.3) (2025-10-07)
 
 
 ### Features
@@ -178,46 +178,46 @@ While the framework is commercially licensed, we welcome community contributions
 * **Type Checking**: All new code passes TypeScript validation
 * **Build Process**: Successful compilation and bundle validation
 
-## [3.0.2](https://github.com/tamylaa/lego-framework/compare/v3.0.1...v3.0.2) (2025-10-06)
+## [3.0.2](https://github.com/tamylaa/clodo-framework/compare/v3.0.1...v3.0.2) (2025-10-06)
 
 
 ### Bug Fixes
 
-* include documentation in package files ([550a734](https://github.com/tamylaa/lego-framework/commit/550a734ef9de3f4e4afc35e85226216649e84332))
+* include documentation in package files ([550a734](https://github.com/tamylaa/clodo-framework/commit/550a734ef9de3f4e4afc35e85226216649e84332))
 
-## [3.0.1](https://github.com/tamylaa/lego-framework/compare/v3.0.0...v3.0.1) (2025-10-06)
-
-
-### Bug Fixes
-
-* add customer configuration management ([ac7379b](https://github.com/tamylaa/lego-framework/commit/ac7379b41e584bed229cd3a3b8ccb532eed9dcb4))
-
-# [3.0.0](https://github.com/tamylaa/lego-framework/compare/v2.0.1...v3.0.0) (2025-10-06)
+## [3.0.1](https://github.com/tamylaa/clodo-framework/compare/v3.0.0...v3.0.1) (2025-10-06)
 
 
 ### Bug Fixes
 
-* add comprehensive security validation module ([ea6cbdf](https://github.com/tamylaa/lego-framework/commit/ea6cbdf07790266d8b2cd779f750b5e6ef622ba6))
+* add customer configuration management ([ac7379b](https://github.com/tamylaa/clodo-framework/commit/ac7379b41e584bed229cd3a3b8ccb532eed9dcb4))
+
+# [3.0.0](https://github.com/tamylaa/clodo-framework/compare/v2.0.1...v3.0.0) (2025-10-06)
+
+
+### Bug Fixes
+
+* add comprehensive security validation module ([ea6cbdf](https://github.com/tamylaa/clodo-framework/commit/ea6cbdf07790266d8b2cd779f750b5e6ef622ba6))
 
 
 ### BREAKING CHANGES
 
 * Deployments now require security validation by default
 
-## [2.0.1](https://github.com/tamylaa/lego-framework/compare/v2.0.0...v2.0.1) (2025-10-05)
+## [2.0.1](https://github.com/tamylaa/clodo-framework/compare/v2.0.0...v2.0.1) (2025-10-05)
 
 
 ### Bug Fixes
 
-* allow tests to pass when no test files exist ([70bd5b8](https://github.com/tamylaa/lego-framework/commit/70bd5b8ee61fc7fb70e5015d1889e411c9e091b4))
+* allow tests to pass when no test files exist ([70bd5b8](https://github.com/tamylaa/clodo-framework/commit/70bd5b8ee61fc7fb70e5015d1889e411c9e091b4))
 
-# [2.0.0](https://github.com/tamylaa/lego-framework/compare/v1.3.4...v2.0.0) (2025-10-05)
+# [2.0.0](https://github.com/tamylaa/clodo-framework/compare/v1.3.4...v2.0.0) (2025-10-05)
 
 
 ### Bug Fixes
 
-* major framework enhancement with enterprise features and TypeScript support ([53c94fb](https://github.com/tamylaa/lego-framework/commit/53c94fbc3adde14852ffaab9117eda09621f3a16))
-* resolve ESLint errors and warnings ([005b591](https://github.com/tamylaa/lego-framework/commit/005b5916faf6a57c0065d649979dcef84c466ce3))
+* major framework enhancement with enterprise features and TypeScript support ([53c94fb](https://github.com/tamylaa/clodo-framework/commit/53c94fbc3adde14852ffaab9117eda09621f3a16))
+* resolve ESLint errors and warnings ([005b591](https://github.com/tamylaa/clodo-framework/commit/005b5916faf6a57c0065d649979dcef84c466ce3))
 
 
 ### BREAKING CHANGES
@@ -241,7 +241,7 @@ All breaking changes include backwards compatibility via migration adapters.
 
 ### 🚀 Major Framework Enhancement Release
 
-This release represents a major enhancement of the LEGO Framework with enterprise-grade features, comprehensive type safety, and backwards compatibility systems.
+This release represents a major enhancement of the CLODO Framework with enterprise-grade features, comprehensive type safety, and backwards compatibility systems.
 
 ### Added
 
@@ -294,30 +294,30 @@ This release represents a major enhancement of the LEGO Framework with enterpris
 - **Backwards Compatibility**: Existing code works unchanged via migration adapters
 - **Auto-Configuration**: Automatic detection and setup for seamless upgrade
 
-## [1.3.3](https://github.com/tamylaa/lego-framework/compare/v1.3.2...v1.3.3) (2025-10-01)
+## [1.3.3](https://github.com/tamylaa/clodo-framework/compare/v1.3.2...v1.3.3) (2025-10-01)
 
 ### Bug Fixes
 
-* implement intelligent WranglerDeployer for actual Cloudflare deployments ([a656190](https://github.com/tamylaa/lego-framework/commit/a6561909753b5bcb7ece0a0159772daee28dd37c))
+* implement intelligent WranglerDeployer for actual Cloudflare deployments ([a656190](https://github.com/tamylaa/clodo-framework/commit/a6561909753b5bcb7ece0a0159772daee28dd37c))
 
-## [1.3.2](https://github.com/tamylaa/lego-framework/compare/v1.3.1...v1.3.2) (2025-10-01)
-
-
-### Bug Fixes
-
-* major framework reorganization and robustness improvements ([7aed0b5](https://github.com/tamylaa/lego-framework/commit/7aed0b5b438bb02c081d533766951ccc89ff4d4c))
-* make database orchestrator dependency-aware ([051f722](https://github.com/tamylaa/lego-framework/commit/051f72269aab39d4e972cad8011430dfa86b3f7a))
-
-## [1.3.1](https://github.com/tamylaa/lego-framework/compare/v1.3.0...v1.3.1) (2025-09-29)
+## [1.3.2](https://github.com/tamylaa/clodo-framework/compare/v1.3.1...v1.3.2) (2025-10-01)
 
 
 ### Bug Fixes
 
-* Windows compatibility and ES module issues ([7ed2588](https://github.com/tamylaa/lego-framework/commit/7ed2588d8ae2f706e5646813c1d1dad99944d50f))
+* major framework reorganization and robustness improvements ([7aed0b5](https://github.com/tamylaa/clodo-framework/commit/7aed0b5b438bb02c081d533766951ccc89ff4d4c))
+* make database orchestrator dependency-aware ([051f722](https://github.com/tamylaa/clodo-framework/commit/051f72269aab39d4e972cad8011430dfa86b3f7a))
+
+## [1.3.1](https://github.com/tamylaa/clodo-framework/compare/v1.3.0...v1.3.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* Windows compatibility and ES module issues ([7ed2588](https://github.com/tamylaa/clodo-framework/commit/7ed2588d8ae2f706e5646813c1d1dad99944d50f))
 
 # Changelog
 
-All notable changes to the Lego Framework project will be documented in this file.
+All notable changes to the Clodo Framework project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -334,7 +334,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Schema manager with automatic validation and SQL generation
 
 - **CLI Tools**
-  - `create-lego-service` command for service generation
+  - `create-clodo-service` command for service generation
   - Multiple service templates (data-service, auth-service, content-service, api-gateway, generic)
   - Interactive service setup and configuration
   - Template variable replacement system

@@ -1,4 +1,4 @@
-# Lego Framework - Deployment Helper Functions
+# Clodo Framework - Deployment Helper Functions
 # Common utilities used by deployment scripts
 
 # Configuration
@@ -26,8 +26,8 @@ function Write-DeploymentLog {
     }
 
     # Also log to file if log path is set
-    if ($env:LEGO_DEPLOYMENT_LOG) {
-        $logMessage | Out-File -FilePath $env:LEGO_DEPLOYMENT_LOG -Append -Encoding UTF8
+    if ($env:CLODO_DEPLOYMENT_LOG) {
+        $logMessage | Out-File -FilePath $env:CLODO_DEPLOYMENT_LOG -Append -Encoding UTF8
     }
 }
 

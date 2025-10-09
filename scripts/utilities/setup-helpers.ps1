@@ -1,5 +1,5 @@
 # PowerShell Setup Helper Functions
-# Interactive setup utilities for Lego Framework services
+# Interactive setup utilities for Clodo Framework services
 
 function Get-UserInput {
     param(
@@ -184,10 +184,10 @@ function Get-ServiceTypeFeatures {
 
 function Show-WelcomeMessage {
     Write-Host @"
-🚀 Lego Framework Interactive Setup Wizard
+🚀 Clodo Framework Interactive Setup Wizard
 ==========================================
 
-This wizard will guide you through creating a new Lego service.
+This wizard will guide you through creating a new Clodo service.
 You'll be prompted for the following information:
 
 • Service Name (required)

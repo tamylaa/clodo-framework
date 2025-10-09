@@ -1,10 +1,10 @@
-# Lego Framework Extraction Plan
+# Clodo Framework Extraction Plan
 
 ## Phase 1: Framework Core (Week 1-2)
 
 ### 1. Create Framework Package Structure
 ```
-packages/lego-framework/
+packages/clodo-framework/
 ├── package.json
 ├── README.md
 ├── src/
@@ -26,7 +26,7 @@ packages/lego-framework/
 
 ### 2. Extract Core Domain Configuration
 ```javascript
-// packages/lego-framework/src/config/domains.js
+// packages/clodo-framework/src/config/domains.js
 export const createDomainConfigSchema = () => ({
   name: '',
   displayName: '',
@@ -53,7 +53,7 @@ export const mergeDomainConfigs = (baseConfig, serviceConfig) => {
 
 ### 3. Extract Feature Flag System
 ```javascript
-// packages/lego-framework/src/config/features.js
+// packages/clodo-framework/src/config/features.js
 export class FeatureFlagManager {
   constructor() {
     this.currentDomain = null;
@@ -80,7 +80,7 @@ export const featureManager = new FeatureFlagManager();
 
 ### 4. Extract Worker Integration
 ```javascript
-// packages/lego-framework/src/worker/integration.js
+// packages/clodo-framework/src/worker/integration.js
 export const initializeService = (env) => {
   // Set up domain from environment
   const domainName = env.DOMAIN_NAME || 'default';
@@ -109,7 +109,7 @@ export const createFeatureGuard = (featureName) => {
 
 ### 1. Generic Deployment Script
 ```powershell
-# packages/lego-framework/scripts/deploy-domain.ps1
+# packages/clodo-framework/scripts/deploy-domain.ps1
 param(
     [Parameter(Mandatory=$true)]
     [string]$DomainName,
@@ -131,7 +131,7 @@ param(
 
 ### 2. Service Template Generator
 ```bash
-# packages/lego-framework/bin/create-service.js
+# packages/clodo-framework/bin/create-service.js
 #!/usr/bin/env node
 
 const { createService } = require('../src/templates');
@@ -156,14 +156,14 @@ createService(serviceName, serviceType);
 import { getDomainConfig } from './config/domains.js';
 
 // After (framework)
-import { getDomainConfig } from '@yourcompany/lego-framework';
+import { getDomainConfig } from '@yourcompany/clodo-framework';
 import { DATA_SERVICE_FEATURES } from './config/features.js';
 ```
 
 ### 2. Service-Specific Extensions
 ```javascript
 // services/data-service/src/config/features.js
-import { FEATURES } from '@yourcompany/lego-framework';
+import { FEATURES } from '@yourcompany/clodo-framework';
 
 export const DATA_SERVICE_FEATURES = {
   ...FEATURES,
@@ -176,7 +176,7 @@ export const DATA_SERVICE_FEATURES = {
 ### 3. Worker Integration
 ```javascript
 // services/data-service/src/worker/index.js
-import { initializeService, featureGuard } from '@yourcompany/lego-framework';
+import { initializeService, featureGuard } from '@yourcompany/clodo-framework';
 import { DATA_SERVICE_FEATURES } from '../config/features.js';
 
 export default {
@@ -197,7 +197,7 @@ export default {
 
 ### 1. Service Registry
 ```javascript
-// packages/lego-framework/src/registry.js
+// packages/clodo-framework/src/registry.js
 export const SERVICE_REGISTRY = {
   'data-service': {
     features: DATA_SERVICE_FEATURES,
@@ -214,7 +214,7 @@ export const SERVICE_REGISTRY = {
 
 ### 2. Cross-Service Communication
 ```javascript
-// packages/lego-framework/src/communication.js
+// packages/clodo-framework/src/communication.js
 export const createServiceClient = (serviceName) => {
   const serviceConfig = SERVICE_REGISTRY[serviceName];
   return {
@@ -227,7 +227,7 @@ export const createServiceClient = (serviceName) => {
 
 ### 3. Monitoring & Observability
 ```javascript
-// packages/lego-framework/src/monitoring.js
+// packages/clodo-framework/src/monitoring.js
 export const createMetrics = (serviceName) => {
   return {
     increment: (metric, tags) => {
@@ -281,5 +281,5 @@ export const createMetrics = (serviceName) => {
 4. **Maintenance**: Framework updates benefit all services automatically
 5. **Developer Velocity**: New services created in days, not weeks
 
-This framework becomes the **Lego baseplate** that all your services snap into, enabling the true vision of composable, reusable software architecture.</content>
+This framework becomes the **Clodo baseplate** that all your services snap into, enabling the true vision of composable, reusable software architecture.</content>
 <parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\data-service\FRAMEWORK-EXTRACTION-PLAN.md

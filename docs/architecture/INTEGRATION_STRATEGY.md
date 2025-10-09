@@ -1,14 +1,14 @@
-# LEGO Framework Integration Strategy
+# CLODO Framework Integration Strategy
 ## Unified Service Lifecycle Management
 
 ### 🎯 **Strategic Vision**
 
-Transform the LEGO Framework from separate systems into a **unified service lifecycle platform** that seamlessly connects service creation, configuration, and deployment.
+Transform the CLODO Framework from separate systems into a **unified service lifecycle platform** that seamlessly connects service creation, configuration, and deployment.
 
 ### 🔄 **Current State Analysis**
 
 #### Missed Synergies Identified:
-1. **Service Creation → Deployment Gap**: `lego create` generates services but doesn't offer deployment
+1. **Service Creation → Deployment Gap**: `clodo create` generates services but doesn't offer deployment
 2. **Configuration Duplication**: Service configs and deployment configs are managed separately  
 3. **Workflow Fragmentation**: Users need to learn multiple CLI tools for complete workflow
 4. **Data Loss**: Service creation metadata isn't leveraged by deployment system
@@ -22,24 +22,24 @@ Transform the LEGO Framework from separate systems into a **unified service life
 
 ### 🚀 **Proposed Unified Architecture**
 
-#### **Phase 1: Enhanced lego CLI Integration**
+#### **Phase 1: Enhanced clodo CLI Integration**
 
-**Add deployment capabilities to existing `lego-service` commands:**
+**Add deployment capabilities to existing `clodo-service` commands:**
 
 ```javascript
-// Enhanced lego create command
-lego-service create my-app --deploy-after-creation
-lego-service create my-app --environment production --auto-deploy
+// Enhanced clodo create command
+clodo-service create my-app --deploy-after-creation
+clodo-service create my-app --environment production --auto-deploy
 
-// Enhanced lego update command  
-lego-service update ./my-service --deploy-changes
-lego-service update ./my-service --validate-deployment --environment staging
+// Enhanced clodo update command  
+clodo-service update ./my-service --deploy-changes
+clodo-service update ./my-service --validate-deployment --environment staging
 
 // New integrated commands
-lego-service deploy [service-path]        // Deploy created/updated service
-lego-service deploy --all                 // Deploy all services in workspace
-lego-service status [service-path]        // Check deployment status
-lego-service rollback [service-path]      // Rollback service deployment
+clodo-service deploy [service-path]        // Deploy created/updated service
+clodo-service deploy --all                 // Deploy all services in workspace
+clodo-service status [service-path]        // Check deployment status
+clodo-service rollback [service-path]      // Rollback service deployment
 ```
 
 #### **Phase 2: Service-Aware Deployment System**
@@ -103,11 +103,11 @@ export class ServiceDeploymentBridge {
 }
 ```
 
-#### **2. Enhanced lego CLI Commands**
+#### **2. Enhanced clodo CLI Commands**
 Update existing commands to optionally use deployment orchestration:
 
 ```javascript
-// In bin/lego-service.js - add deployment integration
+// In bin/clodo-service.js - add deployment integration
 program
   .command('create')
   .option('--deploy', 'Deploy service after creation')
@@ -173,12 +173,12 @@ program
 ### 🛣️ **Migration Path**
 
 #### **Phase 1: Backwards-Compatible Enhancement (Week 1)**
-- Add optional deployment flags to existing `lego create/update` commands
+- Add optional deployment flags to existing `clodo create/update` commands
 - Create `ServiceDeploymentBridge` integration layer
 - Maintain all existing functionality
 
 #### **Phase 2: Enhanced Integration (Week 2)**
-- Add new `lego deploy` command that reads service configs
+- Add new `clodo deploy` command that reads service configs
 - Enhance deployment orchestration to use service manifests
 - Add deployment status tracking to service updates
 
@@ -201,7 +201,7 @@ program
 - ✅ **Keep `src/orchestration/`** - These ARE customer-facing APIs
 - ✅ **Keep modular components** - They work well and are properly exported  
 - ➕ **Add `src/integration/`** - New bridge components for service ↔ deployment
-- ➕ **Enhance `bin/lego-service.js`** - Add optional deployment capabilities
+- ➕ **Enhance `bin/clodo-service.js`** - Add optional deployment capabilities
 - ➕ **Update exports** - Add new integration components to package.json
 
 This approach maintains the excellent modular architecture while providing the unified customer experience you're envisioning!

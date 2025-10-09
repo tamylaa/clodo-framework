@@ -28,7 +28,7 @@ param(
     [string]$PackagePath = ".\package.json"
 )
 
-# Import Lego Framework utilities
+# Import Clodo Framework utilities
 . "$PSScriptRoot\..\utilities\deployment-helpers.ps1"
 
 # Configuration

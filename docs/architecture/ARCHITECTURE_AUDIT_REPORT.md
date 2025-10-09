@@ -93,7 +93,7 @@ Package.json properly exposes both systems:
 
 ### ✅ **SEPARATE CLI COMMANDS**
 No command name conflicts:
-- `lego-service create/update/validate` (service management)
+- `clodo-service create/update/validate` (service management)
 - `enterprise-deploy.js deploy` (orchestration)
 
 ---
@@ -141,7 +141,7 @@ export class ServiceDeploymentBridge {
 Add **optional** integration to existing commands:
 
 ```javascript
-// bin/lego-service.js - ENHANCED, NOT REPLACED
+// bin/clodo-service.js - ENHANCED, NOT REPLACED
 program.command('create')
   .option('--validate-deployment', 'Check deployment readiness')  ← NEW
   .option('--generate-deployment-config', 'Generate deployment files') ← NEW

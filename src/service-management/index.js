@@ -1,5 +1,5 @@
 /**
- * Lego Framework - Service Management Module
+ * Clodo Framework - Service Management Module
  * Programmatic APIs for service creation and initialization
  */
 

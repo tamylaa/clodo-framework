@@ -2,17 +2,17 @@
 
 ## Overview
 
-Enhanced the Lego Framework CLI with comprehensive **update capabilities** and **error handling/failure capture** system to address service lifecycle management challenges.
+Enhanced the Clodo Framework CLI with comprehensive **update capabilities** and **error handling/failure capture** system to address service lifecycle management challenges.
 
-## Update Capability (`lego-service update`)
+## Update Capability (`clodo-service update`)
 
 ### Features
 
 #### Interactive Update Mode
 ```bash
-lego-service update
+clodo-service update
 # or from within a service directory
-cd my-service && lego-service update
+cd my-service && clodo-service update
 ```
 
 **Update Options:**
@@ -26,23 +26,23 @@ cd my-service && lego-service update
 #### Non-Interactive Update Mode
 ```bash
 # Update domain
-lego-service update --domain-name new-domain.com
+clodo-service update --domain-name new-domain.com
 
 # Update Cloudflare settings
-lego-service update --cloudflare-token new-token --cloudflare-account-id new-id
+clodo-service update --cloudflare-token new-token --cloudflare-account-id new-id
 
 # Update environment
-lego-service update --environment production
+clodo-service update --environment production
 
 # Modify features
-lego-service update --add-feature authentication
-lego-service update --remove-feature caching
+clodo-service update --add-feature authentication
+clodo-service update --remove-feature caching
 
 # Regenerate configurations
-lego-service update --regenerate-configs
+clodo-service update --regenerate-configs
 
 # Fix errors automatically
-lego-service update --fix-errors
+clodo-service update --fix-errors
 ```
 
 #### Auto-Detection
@@ -73,7 +73,7 @@ lego-service update --fix-errors
 - **Context Preservation**: Captures input state, user selections, and operation context
 - **Severity Classification**: Critical, High, Medium, Low severity levels
 - **Recovery Suggestions**: Automated generation of fix recommendations
-- **Persistent Logging**: Saves error history to `lego-service-errors.log`
+- **Persistent Logging**: Saves error history to `clodo-service-errors.log`
 
 #### Error Categories & Recovery
 
@@ -109,34 +109,34 @@ Recovery:
 Error: Invalid service name format
 Recovery:
 • Review input values for correctness
-• Use lego-service validate <path> to check service configuration
-• Run lego-service diagnose <path> for detailed issue analysis
+• Use clodo-service validate <path> to check service configuration
+• Run clodo-service diagnose <path> for detailed issue analysis
 ```
 
 ##### Configuration Errors
 ```
 Error: Missing required configuration
 Recovery:
-• Run lego-service update --fix-errors to attempt automatic fixes
+• Run clodo-service update --fix-errors to attempt automatic fixes
 • Check domain configuration in src/config/domains.js
 • Verify package.json has all required fields
 ```
 
 ### Error Reporting & Analysis
 
-#### Command: `lego-service diagnose`
+#### Command: `clodo-service diagnose`
 ```bash
 # Diagnose current service
-lego-service diagnose
+clodo-service diagnose
 
 # Diagnose specific service
-lego-service diagnose /path/to/service
+clodo-service diagnose /path/to/service
 
 # Deep analysis with dependency checks
-lego-service diagnose --deep-scan
+clodo-service diagnose --deep-scan
 
 # Export diagnostic report
-lego-service diagnose --export-report diagnosis.json
+clodo-service diagnose --export-report diagnosis.json
 ```
 
 **Diagnostic Output:**
@@ -148,12 +148,12 @@ Path: /path/to/service
 ❌ Critical Errors:
   • Missing required file: src/worker/index.js
     Location: /path/to/service
-    💡 Run 'lego-service update --regenerate-configs' to recreate missing files
+    💡 Run 'clodo-service update --regenerate-configs' to recreate missing files
 
 ⚠️  Warnings:
-  • Domain configuration may not be using Lego Framework schema
+  • Domain configuration may not be using Clodo Framework schema
     Location: src/config/domains.js
-    💡 Ensure domain config uses createDomainConfigSchema from @tamyla/lego-framework
+    💡 Ensure domain config uses createDomainConfigSchema from @tamyla/clodo-framework
 
 💡 Recommendations:
   • Consider running tests to validate service functionality
@@ -162,7 +162,7 @@ Path: /path/to/service
 ```
 
 #### Error Log Analysis
-- **Persistent Error Log**: `lego-service-errors.log` contains detailed error history
+- **Persistent Error Log**: `clodo-service-errors.log` contains detailed error history
 - **Error Summary**: Aggregated statistics on error types and frequencies
 - **Trend Analysis**: Identifies most problematic commands and common failure patterns
 
@@ -196,38 +196,38 @@ Path: /path/to/service
 ### Complete Service Update Workflow
 ```bash
 # 1. Diagnose current issues
-lego-service diagnose
+clodo-service diagnose
 
 # 2. Attempt automatic fixes
-lego-service update --fix-errors
+clodo-service update --fix-errors
 
 # 3. Update domain configuration
-lego-service update --domain-name new-domain.com
+clodo-service update --domain-name new-domain.com
 
 # 4. Update Cloudflare settings
-lego-service update --cloudflare-token $(cat new-token.txt)
+clodo-service update --cloudflare-token $(cat new-token.txt)
 
 # 5. Regenerate all configurations
-lego-service update --regenerate-configs
+clodo-service update --regenerate-configs
 
 # 6. Validate final configuration
-lego-service validate
+clodo-service validate
 ```
 
 ### Error Recovery Workflow
 ```bash
 # Service creation failed
-lego-service create --service-name my-service
+clodo-service create --service-name my-service
 # Error: Invalid Cloudflare token
 
 # Diagnose the issue
-lego-service diagnose my-service
+clodo-service diagnose my-service
 
 # Update with correct token
-lego-service update my-service --cloudflare-token correct-token
+clodo-service update my-service --cloudflare-token correct-token
 
 # Continue with configuration
-lego-service update my-service --regenerate-configs
+clodo-service update my-service --regenerate-configs
 ```
 
 ## Technical Implementation
@@ -264,5 +264,5 @@ lego-service update my-service --regenerate-configs
 - **Automated Recovery**: Reduce manual intervention requirements
 - **Quality Assurance**: Validate service health before deployment
 
-This implementation transforms the Lego Framework CLI from a basic creation tool into a comprehensive service lifecycle management system with robust error handling and recovery capabilities.</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\architecture\PHASE1_TASK3-4_UPDATE_ERRORS.md
+This implementation transforms the Clodo Framework CLI from a basic creation tool into a comprehensive service lifecycle management system with robust error handling and recovery capabilities.</content>
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\architecture\PHASE1_TASK3-4_UPDATE_ERRORS.md

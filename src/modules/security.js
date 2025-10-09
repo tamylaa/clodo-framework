@@ -3,7 +3,7 @@ import { DeploymentManager } from '../security/DeploymentManager.js';
 import { SecretGenerator } from '../security/SecretGenerator.js';
 
 /**
- * Security Module for Lego Framework
+ * Security Module for Clodo Framework
  * Provides comprehensive security validation and management
  */
 export const securityModule = {
@@ -92,7 +92,7 @@ export const securityModule = {
 try {
   const { moduleManager } = await import('../modules/ModuleManager.js');
   moduleManager.registerModule('security', securityModule);
-  console.log('🔒 Security module registered with Lego Framework');
+  console.log('🔒 Security module registered with Clodo Framework');
 } catch (error) {
   // ModuleManager not available, module will be registered manually
 }

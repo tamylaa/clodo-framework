@@ -102,9 +102,9 @@ export class ValidationHandler {
     try {
       const domainConfig = await fs.readFile(domainConfigPath, 'utf8');
 
-      // Check for Lego Framework integration
+      // Check for Clodo Framework integration
       if (!domainConfig.includes('createDomainConfigSchema')) {
-        issues.push('Domain configuration missing Lego Framework integration');
+        issues.push('Domain configuration missing Clodo Framework integration');
       }
 
       // Check for required exports

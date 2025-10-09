@@ -1,4 +1,4 @@
-# 📚 LEGO Framework - Complete API Reference
+# 📚 CLODO Framework - Complete API Reference
 
 > **Version**: 3.0.5  
 > **Updated**: October 2025  
@@ -31,10 +31,10 @@
 
 ### `initializeService(config, env)`
 
-Initialize a LEGO Framework service instance.
+Initialize a CLODO Framework service instance.
 
 ```javascript
-import { initializeService } from '@tamyla/lego-framework';
+import { initializeService } from '@tamyla/clodo-framework';
 
 const service = initializeService(domainConfig, env);
 ```
@@ -47,7 +47,7 @@ const service = initializeService(domainConfig, env);
 
 **Example:**
 ```javascript
-import { initializeService } from '@tamyla/lego-framework';
+import { initializeService } from '@tamyla/clodo-framework';
 import { domains } from './config/domains.js';
 
 export default {
@@ -65,7 +65,7 @@ export default {
 Automatically configure the framework with sensible defaults.
 
 ```javascript
-import { autoConfigureFramework } from '@tamyla/lego-framework';
+import { autoConfigureFramework } from '@tamyla/clodo-framework';
 
 const config = autoConfigureFramework({
   environment: 'production',
@@ -82,7 +82,7 @@ const config = autoConfigureFramework({
 Type-safe database operations with automatic validation.
 
 ```javascript
-import { GenericDataService } from '@tamyla/lego-framework';
+import { GenericDataService } from '@tamyla/clodo-framework';
 
 const userService = new GenericDataService(d1Client, 'users');
 ```
@@ -163,7 +163,7 @@ interface QueryOptions {
 Factory function for creating data services.
 
 ```javascript
-import { createDataService } from '@tamyla/lego-framework';
+import { createDataService } from '@tamyla/clodo-framework';
 
 const userService = createDataService(env.DB, 'users');
 const postService = createDataService(env.DB, 'posts');
@@ -174,7 +174,7 @@ const postService = createDataService(env.DB, 'posts');
 Create services for all registered models.
 
 ```javascript
-import { getAllDataServices } from '@tamyla/lego-framework';
+import { getAllDataServices } from '@tamyla/clodo-framework';
 
 const services = getAllDataServices(env.DB);
 // Returns: { users: GenericDataService, posts: GenericDataService, ... }
@@ -189,7 +189,7 @@ const services = getAllDataServices(env.DB);
 Global schema registry for managing data models.
 
 ```javascript
-import { schemaManager } from '@tamyla/lego-framework';
+import { schemaManager } from '@tamyla/clodo-framework';
 ```
 
 #### Methods
@@ -271,7 +271,7 @@ interface ColumnDefinition {
 Advanced routing with middleware and authentication support.
 
 ```javascript
-import { EnhancedRouter } from '@tamyla/lego-framework';
+import { EnhancedRouter } from '@tamyla/clodo-framework';
 
 const router = new EnhancedRouter(d1Client, {
   requireAuth: true,
@@ -320,7 +320,7 @@ interface RouterOptions {
 Pre-built CRUD route handlers for data models.
 
 ```javascript
-import { GenericRouteHandler } from '@tamyla/lego-framework';
+import { GenericRouteHandler } from '@tamyla/clodo-framework';
 
 const userHandler = new GenericRouteHandler(d1Client, 'users', {
   requireAuth: true,
@@ -366,7 +366,7 @@ const response = await userHandler.handleDelete(request, '123');
 
 #### `validateSecurity(config, environment?)`
 ```javascript
-import { validateSecurity } from '@tamyla/lego-framework/security';
+import { validateSecurity } from '@tamyla/clodo-framework/security';
 
 const issues = validateSecurity(config, 'production');
 // Returns: Array of security issues or empty array if valid
@@ -374,7 +374,7 @@ const issues = validateSecurity(config, 'production');
 
 #### `deployWithSecurity(options)`
 ```javascript
-import { deployWithSecurity } from '@tamyla/lego-framework/security';
+import { deployWithSecurity } from '@tamyla/clodo-framework/security';
 
 await deployWithSecurity({
   customer: 'my-company',
@@ -385,7 +385,7 @@ await deployWithSecurity({
 
 #### `generateSecureKey(type?, options?)`
 ```javascript
-import { generateSecureKey } from '@tamyla/lego-framework/security';
+import { generateSecureKey } from '@tamyla/clodo-framework/security';
 
 // Generate JWT secret
 const jwtSecret = generateSecureKey('jwt', { length: 64 });
@@ -399,7 +399,7 @@ const apiKey = generateSecureKey('api', { length: 32, prefix: 'sk_' });
 Validate service configurations for security compliance.
 
 ```javascript
-import { ConfigurationValidator } from '@tamyla/lego-framework/security';
+import { ConfigurationValidator } from '@tamyla/clodo-framework/security';
 
 const issues = ConfigurationValidator.validate(config, 'production');
 const result = ConfigurationValidator.validateConfiguration('my-company', 'prod');
@@ -410,7 +410,7 @@ const result = ConfigurationValidator.validateConfiguration('my-company', 'prod'
 Generate cryptographically secure keys and tokens.
 
 ```javascript
-import { SecretGenerator } from '@tamyla/lego-framework/security';
+import { SecretGenerator } from '@tamyla/clodo-framework/security';
 
 // Generate different types of secrets
 const apiKey = SecretGenerator.generateSecureApiKey(32, 'api_');
@@ -423,7 +423,7 @@ const serviceKey = SecretGenerator.generateServiceKey('auth-service', 'prod');
 Secure deployment orchestration.
 
 ```javascript
-import { DeploymentManager } from '@tamyla/lego-framework/security';
+import { DeploymentManager } from '@tamyla/clodo-framework/security';
 
 // Deploy with security validation
 await DeploymentManager.deployWithSecurity({
@@ -445,7 +445,7 @@ const config = DeploymentManager.generateSecureConfig('client', 'prod');
 
 #### `createDomainConfigSchema(domains)`
 ```javascript
-import { createDomainConfigSchema } from '@tamyla/lego-framework';
+import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
 export const domains = createDomainConfigSchema({
   'my-api': {
@@ -471,7 +471,7 @@ export const domains = createDomainConfigSchema({
 
 #### `validateDomainConfig(domain)`
 ```javascript
-import { validateDomainConfig } from '@tamyla/lego-framework';
+import { validateDomainConfig } from '@tamyla/clodo-framework';
 
 const result = validateDomainConfig(domains['my-api']);
 // Returns: { valid: boolean, errors: string[] }
@@ -479,7 +479,7 @@ const result = validateDomainConfig(domains['my-api']);
 
 #### `createDomainRegistry(domains)`
 ```javascript
-import { createDomainRegistry } from '@tamyla/lego-framework';
+import { createDomainRegistry } from '@tamyla/clodo-framework';
 
 const registry = createDomainRegistry(domains);
 ```
@@ -488,7 +488,7 @@ const registry = createDomainRegistry(domains);
 
 #### `FeatureManager`
 ```javascript
-import { featureManager, isFeatureEnabled, withFeature } from '@tamyla/lego-framework';
+import { featureManager, isFeatureEnabled, withFeature } from '@tamyla/clodo-framework';
 
 // Check if feature is enabled
 if (isFeatureEnabled('NEW_API_ENDPOINTS')) {
@@ -504,7 +504,7 @@ withFeature('ADVANCED_LOGGING',
 
 #### Feature Constants
 ```javascript
-import { COMMON_FEATURES } from '@tamyla/lego-framework';
+import { COMMON_FEATURES } from '@tamyla/clodo-framework';
 
 // Available features
 COMMON_FEATURES.AUTHENTICATION     // 'authentication'
@@ -526,7 +526,7 @@ COMMON_FEATURES.FILE_STORAGE      // 'fileStorage'
 Coordinate deployments across multiple domains and environments.
 
 ```javascript
-import { MultiDomainOrchestrator } from '@tamyla/lego-framework/orchestration';
+import { MultiDomainOrchestrator } from '@tamyla/clodo-framework/orchestration';
 
 const orchestrator = new MultiDomainOrchestrator({
   portfolio: ['api.example.com', 'auth.example.com'],
@@ -565,7 +565,7 @@ const isValid = await orchestrator.validatePrerequisites('api.example.com');
 Coordinate resources and dependencies across domains.
 
 ```javascript
-import { CrossDomainCoordinator } from '@tamyla/lego-framework/orchestration';
+import { CrossDomainCoordinator } from '@tamyla/clodo-framework/orchestration';
 
 const coordinator = new CrossDomainCoordinator();
 await coordinator.coordinateDomains(['api.com', 'auth.com']);
@@ -580,7 +580,7 @@ await coordinator.coordinateDomains(['api.com', 'auth.com']);
 Comprehensive production environment testing.
 
 ```javascript
-import { ProductionTester } from '@tamyla/lego-framework/deployment';
+import { ProductionTester } from '@tamyla/clodo-framework/deployment';
 
 const tester = new ProductionTester({
   baseUrl: 'https://api.example.com',
@@ -618,7 +618,7 @@ const authResults = await tester.runAuthenticationTests({
 
 #### `ApiTester`
 ```javascript
-import { ApiTester } from '@tamyla/lego-framework/deployment';
+import { ApiTester } from '@tamyla/clodo-framework/deployment';
 
 const apiTester = new ApiTester({ timeout: 5000 });
 const results = await apiTester.runApiTests('production');
@@ -626,7 +626,7 @@ const results = await apiTester.runApiTests('production');
 
 #### `AuthTester`
 ```javascript
-import { AuthTester } from '@tamyla/lego-framework/deployment';
+import { AuthTester } from '@tamyla/clodo-framework/deployment';
 
 const authTester = new AuthTester({ jwtSecret: process.env.JWT_SECRET });
 const results = await authTester.testAuthFlow(testUser);
@@ -634,7 +634,7 @@ const results = await authTester.testAuthFlow(testUser);
 
 #### `DatabaseTester`
 ```javascript
-import { DatabaseTester } from '@tamyla/lego-framework/deployment';
+import { DatabaseTester } from '@tamyla/clodo-framework/deployment';
 
 const dbTester = new DatabaseTester({ connectionString: env.DATABASE_URL });
 const results = await dbTester.testDatabaseConnectivity();
@@ -648,7 +648,7 @@ const results = await dbTester.testDatabaseConnectivity();
 
 #### `createLogger(serviceName)`
 ```javascript
-import { createLogger } from '@tamyla/lego-framework';
+import { createLogger } from '@tamyla/clodo-framework';
 
 const logger = createLogger('MyService');
 
@@ -662,7 +662,7 @@ logger.error('Error message', error);
 
 #### `validateRequired(object, fields)`
 ```javascript
-import { validateRequired } from '@tamyla/lego-framework';
+import { validateRequired } from '@tamyla/clodo-framework';
 
 try {
   validateRequired(userData, ['name', 'email']);
@@ -674,7 +674,7 @@ try {
 
 #### `deepMerge(target, source)`
 ```javascript
-import { deepMerge } from '@tamyla/lego-framework';
+import { deepMerge } from '@tamyla/clodo-framework';
 
 const merged = deepMerge(defaultConfig, userConfig);
 ```
@@ -683,7 +683,7 @@ const merged = deepMerge(defaultConfig, userConfig);
 
 #### `ErrorRecoveryManager`
 ```javascript
-import { ErrorRecoveryManager } from '@tamyla/lego-framework';
+import { ErrorRecoveryManager } from '@tamyla/clodo-framework';
 
 const recovery = new ErrorRecoveryManager({
   maxRetries: 3,
@@ -697,7 +697,7 @@ await recovery.executeWithRetry(async () => {
 
 #### `withRetry(fn, options)`
 ```javascript
-import { withRetry } from '@tamyla/lego-framework';
+import { withRetry } from '@tamyla/clodo-framework';
 
 const result = await withRetry(
   () => fetch('https://api.example.com/data'),
@@ -707,7 +707,7 @@ const result = await withRetry(
 
 #### `withCircuitBreaker(fn, options)`
 ```javascript
-import { withCircuitBreaker } from '@tamyla/lego-framework';
+import { withCircuitBreaker } from '@tamyla/clodo-framework';
 
 const result = await withCircuitBreaker(
   () => externalApiCall(),
@@ -721,7 +721,7 @@ const result = await withCircuitBreaker(
 
 ### Service Management
 
-#### `lego-create-service`
+#### `clodo-create-service`
 ```bash
 # Create new service
 node bin/service-management/create-service.js my-api --type data-service
@@ -730,7 +730,7 @@ node bin/service-management/create-service.js my-api --type data-service
 # Options: --output, --force, --type
 ```
 
-#### `lego-init-service`
+#### `clodo-init-service`
 ```bash
 # Initialize existing service
 node bin/service-management/init-service.js ./my-existing-service
@@ -738,7 +738,7 @@ node bin/service-management/init-service.js ./my-existing-service
 
 ### Security Tools
 
-#### `lego-security`
+#### `clodo-security`
 ```bash
 # Generate secrets
 node bin/security/security-cli.js generate-key jwt
@@ -889,28 +889,28 @@ export const ERROR_CODES = {
 
 ```javascript
 // Core framework
-import { initializeService, autoConfigureFramework } from '@tamyla/lego-framework';
+import { initializeService, autoConfigureFramework } from '@tamyla/clodo-framework';
 
 // Data services
-import { GenericDataService, schemaManager } from '@tamyla/lego-framework/services';
+import { GenericDataService, schemaManager } from '@tamyla/clodo-framework/services';
 
 // Routing
-import { EnhancedRouter, GenericRouteHandler } from '@tamyla/lego-framework/routing';
+import { EnhancedRouter, GenericRouteHandler } from '@tamyla/clodo-framework/routing';
 
 // Security
-import { validateSecurity, generateSecureKey } from '@tamyla/lego-framework/security';
+import { validateSecurity, generateSecureKey } from '@tamyla/clodo-framework/security';
 
 // Configuration
-import { createDomainConfigSchema, featureManager } from '@tamyla/lego-framework/config';
+import { createDomainConfigSchema, featureManager } from '@tamyla/clodo-framework/config';
 
 // Orchestration
-import { MultiDomainOrchestrator } from '@tamyla/lego-framework/orchestration';
+import { MultiDomainOrchestrator } from '@tamyla/clodo-framework/orchestration';
 
 // Testing
-import { ProductionTester, ApiTester } from '@tamyla/lego-framework/deployment';
+import { ProductionTester, ApiTester } from '@tamyla/clodo-framework/deployment';
 
 // Utilities
-import { createLogger, validateRequired } from '@tamyla/lego-framework/utils';
+import { createLogger, validateRequired } from '@tamyla/clodo-framework/utils';
 ```
 
 ---
@@ -920,8 +920,8 @@ import { createLogger, validateRequired } from '@tamyla/lego-framework/utils';
 - **📖 Documentation**: [Complete Guide](../README.md)
 - **🚀 Getting Started**: [Interactive Tutorial](./getting-started.md)
 - **🔐 Security Guide**: [Security Documentation](../SECURITY.md)
-- **🐛 Issues**: [GitHub Issues](https://github.com/tamylaa/lego-framework/issues)
-- **💬 Discussions**: [Community Forum](https://github.com/tamylaa/lego-framework/discussions)
+- **🐛 Issues**: [GitHub Issues](https://github.com/tamylaa/clodo-framework/issues)
+- **💬 Discussions**: [Community Forum](https://github.com/tamylaa/clodo-framework/discussions)
 
 ---
 

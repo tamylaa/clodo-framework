@@ -1,4 +1,4 @@
-# Lego Framework - Workflow Order Analysis
+# Clodo Framework - Workflow Order Analysis
 
 ## The Configuration Dependency Problem
 
@@ -42,7 +42,7 @@ clodo-framework plan-service my-service --type api-gateway --domains 5
 ### Phase 2: Configuration Generation
 ```bash
 # Initialize service with auto-generated configs
-lego-framework init-service my-service \
+clodo-framework init-service my-service \
   --type api-gateway \
   --domains "api.example.com,staging.example.com" \
   --env production
@@ -57,16 +57,16 @@ lego-framework init-service my-service \
 ### Phase 3: Validation & Testing
 ```bash
 # Validate generated configurations
-lego-framework validate-config my-service
+clodo-framework validate-config my-service
 
 # Test deployment readiness
-lego-framework test-deployment my-service --dry-run
+clodo-framework test-deployment my-service --dry-run
 ```
 
 ### Phase 4: Deployment
 ```bash
 # Deploy with confidence
-lego-framework deploy my-service
+clodo-framework deploy my-service
 ```
 
 ## Implementation Requirements

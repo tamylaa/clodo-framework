@@ -80,7 +80,7 @@ export class ConfirmationEngine {
       version: '1.0.0',
 
       // 4. Author - Default framework author
-      author: 'Lego Framework',
+      author: 'Clodo Framework',
 
       // 5-7. URLs - Derived from domain
       productionUrl: `https://api.${domainName}`,
@@ -97,7 +97,7 @@ export class ConfirmationEngine {
       workerName: `${serviceName}-worker`,
 
       // 11. Package Name - NPM package naming
-      packageName: `@lego/${serviceName}`,
+      packageName: `@clodo/${serviceName}`,
 
       // 12. Git Repository URL - GitHub naming
       gitRepositoryUrl: `https://github.com/tamylaa/${serviceName}`,
@@ -332,7 +332,7 @@ export class ConfirmationEngine {
       'auth-service': 'Authentication and authorization service with user management and security features',
       'content-service': 'Content management service with file storage, search, and delivery capabilities',
       'api-gateway': 'API gateway providing routing, rate limiting, authentication, and monitoring',
-      'generic': 'A Lego Framework service providing core functionality and extensibility'
+      'generic': 'A Clodo Framework service providing core functionality and extensibility'
     };
     return descriptions[serviceType] || descriptions.generic;
   }

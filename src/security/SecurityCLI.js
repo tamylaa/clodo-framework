@@ -1,5 +1,5 @@
 /**
- * Lego Framework - Security CLI
+ * Clodo Framework - Security CLI
  * Programmatic API for security operations
  */
 
@@ -211,7 +211,7 @@ export class SecurityCLI {
       return help[command];
     }
 
-    return `Lego Framework Security CLI
+    return `Clodo Framework Security CLI
 
 Commands:
 ${Object.values(help).map(cmd => `  ${cmd}`).join('\n')}

@@ -5,7 +5,7 @@ import path from 'path';
 
 /**
  * WranglerDeployer - Executes actual Cloudflare Workers deployments using wrangler CLI
- * Provides integration between Lego Framework orchestration and wrangler deployment
+ * Provides integration between Clodo Framework orchestration and wrangler deployment
  */
 export class WranglerDeployer {
   constructor(options = {}) {

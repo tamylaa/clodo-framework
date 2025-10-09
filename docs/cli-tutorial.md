@@ -1,17 +1,17 @@
-# 🛠️ LEGO Framework CLI Tutorial
+# 🛠️ CLODO Framework CLI Tutorial
 
-Interactive guide to mastering the LEGO Framework command-line tools. Follow along with real examples and see the expected outputs.
+Interactive guide to mastering the CLODO Framework command-line tools. Follow along with real examples and see the expected outputs.
 
 ## 📋 CLI Tools Overview
 
-The LEGO Framework provides three main CLI tools:
+The CLODO Framework provides three main CLI tools:
 
 ### 🏗️ **Service Management**
-- `lego-create-service` - Generate new services
-- `lego-init-service` - Initialize existing projects
+- `clodo-create-service` - Generate new services
+- `clodo-init-service` - Initialize existing projects
 
 ### 🔐 **Security Tools**  
-- `lego-security` - Manage keys, validate configs, deploy securely
+- `clodo-security` - Manage keys, validate configs, deploy securely
 
 ### 🚀 **Deployment Tools**
 - `enterprise-deploy` - Enterprise deployment management
@@ -21,7 +21,7 @@ The LEGO Framework provides three main CLI tools:
 
 ## 🏗️ Service Management CLI
 
-### `lego-create-service` - Create New Services
+### `clodo-create-service` - Create New Services
 
 #### **Basic Usage**
 ```bash
@@ -30,9 +30,9 @@ node bin/service-management/create-service.js --help
 
 **📤 Expected Output:**
 ```
-Lego Framework - Service Template Generator
+Clodo Framework - Service Template Generator
 
-Usage: lego-create-service <service-name> [options]
+Usage: clodo-create-service <service-name> [options]
 
 Arguments:
   service-name    Name of the service to create (required)
@@ -44,9 +44,9 @@ Options:
   -h, --help           Show this help message
 
 Examples:
-  lego-create-service my-data-service --type data-service
-  lego-create-service auth-api --type auth-service --output ./services
-  lego-create-service my-service --force
+  clodo-create-service my-data-service --type data-service
+  clodo-create-service auth-api --type auth-service --output ./services
+  clodo-create-service my-service --force
 ```
 
 #### **Example 1: Create a Data Service**
@@ -56,7 +56,7 @@ node bin/service-management/create-service.js my-blog-api --type data-service --
 
 **📤 Expected Output:**
 ```
-🏗️  Lego Framework Service Generator
+🏗️  Clodo Framework Service Generator
 =====================================
 
 📋 Configuration:
@@ -94,7 +94,7 @@ node bin/service-management/create-service.js my-blog-api --type data-service --
    4. npm test
    5. npm run deploy
 
-🔗 Documentation: https://github.com/tamylaa/lego-framework/docs
+🔗 Documentation: https://github.com/tamylaa/clodo-framework/docs
 ```
 
 #### **Example 2: Create an Auth Service**
@@ -104,7 +104,7 @@ node bin/service-management/create-service.js user-auth --type auth-service
 
 **📤 Expected Output:**
 ```
-🏗️  Lego Framework Service Generator
+🏗️  Clodo Framework Service Generator
 =====================================
 
 📋 Configuration:
@@ -154,7 +154,7 @@ node bin/service-management/create-service.js user-auth --type auth-service
 ⚠️  Security Note: Always generate secure secrets for production!
 ```
 
-### `lego-init-service` - Initialize Existing Projects
+### `clodo-init-service` - Initialize Existing Projects
 
 #### **Basic Usage**
 ```bash
@@ -163,9 +163,9 @@ node bin/service-management/init-service.js --help
 
 **📤 Expected Output:**
 ```
-Lego Framework - Service Initializer
+Clodo Framework - Service Initializer
 
-Usage: lego-init-service [directory] [options]
+Usage: clodo-init-service [directory] [options]
 
 Arguments:
   directory       Directory to initialize (default: current directory)
@@ -176,8 +176,8 @@ Options:
   -h, --help      Show this help message
 
 Examples:
-  lego-init-service ./existing-project
-  lego-init-service --type data-service --force
+  clodo-init-service ./existing-project
+  clodo-init-service --type data-service --force
 ```
 
 #### **Example: Initialize Existing Project**
@@ -186,13 +186,13 @@ Examples:
 mkdir existing-api && cd existing-api
 npm init -y
 
-# Initialize with LEGO Framework
+# Initialize with CLODO Framework
 node ../bin/service-management/init-service.js .
 ```
 
 **📤 Expected Output:**
 ```
-🔧 Lego Framework Service Initializer
+🔧 Clodo Framework Service Initializer
 ====================================
 
 📁 Analyzing directory: ./
@@ -203,7 +203,7 @@ node ../bin/service-management/init-service.js .
    📦 Package dependencies found
    🎯 Detected type: generic service
 
-🚀 Initializing LEGO Framework integration...
+🚀 Initializing CLODO Framework integration...
 
 📄 Adding framework files...
    ✅ src/config/domains.js
@@ -213,7 +213,7 @@ node ../bin/service-management/init-service.js .
    ✅ wrangler.toml
 
 📦 Updating package.json...
-   ✅ Added @tamyla/lego-framework dependency
+   ✅ Added @tamyla/clodo-framework dependency
    ✅ Added build scripts
    ✅ Added deploy scripts
 
@@ -230,14 +230,14 @@ node ../bin/service-management/init-service.js .
    4. npm test
    5. npm run deploy
 
-🔗 Integration Guide: https://github.com/tamylaa/lego-framework/docs/integration
+🔗 Integration Guide: https://github.com/tamylaa/clodo-framework/docs/integration
 ```
 
 ---
 
 ## 🔐 Security CLI
 
-### `lego-security` - Security Management
+### `clodo-security` - Security Management
 
 #### **Basic Usage**
 ```bash
@@ -246,10 +246,10 @@ node bin/security/security-cli.js --help
 
 **📤 Expected Output:**
 ```
-🔐 Lego Framework Security CLI
+🔐 Clodo Framework Security CLI
 =============================
 
-Usage: lego-security <command> [options]
+Usage: clodo-security <command> [options]
 
 Commands:
   generate-key <type> [name]     Generate secure keys (jwt, api, service)
@@ -265,10 +265,10 @@ Options:
   -h, --help        Show this help message
 
 Examples:
-  lego-security generate-key jwt
-  lego-security generate-key api content-service --prefix cs_
-  lego-security validate my-company production
-  lego-security deploy my-company production --dry-run
+  clodo-security generate-key jwt
+  clodo-security generate-key api content-service --prefix cs_
+  clodo-security validate my-company production
+  clodo-security deploy my-company production --dry-run
 ```
 
 #### **Example 1: Generate JWT Secret**
@@ -278,7 +278,7 @@ node bin/security/security-cli.js generate-key jwt
 
 **📤 Expected Output:**
 ```
-🔐 Lego Framework Security CLI
+🔐 Clodo Framework Security CLI
 =============================
 
 🔑 Generating JWT Secret Key
@@ -314,7 +314,7 @@ node bin/security/security-cli.js generate-key api content-service --prefix cs_ 
 
 **📤 Expected Output:**
 ```
-🔐 Lego Framework Security CLI
+🔐 Clodo Framework Security CLI
 =============================
 
 🔑 Generating API Key
@@ -348,7 +348,7 @@ node bin/security/security-cli.js validate my-company production
 
 **📤 Expected Output:**
 ```
-🔐 Lego Framework Security CLI
+🔐 Clodo Framework Security CLI
 =============================
 
 🔍 Security Configuration Validation
@@ -404,7 +404,7 @@ node bin/security/security-cli.js deploy my-company production --dry-run
 
 **📤 Expected Output:**
 ```
-🔐 Lego Framework Security CLI
+🔐 Clodo Framework Security CLI
 =============================
 
 🚀 Secure Deployment Process
@@ -461,7 +461,7 @@ node bin/deployment/enterprise-deploy.js --help
 
 **📤 Expected Output:**
 ```
-🏢 Lego Framework Enterprise Deployment
+🏢 Clodo Framework Enterprise Deployment
 ======================================
 
 Usage: enterprise-deploy [options]
@@ -488,7 +488,7 @@ node bin/deployment/enterprise-deploy.js --customer acme-corp --env production -
 
 **📤 Expected Output:**
 ```
-🏢 Lego Framework Enterprise Deployment
+🏢 Clodo Framework Enterprise Deployment
 ======================================
 
 📋 Deployment Configuration
@@ -567,7 +567,7 @@ node bin/deployment/master-deploy.js --help
 
 **📤 Expected Output:**
 ```
-🌐 Lego Framework Master Deployment Orchestrator
+🌐 Clodo Framework Master Deployment Orchestrator
 ===============================================
 
 Usage: master-deploy [options]
@@ -594,7 +594,7 @@ node bin/deployment/master-deploy.js --portfolio config/production-portfolio.jso
 
 **📤 Expected Output:**
 ```
-🌐 Lego Framework Master Deployment Orchestrator  
+🌐 Clodo Framework Master Deployment Orchestrator  
 ===============================================
 
 📋 Master Deployment Configuration
@@ -767,10 +767,10 @@ node bin/deployment/master-deploy.js --portfolio config/portfolio.json --env pro
 ### **Issue: "Module not found"**
 ```bash
 # Make sure you're in the framework root directory
-pwd  # Should show: .../lego-framework
+pwd  # Should show: .../clodo-framework
 
 # If not, navigate there:
-cd path/to/lego-framework
+cd path/to/clodo-framework
 ```
 
 ### **Issue: "Permission denied"**  
@@ -803,8 +803,8 @@ node --max-old-space-size=8192 bin/service-management/create-service.js --help
 ### **1. Using Environment Variables**
 ```bash
 # Set common options via environment  
-export LEGO_DEFAULT_TYPE=data-service
-export LEGO_OUTPUT_DIR=./my-services
+export CLODO_DEFAULT_TYPE=data-service
+export CLODO_OUTPUT_DIR=./my-services
 
 # Now these are defaults:
 node bin/service-management/create-service.js my-api
@@ -847,4 +847,4 @@ After mastering the CLI tools:
 
 ---
 
-**🎯 Questions or Issues?** [Open an issue](https://github.com/tamylaa/lego-framework/issues) or check our [troubleshooting guide](./troubleshooting.md)!
+**🎯 Questions or Issues?** [Open an issue](https://github.com/tamylaa/clodo-framework/issues) or check our [troubleshooting guide](./troubleshooting.md)!

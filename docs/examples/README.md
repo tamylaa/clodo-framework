@@ -11,7 +11,7 @@ Build a customer management system that serves multiple clients with domain-spec
 #### **Setup**
 ```bash
 # Create the service
-create-lego-service crm-platform --type data-service
+create-clodo-service crm-platform --type data-service
 cd crm-platform
 ```
 
@@ -99,7 +99,7 @@ export const domains = {
 #### **Data Models**
 ```javascript
 // src/models/contacts.js
-import { schemaManager } from '@tamyla/lego-framework';
+import { schemaManager } from '@tamyla/clodo-framework';
 
 const contactSchema = {
   tableName: 'contacts',
@@ -155,7 +155,7 @@ import {
   createFeatureGuard, 
   EnhancedRouter,
   GenericRouteHandler 
-} from '@tamyla/lego-framework';
+} from '@tamyla/clodo-framework';
 import { domains } from '../config/domains.js';
 import '../models/contacts.js';
 import '../models/companies.js';
@@ -267,7 +267,7 @@ Build a product catalog API with JWT authentication and role-based access.
 
 #### **Setup**
 ```bash
-create-lego-service ecommerce-api --type api-gateway
+create-clodo-service ecommerce-api --type api-gateway
 cd ecommerce-api
 ```
 
@@ -316,7 +316,7 @@ export class AuthModule {
 #### **Product Models**
 ```javascript
 // src/models/products.js
-import { schemaManager } from '@tamyla/lego-framework';
+import { schemaManager } from '@tamyla/clodo-framework';
 
 const productSchema = {
   tableName: 'products',
@@ -551,7 +551,7 @@ router.registerRoute('POST', '/webhooks/payment', async (request) => {
 ### **Unit Test Patterns**
 ```javascript
 // tests/services/user-service.test.js
-import { GenericDataService } from '@tamyla/lego-framework';
+import { GenericDataService } from '@tamyla/clodo-framework';
 
 describe('UserService', () => {
   let mockDb, userService;
@@ -593,4 +593,4 @@ describe('Multi-Tenant Integration', () => {
 
 ---
 
-These examples provide comprehensive patterns for building production-ready services with the Lego Framework. Each example demonstrates real-world scenarios with proper error handling, security considerations, and scalability patterns.
+These examples provide comprehensive patterns for building production-ready services with the Clodo Framework. Each example demonstrates real-world scenarios with proper error handling, security considerations, and scalability patterns.

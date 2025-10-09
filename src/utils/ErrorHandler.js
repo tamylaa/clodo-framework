@@ -39,8 +39,8 @@ export class ErrorHandler {
     console.error('\n💡 Suggestions:');
 
     if (error.message.includes('security')) {
-      console.error('   - Run security validation: npx lego-security validate <customer> <environment>');
-      console.error('   - Generate secure keys: npx lego-security generate-key api');
+      console.error('   - Run security validation: npx clodo-security validate <customer> <environment>');
+      console.error('   - Generate secure keys: npx clodo-security generate-key api');
     }
 
     if (error.message.includes('health check')) {
@@ -60,7 +60,7 @@ export class ErrorHandler {
 
     if (error.message.includes('validation')) {
       console.error('   - Review configuration files for errors');
-      console.error('   - Run validation checks: npx lego-config validate');
+      console.error('   - Run validation checks: npx clodo-config validate');
     }
 
     console.error('   - Review logs for more details');
@@ -152,8 +152,8 @@ export class ErrorHandler {
     const errorMessage = error.message.toLowerCase();
 
     if (errorMessage.includes('security') || errorMessage.includes('validation')) {
-      suggestions.push('Run security validation: npx lego-security validate');
-      suggestions.push('Generate secure keys: npx lego-security generate-key api');
+      suggestions.push('Run security validation: npx clodo-security validate');
+      suggestions.push('Generate secure keys: npx clodo-security generate-key api');
     }
 
     if (errorMessage.includes('health') || errorMessage.includes('connection')) {
@@ -174,7 +174,7 @@ export class ErrorHandler {
 
     if (errorMessage.includes('config') || errorMessage.includes('missing')) {
       suggestions.push('Review configuration files for errors');
-      suggestions.push('Run configuration validation: npx lego-config validate');
+      suggestions.push('Run configuration validation: npx clodo-config validate');
       suggestions.push('Check environment variables are properly set');
     }
 

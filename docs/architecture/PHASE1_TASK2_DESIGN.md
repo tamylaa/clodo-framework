@@ -11,8 +11,8 @@ Successfully designed and implemented the foundation of the unified three-tier C
 2. **Tier 2: Smart Confirmations** - Generates and confirms 15 derived values
 3. **Tier 3: Automated Generation** - Creates 67 configuration files and components
 
-### Unified CLI Interface (`bin/lego-service.js`)
-- **Primary Command**: `lego-service create` - Interactive service creation
+### Unified CLI Interface (`bin/clodo-service.js`)
+- **Primary Command**: `clodo-service create` - Interactive service creation
 - **Non-Interactive Mode**: Full parameter support for CI/CD pipelines
 - **Legacy Compatibility**: Aliases for `create-service` and `init-service`
 - **Additional Commands**:
@@ -48,7 +48,7 @@ Successfully designed and implemented the foundation of the unified three-tier C
 ## Integration Strategy
 
 ### Backward Compatibility
-- **Legacy Commands**: Existing `lego-create-service` and `lego-init-service` remain functional
+- **Legacy Commands**: Existing `clodo-create-service` and `clodo-init-service` remain functional
 - **Deprecation Path**: Clear migration guidance to new unified command
 - **API Preservation**: Existing programmatic APIs unchanged
 
@@ -93,4 +93,4 @@ Successfully designed and implemented the foundation of the unified three-tier C
 - **Non-Interactive Support**: Full CI/CD pipeline compatibility
 
 This design provides a solid foundation for the complete three-tier system while maintaining compatibility with existing workflows and codebases.</content>
-<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\lego-framework\docs\architecture\PHASE1_TASK2_DESIGN.md
+<parameter name="filePath">c:\Users\Admin\Documents\coding\tamyla\clodo-framework\docs\architecture\PHASE1_TASK2_DESIGN.md

@@ -1,11 +1,11 @@
-# LEGO Framework Project Structure Guide
+# CLODO Framework Project Structure Guide
 
-This document defines the organization standards and directory structure guidelines for the LEGO Framework.
+This document defines the organization standards and directory structure guidelines for the CLODO Framework.
 
 ## Directory Structure Overview
 
 ```
-lego-framework/
+clodo-framework/
 ├── src/                    # Core framework source code
 ├── bin/                    # CLI tools and shared utilities
 ├── docs/                   # All documentation
@@ -55,7 +55,7 @@ The `bin/` directory contains CLI tools and their shared utilities, optimized fo
 ### Structure
 ```
 bin/
-├── lego-service.js         # Main service CLI
+├── clodo-service.js         # Main service CLI
 ├── enterprise-deploy.js    # Enterprise deployment CLI
 ├── master-deploy.js        # Master deployment CLI
 ├── portfolio-manager.js    # Portfolio management CLI

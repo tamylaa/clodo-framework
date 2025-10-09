@@ -1,6 +1,6 @@
 /**
  * Enhanced Configuration Manager
- * Centralized configuration loading and management for the Lego Framework
+ * Centralized configuration loading and management for the Clodo Framework
  * 
  * Replaces hardcoded values throughout the codebase with configurable settings
  * from validation-config.json and environment variables

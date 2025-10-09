@@ -1,6 +1,6 @@
 # Portfolio Tools
 
-Portfolio and multi-service management tools for Lego Framework.
+Portfolio and multi-service management tools for Clodo Framework.
 
 ## Tools
 

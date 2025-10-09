@@ -6,7 +6,7 @@
 
 #### **FeatureFlagManager**
 ```javascript
-import { FeatureFlagManager } from '@tamyla/lego-framework';
+import { FeatureFlagManager } from '@tamyla/clodo-framework';
 
 const featureManager = new FeatureFlagManager();
 ```
@@ -69,7 +69,7 @@ import {
   createDomainRegistry,
   getDomainFromEnv,
   createEnvironmentConfig 
-} from '@tamyla/lego-framework';
+} from '@tamyla/clodo-framework';
 ```
 
 **Functions:**
@@ -128,7 +128,7 @@ interface DomainRegistry {
 
 #### **GenericDataService**
 ```javascript
-import { GenericDataService } from '@tamyla/lego-framework';
+import { GenericDataService } from '@tamyla/clodo-framework';
 
 const userService = new GenericDataService(d1Client, 'users');
 ```
@@ -193,7 +193,7 @@ interface PaginatedResult {
 
 #### **SchemaManager**
 ```javascript
-import { schemaManager } from '@tamyla/lego-framework';
+import { schemaManager } from '@tamyla/clodo-framework';
 ```
 
 **Methods:**
@@ -256,7 +256,7 @@ interface SQLResult {
 
 #### **EnhancedRouter**
 ```javascript
-import { EnhancedRouter } from '@tamyla/lego-framework';
+import { EnhancedRouter } from '@tamyla/clodo-framework';
 
 const router = new EnhancedRouter(d1Client, options);
 ```
@@ -292,7 +292,7 @@ type RouteHandler = (request: Request, ...params: string[]) => Promise<Response>
 
 #### **GenericRouteHandler**
 ```javascript
-import { GenericRouteHandler } from '@tamyla/lego-framework';
+import { GenericRouteHandler } from '@tamyla/clodo-framework';
 
 const handler = new GenericRouteHandler(d1Client, 'users', options);
 ```
@@ -341,7 +341,7 @@ interface HandlerOptions {
 
 #### **Service Initialization**
 ```javascript
-import { initializeService } from '@tamyla/lego-framework';
+import { initializeService } from '@tamyla/clodo-framework';
 
 const service = initializeService(env, domainConfigs);
 ```
@@ -378,7 +378,7 @@ interface WorkerEnv {
 
 #### **Feature Guards**
 ```javascript
-import { createFeatureGuard } from '@tamyla/lego-framework';
+import { createFeatureGuard } from '@tamyla/clodo-framework';
 
 const guard = createFeatureGuard('featureName', options);
 ```
@@ -415,7 +415,7 @@ interface FeatureGuardOptions {
 
 #### **ModuleManager**
 ```javascript
-import { moduleManager } from '@tamyla/lego-framework';
+import { moduleManager } from '@tamyla/clodo-framework';
 ```
 
 **Methods:**
@@ -455,7 +455,7 @@ interface HookContext {
 
 #### **Logging**
 ```javascript
-import { createLogger } from '@tamyla/lego-framework';
+import { createLogger } from '@tamyla/clodo-framework';
 
 const logger = createLogger('ServiceName');
 ```
@@ -470,7 +470,7 @@ logger.error(message: string, ...args: any[]): void
 
 #### **Validation Helpers**
 ```javascript
-import { validateRequired, deepMerge } from '@tamyla/lego-framework';
+import { validateRequired, deepMerge } from '@tamyla/clodo-framework';
 
 // Validate required fields exist
 validateRequired(object: any, requiredFields: string[]): void // throws on missing
@@ -483,7 +483,7 @@ deepMerge(target: any, source: any): any
 
 #### **Common Features**
 ```javascript
-import { COMMON_FEATURES } from '@tamyla/lego-framework';
+import { COMMON_FEATURES } from '@tamyla/clodo-framework';
 
 // Pre-defined feature names
 COMMON_FEATURES.AUTHENTICATION     // 'authentication'
@@ -509,9 +509,9 @@ COMMON_FEATURES.RESTORE           // 'restore'
 ## 🔧 Framework Information
 
 ```javascript
-import { FRAMEWORK_VERSION, FRAMEWORK_NAME, initializeFramework } from '@tamyla/lego-framework';
+import { FRAMEWORK_VERSION, FRAMEWORK_NAME, initializeFramework } from '@tamyla/clodo-framework';
 
-console.log(FRAMEWORK_NAME);     // 'Lego Framework'
+console.log(FRAMEWORK_NAME);     // 'Clodo Framework'
 console.log(FRAMEWORK_VERSION);  // '1.0.0'
 
 // Initialize framework with options

@@ -1,8 +1,8 @@
-# LEGO Framework: Second-Order Information Acquisition Strategy
+# CLODO Framework: Second-Order Information Acquisition Strategy
 
 ## 🎯 **Core Concept**
 
-The LEGO Framework currently collects **87 inputs** across its scripts, but **only 6 are absolutely necessary**. The remaining **81 inputs** are "second-order information" that can be **derived, auto-generated, or discovered** from these core inputs through smart conventions and intelligent defaults.
+The CLODO Framework currently collects **87 inputs** across its scripts, but **only 6 are absolutely necessary**. The remaining **81 inputs** are "second-order information" that can be **derived, auto-generated, or discovered** from these core inputs through smart conventions and intelligent defaults.
 
 ## 📊 **The 6 Absolutely Required Inputs**
 
@@ -25,9 +25,9 @@ The LEGO Framework currently collects **87 inputs** across its scripts, but **on
 // Derives:
 {
   displayName: "User Auth Service",           // Title case conversion
-  description: "A api service built with LEGO Framework",  // Template + service-type
+  description: "A api service built with CLODO Framework",  // Template + service-type
   version: "1.0.0",                          // From package.json or default
-  author: process.env.USER || "LEGO Framework"  // System user or fallback
+  author: process.env.USER || "CLODO Framework"  // System user or fallback
 }
 ```
 
@@ -283,4 +283,4 @@ class InputValidator {
 
 ---
 
-*This strategy transforms the LEGO Framework from a manual input-heavy system to an intelligent, convention-driven platform that minimizes developer friction while maintaining full flexibility.*
+*This strategy transforms the CLODO Framework from a manual input-heavy system to an intelligent, convention-driven platform that minimizes developer friction while maintaining full flexibility.*
