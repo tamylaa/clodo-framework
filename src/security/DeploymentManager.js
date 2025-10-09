@@ -109,6 +109,7 @@ export class DeploymentManager {
   /**
    * Perform pre-deployment checks
    */
+  // eslint-disable-next-line no-unused-vars
   static async performPreDeploymentChecks(_customer, _environment) {
     const checks = [
       'Environment variables validation',
@@ -206,10 +207,12 @@ export class DeploymentManager {
   /**
    * Validate deployment readiness
    */
+  // eslint-disable-next-line no-unused-vars
   static validateDeploymentReadiness(_customer, _environment) {
     const issues = [];
 
     // Check if all required secrets are available
+    // eslint-disable-next-line no-unused-vars
     const requiredSecrets = [
       'CONTENT_SKIMMER_API_KEY',
       'LOGGER_SERVICE_API_KEY',

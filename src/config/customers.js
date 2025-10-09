@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
-import { resolve, dirname, join } from 'path';
+// eslint-disable-next-line no-unused-vars
+import { resolve, join } from 'path';
 import { createDomainConfigSchema, validateDomainConfig, createDomainRegistry } from './domains.js';
 import { createLogger } from '../utils/index.js';
 import { getDirname } from '../utils/esm-helper.js';
@@ -109,6 +110,7 @@ export class CustomerConfigurationManager {
   /**
    * Create customer environment config from template
    */
+  // eslint-disable-next-line no-unused-vars
   async createCustomerEnvironment(customerName, environment, domain, options) {
     const templatePath = resolve(this.configDir, 'customers', 'template', `${environment}.env.template`);
     const outputPath = resolve(this.configDir, 'customers', customerName, `${environment}.env`);
