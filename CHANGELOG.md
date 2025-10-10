@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/tamylaa/clodo-framework/compare/v2.0.0...v2.0.1) (2025-10-10)
+
+
+### Bug Fixes
+
+* reorganize documentation structure and fix package distribution ([598d44b](https://github.com/tamylaa/clodo-framework/commit/598d44b669f65c222d215ba33d0361d736a15ac9))
+
 # [2.0.0](https://github.com/tamylaa/clodo-framework/compare/v1.0.0...v2.0.0) (2025-10-10)
 
 
