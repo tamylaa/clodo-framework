@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/tamylaa/clodo-framework/compare/v1.0.0...v2.0.0) (2025-10-10)
+
+
+### Bug Fixes
+
+* enhance enterprise readiness with comprehensive testing roadmap and documentation ([25702d6](https://github.com/tamylaa/clodo-framework/commit/25702d624047ef40991de47eba0b8dabcfaecfa8))
+
+
+### BREAKING CHANGES
+
+* Framework now requires structured testing approach for enterprise deployment
+
 # 1.0.0 (2025-10-09)
 
 
