@@ -49,11 +49,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Sync with remote
-        run: |
-          git fetch origin master
-          git reset --hard origin/master
+          ref: ${{ github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
