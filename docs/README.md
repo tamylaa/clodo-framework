@@ -1,82 +1,35 @@
-# Clodo Framework Documentation
+# CLODO Framework Documentation
 
 > A comprehensive framework for building Clodo-style microservices on Cloudflare Workers + D1
 
-## 📚 Documentation Structure
+## 📚 Essential Documentation
 
-### **Getting Started**
+This folder contains **only essential, public-facing documentation** that is distributed with the npm package. For comprehensive documentation, examples, and guides, visit the [GitHub repository](https://github.com/tamylaa/clodo-framework).
+
+### **Core Documentation**
 - **[Overview](./overview.md)** - Framework philosophy and core concepts
-- **[Developer Guide](./guides/developer-guide.md)** - Comprehensive guide for external developers
-- **[Quick Start Guide](./guides/getting-started.md)** - Build your first service in 5 minutes
-- **[Installation](./guides/installation.md)** - Setup and prerequisites
+- **[Security](./SECURITY.md)** - Security considerations and best practices
+- **[API Reference](./api-reference.md)** - Complete API documentation
 
-### **Architecture**
-- **[Framework Architecture Overview](./FRAMEWORK-ARCHITECTURE-OVERVIEW.md)** - User-friendly architecture guide
-- **[Framework Architecture Analysis](./FRAMEWORK-ARCHITECTURE-ANALYSIS.md)** - Detailed technical analysis (internal)
-- **[Core Components](./architecture/components.md)** - Deep dive into framework modules
-- **[Configuration System](./architecture/configuration.md)** - Domain and feature management
-- **[Data Layer](./architecture/data-layer.md)** - Services, schemas, and database integration
-- **[Worker Integration](./architecture/worker-integration.md)** - Cloudflare Workers patterns
-
-### **Guides**
-- **[Creating Services](./guides/creating-services.md)** - Service generation and templates
-- **[Domain Configuration](./guides/domain-configuration.md)** - Multi-tenant setup
-- **[Feature Management](./guides/feature-flags.md)** - Feature flags and runtime control
-- **[Authentication](./guides/authentication.md)** - Security patterns and implementation
-- **[Database Operations](./guides/database-operations.md)** - CRUD patterns and data modeling
-
-### **Deployment**
-- **[Environment Setup](./deployment/environment-setup.md)** - Cloudflare and local development
-- **[Deployment Guide](./deployment/deployment-guide.md)** - Production deployment strategies
-- **[CI/CD Integration](./deployment/ci-cd.md)** - Automated deployment pipelines
-- **[Monitoring](./deployment/monitoring.md)** - Observability and debugging
-
-### **API Reference**
-- **[Core Classes](./api/core-classes.md)** - Framework class references
-- **[Configuration API](./api/configuration.md)** - Domain and feature APIs
-- **[Service API](./api/services.md)** - Data service interfaces
-- **[Worker Helpers](./api/worker-helpers.md)** - Cloudflare Worker utilities
-- **[CLI Tools](./api/cli-tools.md)** - Command-line interface documentation
-
-### **Examples**
-- **[Basic CRUD Service](./examples/basic-crud.md)** - Simple data service example
-- **[Multi-Tenant SaaS](./examples/multi-tenant-saas.md)** - Complex multi-domain setup
-- **[Authentication Service](./examples/auth-service.md)** - JWT-based authentication
-- **[API Gateway](./examples/api-gateway.md)** - Service orchestration patterns
-
-### **Decision Framework**
-- **[When to Use](./decision-framework.md)** - Use cases and anti-patterns
-- **[Alternatives](./alternatives.md)** - Other approaches and trade-offs
-- **[Migration Guide](./migration-guide.md)** - Moving to/from the framework
-
-## 🚀 Quick Navigation
-
-| I want to... | Go to |
-|--------------|--------|
-| **Understand the framework** | [Overview](./overview.md) |
-| **Learn comprehensive usage** | [Developer Guide](./guides/developer-guide.md) |
-| **Build my first service** | [Getting Started](./guides/getting-started.md) |
-| **Configure domains** | [Domain Configuration](./guides/domain-configuration.md) |
-| **Deploy to production** | [Deployment Guide](./deployment/deployment-guide.md) |
-| **Find API documentation** | [API Reference](./api/README.md) |
-| **See real examples** | [Examples](./examples/README.md) |
-| **Decide if this is right for me** | [Decision Framework](./decision-framework.md) |
+### **Package Contents**
+This documentation is included in the npm package distribution to provide essential information for developers using the framework.
 
 ## 🆘 Getting Help
 
-- **Documentation Issues**: Open an issue in the repository
-- **Framework Bugs**: Report via GitHub Issues
-- **Questions**: Check existing issues or create a new discussion
-- **Contributing**: See [Contributing Guide](../CONTRIBUTING.md)
+- **Framework Issues**: [GitHub Issues](https://github.com/tamylaa/clodo-framework/issues)
+- **Security Concerns**: Review [Security Documentation](./SECURITY.md)
+- **API Questions**: See [API Reference](./api-reference.md)
 
-## 🔗 External Resources
+## 📦 Package Information
 
-- **[Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)**
-- **[D1 Database Documentation](https://developers.cloudflare.com/d1/)**
-- **[Wrangler CLI Documentation](https://developers.cloudflare.com/workers/wrangler/)**
+- **Version**: 1.0.0
+- **License**: See repository LICENSE file
+- **Repository**: [GitHub](https://github.com/tamylaa/clodo-framework)
 
 ---
 
-**Framework Version**: 1.0.0  
-**Last Updated**: September 27, 2025  
-**Cloudflare Workers Runtime**: Compatible with 2023-05-18 and later
+**For comprehensive documentation, visit the [GitHub repository](https://github.com/tamylaa/clodo-framework).**
+
+---
+
+**For comprehensive documentation, visit the [GitHub repository](https://github.com/tamylaa/clodo-framework).**

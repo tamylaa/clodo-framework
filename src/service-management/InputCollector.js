@@ -14,6 +14,7 @@
 import { createInterface } from 'readline';
 import chalk from 'chalk';
 import { validateServiceName, validateDomainName } from '../utils/validation.js';
+import { uiStructuresLoader } from '../utils/ui-structures-loader.js';
 
 export class InputCollector {
   constructor(options = {}) {
@@ -25,36 +26,233 @@ export class InputCollector {
   }
 
   /**
-   * Collect all 6 core inputs interactively
+   * Collect all inputs using three-tier template-driven approach
+   * Tier 1: 6 core inputs (required)
+   * Tier 2: 15 smart confirmations (assumed, user can modify)
+   * Tier 3: 67 automated generations (framework handles)
    */
-  async collectCoreInputs() {
-    const inputs = {};
+  async collectInputsWithTransparency() {
+    await uiStructuresLoader.loadTemplates();
 
-    console.log(chalk.cyan('📝 Collecting Core Service Information'));
-    console.log(chalk.white('These 6 inputs are required to create your Clodo service.\n'));
+    const result = {
+      collectionMetadata: {
+        method: 'three-tier-template-driven',
+        timestamp: new Date().toISOString(),
+        tiers: {
+          core: 6,
+          confirmable: 15,
+          automated: 67
+        }
+      },
+      coreInputs: {},
+      smartConfirmations: {},
+      automatedGenerations: {},
+      userModifications: []
+    };
 
-    // 1. Service Name
-    inputs.serviceName = await this.collectServiceName();
+    // Tier 1: Core Inputs (required from user)
+    console.log(chalk.cyan('\n📝 Tier 1: Core Service Information'));
+    console.log(chalk.white('These 6 inputs are required to create your service.\n'));
 
-    // 2. Service Type
-    inputs.serviceType = await this.collectServiceType();
+    const coreTemplate = uiStructuresLoader.getCoreInputsTemplate();
+    if (!coreTemplate) {
+      throw new Error('Core inputs template not found. Cannot proceed with input collection.');
+    }
+    if (coreTemplate) {
+      for (const inputDef of coreTemplate.inputs) {
+        const value = await this.collectInputFromDefinition(inputDef);
+        result.coreInputs[inputDef.id] = {
+          value,
+          source: 'user-provided',
+          required: true
+        };
+      }
+    }
 
-    // 3. Domain Name
-    inputs.domainName = await this.collectDomainName();
+    // Tier 2: Smart Confirmations (framework assumptions, user can modify)
+    console.log(chalk.cyan('\n🤔 Tier 2: Smart Confirmations'));
+    console.log(chalk.white('Based on your core inputs, we\'ve made smart assumptions. Review and modify as needed.\n'));
 
-    // 4. Cloudflare API Token
-    inputs.cloudflareToken = await this.collectCloudflareToken();
+    const confirmTemplate = uiStructuresLoader.getSmartConfirmableTemplate();
+    if (confirmTemplate) {
+      for (const category of confirmTemplate.categories) {
+        console.log(chalk.yellow(`\n${category.title}`));
+        console.log(chalk.gray(`${category.description}\n`));
 
-    // 5. Cloudflare Account ID
-    inputs.cloudflareAccountId = await this.collectCloudflareAccountId();
+        for (const inputId of category.inputs) {
+          // Generate smart default based on core inputs
+          const smartDefault = this.generateSmartDefault(inputId, result.coreInputs);
+          const userValue = await this.confirmOrModifyValue(inputId, smartDefault);
 
-    // 6. Cloudflare Zone ID
-    inputs.cloudflareZoneId = await this.collectCloudflareZoneId();
+          result.smartConfirmations[inputId] = {
+            value: userValue,
+            defaultAssumed: smartDefault,
+            userModified: userValue !== smartDefault,
+            source: userValue === smartDefault ? 'framework-assumed' : 'user-modified'
+          };
 
-    // 7. Target Environment
-    inputs.environment = await this.collectEnvironment();
+          if (userValue !== smartDefault) {
+            result.userModifications.push({
+              field: inputId,
+              assumed: smartDefault,
+              chosen: userValue
+            });
+          }
+        }
+      }
+    }
 
-    return inputs;
+    // Tier 3: Automated Generation (show transparency)
+    console.log(chalk.cyan('\n⚡ Tier 3: Automated Generation'));
+    console.log(chalk.white('The following will be automatically generated from your inputs:\n'));
+
+    const autoTemplate = uiStructuresLoader.getAutomatedGenerationTemplate();
+    if (autoTemplate) {
+      console.log(chalk.gray(`📊 ${autoTemplate.collectionStrategy.inputCount} configurations will be generated automatically`));
+      console.log(chalk.gray(`⏱️ Estimated time: ${autoTemplate.template.estimatedTime}`));
+
+      // Show some examples of what will be automated
+      result.automatedGenerations = {
+        count: autoTemplate.collectionStrategy.inputCount,
+        estimatedTime: autoTemplate.template.estimatedTime,
+        examples: [
+          'Database connection strings',
+          'Environment variables',
+          'API endpoints',
+          'Security configurations',
+          'Deployment scripts'
+        ]
+      };
+    }
+
+    // Summary
+    console.log(chalk.green('\n✅ Collection Complete!'));
+    console.log(chalk.white(`Core inputs: ${Object.keys(result.coreInputs).length}`));
+    console.log(chalk.white(`Smart confirmations: ${Object.keys(result.smartConfirmations).length}`));
+    console.log(chalk.white(`Automated generations: ${result.automatedGenerations.count || 0}`));
+    if (result.userModifications.length > 0) {
+      console.log(chalk.yellow(`User modifications: ${result.userModifications.length}`));
+    }
+
+    return result;
+  }
+
+  /**
+   * Generate smart defaults based on core inputs
+   */
+  generateSmartDefault(inputId, coreInputs) {
+    const serviceName = coreInputs.serviceName?.value || '';
+    const environment = coreInputs.environment?.value || 'development';
+    const domainName = coreInputs.domainName?.value || '';
+
+    switch (inputId) {
+      case 'display-name':
+        return serviceName ? serviceName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '';
+      case 'description':
+        return `A service built with CLODO Framework`;
+      case 'version':
+        return '1.0.0';
+      case 'author':
+        return 'CLODO Framework';
+      case 'production-url':
+        return domainName ? `https://api.${domainName}` : '';
+      case 'staging-url':
+        return domainName ? `https://staging-api.${domainName}` : '';
+      case 'development-url':
+        return domainName ? `https://dev-api.${domainName}` : '';
+      case 'service-directory':
+        return serviceName ? `./services/${serviceName}` : '';
+      case 'database-name':
+        return serviceName ? `${serviceName}-db` : '';
+      case 'worker-name':
+        return serviceName ? `${serviceName}-worker` : '';
+      case 'log-level':
+        return environment === 'production' ? 'warn' : environment === 'staging' ? 'info' : 'debug';
+      case 'env-prefix':
+        return environment === 'production' ? 'PROD_' : environment === 'staging' ? 'STAGING_' : 'DEV_';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Allow user to confirm or modify a smart default
+   */
+  async confirmOrModifyValue(inputId, defaultValue) {
+    console.log(chalk.blue(`❓ ${this.formatFieldName(inputId)}`));
+    console.log(chalk.gray(`   Suggested: ${defaultValue}`));
+
+    const answer = await this.question(`Press Enter to accept, or enter new value: `);
+    return answer.trim() || defaultValue;
+  }
+
+  /**
+   * Format field names for display
+   */
+  formatFieldName(inputId) {
+    return inputId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  /**
+   * Collect a single input based on UI definition
+   */
+  async collectInputFromDefinition(inputDef) {
+    const { id, ui, validation, examples, followUp } = inputDef;
+
+    // Display prompt
+    console.log(chalk.blue(`❓ ${ui.label}`));
+    if (ui.description) {
+      console.log(chalk.gray(`   ${ui.description}`));
+    }
+    if (examples && examples.length > 0) {
+      console.log(chalk.gray(`   Examples: ${examples.join(', ')}`));
+    }
+
+    for (;;) {
+      const answer = await this.question(`${ui.placeholder || 'Enter value'}: `);
+
+      // Basic validation
+      if (validation) {
+        if (validation.required && !answer) {
+          console.log(chalk.red('❌ This field is required'));
+          continue;
+        }
+        if (validation.minLength && answer.length < validation.minLength) {
+          console.log(chalk.red(`❌ Minimum length: ${validation.minLength}`));
+          continue;
+        }
+        if (validation.maxLength && answer.length > validation.maxLength) {
+          console.log(chalk.red(`❌ Maximum length: ${validation.maxLength}`));
+          continue;
+        }
+        if (validation.pattern && !new RegExp(validation.pattern).test(answer)) {
+          console.log(chalk.red(`❌ ${validation.customMessage || 'Invalid format'}`));
+          continue;
+        }
+      }
+
+      // Follow-up message
+      if (followUp) {
+        const message = followUp.message.replace('{value}', answer);
+        console.log(chalk.green(`✅ ${message}`));
+        if (followUp.preview) {
+          console.log(chalk.gray(`   ${followUp.preview.replace('{value}', answer)}`));
+        }
+      }
+
+      return answer;
+    }
+  }
+
+  /**
+   * Promisified readline question
+   */
+  question(prompt) {
+    return new Promise((resolve) => {
+      this.rl.question(prompt, (answer) => {
+        resolve(answer.trim());
+      });
+    });
   }
 
   /**

@@ -338,6 +338,9 @@ export class DeploymentValidator {
       // Validate environment configuration
       await this.validateEnvironmentConfig();
 
+      // Validate D1 database bindings
+      await this.validateD1Configuration();
+
       this.results.categories.configuration = 'passed';
       this.addResult('configuration', 'Configuration files validated', 'success');
       
@@ -545,6 +548,119 @@ export class DeploymentValidator {
     this.addResult('environment', `${this.environment} environment validated`, 'info');
   }
 
+  /**
+   * Validate D1 database configuration across all services
+   */
+  async validateD1Configuration() {
+    console.log('   🗄️ Validating D1 database configuration...');
+    
+    try {
+      // Import WranglerDeployer for D1 validation capabilities
+      const { WranglerDeployer } = await import('../../../src/deployment/wrangler-deployer.js');
+      
+      // Check if this is a framework-level validation (no specific service)
+      if (!this.options?.servicePath) {
+        console.log('     ⏭️ Skipping D1 validation (framework-level validation)');
+        this.addResult('d1-config', 'D1 validation skipped for framework-level validation', 'info');
+        return;
+      }
+
+      // Create deployer instance for the specific service
+      const deployer = new WranglerDeployer({
+        cwd: this.options.servicePath,
+        environment: this.environment
+      });
+
+      // Discover deployment configuration
+      const deployConfig = await deployer.discoverDeploymentConfig(this.environment);
+      
+      if (!deployConfig.configPath) {
+        console.log('     ⏭️ No wrangler.toml found, skipping D1 validation');
+        this.addResult('d1-config', 'No wrangler.toml found', 'info');
+        return;
+      }
+
+      // Validate D1 bindings
+      const d1Validation = await deployer.validateD1Bindings(deployConfig);
+      
+      if (d1Validation.valid) {
+        if (d1Validation.bindings.length === 0) {
+          console.log('     ✅ No D1 databases configured');
+          this.addResult('d1-config', 'No D1 databases configured', 'info');
+        } else {
+          console.log(`     ✅ All ${d1Validation.summary.total} D1 database bindings valid`);
+          this.addResult('d1-config', `${d1Validation.summary.total} D1 bindings validated`, 'success');
+          
+          // Log details about each binding
+          d1Validation.bindings.forEach(binding => {
+            if (binding.valid) {
+              console.log(`       ✅ ${binding.binding}: ${binding.database_name}`);
+            }
+          });
+        }
+      } else {
+        console.log(`     ❌ D1 validation failed: ${d1Validation.summary.invalid} invalid bindings`);
+        
+        // Log details about invalid bindings
+        d1Validation.invalidBindings.forEach(binding => {
+          console.log(`       ❌ ${binding.binding || 'unnamed'}: ${binding.issues.join(', ')}`);
+        });
+
+        // Add warning with suggestions
+        const suggestions = this.generateD1Suggestions(d1Validation);
+        this.addWarning('d1-config', `D1 configuration issues found. ${suggestions}`);
+        
+        // Don't fail validation entirely for D1 issues if not in strict mode
+        if (!this.strictMode) {
+          console.log('     ⚠️ Continuing with warnings (non-strict mode)');
+          this.addResult('d1-config', 'D1 issues found but continuing', 'warning');
+        } else {
+          throw new Error(`D1 validation failed: ${d1Validation.summary.invalid} invalid bindings`);
+        }
+      }
+
+    } catch (error) {
+      if (error.message.includes('D1 validation failed')) {
+        throw error; // Re-throw D1 validation errors
+      }
+      
+      // Handle other errors (import errors, etc.)
+      console.log(`     ⚠️ D1 validation error: ${error.message}`);
+      this.addWarning('d1-config', `D1 validation error: ${error.message}`);
+      
+      if (this.strictMode) {
+        throw new Error(`D1 validation failed: ${error.message}`);
+      }
+    }
+  }
+
+  /**
+   * Generate helpful suggestions for D1 configuration issues
+   * @param {Object} d1Validation - D1 validation results
+   * @returns {string} Suggestions text
+   */
+  generateD1Suggestions(d1Validation) {
+    const suggestions = [];
+    
+    d1Validation.invalidBindings.forEach(binding => {
+      binding.issues.forEach(issue => {
+        if (issue.includes('not found')) {
+          suggestions.push('Run "wrangler d1 list" to see available databases');
+          suggestions.push('Create missing database with "wrangler d1 create <name>"');
+        } else if (issue.includes('Missing')) {
+          suggestions.push('Check wrangler.toml [[d1_databases]] section completeness');
+        }
+      });
+    });
+
+    // Remove duplicates
+    const uniqueSuggestions = [...new Set(suggestions)];
+    
+    return uniqueSuggestions.length > 0 
+      ? `Suggestions: ${uniqueSuggestions.slice(0, 2).join('; ')}`
+      : 'Check D1 database configuration in wrangler.toml';
+  }
+
   async validateDomainEndpoints(domain) {
     console.log(`   Validating endpoints for ${domain}...`);
     console.log(`   🔧 DEBUG: skipEndpointCheck = ${this.options?.skipEndpointCheck}`);
@@ -630,6 +746,10 @@ export class DeploymentValidator {
     } else if (level === 'error') {
       this.results.errors.push(message);
     }
+  }
+
+  addWarning(category, message) {
+    this.addResult(category, message, 'warning');
   }
 
   printValidationSummary() {

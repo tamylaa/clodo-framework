@@ -40,6 +40,13 @@ import { DeploymentValidator } from '../shared/deployment/validator.js';
 import { DomainDiscovery } from '../shared/cloudflare/domain-discovery.js';
 import { DatabaseOrchestrator } from '../../src/database/database-orchestrator.js';
 
+// New modular architecture components
+import { DeploymentConfiguration } from './modules/DeploymentConfiguration.js';
+import { EnvironmentManager } from './modules/EnvironmentManager.js';
+import { ValidationManager } from './modules/ValidationManager.js';
+import { MonitoringIntegration } from './modules/MonitoringIntegration.js';
+import { DeploymentOrchestrator as ModularDeploymentOrchestrator } from './modules/DeploymentOrchestrator.js';
+
 // Updated imports for fixed shared module structure
 import { 
   checkAuth, 
@@ -58,7 +65,7 @@ import {
 } from '../shared/cloudflare/ops.js';
 import { 
   waitForDeployment, 
-  comprehensiveHealthCheck,
+  enhancedComprehensiveHealthCheck,
   checkHealth
 } from '../shared/monitoring/health-checker.js';
 import { 
@@ -71,6 +78,16 @@ class EnterpriseInteractiveDeployer {
     // Load framework configuration for organized paths
     this.frameworkConfig = null;
     this.frameworkPaths = null;
+    
+    // New modular components - initialized lazily
+    this.modularComponents = {
+      config: null,           // DeploymentConfiguration
+      environment: null,      // EnvironmentManager  
+      validation: null,       // ValidationManager
+      monitoring: null,       // MonitoringIntegration
+      orchestrator: null      // ModularDeploymentOrchestrator
+    };
+    
     this.config = {
       // Basic deployment config
       domain: null,
@@ -211,6 +228,9 @@ class EnterpriseInteractiveDeployer {
         secureTokens: '.secure-tokens'
       };
     }
+
+    // Initialize modular components for enhanced deployment capabilities
+    await this.initializeModularComponents();
 
     // Initialize async modules
     await this.state.enterpriseModules.orchestrator.initialize();
@@ -920,8 +940,121 @@ chmod +x deploy-secrets.sh
   }
 
   async deployWorker() {
-    await deployWorker(this.config.environment);
-    console.log('   ✅ Worker deployed successfully');
+    try {
+      await deployWorker(this.config.environment);
+      console.log('   ✅ Worker deployed successfully');
+    } catch (error) {
+      // Check if this is a D1 binding error and attempt recovery
+      const d1RecoveryResult = await this.handleD1DeploymentError(error);
+      
+      if (d1RecoveryResult.handled && d1RecoveryResult.retry) {
+        console.log('   🔄 Retrying deployment after D1 error recovery...');
+        try {
+          await deployWorker(this.config.environment);
+          console.log('   ✅ Worker deployed successfully after D1 recovery');
+        } catch (retryError) {
+          console.log('   ❌ Deployment failed even after D1 recovery');
+          throw retryError;
+        }
+      } else if (d1RecoveryResult.handled) {
+        // Error was handled but no retry requested
+        throw new Error(`Deployment failed: ${d1RecoveryResult.message || error.message}`);
+      } else {
+        // Not a D1 error, rethrow original
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Handle D1 database binding errors during deployment
+   * @param {Error} error - Deployment error
+   * @returns {Promise<Object>} Recovery result
+   */
+  async handleD1DeploymentError(error) {
+    try {
+      // Import WranglerDeployer for D1 error handling
+      const { WranglerDeployer } = await import('../../src/deployment/wrangler-deployer.js');
+      
+      // Create deployer instance
+      const deployer = new WranglerDeployer({
+        cwd: process.cwd(),
+        environment: this.config.environment
+      });
+
+      // Check if this is a D1 error and handle it
+      const recoveryResult = await deployer.handleD1BindingError(error, {
+        configPath: 'wrangler.toml',
+        environment: this.config.environment
+      });
+
+      if (recoveryResult.handled) {
+        console.log(`   🔧 D1 Error Recovery: ${recoveryResult.action}`);
+        
+        // Log recovery details
+        if (recoveryResult.backupPath) {
+          console.log(`   📁 Configuration backup: ${recoveryResult.backupPath}`);
+          
+          // Add rollback action
+          this.state.rollbackActions.unshift({
+            type: 'restore-wrangler-config',
+            backupPath: recoveryResult.backupPath,
+            description: 'Restore wrangler.toml backup after D1 recovery'
+          });
+        }
+
+        // Determine if we should retry deployment
+        const shouldRetry = ['created_and_configured', 'database_selected_and_configured', 'binding_updated'].includes(recoveryResult.action);
+
+        return {
+          handled: true,
+          retry: shouldRetry,
+          action: recoveryResult.action,
+          message: this.getD1RecoveryMessage(recoveryResult)
+        };
+      }
+
+      return {
+        handled: false,
+        retry: false
+      };
+
+    } catch (recoveryError) {
+      console.log(`   ⚠️ D1 error recovery failed: ${recoveryError.message}`);
+      return {
+        handled: true,
+        retry: false,
+        message: `D1 error recovery failed: ${recoveryError.message}`
+      };
+    }
+  }
+
+  /**
+   * Get user-friendly message for D1 recovery result
+   * @param {Object} recoveryResult - Recovery result object
+   * @returns {string} User-friendly message
+   */
+  getD1RecoveryMessage(recoveryResult) {
+    switch (recoveryResult.action) {
+      case 'created_and_configured':
+        return `Created D1 database '${recoveryResult.databaseName}' and updated configuration`;
+      case 'database_selected_and_configured':
+        return `Selected existing database and updated configuration`;
+      case 'binding_updated':
+        return `Updated D1 database binding configuration`;
+      case 'cancelled':
+        return 'D1 error recovery was cancelled by user';
+      case 'creation_failed':
+        return `Failed to create D1 database: ${recoveryResult.error}`;
+      case 'selection_failed':
+        return `Failed to update database selection: ${recoveryResult.error}`;
+      case 'no_databases_available':
+        return 'No D1 databases available in account';
+      case 'manual':
+        return 'User chose to resolve D1 issues manually';
+      default:
+        return `D1 recovery completed with action: ${recoveryResult.action}`;
+    }
   }
 
   async verifyDeployment() {
@@ -1428,6 +1561,95 @@ chmod +x deploy-secrets.sh
     
     // Implementation for portfolio gathering
     console.log('\\n✅ Portfolio mode activated');
+  }
+  /**
+   * Initialize modular components for enhanced deployment capabilities
+   */
+  async initializeModularComponents() {
+    console.log('\n🔧 Initializing Modular Components (v3.0 Architecture)');
+    console.log('======================================================');
+
+    try {
+      // Initialize configuration manager
+      this.modularComponents.config = new DeploymentConfiguration();
+      console.log('   ✅ Configuration Manager initialized');
+
+      // Initialize environment manager  
+      this.modularComponents.environment = new EnvironmentManager(this.config);
+      console.log('   ✅ Environment Manager initialized');
+
+      // Initialize validation manager
+      this.modularComponents.validation = new ValidationManager(
+        this.config,
+        this.state.enterpriseModules
+      );
+      console.log('   ✅ Validation Manager initialized');
+
+      // Initialize monitoring integration
+      this.modularComponents.monitoring = new MonitoringIntegration(
+        this.config,
+        this.state.enterpriseModules
+      );
+      console.log('   ✅ Monitoring Integration initialized');
+
+      // Initialize deployment orchestrator
+      this.modularComponents.orchestrator = new ModularDeploymentOrchestrator(
+        this.config
+      );
+      console.log('   ✅ Deployment Orchestrator initialized');
+
+      console.log('✅ Modular components initialized - Enhanced deployment capabilities available');
+      
+    } catch (error) {
+      console.warn(`⚠️ Modular components initialization failed: ${error.message}`);
+      console.log('   Continuing with legacy deployment capabilities...');
+    }
+  }
+
+  /**
+   * Enhanced deployment mode selection using modular environment manager
+   */
+  async selectEnhancedDeploymentMode() {
+    if (this.modularComponents.environment) {
+      console.log('\n🎯 Using Enhanced Environment Manager');
+      return await this.modularComponents.environment.selectDeploymentMode();
+    } else {
+      // Fallback to legacy method
+      return await this.selectDeploymentMode();
+    }
+  }
+
+  /**
+   * Enhanced validation using modular validation manager
+   */
+  async executeEnhancedValidation() {
+    if (this.modularComponents.validation) {
+      console.log('\n🔍 Using Enhanced Validation Manager');
+      const result = await this.modularComponents.validation.executeComprehensiveValidation();
+      
+      if (!result.valid && result.phases.failed.some(f => f.phase === 'Authentication')) {
+        // Auto-fix authentication if possible
+        await this.modularComponents.validation.autoFixAuthentication();
+      }
+      
+      return result;
+    } else {
+      // Fallback to legacy method
+      return await this.comprehensiveValidation();
+    }
+  }
+
+  /**
+   * Enhanced monitoring and success summary
+   */
+  async showEnhancedSuccessSummary() {
+    if (this.modularComponents.monitoring) {
+      console.log('\n🎉 Using Enhanced Monitoring Integration');
+      return this.modularComponents.monitoring.displaySuccessSummary();
+    } else {
+      // Fallback to legacy method
+      return await this.showEnterpriseSuccessSummary();
+    }
   }
 }
 

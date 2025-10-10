@@ -1,17 +1,19 @@
 # NPM Package Ignore File
 # Excludes internal files from published package
 
-# Internal documentation (not for downstream users)
-docs/FRAMEWORK-ARCHITECTURE-ANALYSIS.md
-docs/FRAMEWORK-EXTRACTION-PLAN.md
-docs/INTEGRATION_PROMPT.md
-docs/CLODO-OF-SOFTWARE-ARCHITECTURE.md
-docs/WORKFLOW-ORDER-ANALYSIS.md
-docs/REUSABLE-FRAMEWORK-COMPONENTS.md
-docs/decision-framework.md
-docs/customer-config-framework.md
-docs/customer-config.md
-docs/deployment-requirements.md
+# Internal documentation folder (entire folder excluded)
+i-docs/
+
+# Additional internal docs not in i-docs
+docs/FRAMEWORK-ARCHITECTURE-OVERVIEW.md
+docs/INTEGRATION_GUIDE.md
+docs/cli-tutorial.md
+docs/examples-gallery.md
+docs/getting-started.md
+docs/architecture/
+docs/examples/
+docs/guides/
+docs/quickstart-templates/
 
 # Development and build files
 .github/

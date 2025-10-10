@@ -261,3 +261,224 @@ export function formatHealthReport(healthData) {
   
   return lines.join('\n');
 }
+
+/**
+ * Check D1 database connectivity and configuration
+ * @param {string} databaseName - D1 database name
+ * @param {Object} options - Check options
+ * @returns {Promise<Object>} D1 health check result
+ */
+export async function checkD1Health(databaseName, options = {}) {
+  const {
+    timeout = 10000,
+    testQuery = 'SELECT 1 as test',
+    validateSchema = false
+  } = options;
+
+  const startTime = Date.now();
+  const result = {
+    database: databaseName,
+    status: 'unknown',
+    connectivity: false,
+    responseTime: 0,
+    details: {},
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    // Test basic connectivity with a simple query
+    console.log(`   🗄️ Testing D1 database: ${databaseName}`);
+    
+    const queryCommand = `wrangler d1 execute ${databaseName} --command "${testQuery}"`;
+    const queryResult = await execAsync(queryCommand, { timeout });
+    
+    result.responseTime = Date.now() - startTime;
+    result.connectivity = true;
+    result.details.queryResult = queryResult.stdout;
+
+    // Test database info
+    try {
+      const infoCommand = `wrangler d1 info ${databaseName}`;
+      const infoResult = await execAsync(infoCommand, { timeout: 5000 });
+      result.details.databaseInfo = infoResult.stdout;
+    } catch (infoError) {
+      result.details.infoError = infoError.message;
+    }
+
+    // Validate schema if requested
+    if (validateSchema) {
+      try {
+        const schemaCommand = `wrangler d1 execute ${databaseName} --command "SELECT name FROM sqlite_master WHERE type='table'"`;
+        const schemaResult = await execAsync(schemaCommand, { timeout: 5000 });
+        result.details.tables = schemaResult.stdout;
+      } catch (schemaError) {
+        result.details.schemaError = schemaError.message;
+      }
+    }
+
+    result.status = 'healthy';
+    console.log(`     ✅ D1 database '${databaseName}' is healthy (${result.responseTime}ms)`);
+
+  } catch (error) {
+    result.status = 'unhealthy';
+    result.responseTime = Date.now() - startTime;
+    result.error = error.message;
+    
+    // Analyze the error for more specific feedback
+    if (error.message.includes('not found')) {
+      result.details.issue = 'Database not found';
+      result.details.suggestion = 'Check database name or create the database';
+    } else if (error.message.includes('authentication')) {
+      result.details.issue = 'Authentication failed';
+      result.details.suggestion = 'Check wrangler authentication and permissions';
+    } else {
+      result.details.issue = 'Connection failed';
+      result.details.suggestion = 'Check database status and network connectivity';
+    }
+
+    console.log(`     ❌ D1 database '${databaseName}' is unhealthy: ${error.message}`);
+  }
+
+  return result;
+}
+
+/**
+ * Check multiple D1 databases health
+ * @param {Array<string>} databases - Array of database names
+ * @param {Object} options - Check options
+ * @returns {Promise<Object>} Combined health check results
+ */
+export async function checkMultipleD1Health(databases, options = {}) {
+  console.log(`🗄️ Checking health of ${databases.length} D1 databases...`);
+  
+  const results = {
+    overall: 'unknown',
+    healthy: 0,
+    unhealthy: 0,
+    databases: [],
+    timestamp: new Date().toISOString()
+  };
+
+  for (const databaseName of databases) {
+    const dbResult = await checkD1Health(databaseName, options);
+    results.databases.push(dbResult);
+    
+    if (dbResult.status === 'healthy') {
+      results.healthy++;
+    } else {
+      results.unhealthy++;
+    }
+  }
+
+  // Determine overall status
+  if (results.unhealthy === 0) {
+    results.overall = 'healthy';
+  } else if (results.healthy === 0) {
+    results.overall = 'unhealthy';
+  } else {
+    results.overall = 'partial';
+  }
+
+  console.log(`   📊 D1 Health Summary: ${results.healthy} healthy, ${results.unhealthy} unhealthy`);
+  return results;
+}
+
+/**
+ * Comprehensive health check including D1 databases
+ * @param {string} serviceUrl - Service URL to check
+ * @param {Array<string>} databases - D1 databases to check
+ * @param {Object} options - Check options
+ * @returns {Promise<Object>} Comprehensive health result
+ */
+export async function enhancedComprehensiveHealthCheck(serviceUrl, databases = [], options = {}) {
+  console.log(`🏥 Comprehensive Health Check`);
+  console.log(`   Service: ${serviceUrl}`);
+  console.log(`   D1 Databases: ${databases.length}`);
+  
+  const startTime = Date.now();
+  const result = {
+    overall: 'unknown',
+    service: null,
+    databases: null,
+    duration: 0,
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    // Check service health
+    console.log('\n📡 Checking service health...');
+    result.service = await checkHealth(serviceUrl, options.serviceTimeout);
+    
+    // Check D1 databases if provided
+    if (databases.length > 0) {
+      console.log('\n🗄️ Checking D1 databases...');
+      result.databases = await checkMultipleD1Health(databases, options);
+    }
+
+    // Determine overall status
+    const serviceHealthy = result.service.status === 'ok';
+    const databasesHealthy = !result.databases || result.databases.overall === 'healthy';
+    
+    if (serviceHealthy && databasesHealthy) {
+      result.overall = 'healthy';
+    } else if (!serviceHealthy && (!result.databases || result.databases.overall === 'unhealthy')) {
+      result.overall = 'unhealthy';
+    } else {
+      result.overall = 'partial';
+    }
+
+    result.duration = Date.now() - startTime;
+    
+    console.log(`\n📊 Overall Health: ${result.overall.toUpperCase()} (${result.duration}ms)`);
+    return result;
+
+  } catch (error) {
+    result.overall = 'error';
+    result.error = error.message;
+    result.duration = Date.now() - startTime;
+    
+    console.log(`\n❌ Health check failed: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Format D1 health check results for display
+ * @param {Object} d1Results - D1 health check results
+ * @returns {string} Formatted output
+ */
+export function formatD1HealthResults(d1Results) {
+  const lines = [
+    '🗄️ D1 Database Health Report',
+    '=============================='
+  ];
+
+  if (d1Results.databases) {
+    lines.push(`📊 Overall Status: ${d1Results.overall.toUpperCase()}`);
+    lines.push(`✅ Healthy: ${d1Results.healthy}`);
+    lines.push(`❌ Unhealthy: ${d1Results.unhealthy}`);
+    lines.push('');
+
+    d1Results.databases.forEach(db => {
+      const status = db.status === 'healthy' ? '✅' : '❌';
+      lines.push(`${status} ${db.database} (${db.responseTime}ms)`);
+      
+      if (db.status === 'unhealthy' && db.details.suggestion) {
+        lines.push(`   💡 ${db.details.suggestion}`);
+      }
+    });
+  } else {
+    lines.push(`📊 Database: ${d1Results.database}`);
+    lines.push(`📊 Status: ${d1Results.status.toUpperCase()}`);
+    lines.push(`⏱️ Response Time: ${d1Results.responseTime}ms`);
+    
+    if (d1Results.status === 'unhealthy') {
+      lines.push(`❌ Error: ${d1Results.error}`);
+      if (d1Results.details.suggestion) {
+        lines.push(`💡 Suggestion: ${d1Results.details.suggestion}`);
+      }
+    }
+  }
+
+  return lines.join('\n');
+}

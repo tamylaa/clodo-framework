@@ -2,10 +2,13 @@ import { spawn } from 'child_process';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { WranglerD1Manager } from '../../bin/database/wrangler-d1-manager.js';
 
 /**
  * WranglerDeployer - Executes actual Cloudflare Workers deployments using wrangler CLI
  * Provides integration between Clodo Framework orchestration and wrangler deployment
+ * 
+ * Now integrated with WranglerD1Manager for comprehensive D1 database operations
  */
 export class WranglerDeployer {
   constructor(options = {}) {
@@ -15,6 +18,12 @@ export class WranglerDeployer {
     this.maxRetries = options.maxRetries || 1;
     this.environment = options.environment || this.detectEnvironment();
     this.serviceInfo = options.serviceInfo || this.discoverServiceInfo();
+    
+    // Initialize D1 manager for database operations
+    this.d1Manager = new WranglerD1Manager({
+      cwd: this.cwd,
+      timeout: 60000 // 1 minute for D1 operations
+    });
   }
 
   /**
@@ -567,14 +576,20 @@ export class WranglerDeployer {
       // Validate configuration can be parsed
       const configValidation = await this.validateWranglerConfig(deployConfig, environment);
 
+      // Validate D1 database bindings using D1Manager
+      const d1Validation = await this.d1Manager.validateD1Bindings(deployConfig);
+
+      const overallValid = configValidation.valid && d1Validation.valid;
+
       return {
-        valid: true,
+        valid: overallValid,
         version: versionResult.output.trim(),
         config: deployConfig,
         account: accountInfo,
         configValidation,
+        d1Validation,
         authenticated: true,
-        ready: configValidation.valid
+        ready: overallValid
       };
 
     } catch (error) {
@@ -658,6 +673,37 @@ export class WranglerDeployer {
     }
 
     return warnings;
+  }
+
+  /**
+   * Handle D1 binding errors with interactive recovery options (delegated to D1Manager)
+   * @param {string} error - Error message
+   * @param {Object} context - Error context
+   * @returns {Promise<Object>} Recovery result
+   */
+  async handleD1BindingError(error, context = {}) {
+    return await this.d1Manager.handleD1BindingError(error, context);
+  }
+
+  /**
+   * Validate D1 bindings using D1Manager (delegated)
+   */
+  async validateD1Bindings(deployConfig) {
+    return await this.d1Manager.validateD1Bindings(deployConfig);
+  }
+
+  /**
+   * Extract D1 bindings using D1Manager (delegated)  
+   */
+  extractD1Bindings(configContent) {
+    return this.d1Manager.extractD1Bindings(configContent);
+  }
+
+  /**
+   * Check D1 database existence using D1Manager (delegated)
+   */
+  async checkD1DatabaseExists(nameOrId) {
+    return await this.d1Manager.checkD1DatabaseExists(nameOrId);
   }
 }
 

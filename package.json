@@ -56,11 +56,9 @@
     "bin/service-management",
     "bin/security",
     "docs/README.md",
-    "docs/FRAMEWORK-ARCHITECTURE-OVERVIEW.md",
-    "docs/INTEGRATION_GUIDE.md",
     "docs/overview.md",
     "docs/SECURITY.md",
-    "docs/deployment/deployment-guide.md",
+    "docs/api-reference.md",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
