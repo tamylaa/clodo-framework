@@ -58,6 +58,7 @@
     "bin/service-management",
     "bin/security",
     "bin/shared/config",
+    "templates",
     "docs/README.md",
     "docs/overview.md",
     "docs/SECURITY.md",
