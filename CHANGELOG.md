@@ -1,3 +1,10 @@
+## [2.0.6](https://github.com/tamylaa/clodo-framework/compare/v2.0.5...v2.0.6) (2025-10-11)
+
+
+### Bug Fixes
+
+* PowerShell double-echo in interactive input collection ([6a4b153](https://github.com/tamylaa/clodo-framework/commit/6a4b15380efac0ffc4b57ea4e24f320853c33137))
+
 ## [2.0.5](https://github.com/tamylaa/clodo-framework/compare/v2.0.4...v2.0.5) (2025-10-11)
 
 
