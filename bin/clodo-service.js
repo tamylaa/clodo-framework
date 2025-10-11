@@ -541,7 +541,7 @@ program
         
         console.log(chalk.cyan('🚀 Starting deployment...\n'));
         
-        const result = await orchestrator.deployDomain(coreInputs.domainName, {
+        const result = await orchestrator.deploySingleDomain(coreInputs.domainName, {
           ...coreInputs,
           ...confirmations,
           servicePath: options.servicePath
