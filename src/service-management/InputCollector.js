@@ -19,9 +19,14 @@ import { uiStructuresLoader } from '../utils/ui-structures-loader.js';
 export class InputCollector {
   constructor(options = {}) {
     this.interactive = options.interactive !== false;
+    
+    // Fix for PowerShell double-echo issue
+    const isPowerShell = process.env.PSModulePath !== undefined;
+    
     this.rl = this.interactive ? createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
+      terminal: !isPowerShell // Disable terminal mode in PowerShell to prevent double echo
     }) : null;
   }
 
