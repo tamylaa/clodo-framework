@@ -95,7 +95,9 @@
     "update-service": "node bin/clodo-service.js update",
     "diagnose-service": "node bin/clodo-service.js diagnose",
     "validate-service": "node bin/clodo-service.js validate",
-    "customer-config": "node bin/shared/config/customer-cli.js"
+    "customer-config": "node bin/shared/config/customer-cli.js",
+    "push:safe": "powershell -ExecutionPolicy Bypass -File ./scripts/utilities/safe-push.ps1",
+    "sync": "git fetch && git rebase origin/master"
   },
   "keywords": [
     "cloudflare",
