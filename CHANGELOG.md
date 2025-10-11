@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/tamylaa/clodo-framework/compare/v2.0.4...v2.0.5) (2025-10-11)
+
+
+### Bug Fixes
+
+* include templates directory in published package ([8d5c1ff](https://github.com/tamylaa/clodo-framework/commit/8d5c1ffc6090c35751d926042c784ae9b4d711b1))
+
 ## [2.0.4](https://github.com/tamylaa/clodo-framework/compare/v2.0.3...v2.0.4) (2025-10-11)
 
 
