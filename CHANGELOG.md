@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/tamylaa/clodo-framework/compare/v2.0.1...v2.0.2) (2025-10-11)
+
+
+### Bug Fixes
+
+* resolve CLI tool import paths and runtime dependencies ([6a726b9](https://github.com/tamylaa/clodo-framework/commit/6a726b95a5e55055048a262d1c146a50a4f0b46f))
+
 ## [2.0.1](https://github.com/tamylaa/clodo-framework/compare/v2.0.0...v2.0.1) (2025-10-10)
 
 

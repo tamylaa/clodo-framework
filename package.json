@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/clodo-framework",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Reusable framework for Clodo-style software architecture on Cloudflare Workers + D1",
   "type": "module",
   "sideEffects": [
