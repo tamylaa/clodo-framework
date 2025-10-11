@@ -413,4 +413,169 @@ program
     }
   });
 
+// Deploy command - using existing InputCollector + CustomerConfigLoader (reusable pattern)
+program
+  .command('deploy')
+  .description('Deploy service using three-tier input architecture')
+  .option('-c, --customer <name>', 'Customer name')
+  .option('-e, --env <environment>', 'Target environment (development, staging, production)')
+  .option('-i, --interactive', 'Interactive mode (review confirmations)', true)
+  .option('--non-interactive', 'Non-interactive mode (use stored config)')
+  .option('--dry-run', 'Simulate deployment without making changes')
+  .option('--domain <domain>', 'Domain name (overrides stored config)')
+  .option('--service-path <path>', 'Path to service directory', '.')
+  .action(async (options) => {
+    try {
+      // Use existing reusable components
+      const { InputCollector } = await import('../dist/service-management/InputCollector.js');
+      const { CustomerConfigLoader } = await import('../dist/config/customer-config-loader.js');
+      const { ConfirmationHandler } = await import('../dist/service-management/handlers/ConfirmationHandler.js');
+      const { MultiDomainOrchestrator } = await import('../dist/orchestration/multi-domain-orchestrator.js');
+      
+      console.log(chalk.cyan('\n🚀 Clodo Framework Deployment'));
+      console.log(chalk.white('Using Three-Tier Input Architecture\n'));
+      
+      const isInteractive = options.interactive && !options.nonInteractive;
+      const configLoader = new CustomerConfigLoader();
+      const inputCollector = new InputCollector({ interactive: isInteractive });
+      const confirmationHandler = new ConfirmationHandler({ interactive: isInteractive });
+      
+      let coreInputs = {};
+      let source = 'interactive';
+      
+      try {
+        // Try to load existing customer config first
+        if (options.customer && options.env) {
+          const storedConfig = configLoader.loadConfig(options.customer, options.env);
+          
+          if (storedConfig) {
+            source = 'stored-config';
+            console.log(chalk.cyan('📋 Found Existing Configuration\n'));
+            configLoader.displayConfig(storedConfig.parsed);
+            
+            if (!isInteractive) {
+              // Non-interactive: use stored config as-is
+              coreInputs = storedConfig.parsed;
+              console.log(chalk.green('\n✅ Using stored configuration (non-interactive mode)\n'));
+            } else {
+              // Interactive: ask to confirm or re-collect
+              const useStored = await inputCollector.question('\nUse this configuration? (Y/n): ');
+              
+              if (useStored.toLowerCase() !== 'n') {
+                coreInputs = storedConfig.parsed;
+                console.log(chalk.green('\n✅ Using stored configuration\n'));
+              } else {
+                console.log(chalk.white('\nCollecting new configuration...\n'));
+                source = 'interactive';
+              }
+            }
+          } else {
+            console.log(chalk.yellow(`⚠️  No configuration found for ${options.customer}/${options.env}`));
+            console.log(chalk.white('Collecting inputs interactively...\n'));
+          }
+        }
+        
+        // Collect inputs if we don't have them from stored config
+        if (!coreInputs.cloudflareAccountId) {
+          console.log(chalk.cyan('📊 Tier 1: Core Input Collection\n'));
+          
+          // Use InputCollector for what it does best - collecting inputs
+          coreInputs = {
+            customer: options.customer || await inputCollector.question('Customer name: '),
+            environment: options.env || await inputCollector.collectEnvironment(),
+            serviceName: await inputCollector.collectServiceName(),
+            serviceType: await inputCollector.collectServiceType(),
+            domainName: options.domain || await inputCollector.collectDomainName(),
+            cloudflareToken: process.env.CLOUDFLARE_API_TOKEN || await inputCollector.collectCloudflareToken(),
+            cloudflareAccountId: process.env.CLOUDFLARE_ACCOUNT_ID || await inputCollector.collectCloudflareAccountId(),
+            cloudflareZoneId: process.env.CLOUDFLARE_ZONE_ID || await inputCollector.collectCloudflareZoneId()
+          };
+          
+          source = 'interactive';
+        }
+        
+        // Allow domain override
+        if (options.domain) {
+          coreInputs.domainName = options.domain;
+        }
+        
+        // Tier 2: Generate smart confirmations using existing ConfirmationHandler
+        console.log(chalk.cyan('⚙️  Tier 2: Smart Confirmations\n'));
+        const confirmations = await confirmationHandler.generateAndConfirm(coreInputs);
+        
+        // Show deployment summary
+        console.log(chalk.cyan('\n📊 Deployment Summary'));
+        console.log(chalk.gray('─'.repeat(60)));
+        
+        console.log(chalk.white(`Source:        ${source}`));
+        console.log(chalk.white(`Customer:      ${coreInputs.customer}`));
+        console.log(chalk.white(`Environment:   ${coreInputs.environment}`));
+        console.log(chalk.white(`Domain:        ${coreInputs.domainName}`));
+        console.log(chalk.white(`Account ID:    ${coreInputs.cloudflareAccountId?.substring(0, 8)}...`));
+        console.log(chalk.white(`Zone ID:       ${coreInputs.cloudflareZoneId?.substring(0, 8)}...`));
+        
+        if (confirmations.workerName) {
+          console.log(chalk.white(`Worker:        ${confirmations.workerName}`));
+        }
+        if (confirmations.databaseName) {
+          console.log(chalk.white(`Database:      ${confirmations.databaseName}`));
+        }
+        
+        console.log(chalk.gray('─'.repeat(60)));
+        
+        if (options.dryRun) {
+          console.log(chalk.yellow('\n🔍 DRY RUN MODE - No changes will be made\n'));
+        }
+        
+        // Tier 3: Execute deployment
+        console.log(chalk.cyan('\n⚙️  Tier 3: Automated Deployment\n'));
+        
+        const orchestrator = new MultiDomainOrchestrator({
+          domains: [coreInputs.domainName],
+          environment: coreInputs.environment,
+          dryRun: options.dryRun,
+          servicePath: options.servicePath
+        });
+        
+        await orchestrator.initialize();
+        
+        console.log(chalk.cyan('🚀 Starting deployment...\n'));
+        
+        const result = await orchestrator.deployDomain(coreInputs.domainName, {
+          ...coreInputs,
+          ...confirmations,
+          servicePath: options.servicePath
+        });
+        
+        // Display results
+        console.log(chalk.green('\n✅ Deployment Completed Successfully!'));
+        console.log(chalk.gray('─'.repeat(60)));
+        console.log(chalk.white(`   Worker:   ${confirmations.workerName || 'N/A'}`));
+        console.log(chalk.white(`   URL:      ${result.url || confirmations.deploymentUrl || 'N/A'}`));
+        console.log(chalk.white(`   Status:   ${result.status || 'deployed'}`));
+        
+        if (result.health) {
+          console.log(chalk.white(`   Health:   ${result.health}`));
+        }
+        
+        console.log(chalk.gray('─'.repeat(60)));
+        
+        console.log(chalk.cyan('\n📋 Next Steps:'));
+        console.log(chalk.white(`   • Test deployment: curl ${result.url || confirmations.deploymentUrl}/health`));
+        console.log(chalk.white(`   • Monitor logs: wrangler tail ${confirmations.workerName}`));
+        console.log(chalk.white(`   • View dashboard: https://dash.cloudflare.com`));
+        
+      } finally {
+        inputCollector.close();
+      }
+      
+    } catch (error) {
+      console.error(chalk.red(`\n❌ Deployment failed: ${error.message}`));
+      if (error.stack && process.env.DEBUG) {
+        console.error(chalk.gray(error.stack));
+      }
+      process.exit(1);
+    }
+  });
+
 program.parse();
