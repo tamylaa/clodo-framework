@@ -296,16 +296,28 @@ export class GenerationEngine {
       main: "src/worker/index.js",
       type: "module",
       scripts: {
+        // Development
+        dev: "wrangler dev",
+        
+        // Testing
         test: "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
-        dev: "wrangler dev",
-        deploy: "powershell .\\scripts\\deploy.ps1",
-        setup: "powershell .\\scripts\\setup.ps1",
-        "health-check": "powershell .\\scripts\\health-check.ps1",
+        
+        // Deployment (cross-platform via framework)
+        deploy: "clodo-service deploy",
+        "deploy:dev": "node scripts/deploy.js development",
+        "deploy:staging": "node scripts/deploy.js staging",
+        "deploy:prod": "node scripts/deploy.js production",
+        
+        // Code Quality
         lint: "eslint src/ test/",
         "lint:fix": "eslint src/ test/ --fix",
         format: "prettier --write src/ test/",
+        
+        // Utilities
+        validate: "clodo-service validate .",
+        diagnose: "clodo-service diagnose .",
         build: "wrangler deploy --dry-run",
         clean: "rimraf dist/ coverage/"
       },

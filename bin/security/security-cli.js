@@ -36,7 +36,28 @@ async function main() {
       break;
 
     case 'deploy':
-      const [deployCustomer, deployEnvironment] = args;
+      // Check for help flag first
+      if (args.includes('--help') || args.includes('-h')) {
+        console.log('Deploy with security validation');
+        console.log('');
+        console.log('Usage:');
+        console.log('  clodo-security deploy <customer> <environment> [options]');
+        console.log('');
+        console.log('Arguments:');
+        console.log('  customer      Customer name (e.g., wetechfounders)');
+        console.log('  environment   Target environment (development, staging, production)');
+        console.log('');
+        console.log('Options:');
+        console.log('  --dry-run     Simulate deployment without making changes');
+        console.log('  --help, -h    Display this help message');
+        console.log('');
+        console.log('Examples:');
+        console.log('  clodo-security deploy wetechfounders development');
+        console.log('  clodo-security deploy greatidude production --dry-run');
+        break;
+      }
+      
+      const [deployCustomer, deployEnvironment] = args.filter(arg => !arg.startsWith('--'));
       const dryRun = args.includes('--dry-run');
       const deployResult = await cli.deployWithSecurity(deployCustomer, deployEnvironment, { dryRun });
       if (deployResult.success) {
