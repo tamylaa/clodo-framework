@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/tamylaa/clodo-framework/compare/v2.0.3...v2.0.4) (2025-10-11)
+
+
+### Bug Fixes
+
+* ensure clodo-security deploy --help works correctly ([1f81b5f](https://github.com/tamylaa/clodo-framework/commit/1f81b5f0d0590bd3d82470485bde6c449b95c12e))
+
 ## [2.0.3](https://github.com/tamylaa/clodo-framework/compare/v2.0.2...v2.0.3) (2025-10-11)
 
 
