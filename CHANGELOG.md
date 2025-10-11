@@ -1,3 +1,10 @@
+## [2.0.7](https://github.com/tamylaa/clodo-framework/compare/v2.0.6...v2.0.7) (2025-10-11)
+
+
+### Bug Fixes
+
+* correct orchestrator method name in deploy command ([b28a372](https://github.com/tamylaa/clodo-framework/commit/b28a37222cf2859449b3470b16ec6eb284cc50e2))
+
 ## [2.0.6](https://github.com/tamylaa/clodo-framework/compare/v2.0.5...v2.0.6) (2025-10-11)
 
 
