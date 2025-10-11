@@ -11,7 +11,7 @@
  */
 
 import { program } from 'commander';
-import { ServiceInitializer } from '../../src/service-management/ServiceInitializer.js';
+import { ServiceInitializer } from '../../dist/service-management/ServiceInitializer.js';
 
 const SERVICE_TYPES = ['generic', 'data-service', 'auth-service', 'content-service', 'api-gateway'];
 

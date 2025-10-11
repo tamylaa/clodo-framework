@@ -6,7 +6,7 @@
  * Integrates with Clodo Framework domain and feature flag systems
  */
 
-import { CustomerConfigCLI } from '../../../src/config/CustomerConfigCLI.js';
+import { CustomerConfigCLI } from '../../../dist/config/CustomerConfigCLI.js';
 
 const command = process.argv[2];
 const args = process.argv.slice(3);
