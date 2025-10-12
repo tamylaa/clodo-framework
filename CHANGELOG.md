@@ -1,3 +1,10 @@
+## [2.0.15](https://github.com/tamylaa/clodo-framework/compare/v2.0.14...v2.0.15) (2025-10-12)
+
+
+### Bug Fixes
+
+* improve customer selection UX with number support ([2e10d56](https://github.com/tamylaa/clodo-framework/commit/2e10d562061c478ecc238e1185e2514af453d00e))
+
 ## [2.0.14](https://github.com/tamylaa/clodo-framework/compare/v2.0.13...v2.0.14) (2025-10-12)
 
 
