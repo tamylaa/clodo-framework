@@ -287,8 +287,8 @@ export class ConfigPersistenceManager {
       return [];
     }
 
-    const fs = require('fs');
-    const entries = fs.readdirSync(this.configDir, { withFileTypes: true });
+    // ESM-compatible fs import (already imported at top)
+    const entries = readdirSync(this.configDir, { withFileTypes: true });
     
     return entries
       .filter(entry => entry.isDirectory() && entry.name !== 'template')

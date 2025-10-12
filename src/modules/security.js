@@ -1,6 +1,7 @@
 import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
 import { DeploymentManager } from '../security/DeploymentManager.js';
 import { SecretGenerator } from '../security/SecretGenerator.js';
+import { isValidEnvironment } from '../security/patterns/environment-rules.js';
 
 /**
  * Security Module for Clodo Framework
@@ -81,10 +82,7 @@ export const securityModule = {
   utils: {
     calculateKeyEntropy: (key) => SecretGenerator.calculateEntropy(key),
     validateKeyStrength: (key, requirements) => SecretGenerator.validateKeyStrength(key, requirements),
-    isValidEnvironment: (env) => {
-      const { isValidEnvironment } = require('../security/patterns/environment-rules.js');
-      return isValidEnvironment(env);
-    }
+    isValidEnvironment: (env) => isValidEnvironment(env)
   }
 };
 
