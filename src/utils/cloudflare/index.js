@@ -99,20 +99,3 @@ export {
  * - You need to execute SQL queries
  * - You want built-in retry logic and monitoring
  */
-
-export default {
-  CloudflareAPI,
-  formatZonesForDisplay,
-  parseZoneSelection,
-  // CLI operations
-  checkAuth,
-  authenticate,
-  deployWorker,
-  deploySecret,
-  listSecrets,
-  deleteSecret,
-  listDatabases,
-  createDatabase,
-  runMigrations,
-  executeSql
-};
