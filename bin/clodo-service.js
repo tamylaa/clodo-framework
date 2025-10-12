@@ -479,16 +479,31 @@ program
         if (!coreInputs.cloudflareAccountId) {
           console.log(chalk.cyan('📊 Tier 1: Core Input Collection\n'));
           
-          // Use InputCollector for what it does best - collecting inputs
+          // Collect basic info
+          const customer = options.customer || await inputCollector.question('Customer name: ');
+          const environment = options.env || await inputCollector.collectEnvironment();
+          const serviceName = await inputCollector.collectServiceName();
+          const serviceType = await inputCollector.collectServiceType();
+          
+          // Collect Cloudflare token
+          const cloudflareToken = process.env.CLOUDFLARE_API_TOKEN || await inputCollector.collectCloudflareToken();
+          
+          // Use CloudflareAPI for automatic domain discovery
+          const cloudflareConfig = await inputCollector.collectCloudflareConfigWithDiscovery(
+            cloudflareToken,
+            options.domain
+          );
+          
+          // Combine all inputs
           coreInputs = {
-            customer: options.customer || await inputCollector.question('Customer name: '),
-            environment: options.env || await inputCollector.collectEnvironment(),
-            serviceName: await inputCollector.collectServiceName(),
-            serviceType: await inputCollector.collectServiceType(),
-            domainName: options.domain || await inputCollector.collectDomainName(),
-            cloudflareToken: process.env.CLOUDFLARE_API_TOKEN || await inputCollector.collectCloudflareToken(),
-            cloudflareAccountId: process.env.CLOUDFLARE_ACCOUNT_ID || await inputCollector.collectCloudflareAccountId(),
-            cloudflareZoneId: process.env.CLOUDFLARE_ZONE_ID || await inputCollector.collectCloudflareZoneId()
+            customer,
+            environment,
+            serviceName,
+            serviceType,
+            domainName: cloudflareConfig.domainName,
+            cloudflareToken,
+            cloudflareAccountId: cloudflareConfig.accountId,
+            cloudflareZoneId: cloudflareConfig.zoneId
           };
           
           source = 'interactive';

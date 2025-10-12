@@ -3,4 +3,4 @@
 
 export { ConfigurationCacheManager } from './config-cache.js';
 export { EnhancedSecretManager } from './secret-generator.js';
-export { askUser, askYesNo, askChoice, closePrompts } from './interactive-prompts.js';
+export { askUser, askYesNo, askChoice, closePrompts } from '../../../bin/shared/utils/interactive-prompts.js';

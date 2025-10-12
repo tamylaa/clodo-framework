@@ -366,7 +366,20 @@ export class InputCollector {
       const token = await this.prompt('Cloudflare API Token: ');
 
       if (token && token.length > 20) { // Basic length validation
-        return token;
+        // Verify token with CloudflareAPI
+        try {
+          const { CloudflareAPI } = await import('../utils/cloudflare/api.js');
+          const cfApi = new CloudflareAPI(token);
+          const isValid = await cfApi.verifyToken();
+          
+          if (isValid) {
+            console.log(chalk.green('✓ API token verified successfully'));
+            return token;
+          }
+        } catch (error) {
+          console.log(chalk.red(`✗ Token verification failed: ${error.message}`));
+          continue;
+        }
       }
 
       console.log(chalk.red('✗ Invalid API token format.'));
@@ -374,9 +387,70 @@ export class InputCollector {
   }
 
   /**
-   * Collect Cloudflare Account ID
+   * Collect Cloudflare configuration with automatic domain discovery
+   * Returns { accountId, zoneId, domainName }
    */
-  async collectCloudflareAccountId() {
+  async collectCloudflareConfigWithDiscovery(apiToken, preferredDomain = null) {
+    try {
+      const { CloudflareAPI } = await import('../utils/cloudflare/api.js');
+      const { formatZonesForDisplay, parseZoneSelection } = await import('../utils/cloudflare/api.js');
+      
+      const cfApi = new CloudflareAPI(apiToken);
+      
+      console.log(chalk.cyan('\n🔍 Discovering your Cloudflare domains...'));
+      const zones = await cfApi.listZones();
+      
+      if (!zones || zones.length === 0) {
+        console.log(chalk.yellow('⚠️  No domains found in your Cloudflare account.'));
+        console.log(chalk.white('Please add a domain to Cloudflare first.'));
+        throw new Error('No domains available');
+      }
+      
+      console.log(chalk.green(`✓ Found ${zones.length} domain(s)\n`));
+      
+      // Format zones for display
+      const formatted = formatZonesForDisplay(zones);
+      console.log(formatted);
+      
+      // Let user select a domain
+      const selection = await this.prompt('\nSelect domain (enter number or name): ');
+      const selectedZone = parseZoneSelection(selection, zones);
+      
+      if (!selectedZone) {
+        throw new Error('Invalid domain selection');
+      }
+      
+      console.log(chalk.green(`\n✓ Selected: ${selectedZone.name}`));
+      
+      // Get full zone details
+      const zoneDetails = await cfApi.getZoneDetails(selectedZone.id);
+      
+      return {
+        domainName: zoneDetails.name,
+        zoneId: zoneDetails.id,
+        accountId: zoneDetails.account.id,
+        accountName: zoneDetails.account.name,
+        nameServers: zoneDetails.name_servers,
+        status: zoneDetails.status
+      };
+      
+    } catch (error) {
+      console.log(chalk.red(`\n✗ Domain discovery failed: ${error.message}`));
+      console.log(chalk.yellow('Falling back to manual entry...\n'));
+      
+      // Fallback to manual entry
+      return {
+        accountId: await this.collectCloudflareAccountIdManual(),
+        zoneId: await this.collectCloudflareZoneIdManual(),
+        domainName: preferredDomain
+      };
+    }
+  }
+
+  /**
+   * Manual Cloudflare Account ID collection (fallback)
+   */
+  async collectCloudflareAccountIdManual() {
     console.log(chalk.white('Find your Account ID in the right sidebar of your Cloudflare dashboard.'));
     console.log('');
 
@@ -392,9 +466,9 @@ export class InputCollector {
   }
 
   /**
-   * Collect Cloudflare Zone ID
+   * Manual Cloudflare Zone ID collection (fallback)
    */
-  async collectCloudflareZoneId() {
+  async collectCloudflareZoneIdManual() {
     console.log(chalk.white('Find your Zone ID in the Overview tab of your domain in Cloudflare.'));
     console.log('');
 
@@ -407,6 +481,22 @@ export class InputCollector {
 
       console.log(chalk.red('✗ Invalid Zone ID format (should be 32 hexadecimal characters).'));
     }
+  }
+
+  /**
+   * Collect Cloudflare Account ID (kept for backward compatibility)
+   * @deprecated Use collectCloudflareConfigWithDiscovery instead
+   */
+  async collectCloudflareAccountId() {
+    return this.collectCloudflareAccountIdManual();
+  }
+
+  /**
+   * Collect Cloudflare Zone ID (kept for backward compatibility)
+   * @deprecated Use collectCloudflareConfigWithDiscovery instead
+   */
+  async collectCloudflareZoneId() {
+    return this.collectCloudflareZoneIdManual();
   }
 
   /**
