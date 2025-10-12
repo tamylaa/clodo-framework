@@ -1,3 +1,10 @@
+## [2.0.16](https://github.com/tamylaa/clodo-framework/compare/v2.0.15...v2.0.16) (2025-10-12)
+
+
+### Bug Fixes
+
+* comprehensive readline state management and stdin restoration ([a0716fe](https://github.com/tamylaa/clodo-framework/commit/a0716fef9a5db8211b851ab7861bf2419f31e7fa))
+
 ## [2.0.15](https://github.com/tamylaa/clodo-framework/compare/v2.0.14...v2.0.15) (2025-10-12)
 
 
