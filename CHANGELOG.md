@@ -1,3 +1,10 @@
+## [2.0.9](https://github.com/tamylaa/clodo-framework/compare/v2.0.8...v2.0.9) (2025-10-12)
+
+
+### Bug Fixes
+
+* re-release v2.0.8 features that were missing from npm package ([33cf712](https://github.com/tamylaa/clodo-framework/commit/33cf71267c07610e04bd8c752db4385c6f5ca603))
+
 ## [2.0.8](https://github.com/tamylaa/clodo-framework/compare/v2.0.7...v2.0.8) (2025-10-12)
 
 
