@@ -1,3 +1,11 @@
+## [2.0.14](https://github.com/tamylaa/clodo-framework/compare/v2.0.13...v2.0.14) (2025-10-12)
+
+
+### Bug Fixes
+
+* add missing readdirSync import in config-persistence.js ([767efc4](https://github.com/tamylaa/clodo-framework/commit/767efc4aa839c7afa592fe3a1df21b62870bdf23))
+* remove require() calls in ESM modules ([a1783f9](https://github.com/tamylaa/clodo-framework/commit/a1783f9c75c59ae8ce9daacbc223ad80b17d61bc))
+
 ## [2.0.13](https://github.com/tamylaa/clodo-framework/compare/v2.0.12...v2.0.13) (2025-10-12)
 
 
