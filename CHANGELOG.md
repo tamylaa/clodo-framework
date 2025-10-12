@@ -1,3 +1,14 @@
+## [2.0.8](https://github.com/tamylaa/clodo-framework/compare/v2.0.7...v2.0.8) (2025-10-12)
+
+
+### Bug Fixes
+
+* clean up skipped security validation test with proper TODO ([722afbe](https://github.com/tamylaa/clodo-framework/commit/722afbe056be6f8ccb623acbbd3ab9ac4ce75caa))
+* Enhanced customer config, CloudflareAPI utility, and code consolidation ([447ed9b](https://github.com/tamylaa/clodo-framework/commit/447ed9b5d8a2bb806386fc334e2e8bf4efeff43b))
+* implement missing deployment phase methods in MultiDomainOrchestrator ([b0cb1e8](https://github.com/tamylaa/clodo-framework/commit/b0cb1e828679df61d9ebde2551599f47ddeb20d2))
+* integrate CloudflareAPI auto-discovery and cleanup duplicates ([8166d18](https://github.com/tamylaa/clodo-framework/commit/8166d189bbe1e5b78db8f24d56221f0e18e72021))
+* resolve ESLint no-undef errors in cloudflare index.js ([1a2bb7f](https://github.com/tamylaa/clodo-framework/commit/1a2bb7fa175bab142f3d5be451cb44ef1b9d8747))
+
 ## [2.0.7](https://github.com/tamylaa/clodo-framework/compare/v2.0.6...v2.0.7) (2025-10-12)
 
 
