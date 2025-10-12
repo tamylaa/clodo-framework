@@ -1,3 +1,10 @@
+## [2.0.12](https://github.com/tamylaa/clodo-framework/compare/v2.0.11...v2.0.12) (2025-10-12)
+
+
+### Bug Fixes
+
+* correct zone details property access in auto-discovery ([bfca8af](https://github.com/tamylaa/clodo-framework/commit/bfca8af21a28e96e3fa8809d38de997982723d5a))
+
 ## [2.0.11](https://github.com/tamylaa/clodo-framework/compare/v2.0.10...v2.0.11) (2025-10-12)
 
 
