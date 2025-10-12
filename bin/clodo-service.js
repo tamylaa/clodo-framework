@@ -516,8 +516,8 @@ program
           const customers = configPersistence.getConfiguredCustomers();
           if (customers.length > 0) {
             console.log(chalk.cyan('💡 Configured customers:'));
-            customers.forEach(customer => {
-              console.log(chalk.white(`   • ${customer}`));
+            customers.forEach((customer, index) => {
+              console.log(chalk.white(`   ${index + 1}. ${customer}`));
             });
             console.log('');
           }
@@ -527,8 +527,30 @@ program
         if (!coreInputs.cloudflareAccountId) {
           console.log(chalk.cyan('📊 Tier 1: Core Input Collection\n'));
           
-          // Collect basic info
-          const customer = options.customer || await inputCollector.question('Customer name: ');
+          // Collect basic info with smart customer selection
+          let customer = options.customer;
+          if (!customer) {
+            const customers = configPersistence.getConfiguredCustomers();
+            if (customers.length > 0) {
+              const selection = await inputCollector.question('Select customer (enter number or name): ');
+              
+              // Try to parse as number first
+              const num = parseInt(selection);
+              if (!isNaN(num) && num >= 1 && num <= customers.length) {
+                customer = customers[num - 1];
+                console.log(chalk.green(`✓ Selected: ${customer}\n`));
+              } else if (customers.includes(selection)) {
+                customer = selection;
+                console.log(chalk.green(`✓ Selected: ${customer}\n`));
+              } else {
+                // New customer name
+                customer = selection;
+                console.log(chalk.yellow(`⚠️  Creating new customer: ${customer}\n`));
+              }
+            } else {
+              customer = await inputCollector.question('Customer name: ');
+            }
+          }
           const environment = options.env || await inputCollector.collectEnvironment();
           const serviceName = await inputCollector.collectServiceName();
           const serviceType = await inputCollector.collectServiceType();
