@@ -713,8 +713,17 @@ export class DatabaseOrchestrator {
   // Command builders and utility methods
 
   buildMigrationCommand(databaseName, environment, isRemote) {
-    const remoteFlag = isRemote ? '--remote' : '--local';
-    return `npx wrangler d1 migrations apply ${databaseName} --env ${environment} ${remoteFlag}`;
+    let command = `npx wrangler d1 migrations apply ${databaseName}`;
+    
+    // For remote environments, add --env flag
+    // For local development, use --local WITHOUT --env (wrangler requirement)
+    if (isRemote) {
+      command += ` --env ${environment} --remote`;
+    } else {
+      command += ` --local`;
+    }
+    
+    return command;
   }
 
   buildBackupCommand(databaseName, environment, backupFile, isRemote) {

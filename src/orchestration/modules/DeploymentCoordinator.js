@@ -29,6 +29,15 @@ export class DeploymentCoordinator {
    * @returns {Promise<Object>} Deployment result
    */
   async deploySingleDomain(domain, domainState, handlers) {
+    const phaseResults = {
+      validation: { success: false, errors: [], warnings: [] },
+      initialization: { success: false, errors: [], warnings: [] },
+      database: { success: false, errors: [], warnings: [] },
+      secrets: { success: false, errors: [], warnings: [] },
+      deployment: { success: false, errors: [], warnings: [] },
+      'post-validation': { success: false, errors: [], warnings: [] }
+    };
+    
     try {
       domainState.startTime = new Date();
       domainState.status = 'deploying';
@@ -38,41 +47,110 @@ export class DeploymentCoordinator {
       console.log(`   Environment: ${this.environment}`);
 
       let deploymentUrl = null;
+      let hasCriticalErrors = false;
       
       // Execute deployment phases
       for (const phase of this.deploymentPhases) {
-        const phaseResult = await this.executeDeploymentPhase(domain, phase, domainState, handlers);
-        domainState.phase = `${phase}-complete`;
-        
-        // Capture deployment URL from deployment phase
-        if (phase === 'deployment' && phaseResult && phaseResult.url) {
-          deploymentUrl = phaseResult.url;
+        try {
+          const phaseResult = await this.executeDeploymentPhase(domain, phase, domainState, handlers);
+          domainState.phase = `${phase}-complete`;
+          
+          // Mark phase as successful
+          phaseResults[phase].success = true;
+          
+          // Capture deployment URL from deployment phase
+          if (phase === 'deployment' && phaseResult) {
+            if (phaseResult.url) {
+              deploymentUrl = phaseResult.url;
+            }
+            if (phaseResult.deployed === false) {
+              phaseResults[phase].warnings.push('Worker deployed in dry-run mode');
+            }
+          }
+          
+          // Capture database warnings
+          if (phase === 'database' && phaseResult) {
+            if (phaseResult.error) {
+              phaseResults[phase].warnings.push(phaseResult.error);
+            }
+          }
+          
+        } catch (phaseError) {
+          phaseResults[phase].success = false;
+          phaseResults[phase].errors.push(phaseError.message);
+          
+          // Determine if error is critical (stops deployment)
+          const criticalPhases = ['validation', 'initialization', 'deployment'];
+          if (criticalPhases.includes(phase)) {
+            console.error(`   ❌ Critical error in ${phase} phase: ${phaseError.message}`);
+            hasCriticalErrors = true;
+            throw phaseError; // Stop deployment on critical errors
+          } else {
+            // Non-critical errors (database migrations, health checks) - log but continue
+            console.warn(`   ⚠️  ${phase} phase warning: ${phaseError.message}`);
+            console.warn(`   💡 Deployment will continue - this can be fixed manually`);
+          }
         }
       }
 
-      domainState.status = 'completed';
+      // Determine overall success based on phase results
+      const allPhasesSuccessful = Object.values(phaseResults).every(result => result.success);
+      const hasWarnings = Object.values(phaseResults).some(result => 
+        result.warnings.length > 0 || (result.success === false && result.errors.length === 0)
+      );
+      
+      domainState.status = hasCriticalErrors ? 'failed' : (allPhasesSuccessful ? 'completed' : 'completed-with-warnings');
       domainState.endTime = new Date();
+      domainState.phaseResults = phaseResults;
 
-      console.log(`   ✅ ${domain} deployed successfully`);
+      // Show appropriate completion message
+      if (allPhasesSuccessful) {
+        console.log(`   ✅ ${domain} deployed successfully`);
+      } else if (!hasCriticalErrors) {
+        console.log(`   ⚠️  ${domain} deployed with warnings`);
+        this.displayPhaseWarnings(phaseResults);
+      }
       
       return {
         domain,
-        success: true,
+        success: !hasCriticalErrors,
+        allPhasesSuccessful,
         deploymentId: domainState.deploymentId,
         duration: domainState.endTime - domainState.startTime,
         phases: this.deploymentPhases.length,
         url: deploymentUrl || domainState.deploymentUrl,
-        status: 'deployed'
+        status: domainState.status,
+        phaseResults
       };
 
     } catch (error) {
       domainState.status = 'failed';
       domainState.error = error.message;
       domainState.endTime = new Date();
+      domainState.phaseResults = phaseResults;
 
       console.error(`   ❌ ${domain} deployment failed: ${error.message}`);
       
       throw error;
+    }
+  }
+
+  /**
+   * Display warnings for phases that had issues
+   * @param {Object} phaseResults - Phase results object
+   */
+  displayPhaseWarnings(phaseResults) {
+    console.log(`\n   📊 Phase Status Summary:`);
+    for (const [phase, result] of Object.entries(phaseResults)) {
+      if (result.success && result.warnings.length === 0) {
+        console.log(`   ✅ ${phase}: Success`);
+      } else if (result.success && result.warnings.length > 0) {
+        console.log(`   ⚠️  ${phase}: Success with warnings`);
+        result.warnings.forEach(warn => console.log(`      • ${warn}`));
+      } else {
+        console.log(`   ❌ ${phase}: Failed`);
+        result.errors.forEach(err => console.log(`      • ${err}`));
+      }
     }
   }
 

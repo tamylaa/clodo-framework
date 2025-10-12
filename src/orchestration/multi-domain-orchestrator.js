@@ -14,6 +14,11 @@ import { StateManager } from './modules/StateManager.js';
 import { DatabaseOrchestrator } from '../database/database-orchestrator.js';
 import { EnhancedSecretManager } from '../utils/deployment/secret-generator.js';
 import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { join } from 'path';
+
+const execAsync = promisify(exec);
 
 /**
  * Multi-Domain Deployment Orchestrator
@@ -376,24 +381,100 @@ export class MultiDomainOrchestrator {
   }
 
   /**
-   * Deploy domain worker (returns worker URL)
+   * Deploy domain worker (executes actual wrangler deploy)
    */
   async deployDomainWorker(domain) {
-    // Placeholder: Add actual worker deployment logic here
     console.log(`   🚀 Deploying worker for ${domain}`);
     
-    // TODO: Execute actual wrangler deploy command here
-    // For now, construct the expected URL from domain and environment
-    const subdomain = this.environment === 'production' ? 'api' : `${this.environment}-api`;
-    const workerUrl = `https://${subdomain}.${domain}`;
-    
-    // Store URL in domain state for later retrieval
-    const domainState = this.portfolioState.domainStates.get(domain);
-    if (domainState) {
-      domainState.deploymentUrl = workerUrl;
+    if (this.dryRun) {
+      console.log(`   🔍 DRY RUN: Would deploy worker for ${domain}`);
+      const subdomain = this.environment === 'production' ? 'api' : `${this.environment}-api`;
+      return { url: `https://${subdomain}.${domain}`, deployed: false, dryRun: true };
     }
     
-    return { url: workerUrl, deployed: true };
+    try {
+      // Find wrangler.toml in service path
+      const wranglerConfigPath = join(this.servicePath, 'wrangler.toml');
+      
+      // Build deploy command with environment
+      let deployCommand = `npx wrangler deploy`;
+      
+      // Add environment flag for non-production
+      if (this.environment !== 'production') {
+        deployCommand += ` --env ${this.environment}`;
+      }
+      
+      console.log(`   � Executing: ${deployCommand}`);
+      console.log(`   📁 Working directory: ${this.servicePath}`);
+      
+      // Execute deployment with timeout
+      const { stdout, stderr } = await execAsync(deployCommand, {
+        cwd: this.servicePath,
+        timeout: 120000, // 2 minute timeout
+        maxBuffer: 1024 * 1024 * 10 // 10MB buffer for large outputs
+      });
+      
+      // Log output for debugging
+      if (stdout) {
+        console.log(`   📄 Deployment output:`);
+        stdout.split('\n').filter(line => line.trim()).forEach(line => {
+          console.log(`     ${line}`);
+        });
+      }
+      
+      if (stderr && !stderr.includes('deprecated')) {
+        console.warn(`   ⚠️  Deployment warnings: ${stderr}`);
+      }
+      
+      // Parse worker URL from wrangler output
+      // Wrangler outputs: "Published service-name (version) to https://worker-url"
+      const urlMatch = stdout.match(/https:\/\/[^\s]+/);
+      const workerUrl = urlMatch ? urlMatch[0] : null;
+      
+      // Also construct custom domain URL
+      const subdomain = this.environment === 'production' ? 'api' : `${this.environment}-api`;
+      const customUrl = `https://${subdomain}.${domain}`;
+      
+      // Store URLs in domain state
+      const domainState = this.portfolioState.domainStates.get(domain);
+      if (domainState) {
+        domainState.workerUrl = workerUrl;
+        domainState.deploymentUrl = customUrl;
+      }
+      
+      if (workerUrl) {
+        console.log(`   ✅ Worker deployed successfully`);
+        console.log(`   🔗 Worker URL: ${workerUrl}`);
+        console.log(`   🔗 Custom URL: ${customUrl}`);
+      } else {
+        console.log(`   ✅ Deployment completed (URL not detected in output)`);
+        console.log(`   🔗 Expected URL: ${customUrl}`);
+      }
+      
+      return { 
+        url: customUrl, 
+        workerUrl: workerUrl,
+        deployed: true, 
+        stdout, 
+        stderr 
+      };
+      
+    } catch (error) {
+      console.error(`   ❌ Worker deployment failed: ${error.message}`);
+      
+      // Parse error for helpful diagnostics
+      if (error.message.includes('wrangler.toml')) {
+        console.error(`   💡 Ensure wrangler.toml exists in ${this.servicePath}`);
+      }
+      if (error.message.includes('No environment found')) {
+        console.error(`   💡 Add [env.${this.environment}] section to wrangler.toml`);
+      }
+      if (error.stderr) {
+        console.error(`   📄 Error details: ${error.stderr}`);
+      }
+      
+      throw new Error(`Worker deployment failed for ${domain}: ${error.message}`);
+    }
   }
 
   /**
