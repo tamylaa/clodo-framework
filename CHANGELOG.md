@@ -1,3 +1,10 @@
+## [2.0.11](https://github.com/tamylaa/clodo-framework/compare/v2.0.10...v2.0.11) (2025-10-12)
+
+
+### Bug Fixes
+
+* correct domain selection parsing in auto-discovery ([ea80443](https://github.com/tamylaa/clodo-framework/commit/ea80443bf9968d592f066e7d5d13ee47d6fde889))
+
 ## [2.0.10](https://github.com/tamylaa/clodo-framework/compare/v2.0.9...v2.0.10) (2025-10-12)
 
 
