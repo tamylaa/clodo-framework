@@ -1,3 +1,10 @@
+## [2.0.17](https://github.com/tamylaa/clodo-framework/compare/v2.0.16...v2.0.17) (2025-10-12)
+
+
+### Bug Fixes
+
+* use ConfigurationValidator as static class, not instance ([12caaeb](https://github.com/tamylaa/clodo-framework/commit/12caaeba17426239f98dacd2fdb36ac45a7a496b))
+
 ## [2.0.16](https://github.com/tamylaa/clodo-framework/compare/v2.0.15...v2.0.16) (2025-10-12)
 
 
