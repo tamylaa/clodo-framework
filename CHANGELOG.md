@@ -1,3 +1,10 @@
+## [2.0.13](https://github.com/tamylaa/clodo-framework/compare/v2.0.12...v2.0.13) (2025-10-12)
+
+
+### Bug Fixes
+
+* comprehensive deployment and architectural integration fixes ([2a9db26](https://github.com/tamylaa/clodo-framework/commit/2a9db264c0d60f1669597885105cc1fdc0cc2e87))
+
 ## [2.0.12](https://github.com/tamylaa/clodo-framework/compare/v2.0.11...v2.0.12) (2025-10-12)
 
 
