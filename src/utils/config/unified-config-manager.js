@@ -117,7 +117,6 @@ export class UnifiedConfigManager {
       environment: environment,
       
       // Additional fields
-      customer: customer,
       displayName: envVars.DISPLAY_NAME || customer,
       description: envVars.DESCRIPTION,
       workerName: envVars.WORKER_NAME,

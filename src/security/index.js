@@ -26,7 +26,7 @@ export function validateSecurity(config, environment = 'production') {
 
 // Main secure deployment function
 export async function deployWithSecurity(options) {
-  return DeploymentManager.deployWithSecurity(options);
+  throw new Error('deployWithSecurity is deprecated. Use MultiDomainOrchestrator instead.');
 }
 
 // Main key generation function
@@ -47,5 +47,5 @@ export function handleDeploymentError(error, context = {}) {
 
 // Main configuration function
 export async function generateConfiguration(defaults = {}) {
-  return InteractiveDeploymentConfigurator.generateFromUserInput(defaults);
+  throw new Error('generateConfiguration is deprecated. Use InputCollector instead.');
 }
