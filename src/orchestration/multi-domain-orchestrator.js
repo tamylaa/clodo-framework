@@ -64,7 +64,8 @@ export class MultiDomainOrchestrator {
       dryRun: this.dryRun
     });
 
-    this.configValidator = new ConfigurationValidator();
+    // ConfigurationValidator is a static class - don't instantiate
+    // Access via ConfigurationValidator.validate() directly
 
     // Legacy compatibility: expose portfolioState for backward compatibility
     this.portfolioState = this.stateManager.portfolioState;
@@ -224,8 +225,8 @@ export class MultiDomainOrchestrator {
       const domainState = this.portfolioState.domainStates.get(domain);
       const config = domainState?.config || {};
       
-      // Perform security validation
-      const validationIssues = this.configValidator.validate(config, this.environment);
+      // Perform security validation using static method
+      const validationIssues = ConfigurationValidator.validate(config, this.environment);
       
       if (validationIssues.length > 0) {
         console.log(`   ⚠️  Found ${validationIssues.length} configuration warnings:`);
