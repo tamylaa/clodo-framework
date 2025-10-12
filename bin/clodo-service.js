@@ -559,6 +559,7 @@ program
           const cloudflareToken = process.env.CLOUDFLARE_API_TOKEN || await inputCollector.collectCloudflareToken();
           
           // Use CloudflareAPI for automatic domain discovery
+          console.log(chalk.cyan('⏳ Fetching Cloudflare configuration...'));
           const cloudflareConfig = await inputCollector.collectCloudflareConfigWithDiscovery(
             cloudflareToken,
             options.domain
@@ -676,9 +677,31 @@ program
       
     } catch (error) {
       console.error(chalk.red(`\n❌ Deployment failed: ${error.message}`));
-      if (error.stack && process.env.DEBUG) {
-        console.error(chalk.gray(error.stack));
+      
+      // Show helpful context based on error type
+      if (error.message.includes('timeout')) {
+        console.log(chalk.yellow('\n💡 Troubleshooting Tips:'));
+        console.log(chalk.white('  • Use non-interactive mode: npx clodo-service deploy --customer=NAME --env=ENV --non-interactive'));
+        console.log(chalk.white('  • Set DEBUG=1 for detailed logs: DEBUG=1 npx clodo-service deploy'));
+        console.log(chalk.white('  • Check your terminal supports readline'));
+      } else if (error.message.includes('domain')) {
+        console.log(chalk.yellow('\n💡 Domain Issues:'));
+        console.log(chalk.white('  • Verify domain exists in Cloudflare dashboard'));
+        console.log(chalk.white('  • Check API token has zone:read permissions'));
+        console.log(chalk.white('  • Try specifying domain: --domain=example.com'));
+      } else if (error.message.includes('readline')) {
+        console.log(chalk.yellow('\n💡 Terminal Issues:'));
+        console.log(chalk.white('  • Try a different terminal (cmd, bash, powershell)'));
+        console.log(chalk.white('  • Use --non-interactive with config file'));
       }
+      
+      if (process.env.DEBUG) {
+        console.error(chalk.gray('\nFull Stack Trace:'));
+        console.error(chalk.gray(error.stack));
+      } else {
+        console.log(chalk.gray('\nRun with DEBUG=1 for full stack trace'));
+      }
+      
       process.exit(1);
     }
   });

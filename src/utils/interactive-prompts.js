@@ -109,14 +109,21 @@ export function showProgress(message, steps = ['⏳', '⚡', '✅']) {
 
 /**
  * Ask for sensitive input (like API tokens) with hidden input
+ * CRITICAL: Properly restores stdin state for subsequent readline operations
  */
 export function askPassword(question) {
   return new Promise((resolve) => {
     const prompt = `${question}: `;
     process.stdout.write(prompt);
     
+    // Save original state
+    const wasRaw = process.stdin.isRaw;
+    const wasPaused = process.stdin.isPaused();
+    
     // Hide input for sensitive data
-    process.stdin.setRawMode(true);
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(true);
+    }
     process.stdin.resume();
     
     let password = '';
@@ -124,17 +131,38 @@ export function askPassword(question) {
     const onData = (char) => {
       const charCode = char[0];
       
-      if (charCode === 13) { // Enter key
-        process.stdin.setRawMode(false);
-        process.stdin.pause();
+      if (charCode === 13 || charCode === 10) { // Enter key (CR or LF)
+        // Restore original state BEFORE resolving
+        if (process.stdin.isTTY) {
+          process.stdin.setRawMode(wasRaw || false);
+        }
+        
+        // Important: Resume stdin so readline can use it
+        if (!wasPaused) {
+          process.stdin.resume();
+        } else {
+          process.stdin.pause();
+        }
+        
         process.stdin.removeListener('data', onData);
         process.stdout.write('\n');
-        resolve(password);
+        
+        // Small delay to let stdin stabilize before next readline operation
+        setTimeout(() => resolve(password), 50);
+        
       } else if (charCode === 127 || charCode === 8) { // Backspace
         if (password.length > 0) {
           password = password.slice(0, -1);
           process.stdout.write('\b \b');
         }
+      } else if (charCode === 3) { // Ctrl+C
+        // Restore state and exit gracefully
+        if (process.stdin.isTTY) {
+          process.stdin.setRawMode(wasRaw || false);
+        }
+        process.stdin.removeListener('data', onData);
+        process.stdout.write('\n');
+        process.exit(0);
       } else if (charCode >= 32 && charCode <= 126) { // Printable characters
         password += char.toString();
         process.stdout.write('*');

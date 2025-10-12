@@ -19,15 +19,27 @@ import { uiStructuresLoader } from '../utils/ui-structures-loader.js';
 export class InputCollector {
   constructor(options = {}) {
     this.interactive = options.interactive !== false;
+    this.isPowerShell = process.env.PSModulePath !== undefined;
     
-    // Fix for PowerShell double-echo issue
-    const isPowerShell = process.env.PSModulePath !== undefined;
-    
-    this.rl = this.interactive ? createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      terminal: !isPowerShell // Disable terminal mode in PowerShell to prevent double echo
-    }) : null;
+    // Don't create readline immediately - lazy initialize
+    this.rl = null;
+    this.options = options;
+  }
+
+  /**
+   * Ensure readline is initialized and healthy
+   * Creates new instance if needed (e.g., after password input corrupted state)
+   */
+  ensureReadline() {
+    if (!this.rl || this.rl.closed) {
+      // Fix for PowerShell double-echo issue
+      this.rl = this.interactive ? createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: !this.isPowerShell // Disable terminal mode in PowerShell
+      }) : null;
+    }
+    return this.rl;
   }
 
   /**
@@ -250,11 +262,34 @@ export class InputCollector {
   }
 
   /**
-   * Promisified readline question
+   * Promisified readline question with timeout protection
+   * Automatically recreates readline if needed
    */
-  question(prompt) {
-    return new Promise((resolve) => {
-      this.rl.question(prompt, (answer) => {
+  question(prompt, timeout = 120000) {
+    return new Promise((resolve, reject) => {
+      const rl = this.ensureReadline();
+      
+      if (!rl) {
+        reject(new Error('Readline interface not initialized - running in non-interactive mode?'));
+        return;
+      }
+      
+      // Verify stdin is readable
+      if (!process.stdin.readable) {
+        reject(new Error('stdin not readable - terminal may be in broken state'));
+        return;
+      }
+      
+      // Set timeout to detect hangs (default 2 minutes)
+      const timer = setTimeout(() => {
+        console.log(chalk.red('\n\n⚠️  Input timeout - readline may be blocked'));
+        console.log(chalk.yellow('This can happen in some terminal environments.'));
+        console.log(chalk.white('Try running with explicit parameters: npx clodo-service deploy --customer=NAME --env=ENV\n'));
+        reject(new Error('Input timeout after ' + (timeout / 1000) + ' seconds'));
+      }, timeout);
+      
+      rl.question(prompt, (answer) => {
+        clearTimeout(timer);
         resolve(answer.trim());
       });
     });
@@ -410,22 +445,31 @@ export class InputCollector {
       
       console.log(chalk.green(`✓ Found ${zones.length} domain(s)\n`));
       
-      // Format zones for display
-      const formatted = formatZonesForDisplay(zones);
-      formatted.forEach((line, index) => {
-        console.log(chalk.white(`  ${index + 1}. ${line}`));
-      });
+      let selectedZone;
       
-      // Let user select a domain
-      const selection = await this.prompt('\nSelect domain (enter number or name): ');
-      const selectedIndex = parseZoneSelection(selection, zones);
-      
-      if (selectedIndex === -1) {
-        throw new Error('Invalid domain selection');
+      // Auto-select if only one domain
+      if (zones.length === 1) {
+        selectedZone = zones[0];
+        console.log(chalk.white(`  1. ✅ ${zones[0].name} (${zones[0].plan?.name || 'Free'}) - Account: ${zones[0].account?.name || 'N/A'}`));
+        console.log(chalk.green(`\n✓ Auto-selected: ${selectedZone.name} (only domain available)\n`));
+      } else {
+        // Format zones for display
+        const formatted = formatZonesForDisplay(zones);
+        formatted.forEach((line, index) => {
+          console.log(chalk.white(`  ${index + 1}. ${line}`));
+        });
+        
+        // Let user select a domain
+        const selection = await this.prompt('\nSelect domain (enter number or name): ');
+        const selectedIndex = parseZoneSelection(selection, zones);
+        
+        if (selectedIndex === -1) {
+          throw new Error('Invalid domain selection');
+        }
+        
+        selectedZone = zones[selectedIndex];
+        console.log(chalk.green(`\n✓ Selected: ${selectedZone.name}`));
       }
-      
-      const selectedZone = zones[selectedIndex];
-      console.log(chalk.green(`\n✓ Selected: ${selectedZone.name}`));
       
       // Get full zone details
       const zoneDetails = await cfApi.getZoneDetails(selectedZone.id);
@@ -548,11 +592,12 @@ export class InputCollector {
   }
 
   /**
-   * Close readline interface
+   * Close readline interface and clean up
    */
   close() {
-    if (this.rl) {
+    if (this.rl && !this.rl.closed) {
       this.rl.close();
+      this.rl = null; // Clear reference so ensureReadline() can create new one if needed
     }
   }
 }
