@@ -3,7 +3,7 @@
  * User input-driven configuration setup for deployment workflows
  */
 
-import { askChoice, askUser } from '../../bin/shared/utils/interactive-prompts.js';
+import { askChoice, askUser } from '../utils/interactive-prompts.js';
 
 export class InteractiveDeploymentConfigurator {
   /**
