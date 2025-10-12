@@ -1,3 +1,10 @@
+## [2.0.18](https://github.com/tamylaa/clodo-framework/compare/v2.0.17...v2.0.18) (2025-10-12)
+
+
+### Bug Fixes
+
+* **deployment:** Critical deployment fixes - migrations, worker deployment, status tracking ([23c07e9](https://github.com/tamylaa/clodo-framework/commit/23c07e9a68fa4eb52ccd0df9421eff7d91919cb1)), closes [#2](https://github.com/tamylaa/clodo-framework/issues/2) [#3](https://github.com/tamylaa/clodo-framework/issues/3) [#4](https://github.com/tamylaa/clodo-framework/issues/4)
+
 ## [2.0.17](https://github.com/tamylaa/clodo-framework/compare/v2.0.16...v2.0.17) (2025-10-12)
 
 
