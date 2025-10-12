@@ -431,12 +431,14 @@ program
       const { CustomerConfigLoader } = await import('../dist/config/customer-config-loader.js');
       const { ConfirmationHandler } = await import('../dist/service-management/handlers/ConfirmationHandler.js');
       const { MultiDomainOrchestrator } = await import('../dist/orchestration/multi-domain-orchestrator.js');
+      const { ConfigPersistenceManager } = await import('../dist/utils/deployment/config-persistence.js');
       
       console.log(chalk.cyan('\n🚀 Clodo Framework Deployment'));
       console.log(chalk.white('Using Three-Tier Input Architecture\n'));
       
       const isInteractive = options.interactive && !options.nonInteractive;
       const configLoader = new CustomerConfigLoader();
+      const configPersistence = new ConfigPersistenceManager();
       const inputCollector = new InputCollector({ interactive: isInteractive });
       const confirmationHandler = new ConfirmationHandler({ interactive: isInteractive });
       
@@ -444,34 +446,80 @@ program
       let source = 'interactive';
       
       try {
-        // Try to load existing customer config first
+        // Try new ConfigPersistenceManager first, fallback to legacy CustomerConfigLoader
+        let storedConfig = null;
+        
         if (options.customer && options.env) {
-          const storedConfig = configLoader.loadConfig(options.customer, options.env);
-          
-          if (storedConfig) {
-            source = 'stored-config';
-            console.log(chalk.cyan('📋 Found Existing Configuration\n'));
-            configLoader.displayConfig(storedConfig.parsed);
+          // Check new ConfigPersistenceManager
+          if (configPersistence.configExists(options.customer, options.env)) {
+            console.log(chalk.green(`✅ Found existing configuration for ${options.customer}/${options.env}\n`));
+            configPersistence.displayCustomerConfig(options.customer, options.env);
             
             if (!isInteractive) {
-              // Non-interactive: use stored config as-is
-              coreInputs = storedConfig.parsed;
-              console.log(chalk.green('\n✅ Using stored configuration (non-interactive mode)\n'));
+              // Non-interactive: auto-load the config
+              const envVars = configPersistence.loadEnvironmentConfig(options.customer, options.env);
+              storedConfig = {
+                parsed: configLoader.parseToStandardFormat(envVars, options.customer, options.env)
+              };
             } else {
-              // Interactive: ask to confirm or re-collect
-              const useStored = await inputCollector.question('\nUse this configuration? (Y/n): ');
+              // Interactive: ask if they want to use it
+              const useExisting = await inputCollector.question('\n   💡 Use existing configuration? (Y/n): ');
               
-              if (useStored.toLowerCase() !== 'n') {
-                coreInputs = storedConfig.parsed;
-                console.log(chalk.green('\n✅ Using stored configuration\n'));
+              if (useExisting.toLowerCase() !== 'n') {
+                const envVars = configPersistence.loadEnvironmentConfig(options.customer, options.env);
+                storedConfig = {
+                  parsed: configLoader.parseToStandardFormat(envVars, options.customer, options.env)
+                };
               } else {
-                console.log(chalk.white('\nCollecting new configuration...\n'));
-                source = 'interactive';
+                console.log(chalk.white('\n   📝 Collecting new configuration...\n'));
               }
             }
           } else {
-            console.log(chalk.yellow(`⚠️  No configuration found for ${options.customer}/${options.env}`));
-            console.log(chalk.white('Collecting inputs interactively...\n'));
+            // Fallback to legacy CustomerConfigLoader
+            storedConfig = configLoader.loadConfig(options.customer, options.env);
+            
+            if (storedConfig) {
+              source = 'stored-config';
+              console.log(chalk.cyan('📋 Found Existing Configuration (legacy)\n'));
+              configLoader.displayConfig(storedConfig.parsed);
+              
+              if (!isInteractive) {
+                // Non-interactive: use stored config as-is
+                coreInputs = storedConfig.parsed;
+                console.log(chalk.green('\n✅ Using stored configuration (non-interactive mode)\n'));
+              } else {
+                // Interactive: ask to confirm or re-collect
+                const useStored = await inputCollector.question('\nUse this configuration? (Y/n): ');
+                
+                if (useStored.toLowerCase() !== 'n') {
+                  coreInputs = storedConfig.parsed;
+                  console.log(chalk.green('\n✅ Using stored configuration\n'));
+                } else {
+                  console.log(chalk.white('\nCollecting new configuration...\n'));
+                  source = 'interactive';
+                }
+              }
+            } else {
+              console.log(chalk.yellow(`⚠️  No configuration found for ${options.customer}/${options.env}`));
+              console.log(chalk.white('Collecting inputs interactively...\n'));
+            }
+          }
+          
+          // Use stored config if we found it
+          if (storedConfig && !coreInputs.cloudflareAccountId) {
+            coreInputs = storedConfig.parsed;
+            source = 'stored-config';
+            console.log(chalk.green('\n✅ Using stored configuration\n'));
+          }
+        } else if (!options.customer) {
+          // Show available customers to help user
+          const customers = configPersistence.getConfiguredCustomers();
+          if (customers.length > 0) {
+            console.log(chalk.cyan('💡 Configured customers:'));
+            customers.forEach(customer => {
+              console.log(chalk.white(`   • ${customer}`));
+            });
+            console.log('');
           }
         }
         
@@ -515,7 +563,7 @@ program
         }
         
         // Tier 2: Generate smart confirmations using existing ConfirmationHandler
-        console.log(chalk.cyan('⚙️  Tier 2: Smart Confirmations\n'));
+        // Note: ConfirmationEngine prints its own header
         const confirmations = await confirmationHandler.generateAndConfirm(coreInputs);
         
         // Show deployment summary
@@ -574,6 +622,26 @@ program
         }
         
         console.log(chalk.gray('─'.repeat(60)));
+        
+        // Save deployment configuration for future reuse
+        try {
+          console.log(chalk.cyan('\n💾 Saving deployment configuration...'));
+          
+          const configFile = await configPersistence.saveDeploymentConfig({
+            customer: coreInputs.customer,
+            environment: coreInputs.environment,
+            coreInputs,
+            confirmations,
+            result
+          });
+          
+          console.log(chalk.green('   ✅ Configuration saved successfully!'));
+          console.log(chalk.gray(`   📄 File: ${configFile}`));
+          console.log(chalk.white('   💡 Next deployment will automatically load these settings'));
+        } catch (saveError) {
+          console.log(chalk.yellow(`   ⚠️  Could not save configuration: ${saveError.message}`));
+          console.log(chalk.gray('   Deployment succeeded, but you may need to re-enter values next time.'));
+        }
         
         console.log(chalk.cyan('\n📋 Next Steps:'));
         console.log(chalk.white(`   • Test deployment: curl ${result.url || confirmations.deploymentUrl}/health`));

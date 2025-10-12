@@ -16,8 +16,18 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// ESM-compatible __dirname and __filename
+let __dirname;
+let __filename;
+
+try {
+  __filename = fileURLToPath(import.meta.url);
+  __dirname = dirname(__filename);
+} catch {
+  // Fallback for test environments
+  __dirname = process.cwd();
+  __filename = __filename || 'database-orchestrator.js';
+}
 
 /**
  * Advanced Database Orchestrator

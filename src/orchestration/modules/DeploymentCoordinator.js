@@ -37,10 +37,17 @@ export class DeploymentCoordinator {
       console.log(`   Deployment ID: ${domainState.deploymentId}`);
       console.log(`   Environment: ${this.environment}`);
 
+      let deploymentUrl = null;
+      
       // Execute deployment phases
       for (const phase of this.deploymentPhases) {
-        await this.executeDeploymentPhase(domain, phase, domainState, handlers);
+        const phaseResult = await this.executeDeploymentPhase(domain, phase, domainState, handlers);
         domainState.phase = `${phase}-complete`;
+        
+        // Capture deployment URL from deployment phase
+        if (phase === 'deployment' && phaseResult && phaseResult.url) {
+          deploymentUrl = phaseResult.url;
+        }
       }
 
       domainState.status = 'completed';
@@ -53,7 +60,9 @@ export class DeploymentCoordinator {
         success: true,
         deploymentId: domainState.deploymentId,
         duration: domainState.endTime - domainState.startTime,
-        phases: this.deploymentPhases.length
+        phases: this.deploymentPhases.length,
+        url: deploymentUrl || domainState.deploymentUrl,
+        status: 'deployed'
       };
 
     } catch (error) {
@@ -73,12 +82,13 @@ export class DeploymentCoordinator {
    * @param {string} phase - Phase name
    * @param {Object} domainState - Domain state object
    * @param {Object} handlers - Phase handler functions
+   * @returns {Promise<any>} Phase handler result
    */
   async executeDeploymentPhase(domain, phase, domainState, handlers) {
     const phaseHandler = handlers[phase];
     if (!phaseHandler) {
       console.warn(`   ⚠️ No handler for phase: ${phase}`);
-      return;
+      return null;
     }
 
     console.log(`   📋 Phase: ${phase}`);
@@ -86,16 +96,17 @@ export class DeploymentCoordinator {
     if (this.dryRun) {
       console.log(`   🔍 DRY RUN: Would execute ${phase} for ${domain}`);
       await new Promise(resolve => setTimeout(resolve, 100)); // Simulate work
-      return;
+      return null;
     }
 
     // Skip post-validation if tests are disabled
     if (phase === 'post-validation' && this.skipTests) {
       console.log(`   ⏭️ Skipping ${phase} (tests disabled)`);
-      return;
+      return null;
     }
 
-    await phaseHandler(domain, domainState);
+    // Execute handler and return result (important for capturing URLs, database IDs, etc.)
+    return await phaseHandler(domain, domainState);
   }
 
   /**

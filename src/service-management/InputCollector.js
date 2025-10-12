@@ -355,7 +355,7 @@ export class InputCollector {
   }
 
   /**
-   * Collect Cloudflare API token
+   * Collect Cloudflare API token (securely, hidden input)
    */
   async collectCloudflareToken() {
     console.log(chalk.yellow('Cloudflare Configuration:'));
@@ -363,7 +363,9 @@ export class InputCollector {
     console.log('');
 
     for (;;) {
-      const token = await this.prompt('Cloudflare API Token: ');
+      // Use secure password input to hide token from terminal history
+      const { askPassword } = await import('../utils/interactive-prompts.js');
+      const token = await askPassword('Cloudflare API Token (hidden)');
 
       if (token && token.length > 20) { // Basic length validation
         // Verify token with CloudflareAPI
