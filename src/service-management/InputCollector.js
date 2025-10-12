@@ -410,16 +410,19 @@ export class InputCollector {
       
       // Format zones for display
       const formatted = formatZonesForDisplay(zones);
-      console.log(formatted);
+      formatted.forEach((line, index) => {
+        console.log(chalk.white(`  ${index + 1}. ${line}`));
+      });
       
       // Let user select a domain
       const selection = await this.prompt('\nSelect domain (enter number or name): ');
-      const selectedZone = parseZoneSelection(selection, zones);
+      const selectedIndex = parseZoneSelection(selection, zones);
       
-      if (!selectedZone) {
+      if (selectedIndex === -1) {
         throw new Error('Invalid domain selection');
       }
       
+      const selectedZone = zones[selectedIndex];
       console.log(chalk.green(`\n✓ Selected: ${selectedZone.name}`));
       
       // Get full zone details
