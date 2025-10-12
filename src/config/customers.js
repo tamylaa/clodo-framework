@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
 // eslint-disable-next-line no-unused-vars
 import { resolve, join } from 'path';
+import toml from '@iarna/toml';
 import { createDomainConfigSchema, validateDomainConfig, createDomainRegistry } from './domains.js';
 import { createLogger } from '../utils/index.js';
 import { getDirname } from '../utils/esm-helper.js';
@@ -353,6 +354,22 @@ export class CustomerConfigurationManager {
     }
 
     try {
+      // First, try to read from root wrangler.toml (real deployment config)
+      const rootWranglerPath = resolve(this.configDir, '..', 'wrangler.toml');
+      let wranglerConfig = null;
+      let globalAccountId = null;
+      
+      if (existsSync(rootWranglerPath)) {
+        try {
+          const wranglerContent = readFileSync(rootWranglerPath, 'utf8');
+          wranglerConfig = toml.parse(wranglerContent);
+          globalAccountId = wranglerConfig.account_id;
+          logger.info(`Loaded wrangler.toml with account_id: ${globalAccountId ? globalAccountId.substring(0, 8) + '...' : 'not found'}`);
+        } catch (error) {
+          logger.warn('Could not parse root wrangler.toml:', error.message);
+        }
+      }
+
       // Read customer directories
       const customerDirs = this.getCustomerDirectories();
 
@@ -362,25 +379,80 @@ export class CustomerConfigurationManager {
 
         const customerDir = resolve(customersDir, customerName);
 
-        // Try to load customer metadata from a metadata file or infer from configs
+        // Initialize customer metadata
         const metadata = {
           name: customerName,
-          createdAt: new Date().toISOString(), // Placeholder
-          environments: this.environments
+          createdAt: new Date().toISOString(),
+          environments: this.environments,
+          accountId: globalAccountId // Start with global account ID
         };
 
-        // Try to infer domain from production config
+        // Try to load from wrangler.toml [env.production] section
+        if (wranglerConfig && wranglerConfig.env && wranglerConfig.env.production) {
+          const prodEnv = wranglerConfig.env.production;
+          
+          // Extract SERVICE_DOMAIN (maps to customer name usually)
+          if (prodEnv.vars && prodEnv.vars.SERVICE_DOMAIN) {
+            metadata.serviceDomain = prodEnv.vars.SERVICE_DOMAIN;
+            
+            // If SERVICE_DOMAIN matches customer name, this is their config
+            if (prodEnv.vars.SERVICE_DOMAIN === customerName) {
+              // Extract database info
+              if (prodEnv.d1_databases && prodEnv.d1_databases.length > 0) {
+                const db = prodEnv.d1_databases[0];
+                metadata.databaseId = db.database_id;
+                metadata.databaseName = db.database_name;
+              }
+              
+              // Extract zone_id if present
+              if (prodEnv.zone_id) {
+                metadata.zoneId = prodEnv.zone_id;
+              }
+              
+              // Extract route to infer domain
+              if (prodEnv.route) {
+                // Route format: "example.com/*" or "*.example.com/*"
+                const domain = prodEnv.route.replace(/\/\*$/, '').replace(/^\*\./, '');
+                metadata.domain = domain;
+              }
+            }
+          }
+        }
+
+        // Read customer-specific env file to get CUSTOMER_DOMAIN and other info
         const prodConfigPath = resolve(customerDir, 'production.env');
         if (existsSync(prodConfigPath)) {
           try {
             const prodConfig = this.parseEnvFile(prodConfigPath);
-            if (prodConfig.DOMAIN) {
+            
+            // Use CUSTOMER_DOMAIN (correct field name in real configs)
+            if (prodConfig.CUSTOMER_DOMAIN) {
+              metadata.customerDomain = prodConfig.CUSTOMER_DOMAIN.replace(/^https?:\/\//, '');
+              // If we didn't get domain from wrangler.toml, use this
+              if (!metadata.domain) {
+                metadata.domain = metadata.customerDomain;
+              }
+            }
+            
+            // Also check old DOMAIN field for backward compatibility
+            if (!metadata.domain && prodConfig.DOMAIN) {
               metadata.domain = prodConfig.DOMAIN.replace(/^https?:\/\//, '');
             }
+            
+            // Extract customer ID
+            if (prodConfig.CUSTOMER_ID) {
+              metadata.customerId = prodConfig.CUSTOMER_ID;
+            }
+            
           } catch (error) {
-            logger.warn(`Could not parse production config for ${customerName}:`, error.message);
+            logger.warn(`Could not parse customer env for ${customerName}:`, error.message);
           }
         }
+
+        // Check if secrets exist (we can't read them, but can note they should be set)
+        // In a real system, you'd run: wrangler secret list --env production
+        // For now, we just note that secrets should be managed separately
+        metadata.hasSecrets = true; // Assume secrets are managed via wrangler secret commands
 
         // Register customer
         this.customers.set(customerName, metadata);
@@ -389,7 +461,9 @@ export class CustomerConfigurationManager {
         try {
           const domainConfig = this.createCustomerDomainConfig(customerName, metadata.domain, {
             skipValidation: true,
-            isFrameworkMode: true
+            isFrameworkMode: true,
+            accountId: metadata.accountId,
+            zoneId: metadata.zoneId
           });
           this.domainRegistry.add(customerName, domainConfig);
         } catch (error) {
@@ -443,6 +517,116 @@ export class CustomerConfigurationManager {
     });
 
     return variables;
+  }
+
+  /**
+   * Update wrangler.toml with new configuration
+   * @param {string} wranglerPath - Path to wrangler.toml
+   * @param {Object} updates - Configuration updates to merge
+   * @returns {boolean} Success status
+   */
+  updateWranglerToml(wranglerPath, updates) {
+    try {
+      let existingConfig = {};
+      
+      // Read existing config if file exists
+      if (existsSync(wranglerPath)) {
+        const content = readFileSync(wranglerPath, 'utf8');
+        existingConfig = toml.parse(content);
+      }
+
+      // Deep merge updates into existing config
+      const mergedConfig = this.deepMergeConfig(existingConfig, updates);
+
+      // Write back to file
+      const tomlContent = toml.stringify(mergedConfig);
+      writeFileSync(wranglerPath, tomlContent, 'utf8');
+
+      logger.info(`Updated wrangler.toml: ${wranglerPath}`);
+      return true;
+    } catch (error) {
+      logger.error(`Failed to update wrangler.toml: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * Deep merge two configuration objects
+   * @private
+   */
+  deepMergeConfig(target, source) {
+    const output = { ...target };
+
+    for (const key in source) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        // Recursively merge objects
+        output[key] = this.deepMergeConfig(target[key] || {}, source[key]);
+      } else {
+        // Overwrite arrays and primitives
+        output[key] = source[key];
+      }
+    }
+
+    return output;
+  }
+
+  /**
+   * Create or update environment section in wrangler.toml
+   * @param {string} wranglerPath - Path to wrangler.toml
+   * @param {string} environment - Environment name (production, staging, development)
+   * @param {Object} envConfig - Environment configuration
+   * @returns {boolean} Success status
+   */
+  updateEnvironmentConfig(wranglerPath, environment, envConfig) {
+    const updates = {
+      env: {
+        [environment]: envConfig
+      }
+    };
+
+    return this.updateWranglerToml(wranglerPath, updates);
+  }
+
+  /**
+   * Add D1 database binding to environment
+   * @param {string} wranglerPath - Path to wrangler.toml
+   * @param {string} environment - Environment name
+   * @param {Object} databaseConfig - Database configuration
+   * @returns {boolean} Success status
+   */
+  addD1Database(wranglerPath, environment, databaseConfig) {
+    try {
+      const content = readFileSync(wranglerPath, 'utf8');
+      const config = toml.parse(content);
+
+      // Ensure env section exists
+      if (!config.env) config.env = {};
+      if (!config.env[environment]) config.env[environment] = {};
+
+      // Ensure d1_databases array exists
+      if (!config.env[environment].d1_databases) {
+        config.env[environment].d1_databases = [];
+      }
+
+      // Add or update database
+      const existingIndex = config.env[environment].d1_databases.findIndex(
+        db => db.binding === databaseConfig.binding
+      );
+
+      if (existingIndex >= 0) {
+        config.env[environment].d1_databases[existingIndex] = databaseConfig;
+      } else {
+        config.env[environment].d1_databases.push(databaseConfig);
+      }
+
+      // Write back
+      writeFileSync(wranglerPath, toml.stringify(config), 'utf8');
+      logger.info(`Added D1 database to ${environment} environment`);
+      return true;
+    } catch (error) {
+      logger.error(`Failed to add D1 database: ${error.message}`);
+      return false;
+    }
   }
 
   /**

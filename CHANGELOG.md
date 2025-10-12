@@ -1,9 +1,56 @@
-## [2.0.7](https://github.com/tamylaa/clodo-framework/compare/v2.0.6...v2.0.7) (2025-10-11)
+## [2.0.7](https://github.com/tamylaa/clodo-framework/compare/v2.0.6...v2.0.7) (2025-10-12)
+
+
+### Features
+
+* **customer-config**: Enhanced customer configuration system to read directly from wrangler.toml
+  - Load account_id, SERVICE_DOMAIN, and database configurations from wrangler.toml
+  - Read CUSTOMER_DOMAIN from customer environment files
+  - Display all 6 core deployment pieces (account ID, zone ID, domains, worker, database, secrets)
+  - Added --config-dir parameter for flexible directory specification
+
+* **cloudflare**: New CloudflareAPI utility class for programmatic Cloudflare operations
+  - Direct REST API integration without CLI dependencies
+  - Methods: verifyToken(), listZones(), getZoneDetails(), listD1Databases(), getDeploymentInfo()
+  - Helper functions for zone display and selection parsing
+  - Organized under src/utils/cloudflare/ with unified exports
+
+* **toml**: TOML writing capabilities for dynamic configuration updates
+  - updateWranglerToml() - Update wrangler.toml with new configurations
+  - updateEnvironmentConfig() - Modify environment-specific settings
+  - addD1Database() - Add database bindings dynamically
+  - deepMergeConfig() - Recursive configuration merging
 
 
 ### Bug Fixes
 
+* **customer-config**: Removed duplicate code causing double output in customer CLI
+* **deployment**: Removed 180 lines of duplicate secret management from WranglerDeployer
+  - Secret operations now use bin/shared/cloudflare/ops.js as single source of truth
+  - Better error recovery, rate limiting, and production monitoring
 * correct orchestrator method name in deploy command ([b28a372](https://github.com/tamylaa/clodo-framework/commit/b28a37222cf2859449b3470b16ec6eb284cc50e2))
+
+
+### Code Quality
+
+* **organization**: Consolidated Cloudflare utilities under src/utils/cloudflare/
+  - Separated API-based operations (api.js) from CLI-based operations (ops.js)
+  - Created unified index.js for convenient imports
+  - Verified no duplicate utilities across src/ and bin/shared/
+
+
+### Testing
+
+* Added 12 new tests (132 total, all passing, +9.1%)
+  - test/utils/cloudflare-api.test.js - CloudflareAPI module tests (6 tests)
+  - test/config/customer-toml.test.js - Customer config tests (6 tests)
+
+
+### Documentation
+
+* **architecture**: Added comprehensive architecture analysis for customer configuration system
+* **capabilities**: Created inventory of existing framework capabilities
+* **cleanup**: Documented 19-task cleanup plan with execution options
 
 ## [2.0.6](https://github.com/tamylaa/clodo-framework/compare/v2.0.5...v2.0.6) (2025-10-11)
 

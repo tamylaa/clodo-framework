@@ -6,8 +6,8 @@
 import { CustomerConfigurationManager } from '../config/customers.js';
 
 export class CustomerConfigCLI {
-  constructor() {
-    this.customerManager = new CustomerConfigurationManager();
+  constructor(options = {}) {
+    this.customerManager = new CustomerConfigurationManager(options);
   }
 
   /**
@@ -214,28 +214,29 @@ Integration:
 
 // Convenience functions for direct use
 export async function createCustomer(customerName, domain, options = {}) {
-  const cli = new CustomerConfigCLI();
+  const { configDir, ...createOptions } = options;
+  const cli = new CustomerConfigCLI({ configDir });
   await cli.initialize();
-  return await cli.createCustomer(customerName, domain, options);
+  return await cli.createCustomer(customerName, domain, createOptions);
 }
 
-export async function validateCustomerConfigs() {
-  const cli = new CustomerConfigCLI();
+export async function validateCustomerConfigs(options = {}) {
+  const cli = new CustomerConfigCLI(options);
   await cli.initialize();
   return await cli.validateConfigurations();
 }
 
-export function showCustomerConfig(customerName, environment) {
-  const cli = new CustomerConfigCLI();
+export function showCustomerConfig(customerName, environment, options = {}) {
+  const cli = new CustomerConfigCLI(options);
   return cli.showConfiguration(customerName, environment);
 }
 
-export function getCustomerDeployCommand(customerName, environment) {
-  const cli = new CustomerConfigCLI();
+export function getCustomerDeployCommand(customerName, environment, options = {}) {
+  const cli = new CustomerConfigCLI(options);
   return cli.getDeployCommand(customerName, environment);
 }
 
-export function listConfiguredCustomers() {
-  const cli = new CustomerConfigCLI();
+export function listConfiguredCustomers(options = {}) {
+  const cli = new CustomerConfigCLI(options);
   return cli.listCustomers();
 }

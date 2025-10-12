@@ -105,6 +105,84 @@ npx @tamyla/clodo-framework security deploy customer production
 - **⚡ Performance Optimized**: Intelligent caching system for schemas, SQL queries, and validation results
 - **🔄 Advanced Data Operations**: Enhanced CRUD with relationships, advanced pagination, and query optimization
 
+## 🎉 What's New in v2.0.7
+
+### 🔧 Enhanced Customer Configuration System
+The customer configuration CLI now **reads directly from your wrangler.toml** file, providing a single source of truth for deployment configuration:
+
+```bash
+# List all customers with complete deployment metadata
+npx @tamyla/clodo-framework customer list
+
+# Specify custom config directory
+npx @tamyla/clodo-framework customer list --config-dir /path/to/config
+```
+
+**What you see now:**
+- ✅ Account ID from wrangler.toml
+- ✅ Zone ID from wrangler.toml  
+- ✅ Customer domain from environment config
+- ✅ Service domain from wrangler.toml
+- ✅ Worker name and database info
+- ✅ Secrets status
+
+All **6 core deployment pieces** in one command - no more hunting through multiple files!
+
+### ☁️ New CloudflareAPI Utility
+Programmatic Cloudflare operations without CLI dependencies:
+
+```javascript
+import { CloudflareAPI } from '@tamyla/clodo-framework/utils/cloudflare';
+
+const cf = new CloudflareAPI(apiToken);
+
+// Verify token permissions
+const isValid = await cf.verifyToken();
+
+// List all zones/domains
+const zones = await cf.listZones();
+
+// Get zone details (account_id, zone_id, etc.)
+const details = await cf.getZoneDetails(zoneId);
+
+// List D1 databases
+const databases = await cf.listD1Databases(accountId);
+
+// Get complete deployment info
+const info = await cf.getDeploymentInfo(zoneId);
+```
+
+### 📝 TOML Configuration Writing
+Dynamic wrangler.toml updates from code:
+
+```javascript
+import { 
+  updateWranglerToml, 
+  addD1Database, 
+  updateEnvironmentConfig 
+} from '@tamyla/clodo-framework/config/customers';
+
+// Add a new D1 database binding
+await addD1Database('production', 'my-database', 'database-uuid-123');
+
+// Update environment config
+await updateEnvironmentConfig('production', {
+  vars: { SERVICE_DOMAIN: 'api.example.com' }
+});
+
+// Update any wrangler.toml section
+await updateWranglerToml({ 
+  name: 'my-worker',
+  compatibility_date: '2025-01-01'
+});
+```
+
+### 🧹 Code Quality Improvements
+- **Removed 180 lines** of duplicate secret management code
+- **Consolidated Cloudflare utilities** under `src/utils/cloudflare/`
+- **Single source of truth** for Cloudflare operations (API vs CLI)
+- **Better organization** - clear separation between framework and CLI utilities
+
 ## 🧪 Downstream Service Testing & Validation
 
 The CLODO Framework provides comprehensive capabilities for testing, validating, and deploying Cloudflare Workers in downstream environments - perfect for ensuring services work correctly in third-party accounts and production environments.

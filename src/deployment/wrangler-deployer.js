@@ -705,6 +705,27 @@ export class WranglerDeployer {
   async checkD1DatabaseExists(nameOrId) {
     return await this.d1Manager.checkD1DatabaseExists(nameOrId);
   }
+
+  /**
+   * Secret management methods
+   * 
+   * NOTE: For secret management operations, use the Cloudflare ops module:
+   * 
+   * import { deploySecret, listSecrets, deleteSecret } from '../bin/shared/cloudflare/ops.js';
+   * 
+   * The ops.js module provides:
+   * - deploySecret(key, value, env)
+   * - listSecrets(env)
+   * - deleteSecret(key, env)
+   * 
+   * With built-in:
+   * - Rate limiting
+   * - Error recovery
+   * - Production monitoring
+   * - Retry logic
+   * 
+   * This avoids code duplication and ensures consistent secret handling across the framework.
+   */
 }
 
 export default WranglerDeployer;
