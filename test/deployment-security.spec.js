@@ -33,15 +33,11 @@ describe('CLODO Framework Deployment & Security Features v3.0.3', () => {
     expect(content).toContain('ErrorHandler');
   });
 
-  test('should validate configuration module structure', () => {
-    // Test that the configuration module has the expected structure
-    const configIndexPath = path.join(process.cwd(), 'src', 'config', 'ConfigurationManager.js');
-    const content = fs.readFileSync(configIndexPath, 'utf8');
-
-    // Should contain the methods that were demonstrated
-    expect(content).toContain('validateConfiguration');
-    expect(content).toContain('createConfigurationSummary');
-    expect(content).toContain('generateDeploymentUrl');
+  test.skip('should validate configuration module structure (DEPRECATED - ConfigurationManager removed)', () => {
+    // ConfigurationManager.js was deprecated and replaced by:
+    // - InputCollector (3-tier architecture)
+    // - UnifiedConfigManager (customer configs)
+    // - WranglerConfigManager (wrangler.toml)
   });
 
   test('should validate error handler structure', () => {

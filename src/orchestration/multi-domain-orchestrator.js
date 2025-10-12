@@ -13,6 +13,7 @@ import { DeploymentCoordinator } from './modules/DeploymentCoordinator.js';
 import { StateManager } from './modules/StateManager.js';
 import { DatabaseOrchestrator } from '../database/database-orchestrator.js';
 import { EnhancedSecretManager } from '../utils/deployment/secret-generator.js';
+import { WranglerConfigManager } from '../utils/deployment/wrangler-config-manager.js';
 import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -67,6 +68,12 @@ export class MultiDomainOrchestrator {
     this.secretManager = new EnhancedSecretManager({
       projectRoot: this.servicePath,
       dryRun: this.dryRun
+    });
+
+    this.wranglerConfigManager = new WranglerConfigManager({
+      projectRoot: this.servicePath,
+      dryRun: this.dryRun,
+      verbose: options.verbose || false
     });
 
     // ConfigurationValidator is a static class - don't instantiate
@@ -285,6 +292,26 @@ export class MultiDomainOrchestrator {
         domainState.databaseId = databaseId;
       }
       
+      // CRITICAL: Update wrangler.toml BEFORE attempting migrations
+      console.log(`   📝 Configuring wrangler.toml for database...`);
+      
+      try {
+        // Ensure environment section exists
+        await this.wranglerConfigManager.ensureEnvironment(this.environment);
+        
+        // Add database binding (use snake_case for wrangler.toml compatibility)
+        await this.wranglerConfigManager.addDatabaseBinding(this.environment, {
+          binding: 'DB',
+          database_name: databaseName,
+          database_id: databaseId
+        });
+        
+        console.log(`   ✅ wrangler.toml updated with database configuration`);
+      } catch (configError) {
+        console.warn(`   ⚠️  Failed to update wrangler.toml: ${configError.message}`);
+        console.warn(`   💡 You may need to manually add database configuration`);
+      }
+      
       // Apply migrations using DatabaseOrchestrator's enterprise capabilities
       console.log(`   🔄 Applying database migrations...`);
       
@@ -393,6 +420,16 @@ export class MultiDomainOrchestrator {
     }
     
     try {
+      // CRITICAL: Ensure environment section exists in wrangler.toml BEFORE deploying
+      console.log(`   📝 Verifying wrangler.toml configuration...`);
+      
+      try {
+        await this.wranglerConfigManager.ensureEnvironment(this.environment);
+      } catch (configError) {
+        console.warn(`   ⚠️  Could not verify wrangler.toml: ${configError.message}`);
+        // Continue anyway - wrangler will provide clearer error if config is wrong
+      }
+      
       // Find wrangler.toml in service path
       const wranglerConfigPath = join(this.servicePath, 'wrangler.toml');
       

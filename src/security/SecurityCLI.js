@@ -5,7 +5,8 @@
 
 import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
 import { SecretGenerator } from '../security/SecretGenerator.js';
-import { DeploymentManager } from '../security/DeploymentManager.js';
+// DeploymentManager removed - was simulated deployment only
+// Use MultiDomainOrchestrator for real deployments
 
 export class SecurityCLI {
   constructor() {
@@ -81,6 +82,7 @@ export class SecurityCLI {
 
   /**
    * Deploy with security validation
+   * @deprecated Use MultiDomainOrchestrator for real deployments
    * @param {string} customer - Customer name
    * @param {string} environment - Environment name
    * @param {Object} options - Deployment options
@@ -88,95 +90,29 @@ export class SecurityCLI {
    * @returns {Object} Deployment result
    */
   async deployWithSecurity(customer, environment, options = {}) {
-    try {
-      if (!customer || !environment) {
-        throw new Error('Customer and environment are required');
-      }
-
-      const result = await DeploymentManager.deployWithSecurity({
-        customer,
-        environment,
-        dryRun: options.dryRun || false
-      });
-
-      return {
-        success: true,
-        customer,
-        environment,
-        dryRun: options.dryRun,
-        deployed: !options.dryRun,
-        result
-      };
-    } catch (error) {
-      return {
-        success: false,
-        customer,
-        environment,
-        error: error.message
-      };
-    }
+    throw new Error('deployWithSecurity is deprecated. DeploymentManager was simulated deployment only. Use MultiDomainOrchestrator for real deployments.');
   }
 
   /**
    * Generate secure configuration
+   * @deprecated Use UnifiedConfigManager for configuration management
    * @param {string} customer - Customer name
    * @param {string} environment - Environment name
    * @returns {Object} Configuration generation result
    */
   generateSecureConfig(customer, environment) {
-    try {
-      if (!customer || !environment) {
-        throw new Error('Customer and environment are required');
-      }
-
-      const config = DeploymentManager.generateSecureConfig(customer, environment);
-
-      return {
-        success: true,
-        customer,
-        environment,
-        config
-      };
-    } catch (error) {
-      return {
-        success: false,
-        customer,
-        environment,
-        error: error.message
-      };
-    }
+    throw new Error('generateSecureConfig is deprecated. Use UnifiedConfigManager for configuration management.');
   }
 
   /**
    * Check deployment readiness
+   * @deprecated Use MultiDomainOrchestrator's validation instead
    * @param {string} customer - Customer name
    * @param {string} environment - Environment name
    * @returns {Object} Readiness check result
    */
   checkDeploymentReadiness(customer, environment) {
-    try {
-      if (!customer || !environment) {
-        throw new Error('Customer and environment are required');
-      }
-
-      const result = DeploymentManager.validateDeploymentReadiness(customer, environment);
-
-      return {
-        success: true,
-        customer,
-        environment,
-        ready: result.ready,
-        issues: result.issues || []
-      };
-    } catch (error) {
-      return {
-        success: false,
-        customer,
-        environment,
-        ready: false,
-        error: error.message
-      };
-    }
+    throw new Error('checkDeploymentReadiness is deprecated. Use MultiDomainOrchestrator validation instead.');
   }
 
   /**

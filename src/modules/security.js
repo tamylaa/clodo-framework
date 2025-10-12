@@ -1,5 +1,6 @@
 import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
-import { DeploymentManager } from '../security/DeploymentManager.js';
+// DeploymentManager removed - was simulated deployment only
+// Use MultiDomainOrchestrator for real deployments
 import { SecretGenerator } from '../security/SecretGenerator.js';
 import { isValidEnvironment } from '../security/patterns/environment-rules.js';
 
@@ -20,10 +21,16 @@ export const securityModule = {
   generateSecureJwtSecret: (length) => SecretGenerator.generateSecureJwtSecret(length || 64),
   generateServiceKey: (serviceName, env, length) => SecretGenerator.generateServiceKey(serviceName, env, length),
 
-  // Secure deployment
-  deployWithSecurity: (options) => DeploymentManager.deployWithSecurity(options),
-  generateSecureConfig: (customer, env) => DeploymentManager.generateSecureConfig(customer, env),
-  validateDeploymentReadiness: (customer, env) => DeploymentManager.validateDeploymentReadiness(customer, env),
+  // Secure deployment (DEPRECATED)
+  deployWithSecurity: () => {
+    throw new Error('deployWithSecurity is deprecated. Use MultiDomainOrchestrator for real deployments.');
+  },
+  generateSecureConfig: () => {
+    throw new Error('generateSecureConfig is deprecated. Use UnifiedConfigManager for configuration.');
+  },
+  validateDeploymentReadiness: () => {
+    throw new Error('validateDeploymentReadiness is deprecated. Use MultiDomainOrchestrator validation.');
+  },
 
   // Pre-deployment hooks
   hooks: {
@@ -45,20 +52,15 @@ export const securityModule = {
         throw new Error('Deployment blocked due to critical security issues');
       }
 
-      // Check deployment readiness
-      const readiness = DeploymentManager.validateDeploymentReadiness(customer, environment);
-      if (!readiness.ready) {
-        console.error('❌ Deployment not ready:');
-        readiness.issues.forEach(issue => console.error(`   - ${issue}`));
-        throw new Error('Deployment blocked due to readiness issues');
-      }
-
+      // Check deployment readiness (DEPRECATED - commented out)
+      // Use MultiDomainOrchestrator's validation instead
+      console.log('⚠️  DeploymentManager readiness check skipped (deprecated)');
+      
       console.log(`✅ Security validation passed (${issues.length} total issues, ${criticalIssues.length} critical)`);
 
       return {
         valid: true,
-        issues,
-        readiness
+        issues
       };
     },
 
@@ -67,14 +69,15 @@ export const securityModule = {
 
       console.log(`🔍 Post-deployment security checks for ${customer}/${environment}`);
 
-      // Perform post-deployment validation
-      try {
-        await DeploymentManager.performPostDeploymentChecks(customer, environment);
-        console.log(`✅ Post-deployment checks passed`);
-      } catch (error) {
-        console.error(`❌ Post-deployment checks failed: ${error.message}`);
-        throw error;
-      }
+      // Perform post-deployment validation (DEPRECATED - commented out)
+      // DeploymentManager.performPostDeploymentChecks was simulated only
+      console.log('⚠️  Post-deployment checks skipped (DeploymentManager deprecated)');
+      console.log(`✅ Post-deployment phase complete`);
+      
+      return {
+        success: true,
+        message: 'Post-deployment phase complete (DeploymentManager checks deprecated)'
+      };
     }
   },
 

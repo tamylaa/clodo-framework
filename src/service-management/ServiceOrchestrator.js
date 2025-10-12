@@ -11,7 +11,7 @@
 import { InputHandler } from './handlers/InputHandler.js';
 import { ConfirmationHandler } from './handlers/ConfirmationHandler.js';
 import { GenerationHandler } from './handlers/GenerationHandler.js';
-import { ConfigMutator } from './handlers/ConfigMutator.js';
+import { WranglerConfigManager } from '../utils/deployment/wrangler-config-manager.js';
 import { ValidationHandler } from './handlers/ValidationHandler.js';
 
 // Legacy imports for backward compatibility
@@ -34,7 +34,7 @@ export class ServiceOrchestrator {
       outputPath: this.outputPath, 
       templatePath: this.templatePath 
     });
-    this.configMutator = new ConfigMutator();
+    this.wranglerConfigManager = null; // Initialized when needed with specific config path
     this.validationHandler = new ValidationHandler();
 
     // Initialize legacy components for backward compatibility
@@ -398,36 +398,30 @@ export class ServiceOrchestrator {
   }
 
   /**
-   * Update domain configuration using ConfigMutator
+   * Update domain configuration
+   * @deprecated Use WranglerConfigManager directly for wrangler.toml updates
    */
   async updateDomainConfig(servicePath, currentConfig, updates = null) {
-    if (!updates && this.interactive) {
-      // Interactive mode - use confirmation handler
-      const newDomain = await this.confirmationHandler.promptHandler.prompt(
-        `Current domain: ${currentConfig.domainName}\nNew domain name: `
-      );
-      if (!newDomain || newDomain === currentConfig.domainName) {
-        console.log(chalk.yellow('Domain unchanged'));
-        return;
-      }
-      updates = { domainName: newDomain };
-    }
-
-    return await this.configMutator.updateDomainConfig(servicePath, currentConfig, updates);
+    console.log(chalk.yellow('⚠️  updateDomainConfig is deprecated. Use WranglerConfigManager for wrangler.toml updates.'));
+    throw new Error('updateDomainConfig is deprecated. Please use WranglerConfigManager directly.');
   }
 
   /**
-   * Update Cloudflare configuration using ConfigMutator
+   * Update Cloudflare configuration
+   * @deprecated Use WranglerConfigManager directly for wrangler.toml updates
    */
   async updateCloudflareConfig(servicePath, currentConfig, updates = null) {
-    return await this.configMutator.updateCloudflareConfig(servicePath, currentConfig, updates);
+    console.log(chalk.yellow('⚠️  updateCloudflareConfig is deprecated. Use WranglerConfigManager for wrangler.toml updates.'));
+    throw new Error('updateCloudflareConfig is deprecated. Please use WranglerConfigManager directly.');
   }
 
   /**
-   * Update environment configuration using ConfigMutator
+   * Update environment configuration
+   * @deprecated Use WranglerConfigManager directly for wrangler.toml updates
    */
   async updateEnvironmentConfig(servicePath, currentConfig, updates = null) {
-    return await this.configMutator.updateEnvironmentConfig(servicePath, currentConfig, updates);
+    console.log(chalk.yellow('⚠️  updateEnvironmentConfig is deprecated. Use WranglerConfigManager for wrangler.toml updates.'));
+    throw new Error('updateEnvironmentConfig is deprecated. Please use WranglerConfigManager directly.');
   }
 
   /**

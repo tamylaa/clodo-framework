@@ -15,7 +15,7 @@ jest.mock('../src/service-management/handlers/ConfirmationHandler.js');
 jest.mock('../src/service-management/handlers/GenerationHandler.js', () => ({
   GenerationHandler: jest.fn()
 }));
-jest.mock('../src/service-management/handlers/ConfigMutator.js');
+jest.mock('../src/utils/deployment/wrangler-config-manager.js'); // Updated from ConfigMutator
 jest.mock('../src/service-management/handlers/ValidationHandler.js');
 
 // Mock legacy imports
@@ -38,7 +38,7 @@ jest.mock('chalk', () => ({
 import { InputHandler } from '../src/service-management/handlers/InputHandler.js';
 import { ConfirmationHandler } from '../src/service-management/handlers/ConfirmationHandler.js';
 import { GenerationHandler } from '../src/service-management/handlers/GenerationHandler.js';
-import { ConfigMutator } from '../src/service-management/handlers/ConfigMutator.js';
+import { WranglerConfigManager } from '../src/utils/deployment/wrangler-config-manager.js'; // Updated from ConfigMutator
 import { ValidationHandler } from '../src/service-management/handlers/ValidationHandler.js';
 import { ServiceCreator } from '../src/service-management/ServiceCreator.js';
 import { ErrorTracker } from '../src/service-management/ErrorTracker.js';
@@ -54,7 +54,7 @@ describe('ServiceOrchestrator Core Methods', () => {
   let mockInputHandler;
   let mockConfirmationHandler;
   let mockGenerationHandler;
-  let mockConfigMutator;
+  let mockWranglerConfigManager; // Updated from mockConfigMutator
   let mockValidationHandler;
   let mockServiceCreator;
   let mockErrorTracker;
@@ -72,11 +72,10 @@ describe('ServiceOrchestrator Core Methods', () => {
     mockGenerationHandler = {
       generateService: jest.fn()
     };
-    mockConfigMutator = {
-      updateDomainConfig: jest.fn(),
-      updateCloudflareConfig: jest.fn(),
-      updateEnvironmentConfig: jest.fn(),
-      updateFeatureConfig: jest.fn()
+    // WranglerConfigManager methods (deprecated methods in ServiceOrchestrator now throw errors)
+    mockWranglerConfigManager = {
+      ensureEnvironment: jest.fn(),
+      addDatabaseBinding: jest.fn()
     };
     mockValidationHandler = {
       validateService: jest.fn(),
@@ -91,7 +90,7 @@ describe('ServiceOrchestrator Core Methods', () => {
     InputHandler.mockImplementation(() => mockInputHandler);
     ConfirmationHandler.mockImplementation(() => mockConfirmationHandler);
     GenerationHandler.mockImplementation(() => mockGenerationHandler);
-    ConfigMutator.mockImplementation(() => mockConfigMutator);
+    WranglerConfigManager.mockImplementation(() => mockWranglerConfigManager);
     ValidationHandler.mockImplementation(() => mockValidationHandler);
     ServiceCreator.mockImplementation(() => mockServiceCreator);
     ErrorTracker.mockImplementation(() => mockErrorTracker);
