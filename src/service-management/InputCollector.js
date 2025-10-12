@@ -431,9 +431,9 @@ export class InputCollector {
       return {
         domainName: zoneDetails.name,
         zoneId: zoneDetails.id,
-        accountId: zoneDetails.account.id,
-        accountName: zoneDetails.account.name,
-        nameServers: zoneDetails.name_servers,
+        accountId: zoneDetails.accountId,  // Already flattened in getZoneDetails response
+        accountName: zoneDetails.accountName,
+        nameServers: zoneDetails.nameServers,
         status: zoneDetails.status
       };
       
