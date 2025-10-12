@@ -1,3 +1,10 @@
+## [2.0.10](https://github.com/tamylaa/clodo-framework/compare/v2.0.9...v2.0.10) (2025-10-12)
+
+
+### Bug Fixes
+
+* move interactive-prompts to src/ to fix published package imports ([94fc31c](https://github.com/tamylaa/clodo-framework/commit/94fc31c0afa91c52f2073b3ab9f766693c5f68e0))
+
 ## [2.0.9](https://github.com/tamylaa/clodo-framework/compare/v2.0.8...v2.0.9) (2025-10-12)
 
 
