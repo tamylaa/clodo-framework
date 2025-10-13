@@ -6,6 +6,76 @@
 * Add comprehensive deployment configuration implementation status ([025fe82](https://github.com/tamylaa/clodo-framework/commit/025fe821a76ba9ac8cb87d14f2a116a5e8e58c43))
 * Consolidate configuration management and organize documentation ([e3a3d44](https://github.com/tamylaa/clodo-framework/commit/e3a3d448a74b214d75ae669f3a17e3a6ddb36ac4))
 * Resolve ESLint errors in security and config modules ([1080cdb](https://github.com/tamylaa/clodo-framework/commit/1080cdbb69b3ae29158b6af705d8fd376c95da7b))
+* Complete consolidation cleanup - fix all bin file imports ([4132a2c](https://github.com/tamylaa/clodo-framework/commit/4132a2c))
+
+### BREAKING CHANGES
+
+**This release includes breaking changes due to configuration consolidation. Please review the migration guide below.**
+
+#### Removed Package Exports:
+- `@tamyla/clodo-framework/config/customer-loader` → **Use** `@tamyla/clodo-framework/utils/config` instead
+- `@tamyla/clodo-framework/config/cli` → **Deprecated** (no direct replacement)
+
+#### Removed CLI Commands:
+- `clodo-customer-config` → **Use** `clodo-service deploy` instead
+
+#### Migration Guide:
+
+**For External Package Users:**
+```javascript
+// OLD (v2.0.18 and earlier - BROKEN in v2.0.19+)
+import { CustomerConfigLoader } from '@tamyla/clodo-framework/config/customer-loader';
+const loader = new CustomerConfigLoader();
+const config = loader.loadConfig('customer', 'production');
+
+// NEW (v2.0.19+)
+import { UnifiedConfigManager } from '@tamyla/clodo-framework/utils/config';
+const manager = new UnifiedConfigManager();
+const config = manager.loadCustomerConfig('customer', 'production');
+```
+
+**Method Mappings:**
+- `CustomerConfigLoader.loadConfig(customer, env)` → `UnifiedConfigManager.loadCustomerConfig(customer, env)`
+- `CustomerConfigLoader.parseToStandardFormat(config)` → `UnifiedConfigManager.parseToStandardFormat(config)`
+- `ConfigPersistenceManager.configExists(customer, env)` → `UnifiedConfigManager.configExists(customer, env)`
+- `ConfigPersistenceManager.displayCustomerConfig(customer, env)` → `UnifiedConfigManager.displayCustomerConfig(customer, env)`
+- `ConfigPersistenceManager.getConfiguredCustomers()` → `UnifiedConfigManager.listCustomers()`
+- `ConfigPersistenceManager.saveDeploymentConfig(customer, env, config)` → `UnifiedConfigManager.saveCustomerConfig(customer, env, config)`
+
+**For CLI Users:**
+```bash
+# OLD (v2.0.18 and earlier)
+clodo-customer-config create my-customer
+
+# NEW (v2.0.19+)
+clodo-service deploy
+# Then select customer interactively
+```
+
+#### What Was Consolidated:
+- **Deleted files** (backed up in `backups/pre-consolidation-cleanup_2025-10-12_21-05-59/`):
+  - `src/config/customer-config-loader.js` (1,849 bytes)
+  - `src/config/CustomerConfigCLI.js` (14,892 bytes)
+  - `src/utils/deployment/ConfigurationManager.js` (9,235 bytes)
+  - `src/utils/deployment/ConfigMutator.js` (8,342 bytes)
+  - `src/utils/deployment/DeploymentManager.js` (6,819 bytes)
+  - `src/utils/deployment/config-persistence.js` (6,656 bytes)
+  - `bin/shared/config/customer-cli.js` (deprecated CLI wrapper)
+
+- **New consolidated files**:
+  - `src/utils/config/unified-config-manager.js` (493 lines) - All customer config operations
+  - `src/utils/config/wrangler-config-manager.js` (392 lines) - All wrangler.toml operations
+
+#### Why This Change?
+- **Reduced Complexity**: 47,793 bytes of duplicate code consolidated into 885 lines
+- **Better Maintainability**: Single source of truth for config operations
+- **Improved Testing**: Consolidated logic = easier to test
+- **Clearer Architecture**: Documented 3-layer config system (wrangler.toml → customer .env → domains.js)
+
+#### Documentation:
+- See `docs/DOMAIN_CONFIGURATION_ARCHITECTURE.md` for complete architecture guide (28 pages)
+- See `docs/CONSOLIDATION_IMPACT_ANALYSIS.md` for detailed impact analysis
+- See `docs/DEPLOYMENT_CONFIGURATION_STATUS.md` for implementation proof
 
 ## [2.0.18](https://github.com/tamylaa/clodo-framework/compare/v2.0.17...v2.0.18) (2025-10-12)
 
