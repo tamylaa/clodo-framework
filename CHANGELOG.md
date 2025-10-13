@@ -1,3 +1,10 @@
+## [2.0.20](https://github.com/tamylaa/clodo-framework/compare/v2.0.19...v2.0.20) (2025-10-13)
+
+
+### Bug Fixes
+
+* Complete consolidation cleanup - fix all bin file imports ([4132a2c](https://github.com/tamylaa/clodo-framework/commit/4132a2c0878df84ccc0bd78c6964657810d1f4dc))
+
 ## [2.0.19](https://github.com/tamylaa/clodo-framework/compare/v2.0.18...v2.0.19) (2025-10-12)
 
 
