@@ -428,17 +428,15 @@ program
     try {
       // Use existing reusable components
       const { InputCollector } = await import('../dist/service-management/InputCollector.js');
-      const { CustomerConfigLoader } = await import('../dist/config/customer-config-loader.js');
+      const { UnifiedConfigManager } = await import('../dist/utils/config/unified-config-manager.js');
       const { ConfirmationHandler } = await import('../dist/service-management/handlers/ConfirmationHandler.js');
       const { MultiDomainOrchestrator } = await import('../dist/orchestration/multi-domain-orchestrator.js');
-      const { ConfigPersistenceManager } = await import('../dist/utils/deployment/config-persistence.js');
       
       console.log(chalk.cyan('\n🚀 Clodo Framework Deployment'));
       console.log(chalk.white('Using Three-Tier Input Architecture\n'));
       
       const isInteractive = options.interactive && !options.nonInteractive;
-      const configLoader = new CustomerConfigLoader();
-      const configPersistence = new ConfigPersistenceManager();
+      const configManager = new UnifiedConfigManager();
       const inputCollector = new InputCollector({ interactive: isInteractive });
       const confirmationHandler = new ConfirmationHandler({ interactive: isInteractive });
       
@@ -446,74 +444,50 @@ program
       let source = 'interactive';
       
       try {
-        // Try new ConfigPersistenceManager first, fallback to legacy CustomerConfigLoader
+        // Try UnifiedConfigManager to load existing config
         let storedConfig = null;
         
         if (options.customer && options.env) {
-          // Check new ConfigPersistenceManager
-          if (configPersistence.configExists(options.customer, options.env)) {
+          // Check UnifiedConfigManager for existing config
+          if (configManager.configExists(options.customer, options.env)) {
             console.log(chalk.green(`✅ Found existing configuration for ${options.customer}/${options.env}\n`));
-            configPersistence.displayCustomerConfig(options.customer, options.env);
+            configManager.displayCustomerConfig(options.customer, options.env);
             
             if (!isInteractive) {
               // Non-interactive: auto-load the config
-              const envVars = configPersistence.loadEnvironmentConfig(options.customer, options.env);
-              storedConfig = {
-                parsed: configLoader.parseToStandardFormat(envVars, options.customer, options.env)
-              };
+              storedConfig = configManager.loadCustomerConfig(options.customer, options.env);
+              if (storedConfig) {
+                coreInputs = storedConfig;
+                source = 'stored-config';
+              }
             } else {
               // Interactive: ask if they want to use it
               const useExisting = await inputCollector.question('\n   💡 Use existing configuration? (Y/n): ');
               
               if (useExisting.toLowerCase() !== 'n') {
-                const envVars = configPersistence.loadEnvironmentConfig(options.customer, options.env);
-                storedConfig = {
-                  parsed: configLoader.parseToStandardFormat(envVars, options.customer, options.env)
-                };
+                storedConfig = configManager.loadCustomerConfig(options.customer, options.env);
+                if (storedConfig) {
+                  coreInputs = storedConfig;
+                  source = 'stored-config';
+                }
               } else {
                 console.log(chalk.white('\n   📝 Collecting new configuration...\n'));
               }
             }
           } else {
-            // Fallback to legacy CustomerConfigLoader
-            storedConfig = configLoader.loadConfig(options.customer, options.env);
-            
-            if (storedConfig) {
-              source = 'stored-config';
-              console.log(chalk.cyan('📋 Found Existing Configuration (legacy)\n'));
-              configLoader.displayConfig(storedConfig.parsed);
-              
-              if (!isInteractive) {
-                // Non-interactive: use stored config as-is
-                coreInputs = storedConfig.parsed;
-                console.log(chalk.green('\n✅ Using stored configuration (non-interactive mode)\n'));
-              } else {
-                // Interactive: ask to confirm or re-collect
-                const useStored = await inputCollector.question('\nUse this configuration? (Y/n): ');
-                
-                if (useStored.toLowerCase() !== 'n') {
-                  coreInputs = storedConfig.parsed;
-                  console.log(chalk.green('\n✅ Using stored configuration\n'));
-                } else {
-                  console.log(chalk.white('\nCollecting new configuration...\n'));
-                  source = 'interactive';
-                }
-              }
-            } else {
-              console.log(chalk.yellow(`⚠️  No configuration found for ${options.customer}/${options.env}`));
-              console.log(chalk.white('Collecting inputs interactively...\n'));
-            }
+            console.log(chalk.yellow(`⚠️  No configuration found for ${options.customer}/${options.env}`));
+            console.log(chalk.white('Collecting inputs interactively...\n'));
           }
           
-          // Use stored config if we found it
+          // Use stored config if we found it and haven't collected inputs yet
           if (storedConfig && !coreInputs.cloudflareAccountId) {
-            coreInputs = storedConfig.parsed;
+            coreInputs = storedConfig;
             source = 'stored-config';
             console.log(chalk.green('\n✅ Using stored configuration\n'));
           }
         } else if (!options.customer) {
           // Show available customers to help user
-          const customers = configPersistence.getConfiguredCustomers();
+          const customers = configManager.listCustomers();
           if (customers.length > 0) {
             console.log(chalk.cyan('💡 Configured customers:'));
             customers.forEach((customer, index) => {
@@ -530,7 +504,7 @@ program
           // Collect basic info with smart customer selection
           let customer = options.customer;
           if (!customer) {
-            const customers = configPersistence.getConfiguredCustomers();
+            const customers = configManager.listCustomers();
             if (customers.length > 0) {
               const selection = await inputCollector.question('Select customer (enter number or name): ');
               
@@ -650,13 +624,15 @@ program
         try {
           console.log(chalk.cyan('\n💾 Saving deployment configuration...'));
           
-          const configFile = await configPersistence.saveDeploymentConfig({
-            customer: coreInputs.customer,
-            environment: coreInputs.environment,
-            coreInputs,
-            confirmations,
-            result
-          });
+          const configFile = await configManager.saveCustomerConfig(
+            coreInputs.customer,
+            coreInputs.environment,
+            {
+              coreInputs,
+              confirmations,
+              result
+            }
+          );
           
           console.log(chalk.green('   ✅ Configuration saved successfully!'));
           console.log(chalk.gray(`   📄 File: ${configFile}`));

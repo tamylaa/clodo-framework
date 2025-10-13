@@ -20,7 +20,8 @@
     "./handlers": "./dist/handlers/GenericRouteHandler.js",
     "./config": "./dist/config/index.js",
     "./config/discovery": "./dist/config/discovery/domain-discovery.js",
-    "./config/customer-loader": "./dist/config/customer-config-loader.js",
+    "./config/customers": "./dist/config/customers.js",
+    "./utils/config": "./dist/utils/config/unified-config-manager.js",
     "./worker": "./dist/worker/index.js",
     "./utils": "./dist/utils/index.js",
     "./utils/deployment": "./dist/utils/deployment/index.js",
@@ -38,15 +39,13 @@
     "./service-management": "./dist/service-management/index.js",
     "./service-management/create": "./dist/service-management/ServiceCreator.js",
     "./service-management/init": "./dist/service-management/ServiceInitializer.js",
-    "./config/cli": "./dist/config/CustomerConfigCLI.js",
     "./modules/security": "./dist/modules/security.js"
   },
   "bin": {
     "clodo-service": "./bin/clodo-service.js",
     "clodo-create-service": "./bin/service-management/create-service.js",
     "clodo-init-service": "./bin/service-management/init-service.js",
-    "clodo-security": "./bin/security/security-cli.js",
-    "clodo-customer-config": "./bin/shared/config/customer-cli.js"
+    "clodo-security": "./bin/security/security-cli.js"
   },
   "publishConfig": {
     "access": "public"
