@@ -7,6 +7,7 @@
 import { jest } from '@jest/globals';
 import fs from 'fs/promises';
 import path from 'path';
+import os from 'os';
 
 // Mock dependencies
 jest.mock('../src/service-management/ServiceInitializer.js');
@@ -102,10 +103,11 @@ describe('GenerationEngine Unit Tests', () => {
     WranglerD1Manager.mockImplementation(() => mockWranglerD1Manager);
     EnhancedSecretManager.mockImplementation(() => mockSecretManager);
 
-    // Create GenerationEngine instance
+    // Create GenerationEngine instance with temp directory
+    const tempDir = path.join(os.tmpdir(), 'generation-engine-test');
     generationEngine = new GenerationEngine({
-      templatesDir: '/templates',
-      outputDir: '/output',
+      templatesDir: path.join(__dirname, '../templates'),
+      outputDir: tempDir,
       force: false
     });
   });
