@@ -1,3 +1,11 @@
+## [3.0.8](https://github.com/tamylaa/clodo-framework/compare/v3.0.7...v3.0.8) (2025-10-14)
+
+
+### Bug Fixes
+
+* add --env flag to D1 migration commands for environment-specific database configs ([ef095e3](https://github.com/tamylaa/clodo-framework/commit/ef095e3ce7d8ea10e0e45d7eba45011cfa4271db))
+* implement API token authentication for D1 database operations ([d8be0a9](https://github.com/tamylaa/clodo-framework/commit/d8be0a9388bf3ed5cf433fa8b61108acd25007fd))
+
 ## [3.0.7](https://github.com/tamylaa/clodo-framework/compare/v3.0.6...v3.0.7) (2025-10-14)
 
 
