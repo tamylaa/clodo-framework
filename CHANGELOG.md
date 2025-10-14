@@ -1,3 +1,10 @@
+## [3.0.6](https://github.com/tamylaa/clodo-framework/compare/v3.0.5...v3.0.6) (2025-10-14)
+
+
+### Bug Fixes
+
+* use database name instead of binding name for D1 migrations ([6b22b25](https://github.com/tamylaa/clodo-framework/commit/6b22b25e95bebb4f9728835bd881d71dd90cdba6))
+
 ## [3.0.5](https://github.com/tamylaa/clodo-framework/compare/v3.0.4...v3.0.5) (2025-10-14)
 
 
