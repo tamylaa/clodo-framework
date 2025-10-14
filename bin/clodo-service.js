@@ -597,7 +597,9 @@ program
           domains: [coreInputs.domainName],
           environment: coreInputs.environment,
           dryRun: options.dryRun,
-          servicePath: options.servicePath
+          servicePath: options.servicePath,
+          cloudflareToken: coreInputs.cloudflareToken,
+          cloudflareAccountId: coreInputs.cloudflareAccountId
         });
         
         await orchestrator.initialize();
