@@ -15,6 +15,7 @@
 import { Command } from 'commander';
 import { createInterface } from 'readline';
 import chalk from 'chalk';
+import { join } from 'path';
 import { ServiceOrchestrator } from '../dist/service-management/ServiceOrchestrator.js';
 import { InputCollector } from '../dist/service-management/InputCollector.js';
 
