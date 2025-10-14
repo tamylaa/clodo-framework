@@ -1,3 +1,10 @@
+## [3.0.11](https://github.com/tamylaa/clodo-framework/compare/v3.0.10...v3.0.11) (2025-10-14)
+
+
+### Bug Fixes
+
+* Update all bin/ imports from src/ to dist/ for published package compatibility ([c476528](https://github.com/tamylaa/clodo-framework/commit/c476528b575cf9d6338a967e740252ed4d41f66f))
+
 ## [3.0.10](https://github.com/tamylaa/clodo-framework/compare/v3.0.9...v3.0.10) (2025-10-14)
 
 
