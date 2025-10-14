@@ -57,6 +57,19 @@ export class WranglerConfigManager {
   }
 
   /**
+   * Check if wrangler.toml file exists
+   * @returns {Promise<boolean>} True if file exists, false otherwise
+   */
+  async exists() {
+    try {
+      await access(this.configPath, constants.F_OK);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
    * Write configuration back to wrangler.toml
    * @param {Object} config - Configuration object to write
    */
