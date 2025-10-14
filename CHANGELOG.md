@@ -1,3 +1,10 @@
+## [3.0.5](https://github.com/tamylaa/clodo-framework/compare/v3.0.4...v3.0.5) (2025-10-14)
+
+
+### Bug Fixes
+
+* add missing join import in clodo-service.js ([5e0d7c6](https://github.com/tamylaa/clodo-framework/commit/5e0d7c6ce3262454138f39b4e44d0d24dc7bcb65))
+
 ## [3.0.4](https://github.com/tamylaa/clodo-framework/compare/v3.0.3...v3.0.4) (2025-10-14)
 
 
