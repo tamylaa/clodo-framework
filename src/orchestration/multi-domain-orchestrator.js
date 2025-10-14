@@ -333,11 +333,12 @@ export class MultiDomainOrchestrator {
       try {
         // Use the real applyDatabaseMigrations method
         // Note: bindingName defaults to 'DB' if not provided
+        // Since databases are created remotely via Cloudflare API, always use remote flag
         await this.databaseOrchestrator.applyDatabaseMigrations(
           databaseName,
           'DB', // bindingName - wrangler.toml binding name
           this.environment,
-          this.environment !== 'development' // isRemote for staging/production
+          true // Always remote since databases are created in Cloudflare
         );
         console.log(`   ✅ Migrations applied successfully`);
       } catch (migrationError) {
@@ -351,7 +352,7 @@ export class MultiDomainOrchestrator {
         databaseId,
         environment: this.environment,
         migrationsApplied: true,
-        isRemote: this.environment !== 'development',
+        isRemote: true, // Always remote since databases are created in Cloudflare
         created
       });
       
