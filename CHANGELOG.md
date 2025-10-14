@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/tamylaa/clodo-framework/compare/v3.0.0...v3.0.1) (2025-10-14)
+
+
+### Bug Fixes
+
+* include all bin/shared files and correct imports to use dist/ ([268b525](https://github.com/tamylaa/clodo-framework/commit/268b5254d269951e78d481840a9a0fbba486c879)), closes [#deploy-v3](https://github.com/tamylaa/clodo-framework/issues/deploy-v3)
+
 # [3.0.0](https://github.com/tamylaa/clodo-framework/compare/v2.0.20...v3.0.0) (2025-10-14)
 
 
