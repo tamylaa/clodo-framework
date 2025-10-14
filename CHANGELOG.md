@@ -1,3 +1,10 @@
+## [3.0.10](https://github.com/tamylaa/clodo-framework/compare/v3.0.9...v3.0.10) (2025-10-14)
+
+
+### Bug Fixes
+
+* Pass Cloudflare API credentials to MultiDomainOrchestrator in clodo-service deploy ([9f8c249](https://github.com/tamylaa/clodo-framework/commit/9f8c24912c79755152c5273ececa3374651e1164))
+
 ## [3.0.9](https://github.com/tamylaa/clodo-framework/compare/v3.0.8...v3.0.9) (2025-10-14)
 
 
