@@ -1,3 +1,10 @@
+## [3.0.4](https://github.com/tamylaa/clodo-framework/compare/v3.0.3...v3.0.4) (2025-10-14)
+
+
+### Bug Fixes
+
+* resolve deployment configuration and database binding issues ([f9d7036](https://github.com/tamylaa/clodo-framework/commit/f9d7036e18b49ba9082cad8f8e181f5abc1c2c2d))
+
 ## [3.0.3](https://github.com/tamylaa/clodo-framework/compare/v3.0.2...v3.0.3) (2025-10-14)
 
 
