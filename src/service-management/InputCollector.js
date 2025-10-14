@@ -407,9 +407,28 @@ export class InputCollector {
         try {
           const { CloudflareAPI } = await import('../utils/cloudflare/api.js');
           const cfApi = new CloudflareAPI(token);
-          const isValid = await cfApi.verifyToken();
-          
-          if (isValid) {
+          const tokenCheck = await cfApi.verifyToken();
+
+          if (tokenCheck.valid) {
+            // Check D1 permissions
+            const permissionCheck = await cfApi.checkD1Permissions();
+            if (!permissionCheck.hasPermission) {
+              console.log(chalk.yellow(`⚠️  ${permissionCheck.error}`));
+              console.log(chalk.white('   💡 You can update permissions at: https://dash.cloudflare.com/profile/api-tokens'));
+              console.log(chalk.white('   💡 Or continue and the framework will fall back to OAuth authentication'));
+              console.log('');
+
+              const { askYesNo } = await import('../utils/interactive-prompts.js');
+              const continueAnyway = await askYesNo('Continue with limited API token permissions?', false);
+
+              if (!continueAnyway) {
+                console.log(chalk.blue('Please update your API token permissions and try again.'));
+                process.exit(0);
+              }
+
+              console.log(chalk.yellow('⚠️  Proceeding with limited permissions - database operations will use OAuth'));
+            }
+
             console.log(chalk.green('✓ API token verified successfully'));
             return token;
           }

@@ -293,28 +293,66 @@ export class MultiDomainOrchestrator {
       // Use API-based operations if credentials are available
       if (this.cloudflareToken && this.cloudflareAccountId) {
         console.log(`     🔑 Using API token authentication for account: ${this.cloudflareAccountId}`);
-        
-        exists = await databaseExists(databaseName, {
-          apiToken: this.cloudflareToken,
-          accountId: this.cloudflareAccountId
-        });
-        
-        if (exists) {
-          console.log(`   ✅ Database already exists: ${databaseName}`);
-          databaseId = await getDatabaseId(databaseName, {
+
+        try {
+          exists = await databaseExists(databaseName, {
             apiToken: this.cloudflareToken,
             accountId: this.cloudflareAccountId
           });
-          console.log(`   📊 Existing Database ID: ${databaseId}`);
-        } else {
-          console.log(`     📦 Creating database: ${databaseName}`);
-          databaseId = await createDatabase(databaseName, {
-            apiToken: this.cloudflareToken,
-            accountId: this.cloudflareAccountId
-          });
-          console.log(`   ✅ Database created: ${databaseName}`);
-          console.log(`   📊 Database ID: ${databaseId}`);
-          created = true;
+
+          if (exists) {
+            console.log(`   ✅ Database already exists: ${databaseName}`);
+            databaseId = await getDatabaseId(databaseName, {
+              apiToken: this.cloudflareToken,
+              accountId: this.cloudflareAccountId
+            });
+            console.log(`   📊 Existing Database ID: ${databaseId}`);
+          } else {
+            console.log(`     📦 Creating database: ${databaseName}`);
+            databaseId = await createDatabase(databaseName, {
+              apiToken: this.cloudflareToken,
+              accountId: this.cloudflareAccountId
+            });
+            console.log(`   ✅ Database created: ${databaseName}`);
+            console.log(`   📊 Database ID: ${databaseId}`);
+            created = true;
+          }
+        } catch (apiError) {
+          // Check if this is an authentication or permission error
+          if (apiError.message.includes('permission denied') || apiError.message.includes('403') ||
+              apiError.message.includes('authentication failed') || apiError.message.includes('401')) {
+
+            if (apiError.message.includes('401')) {
+              console.log(`   ❌ API token authentication failed (invalid/expired token)`);
+              console.log(`   🔗 Check/create token at: https://dash.cloudflare.com/profile/api-tokens`);
+            } else {
+              console.log(`   ⚠️  API token lacks D1 database permissions`);
+              console.log(`   💡 Required permission: 'Cloudflare D1:Edit'`);
+              console.log(`   🔗 Update token at: https://dash.cloudflare.com/profile/api-tokens`);
+            }
+
+            console.log(`   🔄 Falling back to OAuth authentication...`);
+            console.log(`   ⚠️  WARNING: OAuth uses your personal account, not the API token account!`);
+
+            // Fall back to OAuth-based operations with warning
+            console.log(`     🔐 Using OAuth authentication (wrangler CLI)`);
+
+            exists = await databaseExists(databaseName);
+            if (exists) {
+              console.log(`   ✅ Database already exists: ${databaseName}`);
+              databaseId = await getDatabaseId(databaseName);
+              console.log(`   📊 Existing Database ID: ${databaseId}`);
+            } else {
+              console.log(`     📦 Creating database: ${databaseName}`);
+              databaseId = await createDatabase(databaseName);
+              console.log(`   ✅ Database created: ${databaseName}`);
+              console.log(`   📊 Database ID: ${databaseId}`);
+              created = true;
+            }
+          } else {
+            // Re-throw non-auth/permission errors
+            throw apiError;
+          }
         }
       } else {
         // Fallback to CLI-based operations (OAuth)

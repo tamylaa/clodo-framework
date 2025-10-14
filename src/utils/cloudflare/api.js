@@ -36,7 +36,22 @@ export class CloudflareAPI {
 
     if (!response.ok) {
       const errorMsg = data.errors?.[0]?.message || 'Unknown error';
-      throw new Error(`Cloudflare API error: ${errorMsg} (${response.status})`);
+      const statusCode = response.status;
+
+      // Provide specific guidance for common authentication/permission errors
+      if (statusCode === 401) {
+        throw new Error(`Cloudflare API authentication failed (401). Your API token may be invalid or expired. Please check your token at https://dash.cloudflare.com/profile/api-tokens`);
+      }
+
+      if (statusCode === 403) {
+        // Check if this is a D1-related endpoint to provide specific guidance
+        if (endpoint.includes('/d1/')) {
+          throw new Error(`Cloudflare API permission denied (403). Your API token lacks D1 database permissions. Required permissions: 'Cloudflare D1:Edit'. Update your token at https://dash.cloudflare.com/profile/api-tokens`);
+        }
+        throw new Error(`Cloudflare API permission denied (403). Your API token lacks required permissions for this operation. Please check your token permissions at https://dash.cloudflare.com/profile/api-tokens`);
+      }
+
+      throw new Error(`Cloudflare API error: ${errorMsg} (${statusCode})`);
     }
 
     if (!data.success) {
@@ -66,6 +81,29 @@ export class CloudflareAPI {
         valid: false,
         error: error.message
       };
+    }
+  }
+
+  /**
+   * Check if API token has D1 database permissions
+   * @returns {Promise<Object>} Permission check result
+   */
+  async checkD1Permissions() {
+    try {
+      // Try to list D1 databases - this will fail if no D1 permissions
+      // We use a dummy account ID that should fail safely if permissions are missing
+      await this.request('/accounts/dummy/d1/database');
+      return { hasPermission: true };
+    } catch (error) {
+      if (error.message.includes('403') || error.message.includes('permission denied')) {
+        return {
+          hasPermission: false,
+          error: 'API token lacks D1 database permissions. Required: Cloudflare D1:Edit'
+        };
+      }
+      // If it's a different error (like invalid account), assume permissions are OK
+      // The actual permission check happens during real operations
+      return { hasPermission: true };
     }
   }
 
