@@ -436,7 +436,9 @@ program
       console.log(chalk.white('Using Three-Tier Input Architecture\n'));
       
       const isInteractive = options.interactive && !options.nonInteractive;
-      const configManager = new UnifiedConfigManager();
+      const configManager = new UnifiedConfigManager({
+        configDir: join(process.cwd(), 'config', 'customers')
+      });
       const inputCollector = new InputCollector({ interactive: isInteractive });
       const confirmationHandler = new ConfirmationHandler({ interactive: isInteractive });
       

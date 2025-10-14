@@ -453,7 +453,7 @@ export class DatabaseOrchestrator {
       const command = this.buildMigrationCommand(bindingName, environment, isRemote);
       console.log(`     📋 Migration command: ${command}`);
       
-      const output = await this.executeWithRetry(command, 120000); // 2 minute timeout
+      const output = await this.executeWithRetry(command, 120000, this.projectRoot); // 2 minute timeout
       
       // Parse migration output
       const migrationsApplied = this.parseMigrationOutput(output);
@@ -575,7 +575,7 @@ export class DatabaseOrchestrator {
       const isRemote = this.environments[environment].isRemote;
       const command = this.buildBackupCommand(databaseName, environment, backupFile, isRemote);
       
-      await this.executeWithRetry(command, 300000); // 5 minute timeout for backups
+      await this.executeWithRetry(command, 300000, this.projectRoot); // 5 minute timeout for backups
       
       if (existsSync(backupFile)) {
         const stats = await stat(backupFile);
@@ -714,7 +714,7 @@ export class DatabaseOrchestrator {
     try {
       for (const command of commands) {
         const fullCommand = this.buildDatabaseCommand(command, databaseName, environment);
-        await this.executeWithRetry(fullCommand, 60000);
+        await this.executeWithRetry(fullCommand, 60000, this.projectRoot);
         executedCommands++;
       }
 
@@ -790,17 +790,19 @@ export class DatabaseOrchestrator {
     return matches ? parseInt(matches[1]) : 0;
   }
 
-  async executeWithRetry(command, timeout = null) {
+  async executeWithRetry(command, timeout = null, workingDir = null) {
     const actualTimeout = timeout || (this.config ? this.config.executionTimeout : 30000);
     const maxAttempts = this.config ? this.config.retryAttempts : 3;
     const retryDelay = this.config ? this.config.retryDelay : 1000;
+    const cwd = workingDir || this.projectRoot;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const { stdout } = await execAsync(command, {
           encoding: 'utf8',
           timeout: actualTimeout,
-          stdio: 'pipe'
+          stdio: 'pipe',
+          cwd: cwd
         });
         return stdout;
       } catch (error) {
