@@ -738,9 +738,14 @@ export class DatabaseOrchestrator {
 
   buildMigrationCommand(databaseName, environment, isRemote) {
     // Use DATABASE name, NOT binding name
-    // Wrangler expects: "npx wrangler d1 migrations apply database-name --local"
+    // Wrangler expects: "npx wrangler d1 migrations apply database-name --remote --env environment"
     // NOT: "npx wrangler d1 migrations apply binding-name --local"
     let command = `npx wrangler d1 migrations apply ${databaseName}`;
+    
+    // Add environment flag for non-production environments
+    if (environment !== 'production') {
+      command += ` --env ${environment}`;
+    }
     
     // For remote environments, add --remote flag
     // For local development, use --local
