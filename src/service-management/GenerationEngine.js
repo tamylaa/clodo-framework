@@ -31,12 +31,15 @@
  * 15. API Base Path
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from 'fs';
-import { join, dirname, resolve, relative } from 'path';
+import { ServiceInitializer } from './ServiceInitializer.js';
 import { fileURLToPath } from 'url';
+import { dirname, join, relative } from 'path';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = (() => {
+  const filename = fileURLToPath(import.meta.url);
+  return dirname(filename);
+})();
 
 export class GenerationEngine {
   constructor(options = {}) {
@@ -156,20 +159,63 @@ export class GenerationEngine {
   generateCoreFiles(coreInputs, confirmedValues, servicePath) {
     const files = [];
 
-    // package.json
-    // files.push(this.generatePackageJson(coreInputs, confirmedValues, servicePath));
+    // Use ServiceInitializer for proven package.json generation
+    const serviceInitializer = new ServiceInitializer();
 
-    // wrangler.toml
-    // files.push(this.generateWranglerToml(coreInputs, confirmedValues, servicePath));
+    // Generate package.json with proper dependencies
+    const packageJsonContent = this.generatePackageJson(coreInputs, confirmedValues, servicePath);
+    const packageJsonPath = join(servicePath, 'package.json');
+    writeFileSync(packageJsonPath, packageJsonContent, 'utf8');
+    files.push(packageJsonPath);
 
-    // src/config/domains.js
-    // files.push(this.generateDomainsConfig(coreInputs, confirmedValues, servicePath));
+    // Generate wrangler.toml using ServiceInitializer's proven method
+    const wranglerConfig = serviceInitializer.generateWranglerConfig(
+      coreInputs.serviceName,
+      { type: coreInputs.serviceType, env: coreInputs.environment },
+      [{
+        domain: coreInputs.domainName,
+        accountId: coreInputs.cloudflareAccountId,
+        zoneId: coreInputs.cloudflareZoneId,
+        name: `${coreInputs.serviceName}-${coreInputs.environment}`
+      }]
+    );
 
-    // src/worker/index.js
-    // files.push(this.generateWorkerIndex(coreInputs, confirmedValues, servicePath));
+    // Write wrangler.toml
+    const wranglerPath = join(servicePath, 'wrangler.toml');
+    let wranglerContent = '';
+    for (const [key, value] of Object.entries(wranglerConfig)) {
+      if (key === 'wrangler.toml') {
+        wranglerContent = value;
+      } else {
+        // Handle multi-domain configs if needed
+        const configPath = join(servicePath, key);
+        writeFileSync(configPath, value, 'utf8');
+        files.push(configPath);
+      }
+    }
+    if (wranglerContent) {
+      writeFileSync(wranglerPath, wranglerContent, 'utf8');
+      files.push(wranglerPath);
+    }
 
-    // .env.example
-    // files.push(this.generateEnvExample(coreInputs, confirmedValues, servicePath));
+    // Generate domains.js using ServiceInitializer
+    const domainsContent = serviceInitializer.generateDomainsConfig(
+      coreInputs.serviceName,
+      { type: coreInputs.serviceType, env: coreInputs.environment },
+      [{
+        domain: coreInputs.domainName,
+        accountId: coreInputs.cloudflareAccountId,
+        zoneId: coreInputs.cloudflareZoneId,
+        name: `${coreInputs.serviceName}-${coreInputs.environment}`
+      }]
+    );
+    const domainsPath = join(servicePath, 'src', 'config', 'domains.js');
+    writeFileSync(domainsPath, domainsContent, 'utf8');
+    files.push(domainsPath);
+
+    // Generate worker index using existing method
+    const workerPath = this.generateWorkerIndex(coreInputs, confirmedValues, servicePath);
+    files.push(workerPath);
 
     return files;
   }
@@ -180,17 +226,21 @@ export class GenerationEngine {
   generateServiceSpecificFiles(coreInputs, confirmedValues, servicePath) {
     const files = [];
 
-    // src/schemas/service-schema.js
-    // files.push(this.generateServiceSchema(coreInputs, confirmedValues, servicePath));
+    // Generate service schema
+    const schemaPath = this.generateServiceSchema(coreInputs, confirmedValues, servicePath);
+    files.push(schemaPath);
 
-    // src/handlers/service-handlers.js
-    // files.push(this.generateServiceHandlers(coreInputs, confirmedValues, servicePath));
+    // Generate service handlers
+    const handlersPath = this.generateServiceHandlers(coreInputs, confirmedValues, servicePath);
+    files.push(handlersPath);
 
-    // src/middleware/service-middleware.js
-    // files.push(this.generateServiceMiddleware(coreInputs, confirmedValues, servicePath));
+    // Generate service middleware
+    const middlewarePath = this.generateServiceMiddleware(coreInputs, confirmedValues, servicePath);
+    files.push(middlewarePath);
 
-    // src/utils/service-utils.js
-    // files.push(this.generateServiceUtils(coreInputs, confirmedValues, servicePath));
+    // Generate service utils
+    const utilsPath = this.generateServiceUtils(coreInputs, confirmedValues, servicePath);
+    files.push(utilsPath);
 
     return files;
   }
@@ -322,7 +372,8 @@ export class GenerationEngine {
         clean: "rimraf dist/ coverage/"
       },
       dependencies: {
-        "@tamyla/clodo-framework": "^3.0.0",
+        "@tamyla/clodo-framework": "^2.0.20",
+        "uuid": "^13.0.0",  // Required for auth handlers
         "wrangler": "^3.0.0"
       },
       devDependencies: {

@@ -13,6 +13,7 @@ import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';
+import { databaseExists, createDatabase } from '../utils/cloudflare/index.js';
 
 const execAsync = promisify(exec);
 
@@ -433,6 +434,28 @@ export class DatabaseOrchestrator {
     }
 
     try {
+      // Check if database exists, create if not
+      const exists = await databaseExists(databaseName);
+      if (!exists) {
+        console.log(`     📦 Database ${databaseName} does not exist, creating...`);
+        try {
+          const databaseId = await createDatabase(databaseName);
+          console.log(`     ✅ Database created: ${databaseName} (ID: ${databaseId})`);
+          
+          // Log database creation
+          await this.logAuditEvent('DATABASE_CREATED', environment, {
+            databaseName,
+            databaseId,
+            createdForMigration: true
+          });
+        } catch (createError) {
+          console.error(`     ❌ Failed to create database ${databaseName}: ${createError.message}`);
+          throw new Error(`Database creation failed: ${createError.message}`);
+        }
+      } else {
+        console.log(`     ✅ Database ${databaseName} exists`);
+      }
+
       const command = this.buildMigrationCommand(databaseName, environment, isRemote);
       const output = await this.executeWithRetry(command, 120000); // 2 minute timeout
       

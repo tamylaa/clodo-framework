@@ -18,6 +18,7 @@ import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { join } from 'path';
+import { createDatabase } from '../utils/cloudflare/index.js';
 
 const execAsync = promisify(exec);
 
@@ -275,12 +276,11 @@ export class MultiDomainOrchestrator {
     }
     
     try {
-      // Use DatabaseOrchestrator to create D1 database
+      // Create D1 database using Cloudflare ops
       const databaseName = `${domain.replace(/\./g, '-')}-${this.environment}-db`;
       
-      // Database creation needs actual wrangler CLI integration
-      // For now, we simulate with proper naming and structure
-      const databaseId = `db_${Math.random().toString(36).substring(2, 15)}`;
+      console.log(`     📦 Creating database: ${databaseName}`);
+      const databaseId = await createDatabase(databaseName);
       
       console.log(`   ✅ Database created: ${databaseName}`);
       console.log(`   📊 Database ID: ${databaseId}`);

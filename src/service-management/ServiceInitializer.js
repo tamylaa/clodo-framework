@@ -7,10 +7,11 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const FRAMEWORK_ROOT = resolve(__dirname, '..', '..');
+const FRAMEWORK_ROOT = (() => {
+  const filename = fileURLToPath(import.meta.url);
+  const dirname_ = dirname(filename);
+  return resolve(dirname_, '..', '..');
+})();
 const TEMPLATES_DIR = join(FRAMEWORK_ROOT, 'templates');
 const SERVICE_TYPES = ['generic', 'data-service', 'auth-service', 'content-service', 'api-gateway'];
 
