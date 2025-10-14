@@ -83,17 +83,26 @@ export class EnhancedSecretManager {
    * Initialize enhanced secret manager
    */
   initializeSecretManager() {
-    console.log('🔐 Enhanced Secret Manager v2.0');
-    console.log('===============================');
-    console.log(`📁 Secret Root: ${this.secretPaths.root}`);
-    console.log(`🔍 Mode: ${this.dryRun ? 'DRY RUN' : 'LIVE OPERATIONS'}`);
-    console.log(`📊 Formats: ${Object.keys(this.outputFormats).join(', ')}`);
-    console.log('');
+    // Skip console output and file logging in test/CI environments
+    const isTestEnv = process.env.NODE_ENV === 'test' || process.env.CI === 'true';
+    
+    if (!isTestEnv) {
+      console.log('🔐 Enhanced Secret Manager v2.0');
+      console.log('===============================');
+      console.log(`📁 Secret Root: ${this.secretPaths.root}`);
+      console.log(`🔍 Mode: ${this.dryRun ? 'DRY RUN' : 'LIVE OPERATIONS'}`);
+      console.log(`📊 Formats: ${Object.keys(this.outputFormats).join(', ')}`);
+      console.log('');
+    }
 
     // Create directories
     Object.values(this.secretPaths).forEach(path => {
       if (!path.endsWith('.log')) {
         this.ensureDirectory(path);
+      } else {
+        // For log files, ensure parent directory exists
+        const logDir = dirname(path);
+        this.ensureDirectory(logDir);
       }
     });
 
@@ -704,6 +713,13 @@ ${Object.entries(SECRET_CONFIGS).map(([key, config]) =>
   }
 
   logSecretEvent(event, domain, details = {}) {
+    // Skip file logging in test/CI environments
+    const isTestEnv = process.env.NODE_ENV === 'test' || process.env.CI === 'true';
+    
+    if (isTestEnv) {
+      return; // Silent in tests - no file I/O or warnings
+    }
+
     const logEntry = {
       timestamp: new Date().toISOString(),
       event,
