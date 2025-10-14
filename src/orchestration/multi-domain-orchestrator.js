@@ -18,7 +18,7 @@ import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { join } from 'path';
-import { createDatabase } from '../utils/cloudflare/index.js';
+import { createDatabase, databaseExists, getDatabaseId } from '../utils/cloudflare/index.js';
 
 const execAsync = promisify(exec);
 
@@ -279,11 +279,23 @@ export class MultiDomainOrchestrator {
       // Create D1 database using Cloudflare ops
       const databaseName = `${domain.replace(/\./g, '-')}-${this.environment}-db`;
       
-      console.log(`     📦 Creating database: ${databaseName}`);
-      const databaseId = await createDatabase(databaseName);
+      // Check if database already exists
+      console.log(`     � Checking if database exists: ${databaseName}`);
+      const exists = await databaseExists(databaseName);
+      let databaseId;
+      let created = false;
       
-      console.log(`   ✅ Database created: ${databaseName}`);
-      console.log(`   📊 Database ID: ${databaseId}`);
+      if (exists) {
+        console.log(`   ✅ Database already exists: ${databaseName}`);
+        databaseId = await getDatabaseId(databaseName);
+        console.log(`   📊 Existing Database ID: ${databaseId}`);
+      } else {
+        console.log(`     📦 Creating database: ${databaseName}`);
+        databaseId = await createDatabase(databaseName);
+        console.log(`   ✅ Database created: ${databaseName}`);
+        console.log(`   📊 Database ID: ${databaseId}`);
+        created = true;
+      }
       
       // Store database info in domain state
       const domainState = this.portfolioState.domainStates.get(domain);
@@ -331,18 +343,19 @@ export class MultiDomainOrchestrator {
       }
       
       // Log comprehensive audit event
-      this.stateManager.logAuditEvent('DATABASE_CREATED', domain, {
+      this.stateManager.logAuditEvent(created ? 'DATABASE_CREATED' : 'DATABASE_FOUND', domain, {
         databaseName,
         databaseId,
         environment: this.environment,
         migrationsApplied: true,
-        isRemote: this.environment !== 'development'
+        isRemote: this.environment !== 'development',
+        created
       });
       
       return { 
         databaseName, 
         databaseId, 
-        created: true,
+        created,
         migrationsApplied: true
       };
     } catch (error) {
