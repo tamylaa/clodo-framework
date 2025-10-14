@@ -21,11 +21,13 @@ export class WranglerConfigManager {
       this.projectRoot = dirname(options);
       this.dryRun = false;
       this.verbose = false;
+      this.accountId = null;
     } else {
       this.projectRoot = options.projectRoot || process.cwd();
       this.configPath = options.configPath || join(this.projectRoot, 'wrangler.toml');
       this.dryRun = options.dryRun || false;
       this.verbose = options.verbose || false;
+      this.accountId = options.accountId || null;
     }
   }
 
@@ -84,16 +86,30 @@ export class WranglerConfigManager {
   }
 
   /**
-   * Check if wrangler.toml exists
-   * @returns {Promise<boolean>}
+   * Set account_id in wrangler.toml
+   * @param {string} accountId - Cloudflare account ID
+   * @returns {Promise<boolean>} True if account_id was set
    */
-  async exists() {
-    try {
-      await access(this.configPath, constants.F_OK);
-      return true;
-    } catch {
+  async setAccountId(accountId) {
+    if (!accountId) {
       return false;
     }
+
+    const config = await this.readConfig();
+
+    if (config.account_id === accountId) {
+      if (this.verbose) {
+        console.log(`   ✓ account_id already set to ${accountId}`);
+      }
+      return false;
+    }
+
+    console.log(`   📝 Setting account_id to ${accountId} in wrangler.toml`);
+    config.account_id = accountId;
+
+    await this.writeConfig(config);
+    console.log(`   ✅ account_id updated in wrangler.toml`);
+    return true;
   }
 
   /**

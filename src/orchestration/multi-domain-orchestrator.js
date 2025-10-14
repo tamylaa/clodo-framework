@@ -41,6 +41,13 @@ export class MultiDomainOrchestrator {
     this.cloudflareToken = options.cloudflareToken;
     this.cloudflareAccountId = options.cloudflareAccountId;
     
+    // Configure wrangler to use API token when available
+    // This ensures all wrangler operations use the same account as API operations
+    if (this.cloudflareToken) {
+      process.env.CLOUDFLARE_API_TOKEN = this.cloudflareToken;
+      console.log(`🔑 Configured wrangler to use API token authentication`);
+    }
+    
     // Initialize modular components
     this.domainResolver = new DomainResolver({
       environment: this.environment,
@@ -80,7 +87,8 @@ export class MultiDomainOrchestrator {
     this.wranglerConfigManager = new WranglerConfigManager({
       projectRoot: this.servicePath,
       dryRun: this.dryRun,
-      verbose: options.verbose || false
+      verbose: options.verbose || false,
+      accountId: this.cloudflareAccountId
     });
 
     // ConfigurationValidator is a static class - don't instantiate
@@ -385,6 +393,11 @@ export class MultiDomainOrchestrator {
       console.log(`   📁 Current working directory: ${process.cwd()}`);
 
       try {
+        // Set account_id if API credentials are available
+        if (this.cloudflareAccountId) {
+          await this.wranglerConfigManager.setAccountId(this.cloudflareAccountId);
+        }
+
         // Ensure environment section exists
         await this.wranglerConfigManager.ensureEnvironment(this.environment);
 
