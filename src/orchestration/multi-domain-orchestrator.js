@@ -67,7 +67,9 @@ export class MultiDomainOrchestrator {
     // Initialize enterprise-grade utilities
     this.databaseOrchestrator = new DatabaseOrchestrator({
       projectRoot: this.servicePath,
-      dryRun: this.dryRun
+      dryRun: this.dryRun,
+      cloudflareToken: this.cloudflareToken,
+      cloudflareAccountId: this.cloudflareAccountId
     });
 
     this.secretManager = new EnhancedSecretManager({

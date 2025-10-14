@@ -42,6 +42,10 @@ export class DatabaseOrchestrator {
     this.options = options;
     this.config = null;
     
+    // Cloudflare API credentials for database operations
+    this.cloudflareToken = options.cloudflareToken;
+    this.cloudflareAccountId = options.cloudflareAccountId;
+    
     // Environment configurations
     this.environments = {
       development: {
@@ -439,15 +443,31 @@ export class DatabaseOrchestrator {
 
     try {
       // Validate database exists before attempting migrations
-      const exists = await databaseExists(databaseName);
-      if (!exists) {
-        throw new Error(
-          `Database ${databaseName} does not exist. ` +
-          `Database must be created before applying migrations.`
-        );
-      }
+      const exists = await databaseExists(databaseName, {
+        apiToken: this.cloudflareToken,
+        accountId: this.cloudflareAccountId
+      });
       
-      console.log(`     ✅ Database ${databaseName} validated`);
+      if (!exists) {
+        console.log(`     📦 Database ${databaseName} does not exist, creating...`);
+        
+        if (!this.cloudflareToken || !this.cloudflareAccountId) {
+          throw new Error(
+            `Database ${databaseName} does not exist and no Cloudflare API credentials provided. ` +
+            `Cannot create database automatically. Please provide cloudflareToken and cloudflareAccountId.`
+          );
+        }
+        
+        // Create the database using API
+        await createDatabase(databaseName, {
+          apiToken: this.cloudflareToken,
+          accountId: this.cloudflareAccountId
+        });
+        
+        console.log(`     ✅ Database ${databaseName} created successfully`);
+      } else {
+        console.log(`     ✅ Database ${databaseName} validated`);
+      }
 
       // Use DATABASE name for wrangler command
       const command = this.buildMigrationCommand(databaseName, environment, isRemote);
@@ -742,10 +762,8 @@ export class DatabaseOrchestrator {
     // NOT: "npx wrangler d1 migrations apply binding-name --local"
     let command = `npx wrangler d1 migrations apply ${databaseName}`;
     
-    // Add environment flag for non-production environments
-    if (environment !== 'production') {
-      command += ` --env ${environment}`;
-    }
+    // Add environment flag for all environments (consistent with bin version)
+    command += ` --env ${environment}`;
     
     // For remote environments, add --remote flag
     // For local development, use --local
