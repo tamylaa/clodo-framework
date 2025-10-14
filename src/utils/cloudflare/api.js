@@ -229,6 +229,56 @@ export class CloudflareAPI {
   }
 
   /**
+   * Create a D1 database
+   * @param {string} accountId - Account ID
+   * @param {string} name - Database name
+   * @returns {Promise<Object>} Created database info
+   */
+  async createD1Database(accountId, name) {
+    const data = await this.request(`/accounts/${accountId}/d1/database`, {
+      method: 'POST',
+      body: JSON.stringify({ name })
+    });
+
+    return {
+      uuid: data.result.uuid,
+      name: data.result.name,
+      version: data.result.version,
+      createdAt: data.result.created_at
+    };
+  }
+
+  /**
+   * Check if a D1 database exists
+   * @param {string} accountId - Account ID
+   * @param {string} name - Database name
+   * @returns {Promise<boolean>} True if database exists
+   */
+  async d1DatabaseExists(accountId, name) {
+    try {
+      const databases = await this.listD1Databases(accountId);
+      return databases.some(db => db.name === name);
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Get D1 database by name
+   * @param {string} accountId - Account ID
+   * @param {string} name - Database name
+   * @returns {Promise<Object|null>} Database info or null if not found
+   */
+  async getD1Database(accountId, name) {
+    try {
+      const databases = await this.listD1Databases(accountId);
+      return databases.find(db => db.name === name) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
    * Helper: Get complete deployment info for a zone
    * This combines zone details with useful metadata for deployment
    * @param {string} zoneId - Zone ID

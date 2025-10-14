@@ -227,7 +227,17 @@ export async function listSecrets(env = 'production') {
   }
 }
 
-export async function listDatabases() {
+export async function listDatabases(options = {}) {
+  const { apiToken, accountId } = options;
+  
+  // Use API-based operation if credentials provided
+  if (apiToken && accountId) {
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
+    const cf = new CloudflareAPI(apiToken);
+    return await cf.listD1Databases(accountId);
+  }
+  
+  // Fallback to CLI-based operation
   try {
     const { stdout: list } = await executeWithRateLimit('npx wrangler d1 list', 'd1');
     return list;
@@ -236,7 +246,17 @@ export async function listDatabases() {
   }
 }
 
-export async function databaseExists(databaseName) {
+export async function databaseExists(databaseName, options = {}) {
+  const { apiToken, accountId } = options;
+  
+  // Use API-based operation if credentials provided
+  if (apiToken && accountId) {
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
+    const cf = new CloudflareAPI(apiToken);
+    return await cf.d1DatabaseExists(accountId, databaseName);
+  }
+  
+  // Fallback to CLI-based operation
   try {
     const list = await listDatabases();
     return list.includes(databaseName);
@@ -245,7 +265,18 @@ export async function databaseExists(databaseName) {
   }
 }
 
-export async function createDatabase(name) {
+export async function createDatabase(name, options = {}) {
+  const { apiToken, accountId } = options;
+  
+  // Use API-based operation if credentials provided
+  if (apiToken && accountId) {
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
+    const cf = new CloudflareAPI(apiToken);
+    const result = await cf.createD1Database(accountId, name);
+    return result.uuid; // Return UUID to match CLI behavior
+  }
+  
+  // Fallback to CLI-based operation
   try {
     const { stdout: output } = await executeWithRateLimit(`npx wrangler d1 create ${name}`, 'd1');
     const idMatch = output.match(/database_id = "([^"]+)"/);
@@ -319,7 +350,18 @@ export async function executeSql(databaseName, sql, env = 'production') {
 }
 
 // Get database ID from list output
-export async function getDatabaseId(databaseName) {
+export async function getDatabaseId(databaseName, options = {}) {
+  const { apiToken, accountId } = options;
+  
+  // Use API-based operation if credentials provided
+  if (apiToken && accountId) {
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
+    const cf = new CloudflareAPI(apiToken);
+    const db = await cf.getD1Database(accountId, databaseName);
+    return db?.uuid || null;
+  }
+  
+  // Fallback to CLI-based operation
   try {
     const list = await listDatabases();
     const lines = list.split('\n');

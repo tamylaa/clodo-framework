@@ -37,6 +37,10 @@ export class MultiDomainOrchestrator {
     this.parallelDeployments = options.parallelDeployments || 3;
     this.servicePath = options.servicePath || process.cwd();
     
+    // Cloudflare credentials for API-based operations
+    this.cloudflareToken = options.cloudflareToken;
+    this.cloudflareAccountId = options.cloudflareAccountId;
+    
     // Initialize modular components
     this.domainResolver = new DomainResolver({
       environment: this.environment,
@@ -281,20 +285,51 @@ export class MultiDomainOrchestrator {
       
       // Check if database already exists
       console.log(`     � Checking if database exists: ${databaseName}`);
-      const exists = await databaseExists(databaseName);
-      let databaseId;
-      let created = false;
       
-      if (exists) {
-        console.log(`   ✅ Database already exists: ${databaseName}`);
-        databaseId = await getDatabaseId(databaseName);
-        console.log(`   📊 Existing Database ID: ${databaseId}`);
+      let exists, databaseId, created = false;
+      
+      // Use API-based operations if credentials are available
+      if (this.cloudflareToken && this.cloudflareAccountId) {
+        console.log(`     🔑 Using API token authentication for account: ${this.cloudflareAccountId}`);
+        
+        exists = await databaseExists(databaseName, {
+          apiToken: this.cloudflareToken,
+          accountId: this.cloudflareAccountId
+        });
+        
+        if (exists) {
+          console.log(`   ✅ Database already exists: ${databaseName}`);
+          databaseId = await getDatabaseId(databaseName, {
+            apiToken: this.cloudflareToken,
+            accountId: this.cloudflareAccountId
+          });
+          console.log(`   📊 Existing Database ID: ${databaseId}`);
+        } else {
+          console.log(`     📦 Creating database: ${databaseName}`);
+          databaseId = await createDatabase(databaseName, {
+            apiToken: this.cloudflareToken,
+            accountId: this.cloudflareAccountId
+          });
+          console.log(`   ✅ Database created: ${databaseName}`);
+          console.log(`   📊 Database ID: ${databaseId}`);
+          created = true;
+        }
       } else {
-        console.log(`     📦 Creating database: ${databaseName}`);
-        databaseId = await createDatabase(databaseName);
-        console.log(`   ✅ Database created: ${databaseName}`);
-        console.log(`   📊 Database ID: ${databaseId}`);
-        created = true;
+        // Fallback to CLI-based operations (OAuth)
+        console.log(`     🔐 Using OAuth authentication (wrangler CLI)`);
+        
+        exists = await databaseExists(databaseName);
+        if (exists) {
+          console.log(`   ✅ Database already exists: ${databaseName}`);
+          databaseId = await getDatabaseId(databaseName);
+          console.log(`   📊 Existing Database ID: ${databaseId}`);
+        } else {
+          console.log(`     📦 Creating database: ${databaseName}`);
+          databaseId = await createDatabase(databaseName);
+          console.log(`   ✅ Database created: ${databaseName}`);
+          console.log(`   📊 Database ID: ${databaseId}`);
+          created = true;
+        }
       }
       
       // Store database info in domain state
