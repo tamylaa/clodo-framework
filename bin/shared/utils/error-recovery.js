@@ -16,7 +16,7 @@ export class ErrorRecoveryManager {
    */
   async initialize() {
     // Import framework config for consistent timing and retry settings
-    const { frameworkConfig } = await import('../../../src/utils/framework-config.js');
+    const { frameworkConfig } = await import('../../../dist/utils/framework-config.js');
     const timing = frameworkConfig.getTiming();
     
     this.config = {
