@@ -1,3 +1,12 @@
+## [3.0.12](https://github.com/tamylaa/clodo-framework/compare/v3.0.11...v3.0.12) (2025-10-14)
+
+
+### Bug Fixes
+
+* Add graceful API token permission handling and validation ([6c973b0](https://github.com/tamylaa/clodo-framework/commit/6c973b077b6e2a80b7a6d93f0b39070925bb89af))
+* Add missing exists() method to WranglerConfigManager class ([44ee17c](https://github.com/tamylaa/clodo-framework/commit/44ee17c8931db085ccef502e7e7ac15209b222a5))
+* Ensure wrangler uses correct account for API token operations ([f671b10](https://github.com/tamylaa/clodo-framework/commit/f671b1004057b94dd8ba55c5c1f3c2d5bca54706))
+
 ## [3.0.11](https://github.com/tamylaa/clodo-framework/compare/v3.0.10...v3.0.11) (2025-10-14)
 
 
