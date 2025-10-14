@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/tamylaa/clodo-framework/compare/v3.0.2...v3.0.3) (2025-10-14)
+
+
+### Bug Fixes
+
+* resolve database creation redundancy in deployments ([4a54f2c](https://github.com/tamylaa/clodo-framework/commit/4a54f2ce4bd1bb17d49c4d911171a01179fbd519))
+
 ## [3.0.2](https://github.com/tamylaa/clodo-framework/compare/v3.0.1...v3.0.2) (2025-10-14)
 
 
