@@ -53,19 +53,34 @@ const memoryManager = startMemoryMonitoring({
   leakDetection: true
 });
 
-// Graceful shutdown handling (async initialization)
+// Graceful shutdown handling (lazy initialization to avoid sync issues)
 let shutdownManager = null;
-(async () => {
-  shutdownManager = await initializeGracefulShutdown({
-    dbManager,
-    monitor,
-    tokenManager,
-    memoryManager
-  }, {
-    shutdownTimeout: 30000,
-    forceShutdownTimeout: 5000
-  });
-})().catch(console.error);
+
+/**
+ * Initialize graceful shutdown manager
+ * Call this AFTER interactive input collection to avoid log interruption
+ * @param {boolean} silent - Suppress registration message
+ * @returns {Promise<GracefulShutdownManager>} Initialized shutdown manager
+ */
+export async function initializeShutdownManager(silent = false) {
+  if (!shutdownManager) {
+    shutdownManager = await initializeGracefulShutdown({
+      dbManager,
+      monitor,
+      tokenManager,
+      memoryManager
+    }, {
+      shutdownTimeout: 30000,
+      forceShutdownTimeout: 5000
+    });
+    
+    // Register with optional silent mode
+    if (shutdownManager.register) {
+      shutdownManager.register(silent);
+    }
+  }
+  return shutdownManager;
+}
 
 // Initialize monitoring
 let monitoringInitialized = false;

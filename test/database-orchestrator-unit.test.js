@@ -89,7 +89,7 @@ describe('DatabaseOrchestrator Unit Tests', () => {
     test('should apply migrations successfully when database exists', async () => {
       databaseExists.mockResolvedValue(true);
 
-      const result = await dbOrchestrator.applyDatabaseMigrations(databaseName, environment, isRemote);
+      const result = await dbOrchestrator.applyDatabaseMigrations(databaseName, 'DB', environment, isRemote);
 
       expect(databaseExists).toHaveBeenCalled();
       expect(createDatabase).not.toHaveBeenCalled();
@@ -98,38 +98,25 @@ describe('DatabaseOrchestrator Unit Tests', () => {
       expect(result.databaseName).toBe(databaseName);
     });
 
-    test('should create database and apply migrations when database does not exist', async () => {
+    test('should throw error when database does not exist', async () => {
       databaseExists.mockResolvedValue(false);
 
-      const result = await dbOrchestrator.applyDatabaseMigrations(databaseName, environment, isRemote);
-
-      expect(databaseExists).toHaveBeenCalled();
-      expect(createDatabase).toHaveBeenCalled();
-      expect(dbOrchestrator.executeWithRetry).toHaveBeenCalled();
-      expect(result.status).toBe('completed');
-      expect(result.databaseName).toBe(databaseName);
-    });
-
-    test('should handle database creation failure', async () => {
-      databaseExists.mockResolvedValue(false);
-      createDatabase.mockRejectedValue(new Error('Creation failed'));
-
-      await expect(dbOrchestrator.applyDatabaseMigrations(databaseName, environment, isRemote))
-        .rejects.toThrow('Creation failed');
+      await expect(dbOrchestrator.applyDatabaseMigrations(databaseName, 'DB', environment, isRemote))
+        .rejects.toThrow('Database test-db does not exist');
     });
 
     test('should handle migration execution failure', async () => {
       databaseExists.mockResolvedValue(true);
       dbOrchestrator.executeWithRetry.mockRejectedValue(new Error('Migration command failed'));
 
-      await expect(dbOrchestrator.applyDatabaseMigrations(databaseName, environment, isRemote))
+      await expect(dbOrchestrator.applyDatabaseMigrations(databaseName, 'DB', environment, isRemote))
         .rejects.toThrow('Migration failed for test-db: Migration command failed');
     });
 
     test('should skip operations in dry run mode', async () => {
       const dryRunOrchestrator = new DatabaseOrchestrator({ ...mockOptions, dryRun: true });
 
-      const result = await dryRunOrchestrator.applyDatabaseMigrations(databaseName, environment, isRemote);
+      const result = await dryRunOrchestrator.applyDatabaseMigrations(databaseName, 'DB', environment, isRemote);
 
       expect(databaseExists).not.toHaveBeenCalled();
       expect(createDatabase).not.toHaveBeenCalled();
@@ -183,7 +170,7 @@ describe('DatabaseOrchestrator Unit Tests', () => {
     test('should handle database operations errors', async () => {
       databaseExists.mockRejectedValue(new Error('Database check failed'));
 
-      await expect(dbOrchestrator.applyDatabaseMigrations('test-db', 'development', false))
+      await expect(dbOrchestrator.applyDatabaseMigrations('test-db', 'DB', 'development', false))
         .rejects.toThrow('Migration failed for test-db: Database check failed');
     });
   });
@@ -200,7 +187,7 @@ describe('DatabaseOrchestrator Unit Tests', () => {
     test('should use correct environment-specific settings', async () => {
       databaseExists.mockResolvedValue(true);
 
-      const result = await dbOrchestrator.applyDatabaseMigrations('staging-db', 'staging', false);
+      const result = await dbOrchestrator.applyDatabaseMigrations('staging-db', 'DB', 'staging', false);
 
       expect(result.status).toBe('completed');
       expect(result.databaseName).toBe('staging-db');

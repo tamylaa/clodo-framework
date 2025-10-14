@@ -372,6 +372,7 @@ export class DatabaseOrchestrator {
         try {
           const dbResult = await this.applyDatabaseMigrations(
             dbConfig.name,
+            'DB', // bindingName
             environment,
             envConfig.isRemote
           );
@@ -393,6 +394,7 @@ export class DatabaseOrchestrator {
       const defaultDb = envConfig.defaultDatabase || 'default-db';
       const dbResult = await this.applyDatabaseMigrations(
         defaultDb,
+        'DB', // bindingName
         environment,
         envConfig.isRemote
       );
@@ -415,48 +417,42 @@ export class DatabaseOrchestrator {
 
   /**
    * Apply migrations to specific database
-   * @param {string} databaseName - Database name
+   * @param {string} databaseName - Database name (for display/logging)
+   * @param {string} bindingName - Wrangler binding name (from wrangler.toml, default 'DB')
    * @param {string} environment - Environment
    * @param {boolean} isRemote - Whether database is remote
    * @returns {Promise<Object>} Database migration result
    */
-  async applyDatabaseMigrations(databaseName, environment, isRemote) {
-    console.log(`   🗄️ Applying migrations to ${databaseName}...`);
+  async applyDatabaseMigrations(databaseName, bindingName = 'DB', environment, isRemote) {
+    console.log(`   � Applying migrations to ${databaseName}...`);
 
     if (this.dryRun) {
-      console.log(`     🔍 DRY RUN: Would apply migrations to ${databaseName}`);
+      console.log(`     🔍 DRY RUN: Would apply migrations to ${databaseName} (binding: ${bindingName})`);
       return {
         status: 'dry-run',
         databaseName,
+        bindingName,
         environment,
         migrationsApplied: 0
       };
     }
 
     try {
-      // Check if database exists, create if not
+      // Validate database exists before attempting migrations
       const exists = await databaseExists(databaseName);
       if (!exists) {
-        console.log(`     📦 Database ${databaseName} does not exist, creating...`);
-        try {
-          const databaseId = await createDatabase(databaseName);
-          console.log(`     ✅ Database created: ${databaseName} (ID: ${databaseId})`);
-          
-          // Log database creation
-          await this.logAuditEvent('DATABASE_CREATED', environment, {
-            databaseName,
-            databaseId,
-            createdForMigration: true
-          });
-        } catch (createError) {
-          console.error(`     ❌ Failed to create database ${databaseName}: ${createError.message}`);
-          throw new Error(`Database creation failed: ${createError.message}`);
-        }
-      } else {
-        console.log(`     ✅ Database ${databaseName} exists`);
+        throw new Error(
+          `Database ${databaseName} does not exist. ` +
+          `Database must be created before applying migrations.`
+        );
       }
+      
+      console.log(`     ✅ Database ${databaseName} validated`);
 
-      const command = this.buildMigrationCommand(databaseName, environment, isRemote);
+      // Use BINDING name (not database name) for wrangler command
+      const command = this.buildMigrationCommand(bindingName, environment, isRemote);
+      console.log(`     📋 Migration command: ${command}`);
+      
       const output = await this.executeWithRetry(command, 120000); // 2 minute timeout
       
       // Parse migration output
@@ -466,6 +462,7 @@ export class DatabaseOrchestrator {
       
       await this.logAuditEvent('DATABASE_MIGRATION_APPLIED', environment, {
         databaseName,
+        bindingName,
         migrationsApplied,
         isRemote
       });
@@ -473,6 +470,7 @@ export class DatabaseOrchestrator {
       return {
         status: 'completed',
         databaseName,
+        bindingName,
         environment,
         migrationsApplied,
         output: output.substring(0, 500) // Truncate for storage
@@ -481,6 +479,7 @@ export class DatabaseOrchestrator {
     } catch (error) {
       await this.logAuditEvent('DATABASE_MIGRATION_FAILED', environment, {
         databaseName,
+        bindingName,
         error: error.message
       });
       
@@ -735,13 +734,16 @@ export class DatabaseOrchestrator {
 
   // Command builders and utility methods
 
-  buildMigrationCommand(databaseName, environment, isRemote) {
-    let command = `npx wrangler d1 migrations apply ${databaseName}`;
+  buildMigrationCommand(bindingName = 'DB', environment, isRemote) {
+    // Use BINDING name (from wrangler.toml), NOT database name
+    // Wrangler expects: "npx wrangler d1 migrations apply DB --local"
+    // NOT: "npx wrangler d1 migrations apply database-name --local"
+    let command = `npx wrangler d1 migrations apply ${bindingName}`;
     
-    // For remote environments, add --env flag
-    // For local development, use --local WITHOUT --env (wrangler requirement)
+    // For remote environments, add --remote flag
+    // For local development, use --local
     if (isRemote) {
-      command += ` --env ${environment} --remote`;
+      command += ` --remote`;
     } else {
       command += ` --local`;
     }

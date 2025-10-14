@@ -317,8 +317,10 @@ export class MultiDomainOrchestrator {
       
       try {
         // Use the real applyDatabaseMigrations method
+        // Note: bindingName defaults to 'DB' if not provided
         await this.databaseOrchestrator.applyDatabaseMigrations(
           databaseName,
+          'DB', // bindingName - wrangler.toml binding name
           this.environment,
           this.environment !== 'development' // isRemote for staging/production
         );

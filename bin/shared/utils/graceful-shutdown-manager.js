@@ -31,8 +31,9 @@ export class GracefulShutdownManager {
 
   /**
    * Register the shutdown manager
+   * @param {boolean} silent - Suppress registration message (for interactive modes)
    */
-  register() {
+  register(silent = false) {
     if (this.registered) return;
 
     this.registered = true;
@@ -52,7 +53,7 @@ export class GracefulShutdownManager {
       this.initiateShutdown('unhandledRejection', reason);
     });
 
-    if (this.config.enableLogging) {
+    if (this.config.enableLogging && !silent) {
       console.log('🛑 Graceful shutdown manager registered');
     }
   }
