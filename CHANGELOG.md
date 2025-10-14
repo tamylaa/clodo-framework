@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/tamylaa/clodo-framework/compare/v3.0.0...v3.0.1) (2025-10-14)
+
+
+### Bug Fixes
+
+* reset version to 2.0.20 for clean semantic release ([724df16](https://github.com/tamylaa/clodo-framework/commit/724df162d3fdb4a35cfc50a2cc045a714c56ba6f))
+
 # [3.0.0](https://github.com/tamylaa/clodo-framework/compare/v2.0.20...v3.0.0) (2025-10-14)
 
 
