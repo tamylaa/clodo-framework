@@ -306,19 +306,22 @@ export class MultiDomainOrchestrator {
       
       // CRITICAL: Update wrangler.toml BEFORE attempting migrations
       console.log(`   📝 Configuring wrangler.toml for database...`);
-      
+      console.log(`   📁 Service path: ${this.servicePath}`);
+      console.log(`   📁 Current working directory: ${process.cwd()}`);
+
       try {
         // Ensure environment section exists
         await this.wranglerConfigManager.ensureEnvironment(this.environment);
-        
+
         // Add database binding (use snake_case for wrangler.toml compatibility)
         await this.wranglerConfigManager.addDatabaseBinding(this.environment, {
           binding: 'DB',
           database_name: databaseName,
           database_id: databaseId
         });
-        
+
         console.log(`   ✅ wrangler.toml updated with database configuration`);
+        console.log(`   📄 wrangler.toml location: ${this.wranglerConfigManager.configPath}`);
       } catch (configError) {
         console.warn(`   ⚠️  Failed to update wrangler.toml: ${configError.message}`);
         console.warn(`   💡 You may need to manually add database configuration`);
