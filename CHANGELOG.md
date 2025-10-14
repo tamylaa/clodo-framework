@@ -1,3 +1,10 @@
+## [3.0.7](https://github.com/tamylaa/clodo-framework/compare/v3.0.6...v3.0.7) (2025-10-14)
+
+
+### Bug Fixes
+
+* use --remote flag for D1 migrations since databases are created in Cloudflare ([1a94538](https://github.com/tamylaa/clodo-framework/commit/1a945389f9c4ae54a7ebc7c1ea4badc3b0ccaed2))
+
 ## [3.0.6](https://github.com/tamylaa/clodo-framework/compare/v3.0.5...v3.0.6) (2025-10-14)
 
 
