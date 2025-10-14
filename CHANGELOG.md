@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/tamylaa/clodo-framework/compare/v3.0.1...v3.0.2) (2025-10-14)
+
+
+### Bug Fixes
+
+* suppress secret audit logging in test/CI environments ([daa58e0](https://github.com/tamylaa/clodo-framework/commit/daa58e013f8c3c37bb251a658b78f011a56dab3f))
+
 ## [3.0.1](https://github.com/tamylaa/clodo-framework/compare/v3.0.0...v3.0.1) (2025-10-14)
 
 
