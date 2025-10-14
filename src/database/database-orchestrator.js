@@ -449,10 +449,12 @@ export class DatabaseOrchestrator {
       
       console.log(`     ✅ Database ${databaseName} validated`);
 
-      // Use BINDING name (not database name) for wrangler command
-      const command = this.buildMigrationCommand(bindingName, environment, isRemote);
+      // Use DATABASE name for wrangler command
+      const command = this.buildMigrationCommand(databaseName, environment, isRemote);
       console.log(`     📋 Migration command: ${command}`);
-      
+      console.log(`     📁 Command will run from: ${this.projectRoot}`);
+      console.log(`     📁 Current working directory: ${process.cwd()}`);
+
       const output = await this.executeWithRetry(command, 120000, this.projectRoot); // 2 minute timeout
       
       // Parse migration output
@@ -734,11 +736,11 @@ export class DatabaseOrchestrator {
 
   // Command builders and utility methods
 
-  buildMigrationCommand(bindingName = 'DB', environment, isRemote) {
-    // Use BINDING name (from wrangler.toml), NOT database name
-    // Wrangler expects: "npx wrangler d1 migrations apply DB --local"
-    // NOT: "npx wrangler d1 migrations apply database-name --local"
-    let command = `npx wrangler d1 migrations apply ${bindingName}`;
+  buildMigrationCommand(databaseName, environment, isRemote) {
+    // Use DATABASE name, NOT binding name
+    // Wrangler expects: "npx wrangler d1 migrations apply database-name --local"
+    // NOT: "npx wrangler d1 migrations apply binding-name --local"
+    let command = `npx wrangler d1 migrations apply ${databaseName}`;
     
     // For remote environments, add --remote flag
     // For local development, use --local
