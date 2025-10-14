@@ -20,7 +20,7 @@ export class DatabaseConnectionManager {
    */
   async initialize() {
     // Import framework config for consistent database connection settings
-    const { frameworkConfig } = await import('../../../src/utils/framework-config.js');
+    const { frameworkConfig } = await import('../../../dist/utils/framework-config.js');
     const timing = frameworkConfig.getTiming();
     const database = frameworkConfig.getDatabaseConfig();
     

@@ -13,7 +13,7 @@ import http from 'http';
 const execAsync = promisify(exec);
 
 // Load framework configuration
-const { frameworkConfig } = await import('../../../src/utils/framework-config.js');
+const { frameworkConfig } = await import('../../../dist/utils/framework-config.js');
 const timing = frameworkConfig.getTiming();
 
 function makeHttpRequest(url, method = 'GET', timeout = 5000) {

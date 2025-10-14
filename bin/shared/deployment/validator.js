@@ -556,7 +556,7 @@ export class DeploymentValidator {
     
     try {
       // Import WranglerDeployer for D1 validation capabilities
-      const { WranglerDeployer } = await import('../../../src/deployment/wrangler-deployer.js');
+      const { WranglerDeployer } = await import('../../../dist/deployment/wrangler-deployer.js');
       
       // Check if this is a framework-level validation (no specific service)
       if (!this.options?.servicePath) {
