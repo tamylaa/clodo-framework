@@ -1,3 +1,10 @@
+## [3.0.9](https://github.com/tamylaa/clodo-framework/compare/v3.0.8...v3.0.9) (2025-10-14)
+
+
+### Bug Fixes
+
+* Auto-create D1 databases before applying migrations ([bb4a780](https://github.com/tamylaa/clodo-framework/commit/bb4a7804307f4ee8ff17256287e61098d809b0e9))
+
 ## [3.0.8](https://github.com/tamylaa/clodo-framework/compare/v3.0.7...v3.0.8) (2025-10-14)
 
 
