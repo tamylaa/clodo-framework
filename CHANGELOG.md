@@ -1,3 +1,10 @@
+## [3.0.13](https://github.com/tamylaa/clodo-framework/compare/v3.0.12...v3.0.13) (2025-10-16)
+
+
+### Bug Fixes
+
+* resolve circular dependency in unified-config-manager ([dff0841](https://github.com/tamylaa/clodo-framework/commit/dff0841c3bfc4ce0200b057c99ab76ea09641c68))
+
 ## [3.0.12](https://github.com/tamylaa/clodo-framework/compare/v3.0.11...v3.0.12) (2025-10-14)
 
 
