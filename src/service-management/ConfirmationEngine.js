@@ -82,10 +82,10 @@ export class ConfirmationEngine {
       // 4. Author - Default framework author
       author: 'Clodo Framework',
 
-      // 5-7. URLs - Derived from domain
-      productionUrl: `https://api.${domainName}`,
-      stagingUrl: `https://staging-api.${domainName}`,
-      developmentUrl: `https://dev-api.${domainName}`,
+      // 5-7. URLs - Derived from domain and service name
+      productionUrl: `https://${serviceName}.${domainName}`,
+      stagingUrl: `https://${serviceName}-staging.${domainName}`,
+      developmentUrl: `https://${serviceName}-dev.${domainName}`,
 
       // 8. Features - Based on service type
       features: this.generateFeaturesForType(serviceType),

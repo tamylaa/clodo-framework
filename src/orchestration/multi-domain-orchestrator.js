@@ -622,7 +622,7 @@ export class MultiDomainOrchestrator {
   }
 
   /**
-   * Validate domain deployment with real HTTP health check
+   * Validate domain deployment with real HTTP health check (with retries)
    */
   async validateDomainDeployment(domain) {
     console.log(`   ✅ Validating deployment for ${domain}`);
@@ -643,57 +643,80 @@ export class MultiDomainOrchestrator {
     
     console.log(`   🔍 Running health check: ${deploymentUrl}/health`);
     
-    try {
-      const startTime = Date.now();
-      
-      // Perform actual HTTP health check
-      const response = await fetch(`${deploymentUrl}/health`, {
-        method: 'GET',
-        headers: { 'User-Agent': 'Clodo-Orchestrator/2.0' },
-        signal: AbortSignal.timeout(10000) // 10 second timeout
-      });
-      
-      const responseTime = Date.now() - startTime;
-      const status = response.status;
-      
-      if (status === 200) {
-        console.log(`   ✅ Health check passed (${status}) - Response time: ${responseTime}ms`);
+    // Retry logic for health checks
+    const maxRetries = 3;
+    const retryDelay = 5000; // 5 seconds between retries
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const startTime = Date.now();
         
-        // Log successful health check
-        this.stateManager.logAuditEvent('HEALTH_CHECK_PASSED', domain, {
-          url: deploymentUrl,
-          status,
-          responseTime,
-          environment: this.environment
+        console.log(`   Attempt ${attempt}/${maxRetries}...`);
+        
+        // Perform actual HTTP health check
+        const response = await fetch(`${deploymentUrl}/health`, {
+          method: 'GET',
+          headers: { 'User-Agent': 'Clodo-Orchestrator/2.0' },
+          signal: AbortSignal.timeout(15000) // 15 second timeout
         });
         
-        return true;
-      } else {
-        console.log(`   ⚠️  Health check returned ${status} - deployment may have issues`);
+        const responseTime = Date.now() - startTime;
+        const status = response.status;
         
-        this.stateManager.logAuditEvent('HEALTH_CHECK_WARNING', domain, {
-          url: deploymentUrl,
-          status,
-          responseTime,
-          environment: this.environment
-        });
+        if (status === 200) {
+          console.log(`   ✅ Health check passed (${status}) - Response time: ${responseTime}ms`);
+          
+          // Log successful health check
+          this.stateManager.logAuditEvent('HEALTH_CHECK_PASSED', domain, {
+            url: deploymentUrl,
+            status,
+            responseTime,
+            attempt,
+            environment: this.environment
+          });
+          
+          return true;
+        } else {
+          const errorMsg = `Health check returned ${status} - deployment may have issues`;
+          console.log(`   ⚠️  ${errorMsg}`);
+          
+          this.stateManager.logAuditEvent('HEALTH_CHECK_WARNING', domain, {
+            url: deploymentUrl,
+            status,
+            responseTime,
+            attempt,
+            environment: this.environment
+          });
+          
+          // Don't fail deployment for non-200 status, just warn
+          return true;
+        }
+      } catch (error) {
+        const isLastAttempt = attempt === maxRetries;
+        const errorMsg = `Health check failed: ${error.message}`;
         
-        // Don't fail deployment for non-200 status, just warn
-        return true;
+        if (isLastAttempt) {
+          console.log(`   ❌ ${errorMsg} (final attempt)`);
+          console.log(`   💡 The service may still be deploying. Check manually: curl ${deploymentUrl}/health`);
+          
+          this.stateManager.logAuditEvent('HEALTH_CHECK_FAILED', domain, {
+            url: deploymentUrl,
+            error: error.message,
+            attempts: maxRetries,
+            environment: this.environment
+          });
+          
+          // Don't fail deployment for health check failure - it might just need time
+          return true;
+        } else {
+          console.log(`   ⚠️  ${errorMsg} (attempt ${attempt}/${maxRetries})`);
+          console.log(`   ⏳ Retrying in ${retryDelay/1000} seconds...`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
       }
-    } catch (error) {
-      console.log(`   ⚠️  Health check failed: ${error.message}`);
-      console.log(`   💡 This may be expected if the worker isn't fully propagated yet`);
-      
-      this.stateManager.logAuditEvent('HEALTH_CHECK_FAILED', domain, {
-        url: deploymentUrl,
-        error: error.message,
-        environment: this.environment
-      });
-      
-      // Don't fail deployment for health check failure - it might just need time
-      return true;
     }
+    
+    return true;
   }
 
   /**

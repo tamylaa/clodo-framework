@@ -7,15 +7,11 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync, readdirSync
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const TEMPLATES_DIR = join(__dirname, '..', '..', 'templates');
 const SERVICE_TYPES = ['data-service', 'auth-service', 'content-service', 'api-gateway', 'generic'];
 
 export class ServiceCreator {
   constructor(options = {}) {
-    this.templatesDir = options.templatesDir || TEMPLATES_DIR;
+    this.templatesDir = options.templatesDir || join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'templates');
     this.serviceTypes = options.serviceTypes || SERVICE_TYPES;
   }
 

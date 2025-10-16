@@ -18,6 +18,8 @@ import chalk from 'chalk';
 import { join } from 'path';
 import { ServiceOrchestrator } from '../dist/service-management/ServiceOrchestrator.js';
 import { InputCollector } from '../dist/service-management/InputCollector.js';
+import { readFileSync, existsSync } from 'fs';
+import { resolve } from 'path';
 
 const program = new Command();
 
@@ -25,6 +27,117 @@ program
   .name('clodo-service')
   .description('Unified conversational CLI for Clodo Framework service lifecycle management')
   .version('1.0.0');
+
+// Helper function to load JSON configuration file
+function loadJsonConfig(configPath) {
+  try {
+    const fullPath = resolve(configPath);
+    if (!existsSync(fullPath)) {
+      throw new Error(`Configuration file not found: ${fullPath}`);
+    }
+
+    const content = readFileSync(fullPath, 'utf8');
+    const config = JSON.parse(content);
+
+    // Validate required fields
+    const required = ['customer', 'environment', 'domainName', 'cloudflareToken'];
+    const missing = required.filter(field => !config[field]);
+
+    if (missing.length > 0) {
+      throw new Error(`Missing required configuration fields: ${missing.join(', ')}`);
+    }
+
+    console.log(chalk.green(`✅ Loaded configuration from: ${fullPath}`));
+    return config;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`Invalid JSON in configuration file: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+// Simple progress indicator for deployment steps
+function showProgress(message, duration = 2000) {
+  return new Promise(resolve => {
+    process.stdout.write(chalk.cyan(`⏳ ${message}...`));
+    
+    const spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    let i = 0;
+    
+    const interval = setInterval(() => {
+      process.stdout.write(`\r${chalk.cyan(spinner[i])} ${message}...`);
+      i = (i + 1) % spinner.length;
+    }, 100);
+    
+    setTimeout(() => {
+      clearInterval(interval);
+      process.stdout.write(`\r${chalk.green('✅')} ${message}... Done!\n`);
+      resolve();
+    }, duration);
+  });
+}
+
+// Early validation function to check prerequisites before deployment
+async function validateDeploymentPrerequisites(coreInputs, options) {
+  const issues = [];
+  
+  console.log(chalk.cyan('\n🔍 Pre-deployment Validation'));
+  console.log(chalk.gray('─'.repeat(40)));
+  
+  // Check required fields
+  if (!coreInputs.customer) {
+    issues.push('Customer name is required');
+  }
+  if (!coreInputs.environment) {
+    issues.push('Environment is required');
+  }
+  if (!coreInputs.domainName) {
+    issues.push('Domain name is required');
+  }
+  if (!coreInputs.cloudflareToken) {
+    issues.push('Cloudflare API token is required');
+  }
+  
+  // Check Cloudflare token format (basic validation)
+  if (coreInputs.cloudflareToken && !coreInputs.cloudflareToken.startsWith('CLOUDFLARE_API_TOKEN=')) {
+    if (coreInputs.cloudflareToken.length < 40) {
+      issues.push('Cloudflare API token appears to be invalid (too short)');
+    }
+  }
+  
+  // Check if service path exists
+  if (options.servicePath && options.servicePath !== '.') {
+    const { existsSync } = await import('fs');
+    if (!existsSync(options.servicePath)) {
+      issues.push(`Service path does not exist: ${options.servicePath}`);
+    }
+  }
+  
+  // Check for wrangler.toml if not dry run
+  if (!options.dryRun) {
+    const { existsSync } = await import('fs');
+    const { join } = await import('path');
+    const wranglerPath = join(options.servicePath || '.', 'wrangler.toml');
+    if (!existsSync(wranglerPath)) {
+      issues.push('wrangler.toml not found in service directory');
+    }
+  }
+  
+  // Report issues
+  if (issues.length > 0) {
+    console.log(chalk.red('\n❌ Validation Failed:'));
+    issues.forEach(issue => {
+      console.log(chalk.red(`   • ${issue}`));
+    });
+    console.log(chalk.gray('\n─'.repeat(40)));
+    return false;
+  }
+  
+  console.log(chalk.green('✅ All prerequisites validated'));
+  console.log(chalk.gray('─'.repeat(40)));
+  return true;
+}
 
 // Main interactive command
 program
@@ -422,6 +535,10 @@ program
   .option('-e, --env <environment>', 'Target environment (development, staging, production)')
   .option('-i, --interactive', 'Interactive mode (review confirmations)', true)
   .option('--non-interactive', 'Non-interactive mode (use stored config)')
+  .option('--config-file <file>', 'Load configuration from JSON file')
+  .option('--defaults', 'Use default values where possible (non-interactive)')
+  .option('--quiet', 'Quiet mode - minimal output for CI/CD')
+  .option('--json-output', 'Output results as JSON for scripting')
   .option('--dry-run', 'Simulate deployment without making changes')
   .option('--domain <domain>', 'Domain name (overrides stored config)')
   .option('--service-path <path>', 'Path to service directory', '.')
@@ -436,7 +553,9 @@ program
       console.log(chalk.cyan('\n🚀 Clodo Framework Deployment'));
       console.log(chalk.white('Using Three-Tier Input Architecture\n'));
       
-      const isInteractive = options.interactive && !options.nonInteractive;
+      const isInteractive = options.interactive && !options.nonInteractive && !options.configFile && !options.defaults;
+      const isQuiet = options.quiet;
+      const jsonOutput = options.jsonOutput;
       const configManager = new UnifiedConfigManager({
         configDir: join(process.cwd(), 'config', 'customers')
       });
@@ -446,216 +565,272 @@ program
       let coreInputs = {};
       let source = 'interactive';
       
-      try {
-        // Try UnifiedConfigManager to load existing config
-        let storedConfig = null;
-        
-        if (options.customer && options.env) {
-          // Check UnifiedConfigManager for existing config
-          if (configManager.configExists(options.customer, options.env)) {
-            console.log(chalk.green(`✅ Found existing configuration for ${options.customer}/${options.env}\n`));
-            configManager.displayCustomerConfig(options.customer, options.env);
-            
-            if (!isInteractive) {
+      // Interactive mode: run input collector
+      if (isInteractive) {
+          await inputCollector.collect();
+        } else {
+          // Non-interactive mode: load from config file or stored config
+          
+          // Load from JSON config file if specified
+          if (options.configFile) {
+            coreInputs = loadJsonConfig(options.configFile);
+            source = 'config-file';
+          } else if (options.customer && options.env) {
+            // Check UnifiedConfigManager for existing config
+            if (configManager.configExists(options.customer, options.env)) {
+              console.log(chalk.green(`✅ Found existing configuration for ${options.customer}/${options.env}\n`));
+              configManager.displayCustomerConfig(options.customer, options.env);
+              
               // Non-interactive: auto-load the config
-              storedConfig = configManager.loadCustomerConfig(options.customer, options.env);
+              const storedConfig = configManager.loadCustomerConfig(options.customer, options.env);
               if (storedConfig) {
                 coreInputs = storedConfig;
                 source = 'stored-config';
               }
             } else {
-              // Interactive: ask if they want to use it
-              const useExisting = await inputCollector.question('\n   💡 Use existing configuration? (Y/n): ');
-              
-              if (useExisting.toLowerCase() !== 'n') {
-                storedConfig = configManager.loadCustomerConfig(options.customer, options.env);
-                if (storedConfig) {
-                  coreInputs = storedConfig;
-                  source = 'stored-config';
-                }
-              } else {
-                console.log(chalk.white('\n   📝 Collecting new configuration...\n'));
-              }
+              console.log(chalk.yellow(`⚠️  No configuration found for ${options.customer}/${options.env}`));
+              console.log(chalk.white('Collecting inputs interactively...\n'));
             }
           } else {
-            console.log(chalk.yellow(`⚠️  No configuration found for ${options.customer}/${options.env}`));
-            console.log(chalk.white('Collecting inputs interactively...\n'));
+            console.log(chalk.yellow('⚠️  Customer and environment not specified'));
+            console.log(chalk.white('Use --customer and --env options, or run in interactive mode'));
+            process.exit(1);
           }
           
-          // Use stored config if we found it and haven't collected inputs yet
-          if (storedConfig && !coreInputs.cloudflareAccountId) {
-            coreInputs = storedConfig;
-            source = 'stored-config';
-            console.log(chalk.green('\n✅ Using stored configuration\n'));
+          // Collect inputs if we don't have them from stored config
+          if (!coreInputs.cloudflareAccountId) {
+            console.log(chalk.cyan('📊 Tier 1: Core Input Collection\n'));
+            
+            // Collect basic info with smart customer selection
+            let customer = options.customer;
+            if (!customer) {
+              const customers = configManager.listCustomers();
+              if (customers.length > 0) {
+                const selection = await inputCollector.question('Select customer (enter number or name): ');
+                
+                // Try to parse as number first
+                const num = parseInt(selection);
+                if (!isNaN(num) && num >= 1 && num <= customers.length) {
+                  customer = customers[num - 1];
+                  console.log(chalk.green(`✓ Selected: ${customer}\n`));
+                } else if (customers.includes(selection)) {
+                  customer = selection;
+                  console.log(chalk.green(`✓ Selected: ${customer}\n`));
+                } else {
+                  // New customer name
+                  customer = selection;
+                  console.log(chalk.yellow(`⚠️  Creating new customer: ${customer}\n`));
+                }
+              } else {
+                customer = await inputCollector.question('Customer name: ');
+              }
+            }
+            const environment = options.env || await inputCollector.collectEnvironment();
+            const serviceName = await inputCollector.collectServiceName();
+            const serviceType = await inputCollector.collectServiceType();
+            
+            // Collect Cloudflare token
+            const cloudflareToken = process.env.CLOUDFLARE_API_TOKEN || await inputCollector.collectCloudflareToken();
+            
+            // Use CloudflareAPI for automatic domain discovery
+            console.log(chalk.cyan('⏳ Fetching Cloudflare configuration...'));
+            const cloudflareConfig = await inputCollector.collectCloudflareConfigWithDiscovery(
+              cloudflareToken,
+              options.domain
+            );
+            
+            // Combine all inputs
+            coreInputs = {
+              customer,
+              environment,
+              serviceName,
+              serviceType,
+              domainName: cloudflareConfig.domainName,
+              cloudflareToken,
+              cloudflareAccountId: cloudflareConfig.accountId,
+              cloudflareZoneId: cloudflareConfig.zoneId
+            };
+            
+            source = 'interactive';
           }
-        } else if (!options.customer) {
-          // Show available customers to help user
-          const customers = configManager.listCustomers();
-          if (customers.length > 0) {
-            console.log(chalk.cyan('💡 Configured customers:'));
-            customers.forEach((customer, index) => {
-              console.log(chalk.white(`   ${index + 1}. ${customer}`));
+          
+          // Allow domain override
+          if (options.domain) {
+            coreInputs.domainName = options.domain;
+          }
+          
+          // Early validation before proceeding
+          const isValid = await validateDeploymentPrerequisites(coreInputs, options);
+          if (!isValid) {
+            console.log(chalk.red('\n❌ Deployment cancelled due to validation errors.'));
+            console.log(chalk.cyan('💡 Fix the issues above and try again.'));
+            process.exit(1);
+          }
+          
+          // Tier 2: Generate smart confirmations using existing ConfirmationHandler
+          // Note: ConfirmationEngine prints its own header
+          const confirmations = await confirmationHandler.generateAndConfirm(coreInputs);
+          
+          // Show deployment summary
+          console.log(chalk.cyan('\n📊 Deployment Summary'));
+          console.log(chalk.gray('─'.repeat(60)));
+          
+          console.log(chalk.white(`Source:        ${source}`));
+          console.log(chalk.white(`Customer:      ${coreInputs.customer}`));
+          console.log(chalk.white(`Environment:   ${coreInputs.environment}`));
+          console.log(chalk.white(`Domain:        ${coreInputs.domainName}`));
+          console.log(chalk.white(`Account ID:    ${coreInputs.cloudflareAccountId ? coreInputs.cloudflareAccountId.substring(0, 8) + '...' : 'N/A'}`));
+          console.log(chalk.white(`Zone ID:       ${coreInputs.cloudflareZoneId ? coreInputs.cloudflareZoneId.substring(0, 8) + '...' : 'N/A'}`));
+          
+          if (confirmations.workerName) {
+            console.log(chalk.white(`Worker:        ${confirmations.workerName}`));
+          }
+          if (confirmations.databaseName) {
+            console.log(chalk.white(`Database:      ${confirmations.databaseName}`));
+          }
+          
+          console.log(chalk.gray('─'.repeat(60)));
+          
+          if (options.dryRun) {
+            console.log(chalk.yellow('\n🔍 DRY RUN MODE - No changes will be made\n'));
+          }
+          
+          // Tier 3: Execute deployment
+          console.log(chalk.cyan('\n⚙️  Tier 3: Automated Deployment\n'));
+          
+          // INTEGRATION: Add intelligent service discovery and assessment
+          console.log(chalk.cyan('🧠 Performing Intelligent Service Assessment...'));
+          const { CapabilityAssessmentEngine } = await import('../dist/service-management/CapabilityAssessmentEngine.js');
+          const assessor = new CapabilityAssessmentEngine(options.servicePath || process.cwd());
+          
+          try {
+            const assessment = await assessor.assessCapabilities({
+              serviceName: coreInputs.serviceName,
+              serviceType: coreInputs.serviceType,
+              environment: coreInputs.environment,
+              domainName: coreInputs.domainName
             });
+            
+            // Display assessment results
+            console.log(chalk.green('✅ Assessment Complete'));
+            console.log(chalk.white(`   Service Type: ${assessment.mergedInputs.serviceType || 'Not determined'}`));
+            console.log(chalk.white(`   Confidence: ${assessment.confidence}%`));
+            console.log(chalk.white(`   Missing Capabilities: ${assessment.gapAnalysis.missing.length}`));
+            
+            // Show any blocking issues
+            const blockingIssues = assessment.gapAnalysis.missing.filter(gap => gap.priority === 'blocked');
+            if (blockingIssues.length > 0) {
+              console.log(chalk.yellow('\n⚠️  Permission-limited capabilities detected:'));
+              blockingIssues.forEach(issue => {
+                console.log(chalk.yellow(`   - ${issue.capability}: ${issue.reason}`));
+              });
+            }
+            
+            console.log('');
+            
+          } catch (assessmentError) {
+            console.log(chalk.yellow('⚠️  Assessment failed, proceeding with deployment:'), assessmentError.message);
             console.log('');
           }
-        }
-        
-        // Collect inputs if we don't have them from stored config
-        if (!coreInputs.cloudflareAccountId) {
-          console.log(chalk.cyan('📊 Tier 1: Core Input Collection\n'));
           
-          // Collect basic info with smart customer selection
-          let customer = options.customer;
-          if (!customer) {
-            const customers = configManager.listCustomers();
-            if (customers.length > 0) {
-              const selection = await inputCollector.question('Select customer (enter number or name): ');
-              
-              // Try to parse as number first
-              const num = parseInt(selection);
-              if (!isNaN(num) && num >= 1 && num <= customers.length) {
-                customer = customers[num - 1];
-                console.log(chalk.green(`✓ Selected: ${customer}\n`));
-              } else if (customers.includes(selection)) {
-                customer = selection;
-                console.log(chalk.green(`✓ Selected: ${customer}\n`));
-              } else {
-                // New customer name
-                customer = selection;
-                console.log(chalk.yellow(`⚠️  Creating new customer: ${customer}\n`));
-              }
-            } else {
-              customer = await inputCollector.question('Customer name: ');
+          const orchestrator = new MultiDomainOrchestrator({
+            domains: [coreInputs.domainName],
+            environment: coreInputs.environment,
+            dryRun: options.dryRun,
+            servicePath: options.servicePath,
+            cloudflareToken: coreInputs.cloudflareToken,
+            cloudflareAccountId: coreInputs.cloudflareAccountId
+          });
+          
+          // Show progress for initialization
+          await showProgress('Initializing deployment orchestrator', 1500);
+          await orchestrator.initialize();
+          
+          console.log(chalk.cyan('🚀 Starting deployment...\n'));
+          
+          // Show progress during deployment
+          const deployPromise = orchestrator.deploySingleDomain(coreInputs.domainName, {
+            ...coreInputs,
+            ...confirmations,
+            servicePath: options.servicePath
+          });
+          
+          // Show deployment progress
+          const progressMessages = [
+            'Preparing deployment configuration',
+            'Setting up Cloudflare resources', 
+            'Deploying worker script',
+            'Configuring database connections',
+            'Setting up domain routing',
+            'Running final health checks'
+          ];
+          
+          let progressIndex = 0;
+          const progressInterval = setInterval(() => {
+            if (progressIndex < progressMessages.length) {
+              console.log(chalk.gray(`   ${progressMessages[progressIndex]}`));
+              progressIndex++;
             }
+          }, 2000);
+          
+          const result = await deployPromise;
+          clearInterval(progressInterval);
+          
+          // Fill in remaining progress messages quickly
+          while (progressIndex < progressMessages.length) {
+            console.log(chalk.gray(`   ${progressMessages[progressIndex]}`));
+            progressIndex++;
           }
-          const environment = options.env || await inputCollector.collectEnvironment();
-          const serviceName = await inputCollector.collectServiceName();
-          const serviceType = await inputCollector.collectServiceType();
           
-          // Collect Cloudflare token
-          const cloudflareToken = process.env.CLOUDFLARE_API_TOKEN || await inputCollector.collectCloudflareToken();
+          // Display results with cleaner formatting
+          console.log(chalk.green('\n✅ Deployment Completed Successfully!'));
+          console.log(chalk.gray('─'.repeat(60)));
           
-          // Use CloudflareAPI for automatic domain discovery
-          console.log(chalk.cyan('⏳ Fetching Cloudflare configuration...'));
-          const cloudflareConfig = await inputCollector.collectCloudflareConfigWithDiscovery(
-            cloudflareToken,
-            options.domain
-          );
+          // Show key information prominently
+          if (result.url || confirmations.deploymentUrl) {
+            console.log(chalk.white(`🌐 Service URL:    ${chalk.bold(result.url || confirmations.deploymentUrl)}`));
+          }
           
-          // Combine all inputs
-          coreInputs = {
-            customer,
-            environment,
-            serviceName,
-            serviceType,
-            domainName: cloudflareConfig.domainName,
-            cloudflareToken,
-            cloudflareAccountId: cloudflareConfig.accountId,
-            cloudflareZoneId: cloudflareConfig.zoneId
-          };
+          console.log(chalk.white(`👤 Customer:      ${coreInputs.customer}`));
+          console.log(chalk.white(`🏭 Environment:   ${coreInputs.environment}`));
+          console.log(chalk.white(`🔧 Worker:        ${confirmations.workerName || 'N/A'}`));
           
-          source = 'interactive';
-        }
-        
-        // Allow domain override
-        if (options.domain) {
-          coreInputs.domainName = options.domain;
-        }
-        
-        // Tier 2: Generate smart confirmations using existing ConfirmationHandler
-        // Note: ConfirmationEngine prints its own header
-        const confirmations = await confirmationHandler.generateAndConfirm(coreInputs);
-        
-        // Show deployment summary
-        console.log(chalk.cyan('\n📊 Deployment Summary'));
-        console.log(chalk.gray('─'.repeat(60)));
-        
-        console.log(chalk.white(`Source:        ${source}`));
-        console.log(chalk.white(`Customer:      ${coreInputs.customer}`));
-        console.log(chalk.white(`Environment:   ${coreInputs.environment}`));
-        console.log(chalk.white(`Domain:        ${coreInputs.domainName}`));
-        console.log(chalk.white(`Account ID:    ${coreInputs.cloudflareAccountId?.substring(0, 8)}...`));
-        console.log(chalk.white(`Zone ID:       ${coreInputs.cloudflareZoneId?.substring(0, 8)}...`));
-        
-        if (confirmations.workerName) {
-          console.log(chalk.white(`Worker:        ${confirmations.workerName}`));
-        }
-        if (confirmations.databaseName) {
-          console.log(chalk.white(`Database:      ${confirmations.databaseName}`));
-        }
-        
-        console.log(chalk.gray('─'.repeat(60)));
-        
-        if (options.dryRun) {
-          console.log(chalk.yellow('\n🔍 DRY RUN MODE - No changes will be made\n'));
-        }
-        
-        // Tier 3: Execute deployment
-        console.log(chalk.cyan('\n⚙️  Tier 3: Automated Deployment\n'));
-        
-        const orchestrator = new MultiDomainOrchestrator({
-          domains: [coreInputs.domainName],
-          environment: coreInputs.environment,
-          dryRun: options.dryRun,
-          servicePath: options.servicePath,
-          cloudflareToken: coreInputs.cloudflareToken,
-          cloudflareAccountId: coreInputs.cloudflareAccountId
-        });
-        
-        await orchestrator.initialize();
-        
-        console.log(chalk.cyan('🚀 Starting deployment...\n'));
-        
-        const result = await orchestrator.deploySingleDomain(coreInputs.domainName, {
-          ...coreInputs,
-          ...confirmations,
-          servicePath: options.servicePath
-        });
-        
-        // Display results
-        console.log(chalk.green('\n✅ Deployment Completed Successfully!'));
-        console.log(chalk.gray('─'.repeat(60)));
-        console.log(chalk.white(`   Worker:   ${confirmations.workerName || 'N/A'}`));
-        console.log(chalk.white(`   URL:      ${result.url || confirmations.deploymentUrl || 'N/A'}`));
-        console.log(chalk.white(`   Status:   ${result.status || 'deployed'}`));
-        
-        if (result.health) {
-          console.log(chalk.white(`   Health:   ${result.health}`));
-        }
-        
-        console.log(chalk.gray('─'.repeat(60)));
-        
-        // Save deployment configuration for future reuse
-        try {
-          console.log(chalk.cyan('\n💾 Saving deployment configuration...'));
+          if (result.health) {
+            const healthStatus = result.health.toLowerCase().includes('ok') || result.health.toLowerCase().includes('healthy') 
+              ? chalk.green('✅ Healthy') 
+              : chalk.yellow('⚠️ Check required');
+            console.log(chalk.white(`💚 Health:        ${healthStatus}`));
+          }
           
-          const configFile = await configManager.saveCustomerConfig(
-            coreInputs.customer,
-            coreInputs.environment,
-            {
-              coreInputs,
-              confirmations,
-              result
-            }
-          );
+          console.log(chalk.gray('─'.repeat(60)));
           
-          console.log(chalk.green('   ✅ Configuration saved successfully!'));
-          console.log(chalk.gray(`   📄 File: ${configFile}`));
-          console.log(chalk.white('   💡 Next deployment will automatically load these settings'));
-        } catch (saveError) {
-          console.log(chalk.yellow(`   ⚠️  Could not save configuration: ${saveError.message}`));
-          console.log(chalk.gray('   Deployment succeeded, but you may need to re-enter values next time.'));
+          // Save deployment configuration for future reuse
+          try {
+            console.log(chalk.cyan('\n💾 Saving deployment configuration...'));
+            
+            const configFile = await configManager.saveCustomerConfig(
+              coreInputs.customer,
+              coreInputs.environment,
+              {
+                coreInputs,
+                confirmations,
+                result
+              }
+            );
+            
+            console.log(chalk.green('   ✅ Configuration saved for future deployments'));
+            console.log(chalk.gray(`   📄 File: ${configFile}`));
+          } catch (saveError) {
+            console.log(chalk.yellow(`   ⚠️  Could not save configuration: ${saveError.message}`));
+            console.log(chalk.gray('   Deployment succeeded, but you may need to re-enter values next time.'));
+          }
+          
+          console.log(chalk.cyan('\n📋 Next Steps:'));
+          console.log(chalk.white(`   • Test deployment: curl ${result.url || confirmations.deploymentUrl}/health`));
+          console.log(chalk.white(`   • Monitor logs: wrangler tail ${confirmations.workerName}`));
+          console.log(chalk.white(`   • View dashboard: https://dash.cloudflare.com`));
         }
         
-        console.log(chalk.cyan('\n📋 Next Steps:'));
-        console.log(chalk.white(`   • Test deployment: curl ${result.url || confirmations.deploymentUrl}/health`));
-        console.log(chalk.white(`   • Monitor logs: wrangler tail ${confirmations.workerName}`));
-        console.log(chalk.white(`   • View dashboard: https://dash.cloudflare.com`));
-        
-      } finally {
-        inputCollector.close();
-      }
-      
     } catch (error) {
       console.error(chalk.red(`\n❌ Deployment failed: ${error.message}`));
       
@@ -686,5 +861,31 @@ program
       process.exit(1);
     }
   });
+
+// Utility function to redact sensitive information from logs
+function redactSensitiveInfo(text) {
+  if (typeof text !== 'string') return text;
+  
+  // Patterns to redact
+  const patterns = [
+    // Cloudflare API tokens
+    [/(CLOUDFLARE_API_TOKEN=?)(\w{20,})/gi, '$1[REDACTED]'],
+    // Generic API tokens/keys
+    [/(api[_-]?token|api[_-]?key|auth[_-]?token)["']?[:=]\s*["']?([a-zA-Z0-9_-]{20,})["']?/gi, '$1: [REDACTED]'],
+    // Passwords
+    [/(password|passwd|pwd)["']?[:=]\s*["']?([^"'\s]{3,})["']?/gi, '$1: [REDACTED]'],
+    // Secrets
+    [/(secret|key)["']?[:=]\s*["']?([a-zA-Z0-9_-]{10,})["']?/gi, '$1: [REDACTED]'],
+    // Account IDs (partial redaction)
+    [/(account[_-]?id|zone[_-]?id)["']?[:=]\s*["']?([a-zA-Z0-9]{8})([a-zA-Z0-9]{24,})["']?/gi, '$1: $2[REDACTED]']
+  ];
+  
+  let redacted = text;
+  patterns.forEach(([pattern, replacement]) => {
+    redacted = redacted.replace(pattern, replacement);
+  });
+  
+  return redacted;
+}
 
 program.parse();

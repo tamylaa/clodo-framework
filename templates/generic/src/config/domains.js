@@ -18,9 +18,9 @@ export const domains = {
     accountId: process.env.CLOUDFLARE_ACCOUNT_ID || '', // Configure in setup
     zoneId: process.env.CLOUDFLARE_ZONE_ID || '',       // Configure in setup
     domains: {
-      production: process.env.PRODUCTION_DOMAIN || 'api.{{SERVICE_NAME}}.com',
-      staging: process.env.STAGING_DOMAIN || 'staging-api.{{SERVICE_NAME}}.com',
-      development: process.env.DEVELOPMENT_DOMAIN || 'dev-api.{{SERVICE_NAME}}.com'
+      production: process.env.PRODUCTION_DOMAIN || '{{SERVICE_NAME}}.{{DOMAIN_NAME}}',
+      staging: process.env.STAGING_DOMAIN || '{{SERVICE_NAME}}-staging.{{DOMAIN_NAME}}',
+      development: process.env.DEVELOPMENT_DOMAIN || '{{SERVICE_NAME}}-dev.{{DOMAIN_NAME}}'
     },
     services: [
       '{{SERVICE_NAME}}'

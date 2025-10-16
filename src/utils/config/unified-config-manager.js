@@ -16,10 +16,14 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
 import { resolve, join } from 'path';
 import { getDirname } from '../esm-helper.js';
-import { createLogger } from '../index.js';
 
 const __dirname = getDirname(import.meta.url, 'src/utils/config');
-const logger = createLogger('UnifiedConfigManager');
+
+// Simple inline logger to avoid circular dependency with index.js
+const logger = {
+  info: (message, ...args) => console.log(`[UnifiedConfigManager] ${message}`, ...args),
+  error: (message, ...args) => console.error(`[UnifiedConfigManager] ${message}`, ...args)
+};
 
 /**
  * UnifiedConfigManager

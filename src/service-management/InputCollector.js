@@ -15,6 +15,7 @@ import { createInterface } from 'readline';
 import chalk from 'chalk';
 import { validateServiceName, validateDomainName } from '../utils/validation.js';
 import { uiStructuresLoader } from '../utils/ui-structures-loader.js';
+import { CapabilityAssessmentEngine } from './CapabilityAssessmentEngine.js';
 
 export class InputCollector {
   constructor(options = {}) {
@@ -83,6 +84,11 @@ export class InputCollector {
           source: 'user-provided',
           required: true
         };
+
+        // Run assessment after API token is collected
+        if (inputDef.id === 'cloudflare-api-token' && value) {
+          await this.runDeploymentReadinessAssessment(result.coreInputs);
+        }
       }
     }
 
@@ -174,9 +180,9 @@ export class InputCollector {
       case 'production-url':
         return domainName ? `https://api.${domainName}` : '';
       case 'staging-url':
-        return domainName ? `https://staging-api.${domainName}` : '';
+        return domainName && serviceName ? `https://${serviceName}-staging.${domainName}` : '';
       case 'development-url':
-        return domainName ? `https://dev-api.${domainName}` : '';
+        return domainName && serviceName ? `https://${serviceName}-dev.${domainName}` : '';
       case 'service-directory':
         return serviceName ? `./services/${serviceName}` : '';
       case 'database-name':
@@ -608,6 +614,99 @@ export class InputCollector {
         resolve(answer || defaultValue);
       });
     });
+  }
+
+  /**
+   * Run deployment readiness assessment after API token collection
+   */
+  async runDeploymentReadinessAssessment(coreInputs) {
+    console.log(chalk.cyan('\n🔍 Running Deployment Readiness Assessment...'));
+    console.log(chalk.gray('Analyzing your inputs for deployment feasibility...\n'));
+
+    try {
+      // Convert core inputs to assessment format
+      const assessmentInputs = {
+        serviceName: coreInputs['service-name']?.value,
+        serviceType: coreInputs['service-type']?.value || 'generic',
+        domainName: coreInputs['domain-name']?.value,
+        environment: coreInputs['environment']?.value || 'development',
+        cloudflareToken: coreInputs['cloudflare-api-token']?.value,
+        customerName: coreInputs['customer-name']?.value
+      };
+
+      // Create assessment engine with caching enabled
+      const assessmentEngine = new CapabilityAssessmentEngine(process.cwd(), {
+        cacheEnabled: true,
+        cache: { ttl: 10 * 60 * 1000 } // 10 minutes for interactive sessions
+      });
+
+      // Run assessment
+      const assessment = await assessmentEngine.assessCapabilities(assessmentInputs);
+
+      // Display results
+      this.displayAssessmentResults(assessment);
+
+      // Store assessment in result for later use
+      return assessment;
+
+    } catch (error) {
+      console.log(chalk.yellow(`⚠️  Assessment failed: ${error.message}`));
+      console.log(chalk.gray('Continuing with service creation...'));
+      return null;
+    }
+  }
+
+  /**
+   * Display assessment results in user-friendly format
+   */
+  displayAssessmentResults(assessment) {
+    const { capabilityManifest, gapAnalysis, confidence, cached } = assessment;
+
+    console.log(chalk.cyan('\n📊 Assessment Results:'));
+    console.log(chalk.gray('─'.repeat(40)));
+
+    // Service type and confidence
+    console.log(chalk.white(`Service Type: ${capabilityManifest.serviceType}`));
+    console.log(chalk.white(`Confidence: ${confidence.toFixed(1)}%`));
+
+    if (cached) {
+      console.log(chalk.gray('(Results loaded from cache)'));
+    }
+
+    // Gap analysis summary
+    const missingCount = gapAnalysis.missing.length;
+    const blockedCount = gapAnalysis.missing.filter(gap => gap.priority === 'blocked').length;
+
+    if (missingCount === 0) {
+      console.log(chalk.green('✅ All required capabilities detected'));
+    } else {
+      console.log(chalk.yellow(`⚠️  ${missingCount} capability gap(s) found`));
+
+      if (blockedCount > 0) {
+        console.log(chalk.red(`🚫 ${blockedCount} deployment blocker(s) detected`));
+      }
+
+      // Show top 3 gaps
+      gapAnalysis.missing.slice(0, 3).forEach(gap => {
+        const icon = gap.priority === 'blocked' ? '🚫' : '⚠️';
+        console.log(chalk.gray(`   ${icon} ${gap.capability}: ${gap.reason}`));
+      });
+
+      if (gapAnalysis.missing.length > 3) {
+        console.log(chalk.gray(`   ... and ${gapAnalysis.missing.length - 3} more`));
+      }
+    }
+
+    // Recommendations
+    if (assessment.recommendations && assessment.recommendations.length > 0) {
+      console.log(chalk.blue('\n💡 Recommendations:'));
+      assessment.recommendations.slice(0, 2).forEach(rec => {
+        console.log(chalk.gray(`   • ${rec.message}`));
+      });
+    }
+
+    console.log(chalk.gray('\n─'.repeat(40)));
+    console.log(chalk.white('Continue with service creation? (Assessment will run again before generation)'));
   }
 
   /**
