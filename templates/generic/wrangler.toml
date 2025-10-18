@@ -1,0 +1,27 @@
+name = "{{SERVICE_NAME}}-dev"
+main = "src/worker/index.js"
+compatibility_date = "{{CURRENT_DATE}}"
+
+[env.development]
+name = "{{SERVICE_NAME}}-dev"
+
+[env.staging]
+name = "{{SERVICE_NAME}}-staging"
+
+[env.production]
+name = "{{SERVICE_NAME}}"
+
+# Database bindings will be added during deployment
+# [[d1_databases]]
+# binding = "{{SERVICE_NAME}}-db"
+# database_name = "{{SERVICE_NAME}}-db"
+
+# Environment variables
+[vars]
+DOMAIN_NAME = "{{SERVICE_NAME}}.yourdomain.com"
+ENVIRONMENT = "development"
+SERVICE_NAME = "{{SERVICE_NAME}}"
+SERVICE_TYPE = "{{SERVICE_TYPE}}"
+
+# Add your custom environment variables here
+# CUSTOM_VAR = "value"

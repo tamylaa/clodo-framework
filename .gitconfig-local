@@ -1,0 +1,28 @@
+# Local Git Configuration for Clodo Framework
+# 
+# This prevents the "rejected push" issue when working with semantic-release
+#
+# Usage:
+#   git config --local include.path ../.gitconfig-local
+#
+# Or add to your .git/config:
+#   [include]
+#       path = ../.gitconfig-local
+
+[alias]
+    # Safe push that always pulls/rebases first
+    pushsafe = "!f() { git fetch && git rebase origin/$(git branch --show-current) && git push \"$@\"; }; f"
+    
+    # Quick sync with remote (pull + rebase)
+    sync = "!git fetch && git rebase origin/$(git branch --show-current)"
+    
+    # Status with upstream info
+    st = status -sb
+
+[pull]
+    # Always rebase when pulling to avoid merge commits
+    rebase = true
+
+[push]
+    # Push current branch to same-named remote branch
+    default = current

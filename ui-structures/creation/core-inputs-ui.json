@@ -1,0 +1,217 @@
+{
+  "template": {
+    "name": "core-inputs-ui",
+    "description": "UI template for collecting the 6 absolutely required CLODO Framework inputs",
+    "version": "1.0.0",
+    "category": "absolutely-required",
+    "inputCount": 6,
+    "estimatedTime": "2-3 minutes",
+    "uiType": "interactive-prompts"
+  },
+  "collectionStrategy": {
+    "phase": 1,
+    "title": "Core Service Configuration",
+    "description": "Please provide the fundamental information needed to create your CLODO Framework service",
+    "progressIndicator": "Step 1 of 3: Core Information",
+    "validationMode": "strict",
+    "allowBackNavigation": false,
+    "allowSkip": false
+  },
+  "inputs": [
+    {
+      "id": "service-name",
+      "order": 1,
+      "ui": {
+        "type": "text-input",
+        "label": "Service Name",
+        "description": "What should we call this service? This will be the fundamental identifier used throughout the system.",
+        "placeholder": "e.g., user-service, data-processor, api-gateway",
+        "helpText": "Use lowercase letters, numbers, and hyphens only. This name will be used for directories, databases, and other resources.",
+        "required": true,
+        "autoFocus": true
+      },
+      "validation": {
+        "pattern": "^[a-z][a-z0-9-]*$",
+        "minLength": 3,
+        "maxLength": 50,
+        "customMessage": "Service name must start with a letter and contain only lowercase letters, numbers, and hyphens"
+      },
+      "examples": ["user-service", "data-processor", "api-gateway", "auth-manager"],
+      "followUp": {
+        "message": "Great! We'll use '{value}' as the foundation for all your service components.",
+        "preview": "This will create: {value}-db, {value}-worker, User Service (display name), etc."
+      }
+    },
+    {
+      "id": "environment",
+      "order": 2,
+      "ui": {
+        "type": "select",
+        "label": "Environment",
+        "description": "Which environment will this service be deployed to?",
+        "helpText": "This affects logging levels, security policies, and resource allocation.",
+        "required": true,
+        "options": [
+          {
+            "value": "development",
+            "label": "Development",
+            "description": "Local development with debug logging and relaxed security"
+          },
+          {
+            "value": "staging",
+            "label": "Staging",
+            "description": "Pre-production testing environment"
+          },
+          {
+            "value": "production",
+            "label": "Production",
+            "description": "Live production environment with full security and monitoring"
+          }
+        ],
+        "default": "development"
+      },
+      "followUp": {
+        "message": "Selected {value} environment - this will configure appropriate security and performance settings.",
+        "preview": "Environment settings: {value === 'production' ? 'High security, optimized performance' : value === 'staging' ? 'Medium security, balanced performance' : 'Debug mode, development tools enabled'}"
+      }
+    },
+    {
+      "id": "domain-name",
+      "order": 3,
+      "ui": {
+        "type": "text-input",
+        "label": "Domain Name",
+        "description": "What is your primary domain name for this service?",
+        "placeholder": "e.g., mycompany.com, api.example.org",
+        "helpText": "This will be used to generate API URLs, worker endpoints, and other domain-based configurations.",
+        "required": true
+      },
+      "validation": {
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-\\.]*\\.[a-zA-Z]{2,}$",
+        "minLength": 4,
+        "maxLength": 253,
+        "customMessage": "Please enter a valid domain name (e.g., mycompany.com)"
+      },
+      "examples": ["mycompany.com", "api.example.org", "staging.internal"],
+      "followUp": {
+        "message": "Domain '{value}' configured - we'll generate URLs like api.{value}, staging-api.{value}, etc.",
+        "preview": "Generated URLs: api.{value}, staging-api.{value}, dev-api.{value}"
+      }
+    },
+    {
+      "id": "service-type",
+      "order": 4,
+      "ui": {
+        "type": "select",
+        "label": "Service Type",
+        "description": "What type of service are you building?",
+        "helpText": "This determines the architecture templates, deployment strategy, and default configurations.",
+        "required": false,
+        "default": "generic",
+        "options": [
+          {
+            "value": "generic",
+            "label": "Generic Service",
+            "description": "Basic service with standard configurations (recommended for most cases)"
+          },
+          {
+            "value": "api",
+            "label": "API Service",
+            "description": "REST or GraphQL API with request/response handling"
+          },
+          {
+            "value": "worker",
+            "label": "Background Worker",
+            "description": "Asynchronous processing, queues, or scheduled tasks"
+          },
+          {
+            "value": "database",
+            "label": "Database Service",
+            "description": "Data storage and retrieval focused service"
+          },
+          {
+            "value": "hybrid",
+            "label": "Hybrid Service",
+            "description": "Combines multiple service types (API + Worker + Database)"
+          }
+        ]
+      },
+      "followUp": {
+        "message": "Selected {value} service type - this will apply appropriate templates and configurations.",
+        "preview": "Templates: {value} architecture, {value} deployment strategy, {value} monitoring config"
+      }
+    },
+    {
+      "id": "customer-name",
+      "order": 5,
+      "ui": {
+        "type": "text-input",
+        "label": "Customer Name (Optional)",
+        "description": "If this is a customer-specific service, enter the customer identifier",
+        "placeholder": "e.g., acme-corp, tech-startup",
+        "helpText": "Leave blank for general services. This enables customer-specific configurations and isolation.",
+        "required": false
+      },
+      "validation": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9-_]*$",
+        "minLength": 2,
+        "maxLength": 30,
+        "customMessage": "Customer name must start with a letter and contain only letters, numbers, hyphens, and underscores"
+      },
+      "conditional": {
+        "showWhen": "multiTenantDeployment",
+        "message": "Multi-tenant deployment detected - customer name recommended"
+      },
+      "followUp": {
+        "message": "{value ? 'Customer-specific service for ' + value + ' - will apply customer configurations.' : 'General service - no customer-specific configurations applied.'}",
+        "preview": "{value ? 'Customer config: ./customers/' + value + '/config.json' : 'No customer isolation'}"
+      }
+    },
+    {
+      "id": "cloudflare-api-token",
+      "order": 6,
+      "ui": {
+        "type": "password-input",
+        "label": "Cloudflare API Token (Optional)",
+        "description": "Enter your Cloudflare API token for infrastructure management",
+        "placeholder": "Leave blank to use environment variables",
+        "helpText": "Required for Cloudflare Workers and D1 database management. Can be set via CLOUDFLARE_API_TOKEN environment variable instead.",
+        "required": false
+      },
+      "validation": {
+        "pattern": "^[A-Za-z0-9_-]{40,}$",
+        "minLength": 40,
+        "customMessage": "Cloudflare API tokens are typically 40+ characters long"
+      },
+      "conditional": {
+        "showWhen": "cloudflareIntegration",
+        "message": "Cloudflare integration detected - API token required for deployment"
+      },
+      "followUp": {
+        "message": "{value ? 'Cloudflare API token configured - will manage infrastructure automatically.' : 'No API token provided - will attempt to use environment variables.'}",
+        "preview": "{value ? 'Cloudflare integration: Enabled' : 'Cloudflare integration: Environment variables only'}"
+      }
+    }
+  ],
+  "completion": {
+    "message": "Core configuration complete! 🎉",
+    "summary": "Collected {service-name} for {environment} environment on {domain-name}",
+    "nextPhase": "smart-confirmable",
+    "estimatedNextTime": "3-5 minutes"
+  },
+  "errorHandling": {
+    "validationErrors": {
+      "displayMode": "inline",
+      "allowContinue": false
+    },
+    "networkErrors": {
+      "retryAttempts": 3,
+      "fallbackMessage": "Unable to validate input. Please check your connection and try again."
+    }
+  },
+  "accessibility": {
+    "screenReaderSupport": true,
+    "keyboardNavigation": true,
+    "highContrastMode": true
+  }
+}

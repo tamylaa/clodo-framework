@@ -1,0 +1,208 @@
+{
+  "data": {
+    "timestamp": "2025-10-17T15:13:45.160Z",
+    "discovery": {
+      "artifacts": {
+        "wrangler": {
+          "exists": true,
+          "capabilities": [
+            "deployment"
+          ],
+          "bindings": {
+            "d1_databases": [
+              {
+                "binding": "DB"
+              }
+            ]
+          },
+          "environments": [
+            "production"
+          ]
+        },
+        "package": {
+          "exists": true,
+          "capabilities": [
+            {
+              "type": "framework",
+              "provider": "clodo-framework"
+            }
+          ]
+        },
+        "structure": {
+          "exists": true,
+          "capabilities": []
+        },
+        "apiToken": {
+          "available": true,
+          "permissions": [
+            "D1:Edit",
+            "Workers Scripts:Edit"
+          ],
+          "capabilities": {
+            "database": {
+              "possible": true,
+              "configured": true
+            },
+            "deployment": {
+              "possible": true,
+              "configured": true
+            }
+          }
+        }
+      },
+      "capabilities": {
+        "deployment": {
+          "configured": true,
+          "provider": "cloudflare"
+        },
+        "database": {
+          "configured": true,
+          "provider": "d1"
+        },
+        "framework": {
+          "configured": true,
+          "provider": "clodo-framework"
+        }
+      },
+      "assessment": {
+        "serviceType": "data-service",
+        "maturity": "developing",
+        "completeness": 75
+      }
+    },
+    "userInputs": {},
+    "mergedInputs": {
+      "serviceType": "data-service",
+      "environments": [
+        "production"
+      ],
+      "discoveredCapabilities": {
+        "deployment": {
+          "configured": true,
+          "provider": "cloudflare"
+        },
+        "database": {
+          "configured": true,
+          "provider": "d1"
+        },
+        "framework": {
+          "configured": true,
+          "provider": "clodo-framework"
+        }
+      }
+    },
+    "capabilityManifest": {
+      "serviceType": "data-service",
+      "requiredCapabilities": [
+        "database",
+        "data-validation",
+        "crud-operations"
+      ],
+      "optionalCapabilities": [
+        "caching",
+        "data-export",
+        "backup-restore"
+      ],
+      "infrastructure": [
+        "deployment",
+        "d1-database"
+      ],
+      "security": [
+        "basic-auth",
+        "rate-limiting",
+        "cors"
+      ],
+      "monitoring": [
+        "health-checks",
+        "error-tracking",
+        "performance-monitoring"
+      ],
+      "apiTokenCapabilities": {},
+      "discoveredCapabilities": {
+        "deployment": {
+          "configured": true,
+          "provider": "cloudflare"
+        },
+        "database": {
+          "configured": true,
+          "provider": "d1"
+        },
+        "framework": {
+          "configured": true,
+          "provider": "clodo-framework"
+        }
+      },
+      "urls": {
+        "api": "https://my-service.example.com",
+        "worker": "https://my-service-worker.example.com",
+        "database": "https://my-service-db.example.com",
+        "admin": "https://my-service-admin.example.com"
+      },
+      "database": {
+        "type": "d1",
+        "name": "service-db"
+      },
+      "endpoints": [
+        "GET /data",
+        "POST /data",
+        "GET /data/:id",
+        "PUT /data/:id",
+        "DELETE /data/:id"
+      ],
+      "features": [
+        "data-validation",
+        "crud-operations",
+        "query-builder",
+        "backup",
+        "production-optimization"
+      ],
+      "environment": "production",
+      "resources": {
+        "cpu": "256 MB",
+        "memory": "512 MB",
+        "storage": "10 GB",
+        "database": "5 GB"
+      }
+    },
+    "gapAnalysis": {
+      "missing": [],
+      "partiallyConfigured": [],
+      "fullyConfigured": [
+        {
+          "capability": "database",
+          "provider": "d1"
+        },
+        {
+          "capability": "data-validation",
+          "provider": "d1"
+        },
+        {
+          "capability": "crud-operations",
+          "provider": "d1"
+        }
+      ],
+      "overProvisioned": [],
+      "recommendations": []
+    },
+    "recommendations": [
+      {
+        "type": "upgrade",
+        "priority": "medium",
+        "reason": "Framework detected - ensure latest version",
+        "action": "Check for framework updates and new features",
+        "effort": "low"
+      },
+      {
+        "type": "security",
+        "priority": "medium",
+        "reason": "Security capabilities should be reviewed",
+        "action": "Add authentication and authorization checks",
+        "effort": "medium"
+      }
+    ],
+    "confidence": 78.5,
+    "cached": false
+  },
+  "timestamp": 1760714025164,
+  "key": "e7201b1e156d351524df479cc7f52bbdfc551d7431f3d9a4810075066a00b62c"
+}

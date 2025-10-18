@@ -1,0 +1,24 @@
+name = "my-service"
+main = "dist/index.js"
+compatibility_date = "2024-01-01"
+
+[env.staging]
+name = "my-service-staging"
+
+[env.development]
+name = "my-service"
+
+  [[env.development.d1_databases]]
+  binding = "DB"
+  database_name = "test-db"
+  database_id = "new-id"
+
+  [[env.development.d1_databases]]
+  binding = "DB1"
+  database_name = "test-db-1"
+  database_id = "id-1"
+
+  [[env.development.d1_databases]]
+  binding = "DB2"
+  database_name = "test-db-2"
+  database_id = "id-2"

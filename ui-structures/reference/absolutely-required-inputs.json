@@ -1,0 +1,315 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Three-tier categorization of CLODO Framework inputs with service manifest generation",
+    "created": "2025-10-08",
+    "categories": {
+      "absolutelyRequired": 6,
+      "userConfirmable": 15,
+      "absolutelyGeneratable": 67
+    },
+    "totalInputs": 88,
+    "automationPotential": "76.1%"
+  },
+  "categories": {
+    "absolutelyRequired": {
+      "description": "Core inputs that cannot be derived or assumed - must be provided by user",
+      "count": 6,
+      "inputs": ["service-name", "environment", "domain-name", "service-type", "customer-name", "cloudflare-api-token"],
+      "collectionOrder": "Logical sequence: fundamental identifier → environment context → domain scope → architecture type → customer context → technical access"
+    },
+    "userConfirmable": {
+      "description": "Derived inputs that can be auto-generated but should be presented for user review, confirmation, or customization",
+      "count": 15,
+      "rationale": "Users want flexibility to customize branding, URLs, descriptions, and configuration preferences",
+      "inputs": [
+        "display-name", "description", "version", "author",
+        "production-url", "staging-url", "development-url",
+        "service-directory", "database-name", "worker-name",
+        "log-level", "cors-policy", "env-prefix"
+      ]
+    },
+    "absolutelyGeneratable": {
+      "description": "Inputs that can be fully automated through discovery, API calls, or strict conventions",
+      "count": 66,
+      "automationMethods": ["file-discovery", "api-resolution", "convention-based", "context-inference"],
+      "inputs": [
+        "config-file-paths", "cloudflare-account-id", "cloudflare-zone-id",
+        "d1-database-id", "deployment-url", "customer-id", "customer-config-path",
+        "service-template", "deployment-strategy", "monitoring-config",
+        "security-policies", "resource-limits", "debug-mode", "node-env",
+        "repository-info", "branch-info", "commit-hash", "build-timestamps",
+        "dependency-versions", "environment-variables", "file-permissions",
+        "cache-settings", "backup-configurations", "health-check-endpoints"
+      ]
+    }
+  },
+  "absolutelyRequiredInputs": {
+    "service-name": {
+      "description": "The fundamental service identifier",
+      "type": "string",
+      "required": true,
+      "collectionOrder": 1,
+      "validation": {
+        "pattern": "^[a-z][a-z0-9-]*$",
+        "minLength": 3,
+        "maxLength": 50
+      },
+      "examples": ["user-service", "data-processor", "api-gateway"],
+      "userConfirmableDerivatives": 7,
+      "absolutelyGeneratableDerivatives": 12
+    },
+    "domain-name": {
+      "description": "Primary domain for service operations",
+      "type": "string",
+      "required": true,
+      "collectionOrder": 3,
+      "validation": {
+        "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-\\.]*\\.[a-zA-Z]{2,}$",
+        "minLength": 4,
+        "maxLength": 253
+      },
+      "examples": ["mycompany.com", "api.example.org", "staging.internal"],
+      "userConfirmableDerivatives": 6,
+      "absolutelyGeneratableDerivatives": 8
+    },
+    "environment": {
+      "description": "Deployment target environment",
+      "type": "string",
+      "required": true,
+      "collectionOrder": 2,
+      "allowedValues": ["development", "staging", "production"],
+      "default": "development",
+      "validation": {
+        "enum": ["development", "staging", "production"]
+      },
+      "userConfirmableDerivatives": 5,
+      "absolutelyGeneratableDerivatives": 15
+    },
+    "cloudflare-api-token": {
+      "description": "Cloudflare API token for infrastructure management",
+      "type": "string",
+      "required": "contextual",
+      "collectionOrder": 6,
+      "context": "when not using environment variables for credentials",
+      "validation": {
+        "pattern": "^[A-Za-z0-9_-]{40,}$",
+        "minLength": 40
+      },
+      "userConfirmableDerivatives": 2,
+      "absolutelyGeneratableDerivatives": 8
+    },
+    "customer-name": {
+      "description": "Customer identifier for multi-tenant operations",
+      "type": "string",
+      "required": "contextual",
+      "collectionOrder": 5,
+      "context": "when deploying customer-specific services",
+      "validation": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9-_]*$",
+        "minLength": 2,
+        "maxLength": 30
+      },
+      "examples": ["acme-corp", "tech-startup", "enterprise-client"],
+      "userConfirmableDerivatives": 3,
+      "absolutelyGeneratableDerivatives": 6
+    },
+    "service-type": {
+      "description": "Service architecture pattern",
+      "type": "string",
+      "required": "contextual",
+      "collectionOrder": 4,
+      "context": "when not using generic service template",
+      "allowedValues": ["api", "worker", "database", "hybrid", "generic"],
+      "default": "generic",
+      "validation": {
+        "enum": ["api", "worker", "database", "hybrid", "generic"]
+      },
+      "userConfirmableDerivatives": 4,
+      "absolutelyGeneratableDerivatives": 17
+    }
+  },
+  "userConfirmableDerivatives": {
+    "description": "Inputs that should be auto-generated but presented for user confirmation/customization",
+    "count": 15,
+    "interaction": "show generated value, allow edit, require confirmation",
+    "rules": {
+      "display-name": {
+        "logic": "title-case conversion of service-name",
+        "example": "user-service → User Service",
+        "customization": "users may want custom branding"
+      },
+      "description": {
+        "logic": "template: 'A {service-type} service built with CLODO Framework'",
+        "example": "A api service built with CLODO Framework",
+        "customization": "users may want specific descriptions"
+      },
+      "version": {
+        "logic": "read from package.json or default to 1.0.0",
+        "fallback": "1.0.0",
+        "customization": "users may want to set specific versions"
+      },
+      "author": {
+        "logic": "process.env.USER or git config user.name",
+        "fallback": "CLODO Framework",
+        "customization": "users may want to specify team/organization"
+      },
+      "production-url": {
+        "logic": "api.{domain-name}",
+        "example": "api.mycompany.com",
+        "customization": "users may have specific subdomain preferences"
+      },
+      "staging-url": {
+        "logic": "staging-api.{domain-name}",
+        "example": "staging-api.mycompany.com",
+        "customization": "users may want different staging patterns"
+      },
+      "development-url": {
+        "logic": "dev-api.{domain-name}",
+        "example": "dev-api.mycompany.com",
+        "customization": "users may want different dev patterns"
+      },
+      "service-directory": {
+        "logic": "./services/{service-name}",
+        "example": "./services/user-service",
+        "customization": "users may have different directory structures"
+      },
+      "database-name": {
+        "logic": "{service-name}-db",
+        "example": "user-service-db",
+        "customization": "users may want custom database naming"
+      },
+      "worker-name": {
+        "logic": "{service-name}-worker",
+        "example": "user-service-worker",
+        "customization": "users may want custom worker naming"
+      },
+      "log-level": {
+        "logic": "environment-based default (production: warn, staging: info, development: debug)",
+        "customization": "users may want different log verbosity"
+      },
+      "cors-policy": {
+        "logic": "environment-based (production: restrict to domain, development: allow all)",
+        "customization": "users may have specific CORS requirements"
+      },
+      "env-prefix": {
+        "logic": "environment-based (PROD_, STAGING_, DEV_)",
+        "customization": "users may want different prefixes"
+      }
+    }
+  },
+  "absolutelyGeneratableDerivatives": {
+    "description": "Inputs that can be fully automated without user interaction",
+    "count": 66,
+    "interaction": "generate automatically, no user confirmation needed",
+    "rules": {
+      "config-file-paths": {
+        "logic": "file system discovery (find package.json, wrangler.toml, etc.)",
+        "automation": "recursive search with fallbacks"
+      },
+      "cloudflare-account-id": {
+        "logic": "API call using cloudflare-api-token",
+        "automation": "Cloudflare API resolution"
+      },
+      "cloudflare-zone-id": {
+        "logic": "API call using domain-name + cloudflare-api-token",
+        "automation": "Cloudflare API resolution"
+      },
+      "d1-database-id": {
+        "logic": "API call to list D1 databases matching service-name",
+        "automation": "Cloudflare API resolution"
+      },
+      "deployment-url": {
+        "logic": "construct from cloudflare-zone-id",
+        "automation": "URL construction"
+      },
+      "customer-id": {
+        "logic": "lookup from customer database using customer-name",
+        "automation": "database lookup"
+      },
+      "customer-config-path": {
+        "logic": "./customers/{customer-name}/config.json",
+        "automation": "path construction"
+      },
+      "service-template": {
+        "logic": "select template based on service-type",
+        "automation": "template selection"
+      },
+      "deployment-strategy": {
+        "logic": "service-type + environment based rules",
+        "automation": "rule-based selection"
+      },
+      "monitoring-config": {
+        "logic": "service-type templates with environment overrides",
+        "automation": "template application"
+      },
+      "security-policies": {
+        "logic": "environment + service-type security profiles",
+        "automation": "policy application"
+      },
+      "resource-limits": {
+        "logic": "service-type resource templates",
+        "automation": "resource allocation"
+      },
+      "debug-mode": {
+        "logic": "environment === 'development'",
+        "automation": "boolean logic"
+      },
+      "node-env": {
+        "logic": "direct mapping from environment",
+        "automation": "value mapping"
+      },
+      "repository-info": {
+        "logic": "git config remote.origin.url",
+        "automation": "git command execution"
+      },
+      "branch-info": {
+        "logic": "git rev-parse --abbrev-ref HEAD",
+        "automation": "git command execution"
+      },
+      "commit-hash": {
+        "logic": "git rev-parse HEAD",
+        "automation": "git command execution"
+      },
+      "build-timestamps": {
+        "logic": "new Date().toISOString()",
+        "automation": "timestamp generation"
+      },
+      "dependency-versions": {
+        "logic": "read from package.json dependencies",
+        "automation": "file parsing"
+      },
+      "environment-variables": {
+        "logic": "construct from all inputs using naming conventions",
+        "automation": "variable generation"
+      },
+      "file-permissions": {
+        "logic": "service-type based permission templates",
+        "automation": "permission assignment"
+      },
+      "cache-settings": {
+        "logic": "environment + service-type cache profiles",
+        "automation": "cache configuration"
+      },
+      "backup-configurations": {
+        "logic": "service-type + environment backup policies",
+        "automation": "backup setup"
+      },
+      "health-check-endpoints": {
+        "logic": "service-type standard health check patterns",
+        "automation": "endpoint generation"
+      }
+    }
+  },
+  "acquisitionStrategy": {
+    "primary": "interactive prompts for core inputs only",
+    "secondary": "environment variable fallbacks",
+    "tertiary": "file-based configuration discovery",
+    "fallback": "sensible defaults and auto-generation"
+  },
+  "validationStrategy": {
+    "preValidation": "validate core inputs before derivation",
+    "crossValidation": "ensure derived values are consistent",
+    "postValidation": "test derived configurations against schemas"
+  }
+}

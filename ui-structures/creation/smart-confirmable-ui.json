@@ -1,0 +1,451 @@
+{
+  "template": {
+    "name": "smart-confirmable-ui",
+    "description": "UI template for presenting auto-generated defaults that users can confirm or customize",
+    "version": "1.0.0",
+    "category": "user-confirmable",
+    "inputCount": 15,
+    "estimatedTime": "3-5 minutes",
+    "uiType": "confirmation-with-editing"
+  },
+  "collectionStrategy": {
+    "phase": 2,
+    "title": "Review & Customize Generated Settings",
+    "description": "We've generated smart defaults based on your core inputs. Review and customize as needed.",
+    "progressIndicator": "Step 2 of 3: Review & Customize",
+    "validationMode": "flexible",
+    "allowBackNavigation": true,
+    "allowSkip": true,
+    "batchOperations": {
+      "acceptAll": true,
+      "acceptCategory": true,
+      "resetToDefaults": true
+    }
+  },
+  "categories": [
+    {
+      "id": "branding",
+      "title": "Branding & Identity",
+      "description": "Service names, descriptions, and authorship",
+      "inputs": ["display-name", "description", "version", "author"]
+    },
+    {
+      "id": "networking",
+      "title": "Networking & URLs",
+      "description": "API endpoints and service URLs",
+      "inputs": ["production-url", "staging-url", "development-url"]
+    },
+    {
+      "id": "structure",
+      "title": "Project Structure",
+      "description": "Directories, databases, and resource naming",
+      "inputs": ["service-directory", "database-name", "worker-name"]
+    },
+    {
+      "id": "configuration",
+      "title": "Configuration & Behavior",
+      "description": "Logging, security, and environment settings",
+      "inputs": ["log-level", "cors-policy", "env-prefix"]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "display-name",
+      "category": "branding",
+      "order": 1,
+      "ui": {
+        "type": "text-input",
+        "label": "Display Name",
+        "description": "Human-readable name for your service",
+        "helpText": "This will be shown in dashboards, documentation, and user interfaces",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "title-case conversion of service-name",
+        "example": "user-service → User Service"
+      },
+      "validation": {
+        "minLength": 3,
+        "maxLength": 100
+      },
+      "customization": {
+        "commonReasons": ["Branding preferences", "Marketing names", "User-friendly labels"],
+        "impact": "Affects documentation, dashboards, and user-facing displays"
+      }
+    },
+    {
+      "id": "description",
+      "category": "branding",
+      "order": 2,
+      "ui": {
+        "type": "textarea",
+        "label": "Service Description",
+        "description": "Brief description of what this service does",
+        "helpText": "This will be used in documentation and service registries",
+        "required": true,
+        "showDefault": true,
+        "rows": 3
+      },
+      "generation": {
+        "logic": "template: 'A {service-type} service built with CLODO Framework'",
+        "example": "A api service built with CLODO Framework"
+      },
+      "validation": {
+        "minLength": 10,
+        "maxLength": 500
+      },
+      "customization": {
+        "commonReasons": ["Specific functionality details", "Business context", "Technical capabilities"],
+        "impact": "Affects documentation, API descriptions, and service discovery"
+      }
+    },
+    {
+      "id": "version",
+      "category": "branding",
+      "order": 3,
+      "ui": {
+        "type": "text-input",
+        "label": "Initial Version",
+        "description": "Starting version number for your service",
+        "helpText": "Follows semantic versioning (major.minor.patch)",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "read from package.json or default to 1.0.0",
+        "fallback": "1.0.0"
+      },
+      "validation": {
+        "pattern": "^\\d+\\.\\d+\\.\\d+$",
+        "customMessage": "Version must follow semantic versioning (e.g., 1.0.0)"
+      },
+      "customization": {
+        "commonReasons": ["Existing version schemes", "Release planning", "Dependency alignment"],
+        "impact": "Affects package management and deployment versioning"
+      }
+    },
+    {
+      "id": "author",
+      "category": "branding",
+      "order": 4,
+      "ui": {
+        "type": "text-input",
+        "label": "Author/Organization",
+        "description": "Who is responsible for this service",
+        "helpText": "Individual name, team name, or organization",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "process.env.USER or git config user.name",
+        "fallback": "CLODO Framework"
+      },
+      "validation": {
+        "minLength": 2,
+        "maxLength": 100
+      },
+      "customization": {
+        "commonReasons": ["Team attribution", "Organization branding", "Contact information"],
+        "impact": "Affects documentation, support attribution, and ownership tracking"
+      }
+    },
+    {
+      "id": "production-url",
+      "category": "networking",
+      "order": 5,
+      "ui": {
+        "type": "text-input",
+        "label": "Production URL",
+        "description": "Primary production endpoint",
+        "helpText": "This will be your main API URL in production",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "api.{domain-name}",
+        "example": "api.mycompany.com"
+      },
+      "validation": {
+        "pattern": "^https?://[a-zA-Z0-9][a-zA-Z0-9-\\.]*\\.[a-zA-Z]{2,}(/.*)?$",
+        "customMessage": "Must be a valid URL starting with http:// or https://"
+      },
+      "customization": {
+        "commonReasons": ["Existing subdomain structure", "CDN requirements", "Load balancer setup"],
+        "impact": "Affects production deployments, client integrations, and DNS configuration"
+      }
+    },
+    {
+      "id": "staging-url",
+      "category": "networking",
+      "order": 6,
+      "ui": {
+        "type": "text-input",
+        "label": "Staging URL",
+        "description": "Testing environment endpoint",
+        "helpText": "Used for pre-production testing and validation",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "staging-api.{domain-name}",
+        "example": "staging-api.mycompany.com"
+      },
+      "validation": {
+        "pattern": "^https?://[a-zA-Z0-9][a-zA-Z0-9-\\.]*\\.[a-zA-Z]{2,}(/.*)?$",
+        "customMessage": "Must be a valid URL starting with http:// or https://"
+      },
+      "customization": {
+        "commonReasons": ["Testing environment naming", "Isolation requirements", "CI/CD pipeline setup"],
+        "impact": "Affects testing workflows, QA processes, and staging deployments"
+      }
+    },
+    {
+      "id": "development-url",
+      "category": "networking",
+      "order": 7,
+      "ui": {
+        "type": "text-input",
+        "label": "Development URL",
+        "description": "Local development endpoint",
+        "helpText": "Used during local development and debugging",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "dev-api.{domain-name}",
+        "example": "dev-api.mycompany.com"
+      },
+      "validation": {
+        "pattern": "^https?://[a-zA-Z0-9][a-zA-Z0-9-\\.]*\\.[a-zA-Z]{2,}(/.*)?$",
+        "customMessage": "Must be a valid URL starting with http:// or https://"
+      },
+      "customization": {
+        "commonReasons": ["Local development setup", "Debugging preferences", "Team conventions"],
+        "impact": "Affects local development workflow and debugging processes"
+      }
+    },
+    {
+      "id": "service-directory",
+      "category": "structure",
+      "order": 8,
+      "ui": {
+        "type": "text-input",
+        "label": "Service Directory",
+        "description": "Directory path for this service",
+        "helpText": "Relative to project root",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "./services/{service-name}",
+        "example": "./services/user-service"
+      },
+      "validation": {
+        "pattern": "^\\./[a-zA-Z0-9][a-zA-Z0-9-_/]*$",
+        "customMessage": "Must be a relative path starting with ./"
+      },
+      "customization": {
+        "commonReasons": ["Existing project structure", "Monorepo organization", "Team conventions"],
+        "impact": "Affects file organization, build processes, and deployment scripts"
+      }
+    },
+    {
+      "id": "database-name",
+      "category": "structure",
+      "order": 9,
+      "ui": {
+        "type": "text-input",
+        "label": "Database Name",
+        "description": "Name for the service's database",
+        "helpText": "Used for D1 database and connection strings",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "{service-name}-db",
+        "example": "user-service-db"
+      },
+      "validation": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9-_]*$",
+        "minLength": 3,
+        "maxLength": 63
+      },
+      "customization": {
+        "commonReasons": ["Database naming conventions", "Existing databases", "Multi-environment needs"],
+        "impact": "Affects database creation, migrations, and connection configurations"
+      }
+    },
+    {
+      "id": "worker-name",
+      "category": "structure",
+      "order": 10,
+      "ui": {
+        "type": "text-input",
+        "label": "Worker Name",
+        "description": "Name for the Cloudflare Worker",
+        "helpText": "Used for deployment and worker management",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "{service-name}-worker",
+        "example": "user-service-worker"
+      },
+      "validation": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9-_]*$",
+        "minLength": 3,
+        "maxLength": 63
+      },
+      "customization": {
+        "commonReasons": ["Worker naming conventions", "Deployment strategies", "Resource identification"],
+        "impact": "Affects Cloudflare deployments, monitoring, and worker management"
+      }
+    },
+    {
+      "id": "log-level",
+      "category": "configuration",
+      "order": 11,
+      "ui": {
+        "type": "select",
+        "label": "Log Level",
+        "description": "Default logging verbosity",
+        "helpText": "Controls how much information is logged",
+        "required": true,
+        "showDefault": true,
+        "options": [
+          {
+            "value": "error",
+            "label": "Error Only",
+            "description": "Only log errors and critical issues"
+          },
+          {
+            "value": "warn",
+            "label": "Warnings",
+            "description": "Log warnings and errors"
+          },
+          {
+            "value": "info",
+            "label": "Info",
+            "description": "Log general information, warnings, and errors"
+          },
+          {
+            "value": "debug",
+            "label": "Debug",
+            "description": "Log detailed debugging information"
+          }
+        ]
+      },
+      "generation": {
+        "logic": "environment-based default (production: warn, staging: info, development: debug)",
+        "mapping": {
+          "development": "debug",
+          "staging": "info",
+          "production": "warn"
+        }
+      },
+      "customization": {
+        "commonReasons": ["Debugging needs", "Performance monitoring", "Compliance requirements"],
+        "impact": "Affects log volume, performance, and troubleshooting capabilities"
+      }
+    },
+    {
+      "id": "cors-policy",
+      "category": "configuration",
+      "order": 12,
+      "ui": {
+        "type": "select",
+        "label": "CORS Policy",
+        "description": "Cross-origin resource sharing settings",
+        "helpText": "Controls which domains can access your API",
+        "required": true,
+        "showDefault": true,
+        "options": [
+          {
+            "value": "*",
+            "label": "Allow All (*)",
+            "description": "Allow requests from any domain (development only)"
+          },
+          {
+            "value": "same-origin",
+            "label": "Same Origin",
+            "description": "Only allow requests from the same domain"
+          },
+          {
+            "value": "domain",
+            "label": "Domain Only",
+            "description": "Only allow requests from your domain"
+          },
+          {
+            "value": "custom",
+            "label": "Custom Origins",
+            "description": "Specify custom allowed origins"
+          }
+        ]
+      },
+      "generation": {
+        "logic": "environment-based (production: restrict to domain, development: allow all)",
+        "mapping": {
+          "development": "*",
+          "staging": "domain",
+          "production": "domain"
+        }
+      },
+      "customization": {
+        "commonReasons": ["Security requirements", "Multi-domain needs", "Third-party integrations"],
+        "impact": "Affects API accessibility, security, and integration capabilities"
+      }
+    },
+    {
+      "id": "env-prefix",
+      "category": "configuration",
+      "order": 13,
+      "ui": {
+        "type": "text-input",
+        "label": "Environment Variable Prefix",
+        "description": "Prefix for environment-specific variables",
+        "helpText": "Used to namespace environment variables",
+        "required": true,
+        "showDefault": true
+      },
+      "generation": {
+        "logic": "environment-based (PROD_, STAGING_, DEV_)",
+        "mapping": {
+          "development": "DEV_",
+          "staging": "STAGING_",
+          "production": "PROD_"
+        }
+      },
+      "validation": {
+        "pattern": "^[A-Z][A-Z0-9_]*_$",
+        "customMessage": "Must be uppercase letters, numbers, underscores, ending with underscore"
+      },
+      "customization": {
+        "commonReasons": ["Existing conventions", "Multi-service environments", "Deployment strategies"],
+        "impact": "Affects environment variable naming and configuration management"
+      }
+    }
+  ],
+  "completion": {
+    "message": "Configuration customized! 🎨",
+    "summary": "Reviewed and customized {acceptedCount} of {totalCount} settings",
+    "nextPhase": "automated-generation",
+    "estimatedNextTime": "30 seconds"
+  },
+  "bulkActions": {
+    "acceptAll": {
+      "label": "Accept All Defaults",
+      "description": "Use all auto-generated values without changes",
+      "confirmation": "This will apply all default values. You can change them later if needed."
+    },
+    "acceptCategory": {
+      "label": "Accept Category",
+      "description": "Accept all defaults in a category",
+      "categories": ["branding", "networking", "structure", "configuration"]
+    },
+    "resetToDefaults": {
+      "label": "Reset to Defaults",
+      "description": "Revert all changes back to auto-generated defaults"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "customer": "mycompany",
+  "environment": "production",
+  "serviceName": "my-api-service",
+  "serviceType": "data-service",
+  "domainName": "api.mycompany.com",
+  "cloudflareToken": "CLOUDFLARE_API_TOKEN_PLACEHOLDER",
+  "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+  "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+  "displayName": "My Company API Service",
+  "description": "Production API service for customer data management"
+}
