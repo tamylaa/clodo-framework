@@ -1,6 +1,10 @@
-import { deepMerge, validateRequired, createLogger } from '../utils/index.js';
-
-const logger = createLogger('DomainConfig');
+// Simple inline logger to avoid circular dependency with index.js
+const logger = {
+  info: (message, ...args) => console.log(`[DomainConfig] ${message}`, ...args),
+  error: (message, ...args) => console.error(`[DomainConfig] ${message}`, ...args),
+  warn: (message, ...args) => console.warn(`[DomainConfig] ${message}`, ...args),
+  debug: (message, ...args) => console.debug(`[DomainConfig] ${message}`, ...args)
+};
 
 /**
  * Creates a base domain configuration schema

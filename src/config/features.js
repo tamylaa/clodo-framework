@@ -1,6 +1,10 @@
-import { createLogger } from '../utils/index.js';
-
-const logger = createLogger('FeatureFlags');
+// Simple inline logger to avoid circular dependency with index.js
+const logger = {
+  info: (message, ...args) => console.log(`[FeatureFlagManager] ${message}`, ...args),
+  error: (message, ...args) => console.error(`[FeatureFlagManager] ${message}`, ...args),
+  warn: (message, ...args) => console.warn(`[FeatureFlagManager] ${message}`, ...args),
+  debug: (message, ...args) => console.debug(`[FeatureFlagManager] ${message}`, ...args)
+};
 
 /**
  * Feature Flag Manager Class

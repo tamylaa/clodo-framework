@@ -3,12 +3,17 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSy
 import { resolve, join } from 'path';
 import toml from '@iarna/toml';
 import { createDomainConfigSchema, validateDomainConfig, createDomainRegistry } from './domains.js';
-import { createLogger } from '../utils/index.js';
 import { getDirname } from '../utils/esm-helper.js';
 
 const __dirname = getDirname(import.meta.url, 'src/config');
 
-const logger = createLogger('CustomerConfig');
+// Simple inline logger to avoid circular dependency with index.js
+const logger = {
+  info: (message, ...args) => console.log(`[CustomerConfig] ${message}`, ...args),
+  error: (message, ...args) => console.error(`[CustomerConfig] ${message}`, ...args),
+  warn: (message, ...args) => console.warn(`[CustomerConfig] ${message}`, ...args),
+  debug: (message, ...args) => console.debug(`[CustomerConfig] ${message}`, ...args)
+};
 
 /**
  * Customer Configuration Manager

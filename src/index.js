@@ -24,6 +24,14 @@ export { WranglerDeployer } from './deployment/wrangler-deployer.js';
 // Security components
 export * from './security/index.js';
 
+// Service management components
+export { ServiceCreator, createService } from './service-management/ServiceCreator.js';
+export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
+export { InputHandler } from './service-management/handlers/InputHandler.js';
+export { ConfirmationHandler } from './service-management/handlers/ConfirmationHandler.js';
+export { GenerationHandler } from './service-management/handlers/GenerationHandler.js';
+export { ValidationHandler } from './service-management/handlers/ValidationHandler.js';
+
 // Framework version info
 export const FRAMEWORK_VERSION = '1.0.0';
 export const FRAMEWORK_NAME = 'Clodo Framework';

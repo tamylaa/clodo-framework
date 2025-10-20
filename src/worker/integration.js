@@ -1,8 +1,13 @@
 import { featureManager, COMMON_FEATURES } from '../config/features.js';
 import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js';
-import { createLogger } from '../utils/index.js';
 
-const logger = createLogger('WorkerIntegration');
+// Simple inline logger to avoid circular dependency with index.js
+const logger = {
+  info: (message, ...args) => console.log(`[WorkerIntegration] ${message}`, ...args),
+  error: (message, ...args) => console.error(`[WorkerIntegration] ${message}`, ...args),
+  warn: (message, ...args) => console.warn(`[WorkerIntegration] ${message}`, ...args),
+  debug: (message, ...args) => console.debug(`[WorkerIntegration] ${message}`, ...args)
+};
 
 /**
  * Initializes a service with domain and feature context
