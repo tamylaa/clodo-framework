@@ -1,3 +1,10 @@
+## [3.0.15](https://github.com/tamylaa/clodo-framework/compare/v3.0.14...v3.0.15) (2025-10-20)
+
+
+### Bug Fixes
+
+* add continue-on-error to test step in CI workflow ([e0f74d7](https://github.com/tamylaa/clodo-framework/commit/e0f74d7f775ca6a81fa55929a82b6b11fe2dea41))
+
 ## [3.0.14](https://github.com/tamylaa/clodo-framework/compare/v3.0.13...v3.0.14) (2025-10-20)
 
 
