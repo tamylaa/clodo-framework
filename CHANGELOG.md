@@ -1,3 +1,20 @@
+## [3.0.14](https://github.com/tamylaa/clodo-framework/compare/v3.0.13...v3.0.14) (2025-10-20)
+
+
+### Bug Fixes
+
+* add test environment compatibility fixes for ES modules ([71a033d](https://github.com/tamylaa/clodo-framework/commit/71a033d5d959480879c1a4771005553116e8671f))
+* ignore deployment artifacts in deployments/ directory ([768f453](https://github.com/tamylaa/clodo-framework/commit/768f453cbabb984509613a382d86875c1309bcd2))
+* resolve circular dependency in FeatureFlagManager ([d04956f](https://github.com/tamylaa/clodo-framework/commit/d04956f83527d3236fce2fe9750f71cdf0ba8d8e))
+* resolve ESLint errors and update test expectations ([b1188be](https://github.com/tamylaa/clodo-framework/commit/b1188be66d3723bfff62431f6e0eabec685b0111))
+* revert Jest config to working configuration that passes tests ([35a2846](https://github.com/tamylaa/clodo-framework/commit/35a28466c8a48c78011c128f89695399e8500341))
+* update Jest config to properly handle ES modules ([1a951c7](https://github.com/tamylaa/clodo-framework/commit/1a951c7ae147ddb8bef0ec1508c858ac044423b7))
+* update package-lock.json to sync with package.json dependencies ([a3ef884](https://github.com/tamylaa/clodo-framework/commit/a3ef8844cba2b5657a3493b8339c98049a57dd72))
+* update package.json semantic release config to support main branch ([a06b2e8](https://github.com/tamylaa/clodo-framework/commit/a06b2e899ceb7699b67292157991d64c88dedae3))
+* update semantic release config to support main branch ([4102e6c](https://github.com/tamylaa/clodo-framework/commit/4102e6c4cb4f52d065750239c2a0c5a89b733ac0))
+* update version to 3.0.13 to sync with release history ([f9bb4d4](https://github.com/tamylaa/clodo-framework/commit/f9bb4d463a3884b82e972962e5fcd21a272c3acb))
+* use os.tmpdir() for test paths to fix CI permission errors ([022c771](https://github.com/tamylaa/clodo-framework/commit/022c771994635002410c27d8eb7ec8f0614acf6f))
+
 ## [3.0.12](https://github.com/tamylaa/clodo-framework/compare/v3.0.11...v3.0.12) (2025-10-14)
 
 
