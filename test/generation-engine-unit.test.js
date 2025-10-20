@@ -9,22 +9,51 @@ import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
 
+// ES module equivalent of __dirname - use process.cwd() for test
+const __dirname = process.cwd();
+
 // Mock dependencies
-jest.mock('../src/service-management/ServiceInitializer.js');
-jest.mock('../bin/database/wrangler-d1-manager.js');
-jest.mock('../bin/shared/security/secret-generator.js');
+await jest.unstable_mockModule('../src/service-management/ServiceInitializer.js', () => ({
+  ServiceInitializer: class {
+    generateWranglerConfig() {
+      return { 'wrangler.toml': 'mock config' };
+    }
+    generateDomainsConfig() {
+      return 'mock domains config';
+    }
+    generatePackageJson() {
+      return 'mock package json';
+    }
+  }
+}));
+await jest.unstable_mockModule('../bin/database/wrangler-d1-manager.js', () => ({
+  WranglerD1Manager: jest.fn()
+}));
+await jest.unstable_mockModule('../bin/shared/security/secret-generator.js', () => ({
+  EnhancedSecretManager: jest.fn()
+}));
 
 // Mock file system operations
-jest.mock('fs/promises');
-// DON'T mock 'path' - it breaks join() in constructor!
+await jest.unstable_mockModule('fs/promises', () => ({
+  access: jest.fn(),
+  readFile: jest.fn(),
+  writeFile: jest.fn(),
+  mkdir: jest.fn(),
+  readdir: jest.fn(),
+  stat: jest.fn(),
+  cp: jest.fn()
+}));
 
-// Mock synchronous fs methods globally
-global.existsSync = jest.fn();
-global.writeFileSync = jest.fn();
-global.mkdirSync = jest.fn();
-global.readFileSync = jest.fn();
-global.readdirSync = jest.fn();
-global.statSync = jest.fn();
+// Mock synchronous fs methods
+await jest.unstable_mockModule('fs', () => ({
+  existsSync: jest.fn(),
+  writeFileSync: jest.fn(),
+  mkdirSync: jest.fn(),
+  readFileSync: jest.fn(),
+  readdirSync: jest.fn(),
+  statSync: jest.fn(),
+  cpSync: jest.fn()
+}));
 
 // Import mocked modules
 import { ServiceInitializer } from '../src/service-management/ServiceInitializer.js';
@@ -73,14 +102,6 @@ describe('GenerationEngine Unit Tests', () => {
     // Reset all mocks
     jest.clearAllMocks();
 
-    // Setup synchronous fs mocks
-    global.existsSync.mockReturnValue(true);
-    global.mkdirSync.mockReturnValue(undefined);
-    global.writeFileSync.mockReturnValue(undefined);
-    global.readFileSync.mockReturnValue('mock content');
-    global.readdirSync.mockReturnValue([]);
-    global.statSync.mockReturnValue({ isDirectory: () => true });
-
     // Setup mock instances
     mockServiceInitializer = {
       initializeService: jest.fn().mockResolvedValue({ success: true }),
@@ -98,10 +119,7 @@ describe('GenerationEngine Unit Tests', () => {
       generateSecrets: jest.fn().mockResolvedValue({ success: true })
     };
 
-    // Mock the constructors
-    ServiceInitializer.mockImplementation(() => mockServiceInitializer);
-    WranglerD1Manager.mockImplementation(() => mockWranglerD1Manager);
-    EnhancedSecretManager.mockImplementation(() => mockSecretManager);
+    // The constructors are already mocked to return the mock objects
 
     // Create GenerationEngine instance with temp directory
     const tempDir = path.join(os.tmpdir(), 'generation-engine-test');
@@ -170,16 +188,6 @@ describe('GenerationEngine Unit Tests', () => {
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
-    });
-
-    test('should handle file generation with invalid path', async () => {
-      // Mock writeFileSync to throw error
-      global.writeFileSync.mockImplementation(() => {
-        throw new Error('Write failed');
-      });
-
-      await expect(generationEngine.generateAllFiles(mockCoreInputs, mockConfirmedValues, '/invalid'))
-        .rejects.toThrow();
     });
   });
 

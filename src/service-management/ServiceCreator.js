@@ -11,7 +11,16 @@ const SERVICE_TYPES = ['data-service', 'auth-service', 'content-service', 'api-g
 
 export class ServiceCreator {
   constructor(options = {}) {
-    this.templatesDir = options.templatesDir || join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'templates');
+    const templatesDir = (() => {
+      try {
+        return join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'templates');
+      } catch (error) {
+        // Fallback for test environments - use current working directory
+        return join(process.cwd(), 'templates');
+      }
+    })();
+    
+    this.templatesDir = options.templatesDir || templatesDir;
     this.serviceTypes = options.serviceTypes || SERVICE_TYPES;
   }
 

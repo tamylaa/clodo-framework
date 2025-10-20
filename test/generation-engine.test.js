@@ -1,36 +1,21 @@
 /**
  * GenerationEngine Integration Test Suite
  *
- * Tests the GenerationEngine through CLI integration      // Chec      // Check for generated manifest
-      const manifestPath = path.join(actualServiceDir, 'clodo-service-manifest.json');
-      expect(fs.existsSync(manifestPath)).toBe(true);
-
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-      expect(manifest.service.name).toBe(testServiceName);
-      expect(manifest.service.type).toBe('generic');
-      expect(manifest.coreInputs.environment).toBe('development');nerated service directory
-      const actualServiceDir = path.join(testOutputDir, testServiceName);
-      expect(fs.existsSync(actualServiceDir)).toBe(true);
-
-      // Check for generated manifest
-      const manifestPath = path.join(actualServiceDir, 'clodo-service-manifest.json');
-      expect(fs.existsSync(manifestPath)).toBe(true);
-
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-      expect(manifest.serviceName).toBe(testServiceName);
-      expect(manifest.serviceType).toBe('generic');
-      expect(manifest.environment).toBe('development');ect testing
+ * Tests the GenerationEngine through CLI integration
  * is blocked by ES module issues in Jest environment.
  */
 
-const { spawn } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { spawn } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+
+// Use process.cwd() and path resolution instead of import.meta.url
+const __dirname = path.resolve();
 
 describe('GenerationEngine CLI Integration Tests', () => {
-  const cliPath = path.join(__dirname, '..', 'bin', 'clodo-service.js');
+  const cliPath = path.join(__dirname, 'bin', 'clodo-service.js');
   const testServiceName = 'test-service-integration';
-  const testOutputDir = path.join(__dirname, '..', 'test-output', testServiceName);
+  const testOutputDir = path.join(__dirname, 'test-output', testServiceName);
 
   // Clean up before and after tests
   beforeEach(() => {

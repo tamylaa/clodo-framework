@@ -5,16 +5,20 @@
  * and mocking interactive components for comprehensive coverage
  */
 
+import { jest } from '@jest/globals';
 import { InputCollector } from '../src/service-management/InputCollector.js';
 import { uiStructuresLoader } from '../src/utils/ui-structures-loader.js';
 
 // Mock readline to avoid actual user interaction
-jest.mock('readline', () => ({
+await jest.unstable_mockModule('readline', () => ({
   createInterface: jest.fn(() => ({
     question: jest.fn(),
     close: jest.fn()
   }))
 }));
+
+// Import readline after mocking
+const readline = await import('readline');
 
 describe('InputCollector', () => {
   let collector;

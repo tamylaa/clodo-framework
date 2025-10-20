@@ -7,11 +7,20 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-const FRAMEWORK_ROOT = (() => {
-  const filename = fileURLToPath(import.meta.url);
-  const dirname_ = dirname(filename);
-  return resolve(dirname_, '..', '..');
-})();
+// Get framework root - handle both ES module and CommonJS environments
+const getFrameworkRoot = () => {
+  try {
+    // Try ES module approach
+    const filename = fileURLToPath(import.meta.url);
+    const dirname_ = dirname(filename);
+    return resolve(dirname_, '..', '..');
+  } catch (error) {
+    // Fallback for test environments - use current working directory
+    return process.cwd();
+  }
+};
+
+const FRAMEWORK_ROOT = getFrameworkRoot();
 const TEMPLATES_DIR = join(FRAMEWORK_ROOT, 'templates');
 const SERVICE_TYPES = ['generic', 'data-service', 'auth-service', 'content-service', 'api-gateway'];
 

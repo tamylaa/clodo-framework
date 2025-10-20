@@ -7,10 +7,13 @@
 import { jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
-import { glob } from 'glob';
 
-// Mock glob for testing
-jest.mock('glob');
+// Import glob after mocking
+await jest.unstable_mockModule('glob', () => ({
+  glob: jest.fn()
+}));
+
+const { glob } = await import('glob');
 
 describe('Import Cleanup Tests', () => {
   beforeEach(() => {

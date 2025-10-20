@@ -17,8 +17,13 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = (() => {
-  const filename = fileURLToPath(import.meta.url);
-  return dirname(filename);
+  try {
+    const filename = fileURLToPath(import.meta.url);
+    return dirname(filename);
+  } catch (error) {
+    // Fallback for test environments - use current working directory
+    return process.cwd();
+  }
 })();
 
 const SECRET_CONFIGS = {

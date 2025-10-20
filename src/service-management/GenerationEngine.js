@@ -37,8 +37,13 @@ import { dirname, join, relative } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
 const __dirname = (() => {
-  const filename = fileURLToPath(import.meta.url);
-  return dirname(filename);
+  try {
+    const filename = fileURLToPath(import.meta.url);
+    return dirname(filename);
+  } catch (error) {
+    // Fallback for test environments - use current working directory
+    return process.cwd();
+  }
 })();
 
 export class GenerationEngine {
@@ -172,12 +177,14 @@ export class GenerationEngine {
     const wranglerConfig = serviceInitializer.generateWranglerConfig(
       coreInputs.serviceName,
       { type: coreInputs.serviceType, env: coreInputs.environment },
-      [{
-        domain: coreInputs.domainName,
-        accountId: coreInputs.cloudflareAccountId,
-        zoneId: coreInputs.cloudflareZoneId,
-        name: `${coreInputs.serviceName}-${coreInputs.environment}`
-      }]
+      {
+        domains: [{
+          domain: coreInputs.domainName,
+          accountId: coreInputs.cloudflareAccountId,
+          zoneId: coreInputs.cloudflareZoneId,
+          name: `${coreInputs.serviceName}-${coreInputs.environment}`
+        }]
+      }
     );
 
     // Write wrangler.toml
@@ -202,12 +209,14 @@ export class GenerationEngine {
     const domainsContent = serviceInitializer.generateDomainsConfig(
       coreInputs.serviceName,
       { type: coreInputs.serviceType, env: coreInputs.environment },
-      [{
-        domain: coreInputs.domainName,
-        accountId: coreInputs.cloudflareAccountId,
-        zoneId: coreInputs.cloudflareZoneId,
-        name: `${coreInputs.serviceName}-${coreInputs.environment}`
-      }]
+      {
+        domains: [{
+          domain: coreInputs.domainName,
+          accountId: coreInputs.cloudflareAccountId,
+          zoneId: coreInputs.cloudflareZoneId,
+          name: `${coreInputs.serviceName}-${coreInputs.environment}`
+        }]
+      }
     );
     const domainsPath = join(servicePath, 'src', 'config', 'domains.js');
     writeFileSync(domainsPath, domainsContent, 'utf8');

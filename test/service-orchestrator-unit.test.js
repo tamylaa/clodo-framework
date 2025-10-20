@@ -10,22 +10,37 @@ import fs from 'fs/promises';
 import path from 'path';
 
 // Mock all the problematic handler imports
-jest.mock('../src/service-management/handlers/InputHandler.js');
-jest.mock('../src/service-management/handlers/ConfirmationHandler.js');
-jest.mock('../src/service-management/handlers/GenerationHandler.js', () => ({
-  GenerationHandler: jest.fn()
+await jest.unstable_mockModule('../src/service-management/handlers/InputHandler.js', () => ({
+  InputHandler: jest.fn(() => mockInputHandler)
 }));
-jest.mock('../src/utils/deployment/wrangler-config-manager.js'); // Updated from ConfigMutator
-jest.mock('../src/service-management/handlers/ValidationHandler.js');
+await jest.unstable_mockModule('../src/service-management/handlers/ConfirmationHandler.js', () => ({
+  ConfirmationHandler: jest.fn(() => mockConfirmationHandler)
+}));
+await jest.unstable_mockModule('../src/service-management/handlers/GenerationHandler.js', () => ({
+  GenerationHandler: jest.fn(() => mockGenerationHandler)
+}));
+await jest.unstable_mockModule('../src/utils/deployment/wrangler-config-manager.js', () => ({
+  WranglerConfigManager: jest.fn(() => mockWranglerConfigManager)
+}));
+await jest.unstable_mockModule('../src/service-management/handlers/ValidationHandler.js', () => ({
+  ValidationHandler: jest.fn(() => mockValidationHandler)
+}));
+
+// Mock ServiceInitializer to avoid ES module issues
+await jest.unstable_mockModule('../src/service-management/ServiceInitializer.js', () => ({
+  ServiceInitializer: jest.fn()
+}));
 
 // Mock legacy imports
-jest.mock('../src/service-management/ServiceCreator.js', () => ({
+await jest.unstable_mockModule('../src/service-management/ServiceCreator.js', () => ({
   ServiceCreator: jest.fn()
 }));
-jest.mock('../src/service-management/ErrorTracker.js');
+await jest.unstable_mockModule('../src/service-management/ErrorTracker.js', () => ({
+  ErrorTracker: jest.fn()
+}));
 
 // Mock chalk to avoid console output issues
-jest.mock('chalk', () => ({
+await jest.unstable_mockModule('chalk', () => ({
   cyan: jest.fn((text) => text),
   yellow: jest.fn((text) => text),
   green: jest.fn((text) => text),
@@ -86,16 +101,7 @@ describe('ServiceOrchestrator Core Methods', () => {
       captureError: jest.fn()
     };
 
-    // Mock the constructors
-    InputHandler.mockImplementation(() => mockInputHandler);
-    ConfirmationHandler.mockImplementation(() => mockConfirmationHandler);
-    GenerationHandler.mockImplementation(() => mockGenerationHandler);
-    WranglerConfigManager.mockImplementation(() => mockWranglerConfigManager);
-    ValidationHandler.mockImplementation(() => mockValidationHandler);
-    ServiceCreator.mockImplementation(() => mockServiceCreator);
-    ErrorTracker.mockImplementation(() => mockErrorTracker);
-
-    // Create orchestrator instance
+    // Create orchestrator instance (constructors are already mocked to return mock objects)
     orchestrator = new ServiceOrchestrator();
   });
 
@@ -140,7 +146,7 @@ describe('ServiceOrchestrator Core Methods', () => {
     });
 
     afterEach(() => {
-      console.log.mockRestore();
+      jest.restoreAllMocks();
     });
 
     test('should display new GenerationEngine format results', () => {
@@ -183,8 +189,7 @@ describe('ServiceOrchestrator Core Methods', () => {
     });
 
     afterEach(() => {
-      process.cwd.mockRestore();
-      orchestrator.isServiceDirectory.mockRestore();
+      jest.restoreAllMocks();
     });
 
     test('should return current directory if it is a service', async () => {
@@ -218,7 +223,7 @@ describe('ServiceOrchestrator Core Methods', () => {
     });
 
     afterEach(() => {
-      fs.access.mockRestore();
+      jest.restoreAllMocks();
     });
 
     test('should return true for valid service directory', async () => {
@@ -246,7 +251,7 @@ describe('ServiceOrchestrator Core Methods', () => {
     });
 
     afterEach(() => {
-      fs.readFile.mockRestore();
+      jest.restoreAllMocks();
     });
 
     test('should load and parse service configuration', async () => {
