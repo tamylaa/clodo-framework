@@ -1,7 +1,6 @@
 export default {
   preset: null,
   testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   globals: {
     'ts-jest': {
@@ -12,7 +11,7 @@ export default {
     '^.+\\.(js|jsx|mjs)$': ['babel-jest', {
       presets: [['@babel/preset-env', {
         targets: { node: 'current' },
-        modules: false
+        modules: 'auto'
       }]]
     }],
   },
@@ -22,6 +21,7 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  setupFilesAfterEnv: [],
   forceExit: true,
   collectCoverageFrom: [
     'src/**/*.{js,ts}',
