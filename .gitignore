@@ -91,3 +91,6 @@ generated-services/
 *.db
 *.sqlite
 *.sqlite3
+
+# Deployment artifacts (orchestration run outputs)
+deployments/
