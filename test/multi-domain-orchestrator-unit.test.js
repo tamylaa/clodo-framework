@@ -5,6 +5,8 @@
  */
 
 import { jest } from '@jest/globals';
+import os from 'os';
+import path from 'path';
 
 // Mock all dependencies using unstable_mockModule for ES modules
 await jest.unstable_mockModule('../src/orchestration/modules/DomainResolver.js', () => ({
@@ -84,6 +86,7 @@ describe('MultiDomainOrchestrator Unit Tests', () => {
   let mockSecretManager;
   let mockWranglerConfigManager;
   let mockConfigurationValidator;
+  let testServicePath;
 
   const mockOptions = {
     domains: ['test.example.com'],
@@ -91,7 +94,7 @@ describe('MultiDomainOrchestrator Unit Tests', () => {
     dryRun: false,
     skipTests: false,
     parallelDeployments: 3,
-    servicePath: '/test/service'
+    servicePath: null // Will be set in beforeEach with tmpdir
   };
 
   const mockDomain = {
@@ -103,6 +106,10 @@ describe('MultiDomainOrchestrator Unit Tests', () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
+
+    // Create unique test directory using os.tmpdir() (following established pattern)
+    testServicePath = path.join(os.tmpdir(), `multi-domain-test-${Date.now()}-${Math.random().toString(36).substring(7)}`);
+    mockOptions.servicePath = testServicePath;
 
     // Create orchestrator instance
     orchestrator = new MultiDomainOrchestrator(mockOptions);

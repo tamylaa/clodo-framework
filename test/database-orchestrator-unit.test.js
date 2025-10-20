@@ -7,6 +7,7 @@
 import { jest } from '@jest/globals';
 import fs from 'fs/promises';
 import path from 'path';
+import os from 'os';
 import { exec } from 'child_process';
 import util from 'util';
 
@@ -15,9 +16,10 @@ import { DatabaseOrchestrator } from '../src/database/database-orchestrator.js';
 describe('DatabaseOrchestrator Unit Tests', () => {
   let dbOrchestrator;
   let mockExec;
+  let testProjectRoot;
 
   const mockOptions = {
-    projectRoot: '/test/project',
+    projectRoot: null, // Will be set in beforeEach with tmpdir
     dryRun: false,
     environment: 'development',
     cloudflareToken: 'mock-token',
@@ -27,6 +29,10 @@ describe('DatabaseOrchestrator Unit Tests', () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
+
+    // Create unique test directory using os.tmpdir() (following established pattern)
+    testProjectRoot = path.join(os.tmpdir(), `db-orchestrator-test-${Date.now()}-${Math.random().toString(36).substring(7)}`);
+    mockOptions.projectRoot = testProjectRoot;
 
     // Mock fs operations
     fs.access = jest.fn().mockResolvedValue();
@@ -44,7 +50,7 @@ describe('DatabaseOrchestrator Unit Tests', () => {
 
   describe('constructor', () => {
     test('should initialize with provided options', () => {
-      expect(dbOrchestrator.projectRoot).toBe('/test/project');
+      expect(dbOrchestrator.projectRoot).toBe(testProjectRoot);
       expect(dbOrchestrator.dryRun).toBe(false);
       expect(dbOrchestrator.options).toEqual(mockOptions);
     });
