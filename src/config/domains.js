@@ -1,4 +1,6 @@
 // Simple inline logger to avoid circular dependency with index.js
+import { validateRequired, deepMerge } from '../utils/index.js';
+
 const logger = {
   info: (message, ...args) => console.log(`[DomainConfig] ${message}`, ...args),
   error: (message, ...args) => console.error(`[DomainConfig] ${message}`, ...args),
