@@ -6,12 +6,12 @@
         targets: {
           node: '18'
         },
-        modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
+        modules: false // Always output ESM, never CommonJS
       }
     ]
   ],
   plugins: [
-    '@babel/plugin-syntax-import-meta',
-    process.env.NODE_ENV === 'test' ? 'babel-plugin-transform-import-meta' : null
-  ].filter(Boolean)
+    '@babel/plugin-syntax-import-meta'
+    // Removed conditional CommonJS plugin - pure ESM approach
+  ]
 };

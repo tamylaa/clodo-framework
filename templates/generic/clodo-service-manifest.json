@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "serviceName": "{{SERVICE_NAME}}",
+  "serviceType": "{{SERVICE_TYPE}}",
+  "framework": "@tamyla/clodo-framework",
+  "created": "{{CURRENT_DATE}}",
+  "description": "A Clodo Framework {{SERVICE_TYPE}} service",
+  "features": {
+    "authentication": false,
+    "database": false,
+    "cache": false,
+    "storage": false
+  },
+  "cloudflare": {
+    "workers": true,
+    "d1": false,
+    "r2": false,
+    "kv": false,
+    "durable-objects": false
+  },
+  "configuration": {
+    "domains": [],
+    "environment": "development"
+  }
+}

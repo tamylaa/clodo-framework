@@ -358,7 +358,11 @@ export const createErrorHandler = (options = {}) => {
  * @returns {Function} Composed middleware
  */
 export const composeMiddleware = (...middlewares) => {
-  return middlewares.reduce((composed, middleware) => {
+  if (middlewares.length === 0) {
+    return (handler) => handler;
+  }
+  
+  return middlewares.reduceRight((composed, middleware) => {
     return (handler) => middleware(composed(handler));
   });
 };

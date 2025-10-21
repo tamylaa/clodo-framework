@@ -8,7 +8,39 @@ A comprehensive framework for building enterprise-grade software architecture on
 
 Just like Clodo bricks snap together to build anything you can imagine, this framework provides the base components that your services snap into. Focus on your business logic while the framework handles the infrastructure, configuration, and deployment patterns.
 
-## � Incremental Adoption
+## Project Structure
+
+The project is organized for maximum clarity and maintainability:
+
+```
+clodo-framework/
+├── docs/           # 📖 Public-facing documentation (API reference, guides)
+├── i-docs/         # 📚 Internal documentation (organized by category)
+│   ├── architecture/     # Design docs, audits, specs
+│   ├── development/      # Dev guides, improvements
+│   ├── testing/          # Test plans, validation
+│   ├── deployment/       # Deployment analysis, fixes
+│   ├── roadmap/          # Strategic planning
+│   ├── guides/           # Integration guides
+│   ├── session-reports/  # Development sessions
+│   ├── phases/           # Phase completions
+│   ├── analysis/         # Technical analysis
+│   └── licensing/        # License information
+├── src/            # 💻 Source code
+├── test/           # ✅ Test suites (463 tests, 98.9% passing)
+├── bin/            # 🔧 CLI executables
+├── dist/           # 📦 Built distribution
+└── templates/      # 📋 Service templates
+
+```
+
+**Quality Metrics:**
+- ✅ **463/468 tests passing** (98.9% success rate)
+- ✅ **44/44 CLI tests passing** (100% success rate)
+- ✅ **Clean architecture** (no temporary or duplicate files)
+- ✅ **Configuration-based** (no hard-coded values in source)
+
+## 📚 Incremental Adoption
 
 Already have an existing project? The Clodo Framework is designed for **gradual integration** - you don't need to rewrite everything at once. Start with individual components and scale up as needed.
 

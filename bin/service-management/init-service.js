@@ -76,7 +76,8 @@ class ServiceInitializerCLI {
       if (result.success) {
         if (result.dryRun) {
           console.log('📋 Dry run - would create the following:');
-          console.log('Files:', result.configs.join(', '));
+          const configs = Array.isArray(result.configs) ? result.configs : [result.configs];
+          console.log('Files:', configs.filter(Boolean).join(', '));
           return;
         }
 

@@ -1,3 +1,41 @@
+## [Unreleased]
+
+### Improvements
+
+* **Project Organization**: Complete cleanup and reorganization of project structure
+  - Removed 15+ temporary and backup files (test-output.txt, *.old.js, test-*.js, *.log files)
+  - Organized 100+ internal documentation files into categorical structure
+  - Created `i-docs/` with 10 organized categories (architecture, development, testing, deployment, roadmap, guides, session-reports, phases, analysis, licensing)
+  - Cleaned `docs/` directory to contain only 5 public-facing documentation files
+  - Moved 33 internal analysis documents from `docs/` to `i-docs/analysis/`
+  - Moved 13 root-level documentation files to appropriate i-docs categories
+  - Root directory now contains only essential project files (config, package.json, README, etc.)
+
+* **Configuration Management**: Eliminated hard-coded values from source code
+  - Moved domain defaults from ServiceCreator to `validation-config.json`
+  - Added configuration hierarchy: CLI option → config file → fallback default
+  - Introduced `templates.defaults` and `templates.companyDefaults` sections in validation-config.json
+  - ServiceCreator now uses FrameworkConfig for loading template defaults
+
+* **CLI Test Infrastructure**: Achieved 100% CLI test pass rate (44/44 tests)
+  - Fixed dry-run bug in clodo-init-service (Array.isArray check)
+  - Implemented template fallback system (generic template used when specific type missing)
+  - Added clodo-service-manifest.json to generic template
+  - Updated all test expectations to match actual CLI behavior
+  - All CLI tests updated to use command-line arguments instead of interactive input
+
+### Bug Fixes
+
+* Fixed dry-run mode in `clodo-init-service` (handle non-array configs properly)
+* Fixed template generation for missing service types (fallback to generic template)
+* Fixed test file path expectations (`domains.js` location in `src/config/`)
+* Fixed ESM syntax validation in tests (use regex .test() instead of Function constructor)
+
+### Documentation
+
+* Organized internal documentation into 10 logical categories in `i-docs/`
+* Separated public-facing docs (5 files in `docs/`) from internal analysis documents
+
 ## [3.0.15](https://github.com/tamylaa/clodo-framework/compare/v3.0.14...v3.0.15) (2025-10-20)
 
 

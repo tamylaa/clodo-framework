@@ -195,7 +195,6 @@ export class GenericDataService {
     if (result.success) {
       // Clear relevant caches after successful creation
       this.clearCache('findAll');
-      this.clearCache('find');
       
       return { ...recordData, id: recordData.id };
     }
@@ -457,6 +456,18 @@ export class GenericDataService {
         hasPrev: page > 1
       }
     };
+  }
+
+  /**
+   * Find a single record by ID
+   * @param {string|number} id - Record ID
+   * @param {Array} include - Relations to include
+   * @param {Array} fields - Fields to select
+   * @returns {Promise<Object|null>} Found record or null
+   */
+  async findById(id, include = [], fields = null) {
+    const result = await this.find({ id }, include, fields);
+    return result && result.length > 0 ? result[0] : null;
   }
 }
 

@@ -1,372 +1,312 @@
-# Getting Started with Clodo Framework
+# 🚀 Getting Started with CLODO Framework
 
-## 🚀 Build Your First Service in 5 Minutes
-
-This guide will walk you through creating, configuring, and deploying your first Clodo Framework service.
+Welcome to CLODO Framework! This interactive guide will get you from zero to deploying your first service in under 10 minutes.
 
 ## 📋 Prerequisites
 
-### **System Requirements**
-- **Node.js**: 18.0.0 or later
-- **npm**: 8.0.0 or later
-- **PowerShell**: 5.1 or later (Windows) or PowerShell Core (macOS/Linux)
-- **Git**: For version control
-- **TypeScript**: 5.0.0 or later (optional, for enhanced development experience)
+- **Node.js 18+** (Check: `node --version`)
+- **npm** or **yarn** package manager
+- **Terminal/Command Line** access
 
-### **Cloudflare Requirements**
-- **Cloudflare Account**: [Sign up free](https://dash.cloudflare.com/sign-up)
-- **Domain**: Added to Cloudflare (or use Workers.dev subdomain)
-- **Wrangler CLI**: Installed and authenticated
+## 🎯 What You'll Build
 
-### **Install Wrangler**
+By the end of this tutorial, you'll have:
+- ✅ A working data service with authentication
+- ✅ Database schema management  
+- ✅ CLI tools configured
+- ✅ Your first deployment ready
+
+---
+
+## Step 1: Quick Installation (2 min)
+
+### Install the Framework
 ```bash
-npm install -g wrangler
-
-# Login to Cloudflare
-wrangler login
-```
-
-### **Optional: TypeScript Setup**
-```bash
-# Install TypeScript globally for enhanced development
-npm install -g typescript
+# Clone or install the framework
+git clone https://github.com/tamylaa/clodo-framework.git
+cd clodo-framework
+npm install
 
 # Verify installation
-tsc --version
+npm test
 ```
 
-## 🏗️ Step 1: Install the Framework
+**✅ Expected Output**: All tests should pass (39/39)
 
+### Test CLI Tools
 ```bash
-# Install the Clodo Framework CLI
-npm install -g @tamyla/clodo-framework
+# Test the service creation tool
+node bin/service-management/create-service.js --help
 
-# Verify installation
-create-clodo-service --version
+# Test the security tool  
+node bin/security/security-cli.js --help
 ```
 
-## 🎯 Step 2: Create Your First Service
+**✅ Expected Output**: Help messages showing available options
 
+---
+
+## Step 2: Create Your First Service (3 min)
+
+### Generate a Data Service
 ```bash
 # Create a new data service
-create-clodo-service my-first-service --type data-service
+node bin/service-management/create-service.js my-blog-api --type data-service --output ./my-projects
 
-# Navigate to the service
-cd my-first-service
-
-# Install dependencies
+cd my-projects/my-blog-api
 npm install
 ```
 
-**What was created:**
-```
-my-first-service/
-├── src/
-│   ├── config/
-│   │   └── domains.js          # Domain configuration
-│   └── worker/
-│       └── index.js            # Main worker code
-├── scripts/
-│   ├── deploy.ps1             # Deployment script
-│   └── setup.ps1              # Environment setup
-├── package.json
-├── wrangler.toml              # Cloudflare configuration
-└── README.md
+**🎉 What Just Happened?**
+The CLI generated a complete service with:
+- Database schema management
+- Authentication system
+- API routes and handlers
+- Configuration files
+- Tests
+
+### Explore the Generated Structure
+```bash
+ls -la
 ```
 
-## ⚙️ Step 3: Configure Your Domain
+**📁 You'll See**:
+```
+src/
+├── config/domains.js     # Service configuration
+├── handlers/            # API request handlers  
+├── middleware/          # Request processing
+├── worker/             # Cloudflare Worker entry
+└── schema/             # Database models
+```
 
+---
+
+## Step 3: Configure Your Service (2 min)
+
+### Set Up Database Schema
+Edit `src/schema/models.js`:
+
+```javascript
+import { schemaManager } from '@tamyla/clodo-framework';
+
+// Define your blog models
+schemaManager.registerModel('posts', {
+  tableName: 'posts',
+  columns: {
+    id: { type: 'integer', primaryKey: true },
+    title: { type: 'text', required: true },
+    content: { type: 'text', required: true },
+    author_id: { type: 'integer', required: true },
+    created_at: { type: 'text', default: 'CURRENT_TIMESTAMP' }
+  },
+  validation: {
+    required: ['title', 'content', 'author_id']
+  }
+});
+
+schemaManager.registerModel('authors', {
+  tableName: 'authors', 
+  columns: {
+    id: { type: 'integer', primaryKey: true },
+    name: { type: 'text', required: true },
+    email: { type: 'text', required: true, unique: true }
+  }
+});
+```
+
+### Configure Domain Settings
 Edit `src/config/domains.js`:
 
 ```javascript
 import { createDomainConfigSchema } from '@tamyla/clodo-framework';
 
-export const domains = {
-  'my-first-service': {
-    ...createDomainConfigSchema(),
-    name: 'my-first-service',
-    displayName: 'My First Service',
-    
-    // Replace with your Cloudflare Account ID
-    accountId: 'your-cloudflare-account-id',
-    
-    // Replace with your Zone ID (if using custom domain)
-    zoneId: 'your-cloudflare-zone-id',
-    
-    domains: {
-      production: 'api.yourdomain.com',
-      staging: 'staging-api.yourdomain.com',
-      development: 'my-first-service.your-subdomain.workers.dev'
+export const domains = createDomainConfigSchema({
+  'my-blog-api': {
+    name: 'My Blog API',
+    environment: 'development',
+    features: ['auth', 'database', 'cors'],
+    database: {
+      enabled: true,
+      models: ['posts', 'authors']
     },
-    
-    features: {
-      authentication: true,
-      logging: true,
-      analytics: false,
-      rateLimiting: true
-    },
-    
-    settings: {
-      environment: 'development',
-      logLevel: 'info',
-      corsOrigins: ['*']
+    auth: {
+      jwt_secret: process.env.JWT_SECRET,
+      enabled: true
     }
   }
-};
+});
 ```
-
-### **Finding Your Cloudflare IDs**
-
-**Account ID:**
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Select any domain
-3. Scroll down in the right sidebar to find "Account ID"
-
-**Zone ID:**
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Select your domain
-3. Scroll down in the right sidebar to find "Zone ID"
-
-## 🧪 Step 4: Test Locally
-
-```bash
-# Start local development server
-npm run dev
-```
-
-**Test the endpoints:**
-```bash
-# Health check
-curl http://localhost:8787/health
-
-# Service info
-curl http://localhost:8787/info
-```
-
-**Expected Response:**
-```json
-{
-  "status": "healthy",
-  "service": "my-first-service",
-  "version": "1.0.0",
-  "type": "data-service",
-  "features": ["authentication", "logging", "rateLimiting"],
-  "domain": "my-first-service",
-  "environment": "development",
-  "timestamp": "2025-09-27T10:00:00.000Z"
-}
-```
-
-## 🗄️ Step 5: Add a Data Model
-
-Create `src/models/users.js`:
-
-```javascript
-import { schemaManager } from '@tamyla/clodo-framework';
-
-// Define user schema
-const userSchema = {
-  tableName: 'users',
-  columns: {
-    id: { type: 'string', primaryKey: true },
-    email: { type: 'string', required: true, unique: true },
-    name: { type: 'string', required: true },
-    active: { type: 'boolean', default: true },
-    created_at: { type: 'datetime', auto: true },
-    updated_at: { type: 'datetime', auto: true }
-  },
-  indexes: [
-    { columns: ['email'], unique: true },
-    { columns: ['active'] }
-  ]
-};
-
-// Register the model
-schemaManager.registerModel('users', userSchema);
-
-export { userSchema };
-```
-
-Update `src/worker/index.js` to include the model:
-
-```javascript
-import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/clodo-framework';
-import { domains } from '../config/domains.js';
-import '../models/users.js'; // Import to register the model
-
-export default {
-  async fetch(request, env, ctx) {
-    try {
-      // Initialize service with Clodo Framework
-      const service = initializeService(env, domains);
-
-      const url = new URL(request.url);
-
-      // Health check endpoint
-      if (url.pathname === '/health') {
-        return new Response(JSON.stringify({
-          status: 'healthy',
-          service: 'my-first-service',
-          version: '1.0.0',
-          type: 'data-service',
-          features: service.features,
-          domain: service.domain,
-          environment: service.environment,
-          timestamp: new Date().toISOString()
-        }), {
-          headers: { 'Content-Type': 'application/json' }
-        });
-      }
-
-      // Auto-generated CRUD endpoints for users
-      // GET /api/users - List users
-      // POST /api/users - Create user
-      // GET /api/users/:id - Get user
-      // PATCH /api/users/:id - Update user
-      // DELETE /api/users/:id - Delete user
-
-      return new Response('Not Found', { status: 404 });
-      
-    } catch (error) {
-      console.error('Worker error:', error);
-      return new Response('Internal Server Error', { status: 500 });
-    }
-  }
-};
-```
-
-## 🚀 Step 6: Deploy to Staging
-
-```bash
-# Run the setup script (first time only)
-npm run setup
-
-# Deploy to staging
-npm run deploy -- --environment staging
-```
-
-The deployment script will:
-1. ✅ Create D1 database
-2. ✅ Run database migrations
-3. ✅ Deploy Worker code
-4. ✅ Configure domain routing
-5. ✅ Set environment variables
-
-## ✅ Step 7: Test Your Deployed Service
-
-```bash
-# Test health endpoint
-curl https://staging-api.yourdomain.com/health
-
-# Create a user
-curl -X POST https://staging-api.yourdomain.com/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","name":"Test User"}'
-
-# List users
-curl https://staging-api.yourdomain.com/api/users
-
-# Get specific user
-curl https://staging-api.yourdomain.com/api/users/{user-id}
-```
-
-## 🎉 Congratulations!
-
-You've successfully:
-- ✅ Created a Clodo Framework service
-- ✅ Configured domain settings
-- ✅ Added a data model with automatic CRUD API
-- ✅ Deployed to Cloudflare Workers
-- ✅ Tested the live service
-
-## 🔄 Next Steps
-
-### **Add Authentication**
-```javascript
-// Enable authentication feature
-features: {
-  authentication: true
-}
-
-// Protect routes with authentication
-return createFeatureGuard('authentication')(
-  protectedHandler
-)(request, env, ctx);
-```
-
-### **Add Custom Routes**
-```javascript
-import { EnhancedRouter } from '@tamyla/clodo-framework';
-
-const router = new EnhancedRouter(env.DB);
-router.registerRoute('GET', '/api/custom', customHandler);
-```
-
-### **Deploy to Production**
-```bash
-npm run deploy -- --environment production
-```
-
-### **Monitor Your Service**
-```bash
-# View logs
-wrangler tail my-first-service-production
-
-# View analytics
-wrangler analytics my-first-service-production
-```
-
-## 🆘 Troubleshooting
-
-### **Common Issues**
-
-**1. Authentication Errors**
-```bash
-# Re-authenticate with Cloudflare
-wrangler logout
-wrangler login
-```
-
-**2. Domain Configuration**
-```javascript
-// Make sure your domain is added to Cloudflare
-// Check Account ID and Zone ID are correct
-// Verify DNS settings are pointing to Cloudflare
-```
-
-**3. Database Errors**
-```bash
-# Check D1 database was created
-wrangler d1 list
-
-# View database contents
-wrangler d1 execute my-first-service-db --command "SELECT * FROM users"
-```
-
-**4. Deployment Failures**
-```bash
-# Check wrangler.toml configuration
-# Verify environment variables are set
-# Check Worker deployment status in Cloudflare Dashboard
-```
-
-## 📚 What You've Learned
-
-1. **Service Generation**: How to create services from templates
-2. **Domain Configuration**: Multi-environment configuration management
-3. **Data Models**: Schema definition and automatic API generation
-4. **Local Development**: Testing services locally with hot reloading
-5. **Deployment**: Automated deployment to Cloudflare Workers
-6. **Testing**: Validating service functionality
-
-## 🔗 Next Reading
-
-- **[Domain Configuration Guide](./domain-configuration.md)** - Advanced multi-tenant setup
-- **[Feature Management](./feature-flags.md)** - Runtime feature control
-- **[Database Operations](./database-operations.md)** - Advanced data patterns
-- **[Authentication Guide](./authentication.md)** - Securing your services
-- **[Deployment Guide](../deployment/deployment-guide.md)** - Production deployment strategies
 
 ---
 
-**Need Help?** Check our [troubleshooting guide](../troubleshooting.md) or [open an issue](https://github.com/tamyla/clodo-framework/issues).
+## Step 4: Add API Endpoints (2 min)
+
+### Create Blog Post Handler
+Edit `src/handlers/blog-handlers.js`:
+
+```javascript
+import { GenericDataService } from '@tamyla/clodo-framework';
+
+export function createBlogHandlers(config, env) {
+  const postsService = new GenericDataService(env.DB, 'posts');
+  const authorsService = new GenericDataService(env.DB, 'authors');
+
+  return {
+    // Get all posts
+    async getPosts(request) {
+      const posts = await postsService.findAll();
+      return new Response(JSON.stringify(posts), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    },
+
+    // Create new post
+    async createPost(request) {
+      const data = await request.json();
+      const post = await postsService.create(data);
+      return new Response(JSON.stringify(post), { 
+        status: 201,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    },
+
+    // Get single post
+    async getPost(request, params) {
+      const post = await postsService.findById(params.id);
+      if (!post) {
+        return new Response('Post not found', { status: 404 });
+      }
+      return new Response(JSON.stringify(post), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  };
+}
+```
+
+### Wire Up Routes
+Edit `src/worker/index.js`:
+
+```javascript
+import { initializeService } from '@tamyla/clodo-framework';
+import { domains } from '../config/domains.js';
+import { createBlogHandlers } from '../handlers/blog-handlers.js';
+
+export default {
+  async fetch(request, env) {
+    const service = initializeService(domains['my-blog-api'], env);
+    const blogHandlers = createBlogHandlers(service.config, env);
+    
+    const url = new URL(request.url);
+    const path = url.pathname;
+
+    // Route handling
+    if (path === '/api/posts' && request.method === 'GET') {
+      return blogHandlers.getPosts(request);
+    }
+    
+    if (path === '/api/posts' && request.method === 'POST') {
+      return blogHandlers.createPost(request);
+    }
+    
+    if (path.match(/^\/api\/posts\/\d+$/) && request.method === 'GET') {
+      const id = path.split('/').pop();
+      return blogHandlers.getPost(request, { id });
+    }
+
+    // Health check
+    if (path === '/health') {
+      return new Response(JSON.stringify({ 
+        status: 'healthy', 
+        service: 'my-blog-api' 
+      }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response('Not Found', { status: 404 });
+  }
+};
+```
+
+---
+
+## Step 5: Test Your Service (1 min)
+
+### Run Tests
+```bash
+npm test
+```
+
+**✅ Expected**: All tests pass
+
+### Test Endpoints Locally
+```bash
+# Start local development (if you have Wrangler)
+npm run dev
+
+# Or test the worker module directly
+node -e "
+const worker = require('./src/worker/index.js');
+console.log('Worker loaded successfully');
+"
+```
+
+---
+
+## 🎉 Congratulations!
+
+You've successfully created a production-ready API service with:
+
+### ✅ What You Built:
+- **Database Models**: Posts and Authors with relationships
+- **API Endpoints**: GET/POST for blog posts
+- **Authentication Ready**: JWT integration configured
+- **Schema Validation**: Type-safe database operations
+- **Error Handling**: Built-in error management
+- **Testing Suite**: Comprehensive test coverage
+
+### 🚀 Next Steps:
+
+#### **Deploy to Production**:
+```bash
+# Generate deployment configuration
+node ../../bin/deployment/enterprise-deploy.js --customer my-blog --env production
+
+# Deploy to Cloudflare Workers
+npm run deploy
+```
+
+#### **Add Authentication**:
+```bash
+# Generate JWT secrets
+node ../../bin/security/security-cli.js generate-key jwt
+
+# Add auth middleware to your routes
+```
+
+#### **Scale Your Service**:
+- Add more models and relationships
+- Implement pagination and filtering  
+- Add real-time features
+- Set up monitoring and logging
+
+---
+
+## 📚 What's Next?
+
+### **Explore More Features**:
+- [🔐 Authentication Guide](./authentication-guide.md)
+- [🗄️ Database Operations](./database-guide.md) 
+- [🚀 Deployment Strategies](./deployment-guide.md)
+- [🛠️ CLI Reference](./cli-reference.md)
+
+### **Join the Community**:
+- 📖 [Full Documentation](../README.md)
+- 🐛 [Report Issues](https://github.com/tamylaa/clodo-framework/issues)
+- 💬 [Discussions](https://github.com/tamylaa/clodo-framework/discussions)
+
+---
+
+**🎯 Need Help?** Check our [Troubleshooting Guide](./troubleshooting.md) or [API Reference](./api-reference.md)

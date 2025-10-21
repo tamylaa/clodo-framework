@@ -6,6 +6,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync, readdirSync, statSync } from 'fs';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { FrameworkConfig } from '../utils/framework-config.js';
 
 const SERVICE_TYPES = ['data-service', 'auth-service', 'content-service', 'api-gateway', 'generic'];
 
@@ -22,6 +23,9 @@ export class ServiceCreator {
     
     this.templatesDir = options.templatesDir || templatesDir;
     this.serviceTypes = options.serviceTypes || SERVICE_TYPES;
+    
+    // Load framework configuration
+    this.frameworkConfig = options.frameworkConfig || new FrameworkConfig();
   }
 
   /**
@@ -81,9 +85,16 @@ export class ServiceCreator {
       const templateDir = join(this.templatesDir, config.type);
       const serviceDir = join(config.output, serviceName);
 
-      // Check if template exists
+      // Check if template exists, fall back to generic if not
+      let actualTemplateDir = templateDir;
       if (!existsSync(templateDir)) {
-        throw new Error(`Template not found: ${templateDir}. Available templates: ${this.serviceTypes.join(', ')}`);
+        const genericTemplate = join(this.templatesDir, 'generic');
+        if (existsSync(genericTemplate)) {
+          console.log(`⚠️  Template for '${config.type}' not found, using 'generic' template as fallback`);
+          actualTemplateDir = genericTemplate;
+        } else {
+          throw new Error(`Template not found: ${templateDir}. Available templates: ${this.serviceTypes.join(', ')}`);
+        }
       }
 
       // Check if service directory already exists
@@ -92,13 +103,18 @@ export class ServiceCreator {
       }
 
       // Copy template to service directory
-      cpSync(templateDir, serviceDir, { recursive: true });
+      cpSync(actualTemplateDir, serviceDir, { recursive: true });
 
+      // Load template defaults from config
+      const templateDefaults = this.frameworkConfig.config?.templates?.defaults || {};
+      
       // Prepare template variables
       const defaultVariables = {
         '{{SERVICE_NAME}}': serviceName,
         '{{SERVICE_TYPE}}': config.type,
         '{{SERVICE_DISPLAY_NAME}}': this.toTitleCase(serviceName.replace(/-/g, ' ')),
+        '{{DOMAIN_NAME}}': config.domain || templateDefaults.DOMAIN_NAME || 'example.com',
+        '{{WORKERS_DEV_DOMAIN}}': templateDefaults.WORKERS_DEV_DOMAIN || 'workers.dev',
         '{{CURRENT_DATE}}': new Date().toISOString().split('T')[0],
         '{{CURRENT_YEAR}}': new Date().getFullYear().toString(),
         '{{FRAMEWORK_VERSION}}': this.getFrameworkVersion()

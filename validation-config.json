@@ -235,6 +235,17 @@
       "CURRENT_DATE": "auto-generated",
       "CURRENT_YEAR": "auto-generated", 
       "FRAMEWORK_VERSION": "auto-generated"
+    },
+    "defaults": {
+      "DOMAIN_NAME": "example.com",
+      "WORKERS_DEV_DOMAIN": "workers.dev",
+      "DEFAULT_REGION": "auto",
+      "DEFAULT_TIMEZONE": "UTC"
+    },
+    "companyDefaults": {
+      "NOTE": "Override these in customer-specific config files",
+      "COMPANY_DOMAIN": "example.com",
+      "WORKERS_SUBDOMAIN": "company-name"
     }
   }
 }
