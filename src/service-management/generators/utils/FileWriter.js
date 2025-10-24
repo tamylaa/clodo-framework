@@ -3,6 +3,9 @@
  * 
  * Provides safe file writing with directory creation, overwrite protection,
  * and atomic operations.
+ * 
+ * NOTE: This class uses Node.js filesystem APIs and is designed for
+ * build-time usage during service generation, not runtime in Cloudflare Workers.
  */
 import { promises as fs } from 'fs';
 import path from 'path';

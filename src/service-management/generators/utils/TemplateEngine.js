@@ -3,6 +3,9 @@
  * 
  * Provides centralized template management with variable replacement,
  * partial support, and future support for conditionals and loops.
+ * 
+ * NOTE: This class uses Node.js filesystem APIs and is designed for
+ * build-time usage during service generation, not runtime in Cloudflare Workers.
  */
 import { promises as fs } from 'fs';
 import path from 'path';

@@ -1,9 +1,12 @@
 /**
  * BaseGenerator - Abstract base class for all file generators
- * 
+ *
  * Provides common functionality for loading templates, rendering content,
  * and writing files. All concrete generators should extend this class.
- * 
+ *
+ * NOTE: This class uses Node.js filesystem APIs and is designed for
+ * build-time usage during service generation, not runtime in Cloudflare Workers.
+ *
  * @abstract
  */
 import { promises as fs } from 'fs';
@@ -25,6 +28,11 @@ export class BaseGenerator {
     this.name = options.name || this.constructor.name;
     this.templatesPath = options.templatesPath || options.templatesDir || null;
     this.servicePath = options.servicePath || null;
+
+    // Warn if running in Cloudflare Workers environment
+    if (typeof globalThis !== 'undefined' && globalThis.caches) {
+      console.warn(`⚠️  ${this.name}: Generators are designed for build-time usage, not runtime in Cloudflare Workers`);
+    }
     this.context = {};
     this.logger = options.logger || console;
   }
