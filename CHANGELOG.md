@@ -1,3 +1,17 @@
+# [3.1.0](https://github.com/tamylaa/clodo-framework/compare/v3.0.15...v3.1.0) (2025-10-24)
+
+
+### Bug Fixes
+
+* import missing dependencies in generators utils index ([771a336](https://github.com/tamylaa/clodo-framework/commit/771a336f678c636221e73dd2a16efc92dca94345))
+* improve error handling in generators ([799a05b](https://github.com/tamylaa/clodo-framework/commit/799a05b205f8fd0e0c3ca512a39ce8a719c5d39c))
+* resolve ESM compatibility and test stability issues ([87c422d](https://github.com/tamylaa/clodo-framework/commit/87c422d1611469246a819620834feee67577b30f))
+
+
+### Features
+
+* comprehensive framework enhancement with domain routes automation ([ec8aa8d](https://github.com/tamylaa/clodo-framework/commit/ec8aa8d8e40310b2d617091e3d69bb97ded33d6a))
+
 ## [Unreleased]
 
 ### Improvements
