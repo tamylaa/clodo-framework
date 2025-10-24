@@ -2,21 +2,11 @@ export default {
   preset: null,
   testEnvironment: 'node',
   setupFilesAfterEnv: [],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
-  },
-  transform: {
-    // Transform source files in src/ with Babel for coverage instrumentation
-    '^src/.*\\.(js|jsx|mjs)$': ['babel-jest', {
-      presets: [['@babel/preset-env', {
-        targets: { node: 'current' },
-        modules: false // Ensure Babel outputs ESM
-      }]]
-    }],
-    // Don't transform test files - let them run as native ESM
-  },
+  transform: {},
+  // Transform all JS files, including those in node_modules if needed
+  transformIgnorePatterns: [
+    'node_modules/(?!(@babel|@jest)/)'
+  ],
   // Only ignore node_modules, not test files
   moduleNameMapper: {},
   moduleDirectories: ['node_modules', '<rootDir>'],

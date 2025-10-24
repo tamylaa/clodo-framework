@@ -15,7 +15,7 @@ describe('FileWriter', () => {
   let writer;
 
   beforeEach(async () => {
-    tempDir = path.join(__dirname, '..', '..', '..', 'tmp', `filewriter-test-${Date.now()}`);
+    tempDir = path.join(__dirname, '..', '..', '..', 'tmp', `filewriter-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
     await fs.mkdir(tempDir, { recursive: true });
     writer = new FileWriter({ basePath: tempDir });
   });
