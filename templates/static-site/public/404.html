@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - {{SERVICE_DISPLAY_NAME}}</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .error-page {
+            text-align: center;
+            padding: 4rem 2rem;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .error-actions a {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .error-actions a:hover {
+            background: #5a67d8;
+        }
+
+        .error-actions a.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .error-actions a.secondary:hover {
+            background: #cbd5e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-page">
+        <div class="error-code">404</div>
+        <h1 class="error-message">Page Not Found</h1>
+        <p>The page you're looking for doesn't exist on {{SERVICE_DISPLAY_NAME}}.</p>
+
+        <div class="error-actions">
+            <a href="/">Go Home</a>
+            <a href="javascript:history.back()" class="secondary">Go Back</a>
+            <a href="/contact" class="secondary">Contact Us</a>
+        </div>
+    </div>
+
+    <script>
+        // Log 404 errors for analytics
+        console.log('404 Error:', {
+            url: window.location.href,
+            referrer: document.referrer,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+        });
+    </script>
+</body>
+</html>

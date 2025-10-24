@@ -1,0 +1,66 @@
+{
+  "name": "{{SERVICE_NAME}}",
+  "displayName": "{{SERVICE_DISPLAY_NAME}}",
+  "type": "static-site",
+  "version": "1.0.0",
+  "framework": "Clodo Framework",
+  "generated": "{{CURRENT_DATE}}",
+
+  "description": "A static site service that serves files from the public directory using Cloudflare Workers Sites",
+
+  "features": [
+    "static-file-serving",
+    "workers-sites-integration",
+    "mime-type-detection",
+    "cache-optimization",
+    "cors-support",
+    "compression",
+    "spa-fallback",
+    "health-checks"
+  ],
+
+  "configuration": {
+    "publicDir": "public",
+    "indexFile": "index.html",
+    "errorFile": "404.html",
+    "spaFallback": true,
+    "cleanUrls": true,
+    "compression": true,
+    "cors": true
+  },
+
+  "endpoints": {
+    "health": "/health",
+    "info": "/info",
+    "static": "/*"
+  },
+
+  "deployment": {
+    "platform": "cloudflare-workers",
+    "sites": true,
+    "routes": [
+      "{{DOMAIN_NAME}}/*"
+    ]
+  },
+
+  "dependencies": [
+    "@tamyla/clodo-framework",
+    "wrangler"
+  ],
+
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "jest",
+    "lint": "eslint src/",
+    "format": "prettier --write src/"
+  },
+
+  "files": {
+    "worker": "src/worker/index.js",
+    "domains": "src/config/domains.js",
+    "static": "public/",
+    "package": "package.json",
+    "wrangler": "wrangler.toml"
+  }
+}

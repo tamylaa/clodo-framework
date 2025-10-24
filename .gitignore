@@ -59,6 +59,12 @@ build/
 tmp/
 temp/
 
+# Test output files
+test-results.txt
+test-failures.txt
+test-*.txt
+build-error.txt
+
 # Cloudflare specific
 wrangler.toml.backup
 *.toml.backup

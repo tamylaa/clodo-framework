@@ -285,23 +285,162 @@ export class UnifiedConfigManager {
   }
 
   /**
-   * Merge stored config with collected inputs
-   * Collected inputs take precedence over stored config
+   * Validate static-site specific configuration
    * 
-   * @param {Object} storedConfig - Config from .env file
-   * @param {Object} collectedInputs - Inputs from InputCollector
-   * @returns {Object} - Merged configuration
+   * @param {Object} config - Configuration object
+   * @returns {Object} - Validation result {valid: boolean, errors: Array<string>}
    */
-  mergeConfigs(storedConfig, collectedInputs) {
+  validateStaticSiteConfig(config) {
+    const errors = [];
+    
+    if (config.serviceType !== 'static-site') {
+      errors.push('Service type must be "static-site"');
+    }
+    
+    // Domain is required for static sites
+    if (!config.domainName) {
+      errors.push('Domain name is required for static-site services');
+    }
+    
+    // Cloudflare config is required for deployment
+    if (!config.cloudflareAccountId) {
+      errors.push('Cloudflare Account ID is required for static-site deployment');
+    }
+    
     return {
-      ...storedConfig,
-      ...collectedInputs,
-      // Merge envVars separately
-      envVars: {
-        ...(storedConfig.envVars || {}),
-        ...(collectedInputs.envVars || {})
+      valid: errors.length === 0,
+      errors
+    };
+  }
+
+  /**
+   * Get static-site specific configuration defaults
+   * 
+   * @param {string} customer - Customer name
+   * @param {string} environment - Environment
+   * @returns {Object} - Static-site defaults
+   */
+  getStaticSiteDefaults(customer, environment) {
+    return {
+      publicDir: 'public',
+      indexFile: 'index.html',
+      errorFile: '404.html',
+      cacheControl: 'public, max-age=31536000, immutable',
+      spaFallback: true,
+      cleanUrls: true,
+      compressText: true,
+      corsEnabled: true,
+      siteConfig: {
+        bucket: './public',
+        include: ['**/*'],
+        exclude: [
+          'node_modules/**',
+          '.git/**',
+          '.DS_Store',
+          '*.log',
+          'wrangler.toml',
+          'package.json',
+          'package-lock.json'
+        ]
       }
     };
+  }
+
+  /**
+   * Load static-site configuration with defaults applied
+   * 
+   * @param {string} customer - Customer name
+   * @param {string} environment - Environment
+   * @returns {Object} - Static-site configuration with defaults
+   */
+  loadStaticSiteConfig(customer, environment) {
+    const baseConfig = this.loadCustomerConfigSafe(customer, environment);
+    
+    // Validate it's a static-site service
+    if (baseConfig.serviceType !== 'static-site') {
+      throw new Error(`Service type for ${customer}/${environment} is not 'static-site' (found: ${baseConfig.serviceType})`);
+    }
+    
+    // Get defaults and merge
+    const defaults = this.getStaticSiteDefaults(customer, environment);
+    
+    return {
+      ...baseConfig,
+      ...defaults,
+      // Override with any custom static-site settings from env vars
+      publicDir: baseConfig.envVars.PUBLIC_DIR || defaults.publicDir,
+      indexFile: baseConfig.envVars.INDEX_FILE || defaults.indexFile,
+      errorFile: baseConfig.envVars.ERROR_FILE || defaults.errorFile,
+      cacheControl: baseConfig.envVars.CACHE_CONTROL || defaults.cacheControl,
+      spaFallback: baseConfig.envVars.SPA_FALLBACK !== 'false', // Default true
+      cleanUrls: baseConfig.envVars.CLEAN_URLS !== 'false', // Default true
+      compressText: baseConfig.envVars.COMPRESS_TEXT !== 'false', // Default true
+      corsEnabled: baseConfig.envVars.CORS_ENABLED !== 'false' // Default true
+    };
+  }
+
+  /**
+   * Save static-site specific configuration
+   * 
+   * @param {string} customer - Customer name
+   * @param {string} environment - Environment
+   * @param {Object} staticSiteConfig - Static-site specific configuration
+   * @returns {string} - Path to saved file
+   */
+  async saveStaticSiteConfig(customer, environment, staticSiteConfig) {
+    // Validate the configuration
+    const validation = this.validateStaticSiteConfig(staticSiteConfig);
+    if (!validation.valid) {
+      throw new Error(`Invalid static-site configuration: ${validation.errors.join(', ')}`);
+    }
+    
+    // Prepare deployment data for base save method
+    const deploymentData = {
+      coreInputs: {
+        serviceName: staticSiteConfig.serviceName || customer,
+        serviceType: 'static-site',
+        domainName: staticSiteConfig.domainName,
+        cloudflareAccountId: staticSiteConfig.cloudflareAccountId,
+        cloudflareZoneId: staticSiteConfig.cloudflareZoneId,
+        cloudflareToken: staticSiteConfig.cloudflareToken
+      },
+      confirmations: {
+        displayName: staticSiteConfig.displayName || customer,
+        description: staticSiteConfig.description || 'Static site service',
+        healthCheckPath: '/health',
+        apiBasePath: '/', // Static sites serve from root
+        logLevel: staticSiteConfig.logLevel || 'info',
+        nodeCompatibility: staticSiteConfig.nodeCompatibility || 'v18'
+      }
+    };
+    
+    // Save base configuration
+    const configPath = await this.saveCustomerConfig(customer, environment, deploymentData);
+    
+    // Add static-site specific environment variables
+    const staticSiteEnvVars = [
+      '',
+      '# ============================================',
+      '# Static-Site Configuration',
+      '# ============================================',
+      `PUBLIC_DIR=${staticSiteConfig.publicDir || 'public'}`,
+      `INDEX_FILE=${staticSiteConfig.indexFile || 'index.html'}`,
+      `ERROR_FILE=${staticSiteConfig.errorFile || '404.html'}`,
+      `CACHE_CONTROL=${staticSiteConfig.cacheControl || 'public, max-age=31536000, immutable'}`,
+      `SPA_FALLBACK=${staticSiteConfig.spaFallback !== false ? 'true' : 'false'}`,
+      `CLEAN_URLS=${staticSiteConfig.cleanUrls !== false ? 'true' : 'false'}`,
+      `COMPRESS_TEXT=${staticSiteConfig.compressText !== false ? 'true' : 'false'}`,
+      `CORS_ENABLED=${staticSiteConfig.corsEnabled !== false ? 'true' : 'false'}`,
+      ''
+    ].join('\n');
+    
+    // Append to the config file
+    const existingContent = readFileSync(configPath, 'utf-8');
+    writeFileSync(configPath, existingContent + staticSiteEnvVars, 'utf8');
+    
+    logger.info(`Static-site configuration saved: ${configPath}`);
+    
+    return configPath;
   }
 
   /**

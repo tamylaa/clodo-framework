@@ -496,7 +496,81 @@ export class FrameworkConfig {
   }
 
   /**
-   * Get all configuration for easy access
+   * Get routing configuration
+   * Provides route generation settings from validation-config.json
+   */
+  getRoutingConfig() {
+    const routing = this.config.routing || {};
+    const templates = this.config.templates || {};
+    const workersDomain = templates.defaults?.WORKERS_DEV_DOMAIN || 'workers.dev';
+
+    return {
+      defaults: {
+        includeComments: routing.defaults?.includeComments !== false,
+        includeZoneId: routing.defaults?.includeZoneId !== false,
+        targetEnvironment: routing.defaults?.targetEnvironment || 'all',
+        orderStrategy: routing.defaults?.orderStrategy || 'most-specific-first'
+      },
+      domains: {
+        skipPatterns: routing.domains?.skipPatterns || [],
+        workersDomain, // Reuse from templates.defaults.WORKERS_DEV_DOMAIN
+        complexTLDs: routing.domains?.complexTLDs || ['.co.uk', '.com.au', '.org.uk', '.gov.uk'],
+        subdomainMinParts: routing.domains?.subdomainMinParts || 3,
+        ignoreSubdomains: routing.domains?.ignoreSubdomains || ['www']
+      },
+      validation: {
+        zoneIdPattern: routing.validation?.zoneIdPattern || '^[a-f0-9]{32}$',
+        domainPattern: routing.validation?.domainPattern || '^[a-z0-9.-]+$',
+        strictMode: routing.validation?.strictMode !== false
+      },
+      comments: {
+        enabled: routing.comments?.enabled !== false,
+        templates: routing.comments?.templates || {
+          production: '# Production environment routes\n# Domain: {{domain}}',
+          staging: '# Staging environment routes\n# Domain: {{domain}}',
+          development: '# Development environment\n# Uses {{WORKERS_DEV_DOMAIN}} subdomain'
+        }
+      }
+    };
+  }
+
+  /**
+   * Get environment-specific routing configuration
+   * Combines global routing config with environment-specific settings
+   */
+  getEnvironmentRoutingConfig(environment = null) {
+    const env = environment || this.environment;
+    const environments = this.config.environments || {};
+    const envConfig = environments[env] || environments.development || {};
+    const routingConfig = envConfig.routing || {};
+
+    // Fallback defaults if not in config
+    const defaultPrefixes = {
+      development: '/dev-api',
+      staging: '/staging-api',
+      production: '/api'
+    };
+
+    return {
+      defaultPathPrefix: routingConfig.defaultPathPrefix || defaultPrefixes[env] || '/api',
+      wildcardPattern: routingConfig.wildcardPattern || '/*',
+      generateFallbackRoute: routingConfig.generateFallbackRoute !== false,
+      nestedInToml: env !== 'production' && (routingConfig.nestedInToml !== false)
+    };
+  }
+
+  /**
+   * Get all environment names from config
+   */
+  getEnvironmentNames() {
+    const environments = this.config.environments || {};
+    return Object.keys(environments).length > 0 
+      ? Object.keys(environments)
+      : ['development', 'staging', 'production'];
+  }
+
+  /**
+   * Get aggregated configuration for all needs
    */
   getAll() {
     return {
@@ -508,7 +582,8 @@ export class FrameworkConfig {
       caching: this.getCaching(),
       monitoring: this.getMonitoring(),
       security: this.getSecurity(),
-      testing: this.getTesting()
+      testing: this.getTesting(),
+      routing: this.getRoutingConfig()
     };
   }
 }

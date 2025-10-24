@@ -83,7 +83,13 @@
       "databaseSuffix": "-dev",
       "logLevel": "debug",
       "enableMetrics": true,
-      "strictValidation": false
+      "strictValidation": false,
+      "routing": {
+        "_comment": "Development routing configuration - typically uses workers.dev subdomain",
+        "defaultPathPrefix": "/dev-api",
+        "wildcardPattern": "/*",
+        "generateFallbackRoute": true
+      }
     },
     "staging": {
       "domainTemplate": "staging-{service}.{domain}",
@@ -91,7 +97,13 @@
       "databaseSuffix": "-staging",
       "logLevel": "info",
       "enableMetrics": true,
-      "strictValidation": true
+      "strictValidation": true,
+      "routing": {
+        "_comment": "Staging routing configuration - nested under [env.staging] in wrangler.toml",
+        "defaultPathPrefix": "/staging-api",
+        "wildcardPattern": "/*",
+        "generateFallbackRoute": true
+      }
     },
     "production": {
       "domainTemplate": "{service}.{domain}",
@@ -99,7 +111,14 @@
       "databaseSuffix": "",
       "logLevel": "warn",
       "enableMetrics": true,
-      "strictValidation": true
+      "strictValidation": true,
+      "routing": {
+        "_comment": "Production routing configuration - top-level [[routes]] in wrangler.toml",
+        "defaultPathPrefix": "/api",
+        "wildcardPattern": "/*",
+        "generateFallbackRoute": true,
+        "nestedInToml": false
+      }
     }
   },
 
@@ -108,6 +127,42 @@
     "node_compat": true,
     "minify": true,
     "sourcemap": false
+  },
+
+  "staticSite": {
+    "defaults": {
+      "publicDir": "public",
+      "indexFile": "index.html",
+      "errorFile": "404.html",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "textTypes": ["html", "css", "js", "json", "xml", "txt"],
+      "binaryTypes": ["png", "jpg", "jpeg", "gif", "svg", "ico", "webp", "woff", "woff2"]
+    },
+    "siteConfig": {
+      "bucket": "./public",
+      "include": ["**/*"],
+      "exclude": [
+        "node_modules/**",
+        ".git/**",
+        ".DS_Store",
+        "*.log",
+        "wrangler.toml",
+        "package.json",
+        "package-lock.json"
+      ]
+    },
+    "routing": {
+      "spaFallback": true,
+      "spaFallbackPath": "/index.html",
+      "cleanUrls": true,
+      "trailingSlash": false
+    },
+    "optimization": {
+      "compressText": true,
+      "etagGeneration": true,
+      "corsEnabled": true,
+      "corsOrigins": ["*"]
+    }
   },
 
   "validation": {
@@ -129,6 +184,7 @@
       "auth-service", 
       "content-service",
       "api-gateway",
+      "static-site",
       "generic"
     ]
   },
@@ -246,6 +302,46 @@
       "NOTE": "Override these in customer-specific config files",
       "COMPANY_DOMAIN": "example.com",
       "WORKERS_SUBDOMAIN": "company-name"
+    }
+  },
+
+  "routing": {
+    "_comment": "Routing configuration for automatic route generation from domain config",
+    "defaults": {
+      "_comment": "Default options for route generation - applied to all environments unless overridden",
+      "includeComments": true,
+      "includeZoneId": true,
+      "targetEnvironment": "all",
+      "orderStrategy": "most-specific-first"
+    },
+    "domains": {
+      "_comment": "Domain-specific routing rules and patterns",
+      "skipPatterns": [],
+      "_skipPatternsNote": "Add domain patterns to skip route generation (e.g., ['internal.example.com'])",
+      "complexTLDs": [".co.uk", ".com.au", ".org.uk", ".gov.uk", ".co.nz", ".com.br"],
+      "_complexTLDsNote": "Multi-part TLDs that should be treated as single domain extension",
+      "subdomainMinParts": 3,
+      "_subdomainMinPartsNote": "Minimum parts to consider a domain as subdomain (e.g., api.example.com = 3 parts)",
+      "ignoreSubdomains": ["www"],
+      "_ignoreSubdomainsNote": "Subdomain prefixes to ignore when generating routes"
+    },
+    "validation": {
+      "_comment": "Validation patterns for route generation",
+      "zoneIdPattern": "^[a-f0-9]{32}$",
+      "_zoneIdNote": "Cloudflare Zone ID must be 32 hexadecimal characters",
+      "domainPattern": "^[a-z0-9.-]+$",
+      "_domainNote": "Valid domain characters: lowercase letters, numbers, dots, hyphens",
+      "strictMode": true,
+      "_strictModeNote": "When true, reject invalid domains; when false, log warnings only"
+    },
+    "comments": {
+      "_comment": "TOML comment templates - use {{placeholder}} for dynamic values",
+      "enabled": true,
+      "templates": {
+        "production": "# Production environment routes\n# Domain: {{domain}}",
+        "staging": "# Staging environment routes\n# Domain: {{domain}}",
+        "development": "# Development environment\n# Uses {{WORKERS_DEV_DOMAIN}} subdomain"
+      }
     }
   }
 }

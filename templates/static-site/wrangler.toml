@@ -1,0 +1,43 @@
+name = "{{SERVICE_NAME}}-dev"
+main = "src/worker/index.js"
+compatibility_date = "{{CURRENT_DATE}}"
+
+# Workers Sites configuration for static file serving
+[site]
+bucket = "./public"
+include = ["**/*"]
+exclude = [
+  "node_modules/**",
+  ".git/**",
+  ".DS_Store",
+  "*.log",
+  "wrangler.toml",
+  "package.json",
+  "package-lock.json"
+]
+
+[env.development]
+name = "{{SERVICE_NAME}}-dev"
+
+[env.staging]
+name = "{{SERVICE_NAME}}-staging"
+
+[env.production]
+name = "{{SERVICE_NAME}}"
+
+# Environment variables
+[vars]
+DOMAIN_NAME = "{{SERVICE_NAME}}.{{DOMAIN_NAME}}"
+ENVIRONMENT = "development"
+SERVICE_NAME = "{{SERVICE_NAME}}"
+SERVICE_TYPE = "static-site"
+PUBLIC_DIR = "public"
+INDEX_FILE = "index.html"
+ERROR_FILE = "404.html"
+SPA_FALLBACK = "true"
+CLEAN_URLS = "true"
+COMPRESS_TEXT = "true"
+CORS_ENABLED = "true"
+
+# Add your custom environment variables here
+# CUSTOM_VAR = "value"

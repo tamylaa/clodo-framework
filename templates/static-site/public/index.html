@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{SERVICE_DISPLAY_NAME}}</title>
+    <meta name="description" content="A static site powered by Clodo Framework">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to {{SERVICE_DISPLAY_NAME}}</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <h2>Your Static Site is Live!</h2>
+            <p>This site is powered by <strong>Clodo Framework</strong> and served via Cloudflare Workers Sites.</p>
+            <p>Service: {{SERVICE_NAME}}<br>
+            Environment: <span id="environment">loading...</span><br>
+            Domain: {{DOMAIN_NAME}}</p>
+        </section>
+
+        <section id="features">
+            <h3>Features</h3>
+            <ul>
+                <li>⚡ Fast static file serving</li>
+                <li>🌐 Global CDN distribution</li>
+                <li>🔒 HTTPS by default</li>
+                <li>📱 Mobile responsive</li>
+                <li>🤖 SEO optimized</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; {{CURRENT_YEAR}} {{SERVICE_DISPLAY_NAME}}. Powered by Clodo Framework.</p>
+        <p><a href="/health">Health Check</a> | <a href="/info">Service Info</a></p>
+    </footer>
+
+    <script src="/app.js"></script>
+</body>
+</html>

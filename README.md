@@ -583,6 +583,106 @@ The deployment will output the worker URL. Visit it to confirm it's working:
 ✅ Deployment successful: https://your-service.your-domain.com
 ```
 
+## 🛣️ Automatic Route Configuration
+
+**Clodo Framework's killer feature**: Never manually configure routes again. The framework automatically generates Cloudflare Worker routes from your domain configuration, ensuring consistency across all environments.
+
+### **Zero-Configuration Routing**
+
+Simply define your domains, and routes are generated automatically:
+
+```javascript
+// domain-config.json
+{
+  "domains": {
+    "example.com": {
+      "cloudflareZoneId": "abc123...",
+      "environments": {
+        "production": {
+          "domain": "api.example.com",
+          "apiBasePath": "/api"
+        },
+        "staging": {
+          "domain": "staging-api.example.com",
+          "apiBasePath": "/api"
+        },
+        "development": {
+          "subdomain": "my-service-dev"
+        }
+      }
+    }
+  }
+}
+```
+
+**Automatically generates:**
+```toml
+# Production routes (top-level)
+[[routes]]
+pattern = "api.example.com/api/*"
+zone_id = "abc123..."
+
+# Staging routes (nested)
+[env.staging]
+[[routes]]
+pattern = "staging-api.example.com/api/*"
+zone_id = "abc123..."
+
+# Development uses workers.dev automatically
+```
+
+### **Multi-Tenant SaaS Made Simple**
+
+Deploy to multiple customer domains automatically:
+
+```javascript
+{
+  "domains": {
+    "customer1.example.com": { "cloudflareZoneId": "zone1..." },
+    "customer2.example.com": { "cloudflareZoneId": "zone2..." },
+    "customer3.example.com": { "cloudflareZoneId": "zone3..." }
+  }
+}
+```
+
+All routes generated automatically. Add a new customer? Just add their domain to config.
+
+### **Customization & Control**
+
+Fine-tune routing behavior through `validation-config.json`:
+
+```json
+{
+  "routing": {
+    "defaults": {
+      "includeComments": true,
+      "targetEnvironment": "all",
+      "orderStrategy": "most-specific-first"
+    },
+    "domains": {
+      "skipPatterns": ["internal.*"],
+      "complexTLDs": [".co.uk", ".com.au"]
+    }
+  }
+}
+```
+
+### **Key Benefits**
+
+- ✅ **Zero Manual TOML Editing**: Routes generated from domain config
+- ✅ **Multi-Environment Support**: Production, staging, dev automatically configured
+- ✅ **Multi-Tenant Ready**: Scale to hundreds of customer domains
+- ✅ **Conflict Detection**: Validates route patterns before deployment
+- ✅ **Self-Documenting**: Comments explain each route's purpose
+
+### **Learn More**
+
+- **Complete Guide**: [docs/ROUTING_GUIDE.md](./docs/ROUTING_GUIDE.md) - All configuration options explained
+- **Migration Guide**: [docs/MIGRATION_GUIDE.md](./docs/MIGRATION_GUIDE.md) - Move from manual routes
+- **Examples**: See routing examples for single-domain, multi-tenant, and complex scenarios
+
+> **This is what sets Clodo apart**: Other frameworks require manual route configuration. Clodo generates everything automatically from your domain structure.
+
 ## Project Structure
 
 ```
