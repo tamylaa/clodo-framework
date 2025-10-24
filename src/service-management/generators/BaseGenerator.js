@@ -118,7 +118,8 @@ export class BaseGenerator {
       const content = await fs.readFile(templatePath, 'utf8');
       return content;
     } catch (error) {
-      throw new Error(`Failed to load template '${templateName}' from '${templatePath}': ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to load template '${templateName}' from '${templatePath}': ${errorMessage}`);
     }
   }
 

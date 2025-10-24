@@ -88,7 +88,8 @@ export class FileWriter {
       } catch {
         // Ignore cleanup errors
       }
-      throw new Error(`Failed to write file '${filePath}': ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to write file '${filePath}': ${errorMessage}`);
     }
   }
 

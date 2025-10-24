@@ -51,7 +51,8 @@ export class TemplateEngine {
       if (error.code === 'ENOENT') {
         throw new Error(`Template not found: ${templateName} (looked in ${templatePath})`);
       }
-      throw new Error(`Failed to load template '${templateName}': ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to load template '${templateName}': ${errorMessage}`);
     }
   }
 
