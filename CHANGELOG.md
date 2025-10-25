@@ -1,3 +1,10 @@
+## [3.1.4](https://github.com/tamylaa/clodo-framework/compare/v3.1.3...v3.1.4) (2025-10-25)
+
+
+### Bug Fixes
+
+* deploy command should collect deployment inputs, not service creation inputs ([63cbccf](https://github.com/tamylaa/clodo-framework/commit/63cbccfd8b3886668304a7dce51508e6ccba2450))
+
 ## [3.1.3](https://github.com/tamylaa/clodo-framework/compare/v3.1.2...v3.1.3) (2025-10-25)
 
 
