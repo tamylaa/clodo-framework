@@ -7,6 +7,11 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class UIStructuresLoader {
   constructor() {
@@ -20,7 +25,7 @@ class UIStructuresLoader {
   async loadTemplates() {
     if (this.loaded) return;
 
-    const uiStructuresDir = path.join(process.cwd(), 'ui-structures');
+    const uiStructuresDir = path.join(__dirname, '..', '..', 'ui-structures');
 
     // Load creation templates
     const creationDir = path.join(uiStructuresDir, 'creation');
