@@ -1,3 +1,11 @@
+## [3.1.3](https://github.com/tamylaa/clodo-framework/compare/v3.1.2...v3.1.3) (2025-10-25)
+
+
+### Bug Fixes
+
+* ui-structures-loader path resolution and build inclusion ([1744ce3](https://github.com/tamylaa/clodo-framework/commit/1744ce324272a9befa803498f452953409f3f870))
+* ui-structures-loader should look in package directory, not cwd ([23160a8](https://github.com/tamylaa/clodo-framework/commit/23160a808230999c26bb5c5e989ac425b150647d))
+
 ## [3.1.2](https://github.com/tamylaa/clodo-framework/compare/v3.1.1...v3.1.2) (2025-10-25)
 
 
