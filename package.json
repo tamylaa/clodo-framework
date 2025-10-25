@@ -69,7 +69,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run prebuild && babel src/ --out-dir dist/ && babel bin/shared/ --out-dir dist/shared/ && babel bin/shared/production-tester/ --out-dir dist/deployment/testers/ && babel bin/shared/deployment/ --out-dir dist/deployment/ && npm run postbuild",
+    "build": "npm run prebuild && babel src/ --out-dir dist/ && babel bin/shared/ --out-dir dist/shared/ && babel bin/shared/production-tester/ --out-dir dist/deployment/testers/ && babel bin/shared/deployment/ --out-dir dist/deployment/ && node -e \"const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true});\" && npm run postbuild",
     "prebuild": "npm run clean && npm run type-check",
     "postbuild": "npm run check:bundle",
     "clean": "rimraf dist",
