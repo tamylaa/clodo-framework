@@ -647,7 +647,7 @@ program
       
       // Interactive mode: run input collector
       if (isInteractive) {
-          await inputCollector.collect();
+          coreInputs = await inputCollector.collect();
         } else {
           // Non-interactive mode: load from config file or stored config
           

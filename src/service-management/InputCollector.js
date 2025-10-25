@@ -625,4 +625,18 @@ export class InputCollector {
       this.rl = null; // Clear reference so ensureReadline() can create new one if needed
     }
   }
+
+  /**
+   * Collect inputs and return flat core inputs object
+   * Used by CLI for deployment
+   */
+  async collect() {
+    const result = await this.collectInputsWithTransparency();
+    // Flatten the core inputs from {id: {value, ...}} to {id: value}
+    const flatCoreInputs = {};
+    for (const [key, inputObj] of Object.entries(result.coreInputs)) {
+      flatCoreInputs[key] = inputObj.value;
+    }
+    return flatCoreInputs;
+  }
 }
