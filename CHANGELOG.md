@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/tamylaa/clodo-framework/compare/v3.1.0...v3.1.1) (2025-10-25)
+
+
+### Bug Fixes
+
+* add missing collect method to InputCollector for deploy command ([ef78a92](https://github.com/tamylaa/clodo-framework/commit/ef78a922dac445e6d8a88f4dc73cde7a6b280055))
+
 # [3.1.0](https://github.com/tamylaa/clodo-framework/compare/v3.0.15...v3.1.0) (2025-10-24)
 
 
