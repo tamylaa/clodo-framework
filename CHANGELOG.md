@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/tamylaa/clodo-framework/compare/v3.1.1...v3.1.2) (2025-10-25)
+
+
+### Bug Fixes
+
+* include ui-structures directory in published package files ([79ce369](https://github.com/tamylaa/clodo-framework/commit/79ce3692fc5fb50cf90cead6378b4d5d180d91d9))
+
 ## [3.1.1](https://github.com/tamylaa/clodo-framework/compare/v3.1.0...v3.1.1) (2025-10-25)
 
 
