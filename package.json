@@ -59,6 +59,7 @@
     "bin/shared",
     "bin/database",
     "templates",
+    "ui-structures",
     "docs/README.md",
     "docs/overview.md",
     "docs/SECURITY.md",
