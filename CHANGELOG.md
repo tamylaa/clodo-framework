@@ -1,3 +1,10 @@
+## [3.1.5](https://github.com/tamylaa/clodo-framework/compare/v3.1.4...v3.1.5) (2025-10-25)
+
+
+### Bug Fixes
+
+* deploy command should use full three-tier architecture (88+ fields)- Updated collect() to return comprehensive three-tier result- Deploy command now uses full collection with confirmations- Prevents duplicate confirmation steps in interactive mode- Restores the 80+ field deployment flow with user confirmations ([5c6c226](https://github.com/tamylaa/clodo-framework/commit/5c6c226d652d3dc7d1532147af4e87f7ccb8a811))
+
 ## [3.1.4](https://github.com/tamylaa/clodo-framework/compare/v3.1.3...v3.1.4) (2025-10-25)
 
 
