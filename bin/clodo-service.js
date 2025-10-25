@@ -645,9 +645,57 @@ program
       let coreInputs = {};
       let source = 'interactive';
       
-      // Interactive mode: run input collector
+      // Interactive mode: collect deployment-specific inputs
       if (isInteractive) {
-          coreInputs = await inputCollector.collect();
+          console.log(chalk.cyan('📊 Deployment Input Collection\n'));
+          
+          // Collect deployment-focused inputs, not full service creation
+          let customer = options.customer;
+          if (!customer) {
+            const customers = configManager.listCustomers();
+            if (customers.length > 0) {
+              console.log(chalk.blue('❓ Select customer:'));
+              customers.forEach((cust, index) => {
+                console.log(chalk.gray(`   ${index + 1}. ${cust}`));
+              });
+              const selection = await inputCollector.question('Enter number or name: ');
+              
+              const num = parseInt(selection);
+              if (!isNaN(num) && num >= 1 && num <= customers.length) {
+                customer = customers[num - 1];
+              } else if (customers.includes(selection)) {
+                customer = selection;
+              } else {
+                customer = selection;
+                console.log(chalk.yellow(`⚠️  New customer: ${customer}`));
+              }
+            } else {
+              customer = await inputCollector.question('Customer name: ');
+            }
+          }
+          
+          const environment = options.env || await inputCollector.collectEnvironment();
+          const domainName = options.domain || await inputCollector.question('Domain name: ');
+          
+          // Collect Cloudflare credentials
+          const cloudflareToken = process.env.CLOUDFLARE_API_TOKEN || await inputCollector.collectCloudflareToken();
+          
+          console.log(chalk.cyan('⏳ Fetching Cloudflare configuration...'));
+          const cloudflareConfig = await inputCollector.collectCloudflareConfigWithDiscovery(
+            cloudflareToken,
+            domainName
+          );
+          
+          coreInputs = {
+            customer,
+            environment,
+            domainName,
+            cloudflareToken,
+            cloudflareAccountId: cloudflareConfig.accountId,
+            cloudflareZoneId: cloudflareConfig.zoneId
+          };
+          
+          source = 'interactive';
         } else {
           // Non-interactive mode: load from config file or stored config
           
