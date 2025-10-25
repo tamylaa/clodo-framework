@@ -627,16 +627,26 @@ export class InputCollector {
   }
 
   /**
-   * Collect inputs and return flat core inputs object
-   * Used by CLI for deployment
+   * Collect inputs and return full three-tier result
+   * Used by CLI for comprehensive service operations
    */
   async collect() {
     const result = await this.collectInputsWithTransparency();
-    // Flatten the core inputs from {id: {value, ...}} to {id: value}
+    
+    // For CLI compatibility, also provide flat coreInputs
     const flatCoreInputs = {};
     for (const [key, inputObj] of Object.entries(result.coreInputs)) {
       flatCoreInputs[key] = inputObj.value;
     }
-    return flatCoreInputs;
+    
+    // Merge smart confirmations into flat object
+    for (const [key, value] of Object.entries(result.smartConfirmations)) {
+      flatCoreInputs[key] = value;
+    }
+    
+    return {
+      ...result,
+      flatInputs: flatCoreInputs
+    };
   }
 }
