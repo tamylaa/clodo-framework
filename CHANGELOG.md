@@ -1,3 +1,11 @@
+## [3.1.9](https://github.com/tamylaa/clodo-framework/compare/v3.1.8...v3.1.9) (2025-10-27)
+
+
+### Bug Fixes
+
+* compile bin/ to dist/bin/ for proper npm package structure ([d4ba5d5](https://github.com/tamylaa/clodo-framework/commit/d4ba5d55e27911333a9921234e8defe2f995efd3))
+* include required bin directories in npm package ([aa8484e](https://github.com/tamylaa/clodo-framework/commit/aa8484ed600c15a217d7b67b82ad9f31d780fdf7))
+
 ## [3.1.8](https://github.com/tamylaa/clodo-framework/compare/v3.1.7...v3.1.8) (2025-10-27)
 
 
