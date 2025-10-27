@@ -1,3 +1,10 @@
+## [3.1.14](https://github.com/tamylaa/clodo-framework/compare/v3.1.13...v3.1.14) (2025-10-27)
+
+
+### Bug Fixes
+
+* restore smart credential collection flow in deploy command ([a3e94f6](https://github.com/tamylaa/clodo-framework/commit/a3e94f6efe4a41c380badfc7a104e32bfba9fe9a))
+
 ## [3.1.13](https://github.com/tamylaa/clodo-framework/compare/v3.1.12...v3.1.13) (2025-10-27)
 
 
