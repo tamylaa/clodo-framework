@@ -1,3 +1,11 @@
+## [3.1.13](https://github.com/tamylaa/clodo-framework/compare/v3.1.12...v3.1.13) (2025-10-27)
+
+
+### Bug Fixes
+
+* add comprehensive test coverage for service validation ([393e6d2](https://github.com/tamylaa/clodo-framework/commit/393e6d268348cc2926c80f0d3f6cd5377c2875a2))
+* add intelligent Cloudflare service detection and validation ([a680006](https://github.com/tamylaa/clodo-framework/commit/a6800063e2df8f8d6fa7660079cd22eb3f9a4a97))
+
 ## [3.1.12](https://github.com/tamylaa/clodo-framework/compare/v3.1.11...v3.1.12) (2025-10-27)
 
 
