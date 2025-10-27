@@ -1,3 +1,10 @@
+## [3.1.6](https://github.com/tamylaa/clodo-framework/compare/v3.1.5...v3.1.6) (2025-10-27)
+
+
+### Bug Fixes
+
+* add automated testing suite, cover clodo-service deploy 3-level inputs, and Windows compatibility fixes ([305c81c](https://github.com/tamylaa/clodo-framework/commit/305c81c45bd1761a49d1d54585b189c95cd7c749))
+
 ## [3.1.5](https://github.com/tamylaa/clodo-framework/compare/v3.1.4...v3.1.5) (2025-10-25)
 
 
