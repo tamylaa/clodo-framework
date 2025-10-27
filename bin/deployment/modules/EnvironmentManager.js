@@ -3,8 +3,8 @@
  * Handles environment configuration, domain mapping, deployment mode selection, and cross-domain coordination
  */
 
-import { MultiDomainOrchestrator } from '../../../dist/orchestration/multi-domain-orchestrator.js';
-import { CrossDomainCoordinator } from '../../../dist/orchestration/cross-domain-coordinator.js';
+import { MultiDomainOrchestrator } from '../../../src/orchestration/multi-domain-orchestrator.js';
+import { CrossDomainCoordinator } from '../../../src/orchestration/cross-domain-coordinator.js';
 import { DomainDiscovery } from '../../shared/cloudflare/domain-discovery.js';
 import { askChoice, askUser, askYesNo, DeploymentInteractiveUtils } from '../../shared/utils/interactive-utils.js';
 

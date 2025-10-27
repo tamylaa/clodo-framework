@@ -53,11 +53,6 @@
   "files": [
     "dist",
     "types",
-    "bin/clodo-service.js",
-    "bin/service-management",
-    "bin/security",
-    "bin/shared",
-    "bin/database",
     "templates",
     "ui-structures",
     "docs/README.md",
