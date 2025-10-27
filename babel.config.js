@@ -12,7 +12,7 @@
   ],
   plugins: [
     '@babel/plugin-syntax-import-meta',
-    // Custom plugin to rewrite src/ paths during compilation
+    // Custom plugin to rewrite src/ and bin/ paths during compilation
     function pathRewritePlugin() {
       return {
         visitor: {
@@ -22,6 +22,11 @@
             // This accounts for src/ being compiled directly to dist/
             if (source.includes('/src/')) {
               path.node.source.value = source.replace(/\/src\//, '/');
+            }
+            // Rewrite imports from bin/ to dist/bin/ for modules importing shared bin files
+            // Since bin/ is compiled to dist/bin/, references need to point there
+            if (source.includes('/bin/') && !source.includes('/dist/bin/')) {
+              path.node.source.value = source.replace(/\/bin\//, '/dist/bin/');
             }
           }
         }
