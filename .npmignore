@@ -45,8 +45,11 @@ types/
 
 # Development CLI tools (only include specific ones in package.json)
 bin/
+!bin/commands/
 !bin/service-management/
 !bin/security/
+!bin/clodo-service.js
+!bin/shared/
 
 # Lock files
 package-lock.json
