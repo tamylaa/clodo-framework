@@ -20,7 +20,9 @@ export default {
     '/dist/',
     '/test-output/',
     '/coverage/',
-    '/backups/'
+    '/backups/',
+    '/i-docs/',
+    '/generated/'
   ],
   testMatch: [
     '**/__tests__/**/*.[jt]s?(x)',
