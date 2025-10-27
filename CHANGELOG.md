@@ -1,3 +1,10 @@
+## [3.1.12](https://github.com/tamylaa/clodo-framework/compare/v3.1.11...v3.1.12) (2025-10-27)
+
+
+### Bug Fixes
+
+* update babel import rewriter to handle bin/ paths too ([6e26172](https://github.com/tamylaa/clodo-framework/commit/6e26172bbc2f697a59de0ea5567665094d4027b1))
+
 ## [3.1.11](https://github.com/tamylaa/clodo-framework/compare/v3.1.10...v3.1.11) (2025-10-27)
 
 
