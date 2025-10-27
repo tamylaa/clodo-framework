@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { SecurityCLI } from '../../dist/security/SecurityCLI.js';
+import { SecurityCLI } from '../../src/security/SecurityCLI.js';
 
 const command = process.argv[2];
 const args = process.argv.slice(3);

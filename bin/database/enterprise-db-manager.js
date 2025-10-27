@@ -25,10 +25,10 @@ import { program } from 'commander';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-// Enterprise module imports - from dist/ (compiled framework)
-import { DatabaseOrchestrator } from '../../dist/database/database-orchestrator.js';
-import { DeploymentAuditor } from '../../dist/deployment/deployment-auditor.js';
-import { CrossDomainCoordinator } from '../../dist/orchestration/cross-domain-coordinator.js';
+// Enterprise module imports - from src/ (framework source)
+import { DatabaseOrchestrator } from '../../src/database/database-orchestrator.js';
+import { DeploymentAuditor } from '../../src/deployment/deployment-auditor.js';
+import { CrossDomainCoordinator } from '../../src/orchestration/cross-domain-coordinator.js';
 
 // Shared utilities from bin/shared/
 import { ConfigurationCacheManager } from '../shared/config/cache.js';

@@ -6,7 +6,7 @@
  */
 
 import chalk from 'chalk';
-import { ServiceOrchestrator } from '../../dist/service-management/ServiceOrchestrator.js';
+import { ServiceOrchestrator } from '../../src/service-management/ServiceOrchestrator.js';
 
 export function registerCreateCommand(program) {
   program

@@ -15,7 +15,7 @@ import { promisify } from 'util';
 import { exec } from 'child_process';
 import { askChoice, askYesNo } from '../utils/interactive-prompts.js';
 import { DomainDiscovery } from './domain-discovery.js';
-import { MultiDomainOrchestrator } from '../../../dist/orchestration/multi-domain-orchestrator.js';
+import { MultiDomainOrchestrator } from '../../../src/orchestration/multi-domain-orchestrator.js';
 import { getCommandConfig } from '../config/command-config-manager.js';
 import { CloudflareTokenManager } from '../security/api-token-manager.js';
 

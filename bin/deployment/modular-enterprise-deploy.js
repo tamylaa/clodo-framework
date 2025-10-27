@@ -34,10 +34,10 @@ import { MonitoringIntegration } from './modules/MonitoringIntegration.js';
 import { DeploymentOrchestrator } from './modules/DeploymentOrchestrator.js';
 
 // Enterprise modules (optional)
-import { MultiDomainOrchestrator } from '../../dist/orchestration/multi-domain-orchestrator.js';
-import { CrossDomainCoordinator } from '../../dist/orchestration/cross-domain-coordinator.js';
+import { MultiDomainOrchestrator } from '../../src/orchestration/multi-domain-orchestrator.js';
+import { CrossDomainCoordinator } from '../../src/orchestration/cross-domain-coordinator.js';
 import { DeploymentValidator } from '../shared/deployment/validator.js';
-import { DatabaseOrchestrator } from '../../dist/database/database-orchestrator.js';
+import { DatabaseOrchestrator } from '../../src/database/database-orchestrator.js';
 import { EnhancedSecretManager } from '../shared/security/secret-generator.js';
 import { ProductionTester } from '../shared/production-tester/index.js';
 import { DeploymentAuditor } from '../shared/deployment/auditor.js';

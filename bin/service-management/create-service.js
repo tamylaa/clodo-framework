@@ -5,7 +5,7 @@
  * Creates new ser    console.log(`✓ Using Clodo Framework ServiceCreator module`);ices from predefined templates
  */
 
-import { ServiceCreator } from '../../dist/service-management/ServiceCreator.js';
+import { ServiceCreator } from '../../src/service-management/ServiceCreator.js';
 
 const SERVICE_TYPES = ['data-service', 'auth-service', 'content-service', 'api-gateway', 'generic'];
 

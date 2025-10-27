@@ -26,16 +26,16 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 // Enterprise module imports - organized shared modules
-import { MultiDomainOrchestrator } from '../../dist/orchestration/multi-domain-orchestrator.js';
+import { MultiDomainOrchestrator } from '../../src/orchestration/multi-domain-orchestrator.js';
 import { RollbackManager } from '../shared/deployment/rollback-manager.js';
 import { ProductionTester } from '../shared/production-tester/index.js';
 import { DeploymentValidator } from '../shared/deployment/validator.js';
 import { DomainDiscovery } from '../shared/cloudflare/domain-discovery.js';
-import { DatabaseOrchestrator } from '../../dist/database/database-orchestrator.js';
+import { DatabaseOrchestrator } from '../../src/database/database-orchestrator.js';
 import { EnhancedSecretManager } from '../shared/security/secret-generator.js';
 import { DeploymentAuditor } from '../shared/deployment/auditor.js';
 import { ConfigurationCacheManager } from '../shared/config/cache.js';
-import { CrossDomainCoordinator } from '../../dist/orchestration/cross-domain-coordinator.js';
+import { CrossDomainCoordinator } from '../../src/orchestration/cross-domain-coordinator.js';
 import { askChoice, askUser, closePrompts } from '../shared/utils/interactive-prompts.js';
 import { CloudflareDomainManager } from '../shared/cloudflare/domain-manager.js';
 
