@@ -2,14 +2,16 @@
  * Deploy Command - Smart minimal input deployment with service detection
  * 
  * Input Strategy: SMART MINIMAL
- * - Detects if project is a service (clodo-service-manifest.json)
- * - Gathers credentials smartly: env vars → flags → fail with helpful message (never prompt)
+ * - Detects Clodo services OR legacy services (wrangler.toml)
+ * - Supports multiple manifest locations
+ * - Gathers credentials smartly: env vars → flags → fail with helpful message
  * - Integrates with modular-enterprise-deploy.js for clean CLI-based deployment
  */
 
 import chalk from 'chalk';
-import { existsSync, readFileSync } from 'fs';
-import { resolve, join } from 'path';
+import { resolve } from 'path';
+import { ManifestLoader } from '../shared/config/manifest-loader.js';
+import { CloudflareServiceValidator } from '../shared/config/cloudflare-service-validator.js';
 
 export function registerDeployCommand(program) {
   program
@@ -25,36 +27,25 @@ export function registerDeployCommand(program) {
       try {
         console.log(chalk.cyan('\n🚀 Clodo Service Deployment\n'));
 
-        // Step 1: Detect if this is a service project
+        // Step 1: Load and validate service configuration
         const servicePath = resolve(options.servicePath);
-        const manifestPath = join(servicePath, 'clodo-service-manifest.json');
+        const serviceConfig = await ManifestLoader.loadAndValidateCloudflareService(servicePath);
 
-        if (!existsSync(manifestPath)) {
-          console.error(chalk.red('❌ This is not a Clodo service project'));
-          console.error(chalk.yellow('\nExpected to find: clodo-service-manifest.json'));
-          console.error(chalk.cyan('\nAre you trying to deploy the framework itself?'));
-          console.error(chalk.white('The clodo-framework repository is a library, not deployable.'));
-          console.error(chalk.white('Create a service first: npx clodo-service create'));
+        if (!serviceConfig.manifest) {
+          if (serviceConfig.error === 'NOT_A_CLOUDFLARE_SERVICE') {
+            ManifestLoader.printNotCloudflareServiceError(servicePath);
+          } else if (serviceConfig.error === 'CLOUDFLARE_SERVICE_INVALID') {
+            ManifestLoader.printValidationErrors(serviceConfig.validationResult);
+          }
           process.exit(1);
         }
 
-        // Read service manifest
-        let manifest;
-        try {
-          const manifestContent = readFileSync(manifestPath, 'utf8');
-          manifest = JSON.parse(manifestContent);
-        } catch (err) {
-          console.error(chalk.red('❌ Failed to read service manifest'));
-          console.error(chalk.yellow(`Error: ${err.message}`));
-          process.exit(1);
+        // Print service info and validation results
+        if (serviceConfig.validationResult) {
+          CloudflareServiceValidator.printValidationReport(serviceConfig.validationResult.validation);
         }
-
-        const serviceName = manifest.serviceName || 'unknown-service';
-        const serviceType = manifest.serviceType || 'unknown-type';
-
-        console.log(chalk.white(`Service: ${chalk.bold(serviceName)}`));
-        console.log(chalk.white(`Type: ${serviceType}`));
-        console.log(chalk.white(`Path: ${servicePath}\n`));
+        ManifestLoader.printManifestInfo(serviceConfig.manifest);
+        console.log(chalk.gray(`Configuration loaded from: ${serviceConfig.foundAt}\n`));
 
         // Step 2: Smart credential gathering
         // Priority: flags → environment variables → fail with helpful message
@@ -98,12 +89,13 @@ export function registerDeployCommand(program) {
         }
 
         // Step 3: Extract configuration from manifest
-        const config = manifest.configuration || {};
-        const domain = config.domain || config.domainName;
+        const manifest = serviceConfig.manifest;
+        const config = manifest.deployment || manifest.configuration || {};
+        const domains = config.domains || [];
 
-        if (!domain) {
-          console.error(chalk.red('❌ No domain configured in service manifest'));
-          console.error(chalk.yellow('Update clodo-service-manifest.json with domain configuration'));
+        if (domains.length === 0) {
+          console.error(chalk.red('❌ No domains configured in service manifest'));
+          console.error(chalk.yellow('Add domain configuration to: clodo-service-manifest.json'));
           process.exit(1);
         }
 
