@@ -238,7 +238,7 @@ export class ManifestLoader {
   /**
    * Print validation issues for malformed services
    */
-  static printValidationErrors(validationResult) {
+  static printValidationErrors(validationResult, isClodoValidation = false) {
     if (validationResult.validation.issues.length > 0) {
       console.error(chalk.red('\n❌ Service Configuration Issues:\n'));
       validationResult.validation.issues.forEach(issue => {
@@ -251,7 +251,14 @@ export class ManifestLoader {
       validationResult.validation.warnings.forEach(warning => {
         console.warn(chalk.yellow(`  • ${warning}`));
       });
-      console.warn(chalk.cyan('\nContinue with deployment? (May fail or behave unexpectedly)'));
+
+      // Different message based on whether this is a Clodo manifest or detected service
+      if (isClodoValidation) {
+        console.warn(chalk.cyan('\nFor Clodo manifest deployments, review these warnings before proceeding.'));
+      } else {
+        console.warn(chalk.cyan('\nThese warnings indicate optional configurations that may affect behavior.'));
+        console.warn(chalk.cyan('Deployment can proceed, but you may need to handle routing/environments in your worker code.'));
+      }
     }
   }
 

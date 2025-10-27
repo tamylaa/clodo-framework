@@ -88,11 +88,8 @@ export class CloudflareServiceValidator {
         warnings.push('wrangler.toml: No environments configured (production, staging, etc)');
       }
 
-      // Check for routes configuration
-      const routes = wranglerConfig.routes;
-      if (!routes) {
-        warnings.push('wrangler.toml: No routes defined (service may not be accessible)');
-      }
+      // Note: Routes are optional - many services define them in code or use catch-all patterns
+      // Not warning about missing routes here as it's a valid configuration choice
 
       return {
         isValid: issues.length === 0,

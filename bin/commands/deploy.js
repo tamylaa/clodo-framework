@@ -4,7 +4,8 @@
  * Input Strategy: SMART MINIMAL
  * - Detects Clodo services OR legacy services (wrangler.toml)
  * - Supports multiple manifest locations
- * - Gathers credentials smartly: env vars → flags → fail with helpful message
+ * - Gathers credentials smartly: env vars → flags → interactive collection with auto-fetch
+ * - Validates token and fetches account ID & zone ID from Cloudflare
  * - Integrates with modular-enterprise-deploy.js for clean CLI-based deployment
  */
 
@@ -12,6 +13,7 @@ import chalk from 'chalk';
 import { resolve } from 'path';
 import { ManifestLoader } from '../shared/config/manifest-loader.js';
 import { CloudflareServiceValidator } from '../shared/config/cloudflare-service-validator.js';
+import { DeploymentCredentialCollector } from '../shared/deployment/credential-collector.js';
 
 export function registerDeployCommand(program) {
   program
@@ -35,7 +37,8 @@ export function registerDeployCommand(program) {
           if (serviceConfig.error === 'NOT_A_CLOUDFLARE_SERVICE') {
             ManifestLoader.printNotCloudflareServiceError(servicePath);
           } else if (serviceConfig.error === 'CLOUDFLARE_SERVICE_INVALID') {
-            ManifestLoader.printValidationErrors(serviceConfig.validationResult);
+            // Pass false because we're validating a detected service, not a Clodo manifest
+            ManifestLoader.printValidationErrors(serviceConfig.validationResult, false);
           }
           process.exit(1);
         }
@@ -47,63 +50,64 @@ export function registerDeployCommand(program) {
         ManifestLoader.printManifestInfo(serviceConfig.manifest);
         console.log(chalk.gray(`Configuration loaded from: ${serviceConfig.foundAt}\n`));
 
-        // Step 2: Smart credential gathering
-        // Priority: flags → environment variables → fail with helpful message
-        const credentials = {
-          token: options.token || process.env.CLOUDFLARE_API_TOKEN,
-          accountId: options.accountId || process.env.CLOUDFLARE_ACCOUNT_ID,
-          zoneId: options.zoneId || process.env.CLOUDFLARE_ZONE_ID
-        };
+        // Step 2: Smart credential gathering with interactive collection
+        // Uses DeploymentCredentialCollector which:
+        // - Checks flags and env vars first
+        // - Prompts for API token if needed
+        // - Validates token and auto-fetches account ID & zone ID
+        // - Caches credentials for future use
+        const credentialCollector = new DeploymentCredentialCollector({
+          servicePath: servicePath,
+          quiet: options.quiet
+        });
 
-        // Check for missing credentials
-        const missing = [];
-        if (!credentials.token) missing.push('CLOUDFLARE_API_TOKEN');
-        if (!credentials.accountId) missing.push('CLOUDFLARE_ACCOUNT_ID');
-        if (!credentials.zoneId) missing.push('CLOUDFLARE_ZONE_ID');
-
-        if (missing.length > 0) {
-          console.error(chalk.red('❌ Missing required Cloudflare credentials\n'));
-          console.error(chalk.white('Please provide via:'));
-          console.error(chalk.cyan('  Environment Variables:'));
-          missing.forEach(key => {
-            console.error(chalk.white(`    export ${key}=<your-${key.toLowerCase()}>`));
+        let credentials;
+        try {
+          credentials = await credentialCollector.collectCredentials({
+            token: options.token,
+            accountId: options.accountId,
+            zoneId: options.zoneId
           });
-          console.error(chalk.cyan('\n  Command Flags:'));
-          if (missing.includes('CLOUDFLARE_API_TOKEN')) {
-            console.error(chalk.white('    --token <token>'));
-          }
-          if (missing.includes('CLOUDFLARE_ACCOUNT_ID')) {
-            console.error(chalk.white('    --account-id <id>'));
-          }
-          if (missing.includes('CLOUDFLARE_ZONE_ID')) {
-            console.error(chalk.white('    --zone-id <id>'));
-          }
-          console.error(chalk.cyan('\n  Example:'));
-          console.error(chalk.white('    npx clodo-service deploy --token abc123 --account-id xyz789 --zone-id def456'));
-          console.error(chalk.white('    OR'));
-          console.error(chalk.white('    export CLOUDFLARE_API_TOKEN=abc123'));
-          console.error(chalk.white('    export CLOUDFLARE_ACCOUNT_ID=xyz789'));
-          console.error(chalk.white('    export CLOUDFLARE_ZONE_ID=def456'));
-          console.error(chalk.white('    npx clodo-service deploy\n'));
-          process.exit(1);
+        } finally {
+          credentialCollector.cleanup();
         }
 
         // Step 3: Extract configuration from manifest
         const manifest = serviceConfig.manifest;
         const config = manifest.deployment || manifest.configuration || {};
+        
+        // Extract service metadata
+        const serviceName = manifest.serviceName || 'unknown-service';
+        const serviceType = manifest.serviceType || 'generic';
+        
+        // For detected Cloudflare services, domain comes from wrangler.toml or environment
+        // For Clodo services, use first domain if available
+        let domain = null;
         const domains = config.domains || [];
+        
+        if (domains.length > 0) {
+          // Clodo service with multiple domains
+          domain = domains[0].name || domains[0];
+        } else if (manifest._source === 'cloudflare-service-detected') {
+          // Detected CF service - get domain from route or config
+          // For now, use a placeholder since we don't have explicit domain routing in detected services
+          domain = 'workers.cloudflare.com';
+          console.log(chalk.gray('Note: Using Cloudflare Workers default domain (add routes in wrangler.toml for custom domains)'));
+        }
 
-        if (domains.length === 0) {
-          console.error(chalk.red('❌ No domains configured in service manifest'));
-          console.error(chalk.yellow('Add domain configuration to: clodo-service-manifest.json'));
-          process.exit(1);
+        if (!domain && !options.quiet) {
+          console.error(chalk.yellow('⚠️  No domain configured for deployment'));
+          console.error(chalk.gray('For Clodo services: add deployment.domains in clodo-service-manifest.json'));
+          console.error(chalk.gray('For detected CF services: define routes in wrangler.toml'));
         }
 
         console.log(chalk.cyan('📋 Deployment Plan:'));
         console.log(chalk.gray('─'.repeat(50)));
         console.log(chalk.white(`Service:  ${serviceName}`));
         console.log(chalk.white(`Type:     ${serviceType}`));
-        console.log(chalk.white(`Domain:   ${domain}`));
+        if (domain) {
+          console.log(chalk.white(`Domain:   ${domain}`));
+        }
         console.log(chalk.white(`Account:  ${credentials.accountId.substring(0, 8)}...`));
         console.log(chalk.white(`Zone:     ${credentials.zoneId.substring(0, 8)}...`));
         console.log(chalk.gray('─'.repeat(50)));
