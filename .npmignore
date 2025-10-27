@@ -43,13 +43,8 @@ templates/
 test/
 types/
 
-# Development CLI tools (only include specific ones in package.json)
+# Development CLI tools (compiled to dist/bin/)
 bin/
-!bin/commands/
-!bin/service-management/
-!bin/security/
-!bin/clodo-service.js
-!bin/shared/
 
 # Lock files
 package-lock.json
