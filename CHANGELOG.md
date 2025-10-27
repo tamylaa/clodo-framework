@@ -1,3 +1,10 @@
+## [3.1.11](https://github.com/tamylaa/clodo-framework/compare/v3.1.10...v3.1.11) (2025-10-27)
+
+
+### Bug Fixes
+
+* add babel import path rewriter and remove source bin from package files ([91f19d4](https://github.com/tamylaa/clodo-framework/commit/91f19d48791d604497ff708a5c7a836100e6885a))
+
 ## [3.1.10](https://github.com/tamylaa/clodo-framework/compare/v3.1.9...v3.1.10) (2025-10-27)
 
 
