@@ -13,6 +13,7 @@ import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';
+import { logger } from '../logging/Logger.js';
 
 const execAsync = promisify(exec);
 
@@ -186,7 +187,7 @@ export class DatabaseOrchestrator {
           console.log(`✅ ${env} environment completed successfully`);
 
         } catch (error) {
-          console.error(`❌ ${env} environment failed: ${error.message}`);
+          logger.error(`${env} environment failed`, { error: error.message });
           
           results.environments[env] = {
             status: 'failed',
@@ -261,7 +262,7 @@ export class DatabaseOrchestrator {
           results.migrationsApplied += dbResult.migrationsApplied || 0;
           
         } catch (error) {
-          console.error(`   ❌ Database ${dbConfig.name} migration failed: ${error.message}`);
+          logger.error(`Database ${dbConfig.name} migration failed`, { error: error.message });
           results.databases[dbConfig.name] = {
             status: 'failed',
             error: error.message
@@ -522,7 +523,7 @@ export class DatabaseOrchestrator {
             );
             cleanupResults.operations[dbConfig.name] = cleanupResult;
           } catch (error) {
-            console.error(`❌ Cleanup failed for ${dbConfig.name}: ${error.message}`);
+            logger.error(`Cleanup failed for ${dbConfig.name}`, { error: error.message });
             cleanupResults.operations[dbConfig.name] = {
               status: 'failed',
               error: error.message
@@ -718,7 +719,7 @@ export class DatabaseOrchestrator {
         writeFile(this.backupPaths.audit, logLine);
       }
     } catch (error) {
-      console.warn(`⚠️ Failed to log audit event: ${error.message}`);
+      logger.warn('Failed to log audit event', { error: error.message });
     }
   }
 }

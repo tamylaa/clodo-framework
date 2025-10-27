@@ -25,11 +25,13 @@ import { program } from 'commander';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-// Enterprise module imports
-import { DatabaseOrchestrator } from '@tamyla/clodo-framework/database';
-import { DeploymentAuditor } from '@tamyla/clodo-framework/deployment';
-import { CrossDomainCoordinator } from '@tamyla/clodo-framework/orchestration';
-import { ConfigurationCacheManager } from '@tamyla/clodo-framework/utils/deployment';
+// Enterprise module imports - from dist/ (compiled framework)
+import { DatabaseOrchestrator } from '../../dist/database/database-orchestrator.js';
+import { DeploymentAuditor } from '../../dist/deployment/deployment-auditor.js';
+import { CrossDomainCoordinator } from '../../dist/orchestration/cross-domain-coordinator.js';
+
+// Shared utilities from bin/shared/
+import { ConfigurationCacheManager } from '../shared/config/cache.js';
 
 class EnterpriseDatabaseManagerCLI {
   constructor() {

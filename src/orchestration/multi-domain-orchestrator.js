@@ -48,6 +48,16 @@ export class MultiDomainOrchestrator {
       console.log(`🔑 Configured wrangler to use API token authentication`);
     }
     
+    if (this.cloudflareAccountId) {
+      process.env.CLOUDFLARE_ACCOUNT_ID = this.cloudflareAccountId;
+      console.log(`🔑 Configured wrangler to use account ID: ${this.cloudflareAccountId}`);
+    }
+    
+    if (this.cloudflareAccountId) {
+      process.env.CLOUDFLARE_ACCOUNT_ID = this.cloudflareAccountId;
+      console.log(`🔑 Configured wrangler to use account ID: ${this.cloudflareAccountId}`);
+    }
+    
     // Initialize modular components
     this.domainResolver = new DomainResolver({
       environment: this.environment,
@@ -166,13 +176,17 @@ export class MultiDomainOrchestrator {
   /**
    * Deploy to single domain using modular deployment coordinator
    * @param {string} domain - Domain to deploy
+   * @param {Object} deploymentOptions - Deployment configuration options
    * @returns {Promise<Object>} Deployment result
    */
-  async deploySingleDomain(domain) {
+  async deploySingleDomain(domain, deploymentOptions = {}) {
     const domainState = this.portfolioState.domainStates.get(domain);
     if (!domainState) {
       throw new Error(`Domain ${domain} not found in portfolio`);
     }
+
+    // Store deployment options in domain state for handlers to access
+    domainState.deploymentOptions = deploymentOptions;
 
     // Create handlers that delegate to our legacy methods for backward compatibility
     const handlers = {

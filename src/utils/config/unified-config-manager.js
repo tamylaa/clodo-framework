@@ -13,9 +13,10 @@
  * @module UnifiedConfigManager
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { resolve, join } from 'path';
 import { getDirname } from '../esm-helper.js';
+import { FileManager } from '../../../bin/shared/utils/file-manager.js';
 
 const __dirname = getDirname(import.meta.url, 'src/utils/config');
 
@@ -33,6 +34,7 @@ export class UnifiedConfigManager {
   constructor(options = {}) {
     this.configDir = options.configDir || resolve(__dirname, '..', '..', '..', 'config', 'customers');
     this.verbose = options.verbose || false;
+    this.fileManager = new FileManager({ enableCache: true });
   }
 
   /**
@@ -46,7 +48,7 @@ export class UnifiedConfigManager {
   loadCustomerConfig(customer, environment) {
     const configPath = resolve(this.configDir, customer, `${environment}.env`);
     
-    if (!existsSync(configPath)) {
+    if (!this.fileManager.exists(configPath)) {
       if (this.verbose) {
         logger.info(`Config not found: ${configPath}`);
       }
@@ -154,8 +156,8 @@ export class UnifiedConfigManager {
 
     // Create customer directory if it doesn't exist
     const customerDir = join(this.configDir, customer);
-    if (!existsSync(customerDir)) {
-      mkdirSync(customerDir, { recursive: true });
+    if (!this.fileManager.exists(customerDir)) {
+      this.fileManager.ensureDir(customerDir);
       logger.info(`Created customer directory: ${customerDir}`);
     }
 
@@ -168,7 +170,7 @@ export class UnifiedConfigManager {
 
     // Write to customer environment file
     const envFile = join(customerDir, `${environment}.env`);
-    writeFileSync(envFile, envContent, 'utf8');
+    this.fileManager.writeFile(envFile, envContent, 'utf8');
 
     logger.info(`Configuration saved: ${envFile}`);
 
@@ -181,7 +183,7 @@ export class UnifiedConfigManager {
    * @returns {Array<string>} - List of customer names
    */
   listCustomers() {
-    if (!existsSync(this.configDir)) {
+    if (!this.fileManager.exists(this.configDir)) {
       return [];
     }
 
@@ -262,7 +264,7 @@ export class UnifiedConfigManager {
    */
   configExists(customer, environment) {
     const configPath = resolve(this.configDir, customer, `${environment}.env`);
-    return existsSync(configPath);
+    return this.fileManager.exists(configPath);
   }
 
   /**
@@ -435,8 +437,8 @@ export class UnifiedConfigManager {
     ].join('\n');
     
     // Append to the config file
-    const existingContent = readFileSync(configPath, 'utf-8');
-    writeFileSync(configPath, existingContent + staticSiteEnvVars, 'utf8');
+    const existingContent = this.fileManager.readFile(configPath, 'utf-8');
+    this.fileManager.writeFile(configPath, existingContent + staticSiteEnvVars, 'utf8');
     
     logger.info(`Static-site configuration saved: ${configPath}`);
     
@@ -451,7 +453,7 @@ export class UnifiedConfigManager {
    * @returns {Object} - Parsed environment variables
    */
   _parseEnvFile(filePath) {
-    const content = readFileSync(filePath, 'utf-8');
+    const content = this.fileManager.readFile(filePath, 'utf-8');
     const result = {};
     
     content.split('\n').forEach(line => {

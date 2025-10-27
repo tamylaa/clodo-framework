@@ -34,6 +34,7 @@
 import { createInterface } from 'readline';
 import chalk from 'chalk';
 import { validateServiceName, validateDomainName } from '../utils/validation.js';
+import { NameFormatters, UrlFormatters, ResourceFormatters } from '../../bin/shared/utils/Formatters.js';
 
 export class ConfirmationEngine {
   constructor(options = {}) {
@@ -83,21 +84,21 @@ export class ConfirmationEngine {
       author: 'Clodo Framework',
 
       // 5-7. URLs - Derived from domain and service name
-      productionUrl: `https://${serviceName}.${domainName}`,
-      stagingUrl: `https://${serviceName}-staging.${domainName}`,
-      developmentUrl: `https://${serviceName}-dev.${domainName}`,
+      productionUrl: UrlFormatters.buildProductionUrl(serviceName, domainName),
+      stagingUrl: UrlFormatters.buildStagingUrl(serviceName, domainName),
+      developmentUrl: UrlFormatters.buildDevUrl(serviceName, domainName),
 
       // 8. Features - Based on service type
       features: this.generateFeaturesForType(serviceType),
 
       // 9. Database Name - Cloudflare D1 naming
-      databaseName: `${serviceName}-db`,
+      databaseName: ResourceFormatters.databaseName(serviceName),
 
       // 10. Worker Name - Cloudflare Worker naming
-      workerName: `${serviceName}-worker`,
+      workerName: ResourceFormatters.workerName(serviceName),
 
       // 11. Package Name - NPM package naming
-      packageName: `@clodo/${serviceName}`,
+      packageName: ResourceFormatters.packageName(serviceName),
 
       // 12. Git Repository URL - GitHub naming
       gitRepositoryUrl: `https://github.com/tamylaa/${serviceName}`,
@@ -317,10 +318,7 @@ export class ConfirmationEngine {
    * Generate display name from service name
    */
   generateDisplayName(serviceName) {
-    return serviceName
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    return NameFormatters.toDisplayName(serviceName);
   }
 
   /**

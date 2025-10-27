@@ -4,7 +4,7 @@
  */
 
 import { executeSql } from '../cloudflare/ops.js';
-import { ErrorRecoveryManager } from '../utils/error-recovery.js';
+import { ErrorRecoveryManager } from '../utils/index.js';
 
 export class DatabaseConnectionManager {
   constructor(options = {}) {
@@ -36,7 +36,7 @@ export class DatabaseConnectionManager {
     };
 
     // Initialize error recovery with loaded config
-    const { ErrorRecoveryManager } = await import('../utils/error-recovery.js');
+    const { ErrorRecoveryManager } = await import('../utils/index.js');
     this.errorRecovery = new ErrorRecoveryManager({
       maxRetries: this.config.maxRetries,
       retryDelay: this.config.retryDelay,

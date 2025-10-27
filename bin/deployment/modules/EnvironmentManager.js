@@ -437,6 +437,139 @@ export class EnvironmentManager {
   }
 
   /**
+   * Consolidated CLI option definitions from enterprise-deploy.js
+   * Replaces scattered -e, --env definitions across command handlers
+   */
+  static getEnvironmentOption() {
+    return {
+      flag: '-e, --env',
+      description: 'deployment environment',
+      default: 'production',
+      validate: (env) => {
+        const valid = ['production', 'staging', 'development', 'preview'].includes(env);
+        if (!valid) throw new Error(`Invalid environment: ${env}. Must be one of: production, staging, development, preview`);
+        return env;
+      }
+    };
+  }
+
+  /**
+   * Consolidated deployment mode option definition
+   */
+  static getDeploymentModeOption() {
+    return {
+      flag: '--mode',
+      description: 'deployment mode',
+      default: 'single',
+      choices: ['single', 'multi-domain', 'portfolio'],
+      validate: (mode) => {
+        const valid = ['single', 'multi-domain', 'portfolio'].includes(mode);
+        if (!valid) throw new Error(`Invalid mode: ${mode}`);
+        return mode;
+      }
+    };
+  }
+
+  /**
+   * Parse environment from CLI arguments
+   * Consolidates environment parsing from enterprise-deploy.js and master-deploy.js
+   */
+  static parseEnvironmentFromArgs(options) {
+    let environment = options.env || options.environment || process.env.DEPLOY_ENV || 'production';
+    
+    // Validate environment
+    const validEnvs = ['production', 'staging', 'development', 'preview'];
+    if (!validEnvs.includes(environment)) {
+      console.warn(`⚠️  Invalid environment '${environment}', defaulting to 'production'`);
+      environment = 'production';
+    }
+
+    return environment;
+  }
+
+  /**
+   * Parse deployment mode from CLI arguments
+   */
+  static parseDeploymentModeFromArgs(options) {
+    let mode = options.mode || options.deploymentMode || 'single';
+    
+    // Validate mode
+    const validModes = ['single', 'multi-domain', 'portfolio'];
+    if (!validModes.includes(mode)) {
+      console.warn(`⚠️  Invalid mode '${mode}', defaulting to 'single'`);
+      mode = 'single';
+    }
+
+    return mode;
+  }
+
+  /**
+   * Factory method to create EnvironmentManager from CLI arguments
+   * Consolidates initialization patterns from all three deployment systems
+   */
+  static fromCLIArgs(options = {}) {
+    const config = {
+      environment: this.parseEnvironmentFromArgs(options),
+      deploymentMode: this.parseDeploymentModeFromArgs(options),
+      defaultEnvironment: options.defaultEnv || 'production',
+      validationLevel: options.validationLevel || 'comprehensive',
+      auditLevel: options.auditLevel || 'detailed',
+      enableRollback: options.enableRollback !== false,
+      enableTesting: options.enableTesting !== false,
+      ...options
+    };
+
+    return new EnvironmentManager(config);
+  }
+
+  /**
+   * Confirm deployment mode before proceeding
+   * Consolidates confirmation logic from master-deploy.js
+   */
+  async confirmDeploymentMode() {
+    console.log('\n🔍 Deployment Mode Confirmation');
+    console.log('================================');
+    console.log(`Selected Mode: ${this.config.deploymentMode.toUpperCase()}`);
+    
+    let modeDescription = '';
+    switch(this.config.deploymentMode) {
+      case 'single':
+        modeDescription = 'Deploy a single domain with full enterprise features';
+        break;
+      case 'multi-domain':
+        modeDescription = 'Deploy multiple domains with cross-domain coordination';
+        break;
+      case 'portfolio':
+        modeDescription = 'Manage entire domain portfolio';
+        break;
+    }
+
+    console.log(`Description: ${modeDescription}`);
+    
+    const confirm = await askYesNo('Proceed with this deployment mode?', 'y');
+    
+    if (!confirm) {
+      throw new Error('Deployment mode selection cancelled');
+    }
+
+    return true;
+  }
+
+  /**
+   * Get all supported environments
+   */
+  getSupportedEnvironments() {
+    return this.supportedEnvironments;
+  }
+
+  /**
+   * Get all supported deployment modes
+   */
+  getSupportedDeploymentModes() {
+    return this.deploymentModes;
+  }
+
+  /**
    * Clean up environment resources
    */
   async cleanup() {

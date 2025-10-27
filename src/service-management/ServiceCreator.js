@@ -3,15 +3,17 @@
  * Programmatic API for creating services from templates
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync, cpSync, rmSync } from 'fs';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { FrameworkConfig } from '../utils/framework-config.js';
+import { FileManager } from '../../bin/shared/utils/file-manager.js';
 
 const SERVICE_TYPES = ['data-service', 'auth-service', 'content-service', 'api-gateway', 'generic'];
 
 export class ServiceCreator {
   constructor(options = {}) {
+    this.fileManager = new FileManager({ enableCache: true });
     const templatesDir = (() => {
       try {
         return join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'templates');
@@ -87,9 +89,9 @@ export class ServiceCreator {
 
       // Check if template exists, fall back to generic if not
       let actualTemplateDir = templateDir;
-      if (!existsSync(templateDir)) {
+      if (!this.fileManager.exists(templateDir)) {
         const genericTemplate = join(this.templatesDir, 'generic');
-        if (existsSync(genericTemplate)) {
+        if (this.fileManager.exists(genericTemplate)) {
           console.log(`⚠️  Template for '${config.type}' not found, using 'generic' template as fallback`);
           actualTemplateDir = genericTemplate;
         } else {
@@ -98,8 +100,16 @@ export class ServiceCreator {
       }
 
       // Check if service directory already exists
-      if (existsSync(serviceDir) && !config.force) {
+      if (this.fileManager.exists(serviceDir) && !config.force) {
         throw new Error(`Service directory already exists: ${serviceDir}. Use force option to overwrite.`);
+      }
+
+      // Create service directory and copy template
+      this.fileManager.ensureDir(dirname(serviceDir));
+      
+      // If service directory exists (force mode), remove it first
+      if (this.fileManager.exists(serviceDir) && config.force) {
+        rmSync(serviceDir, { recursive: true, force: true });
       }
 
       // Copy template to service directory
@@ -153,7 +163,7 @@ export class ServiceCreator {
 
     for (const file of files) {
       try {
-        let content = readFileSync(file, 'utf8');
+        let content = this.fileManager.readFile(file, 'utf8');
         let modified = false;
 
         for (const [placeholder, value] of Object.entries(variables)) {
@@ -164,7 +174,7 @@ export class ServiceCreator {
         }
 
         if (modified) {
-          writeFileSync(file, content, 'utf8');
+          this.fileManager.writeFile(file, content, 'utf8');
         }
       } catch (error) {
         // Skip binary files or files that can't be read
@@ -232,7 +242,7 @@ export class ServiceCreator {
    */
   getFrameworkVersion() {
     try {
-      const packageJson = JSON.parse(readFileSync(join(__dirname, '..', '..', 'package.json'), 'utf8'));
+      const packageJson = JSON.parse(this.fileManager.readFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'package.json'), 'utf8'));
       return packageJson.version;
     } catch {
       return '1.0.0';

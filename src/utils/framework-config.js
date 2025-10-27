@@ -6,12 +6,13 @@
  * from validation-config.json and environment variables
  */
 
-import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { FileManager } from '../../bin/shared/utils/file-manager.js';
 
 export class FrameworkConfig {
   constructor(configPath = null) {
+    this.fileManager = new FileManager({ enableCache: true });
     this.configPath = configPath || this.findConfigFile();
     this.config = this.loadConfig();
     this.environment = process.env.ENVIRONMENT || 'development';
@@ -45,7 +46,7 @@ export class FrameworkConfig {
     ];
 
     for (const path of possiblePaths) {
-      if (existsSync(path)) {
+      if (this.fileManager.exists(path)) {
         return path;
       }
     }
@@ -66,7 +67,7 @@ export class FrameworkConfig {
     }
 
     try {
-      const configContent = readFileSync(this.configPath, 'utf8');
+      const configContent = this.fileManager.readFile(this.configPath, 'utf8');
       const config = JSON.parse(configContent);
       console.log(`📋 Loaded configuration from: ${this.configPath}`);
       return config;

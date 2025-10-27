@@ -20,11 +20,23 @@ describe('WranglerConfigManager', () => {
   });
 
   afterEach(async () => {
-    // Clean up test directory
-    try {
-      await fs.rm(testDir, { recursive: true, force: true });
-    } catch (error) {
-      // Ignore cleanup errors
+    // Add delay to ensure async operations complete
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Clean up test directory with retry logic
+    if (testDir) {
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          await fs.rm(testDir, { recursive: true, force: true });
+          break;
+        } catch (error) {
+          retries--;
+          if (retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+      }
     }
   });
 

@@ -4,11 +4,8 @@
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import os from 'os';
 import { BaseGenerator } from '../../src/service-management/generators/BaseGenerator.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Concrete implementation for testing
 class TestGenerator extends BaseGenerator {
@@ -24,8 +21,9 @@ describe('BaseGenerator', () => {
   let generator;
 
   beforeEach(async () => {
-    // Create temp directories for testing
-    tempDir = path.join(__dirname, '..', '..', 'tmp', `test-${Date.now()}`);
+    // Create temp directories for testing using system temp directory
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    tempDir = path.join(os.tmpdir(), `clodo-base-gen-test-${uniqueId}`);
     templatesDir = path.join(tempDir, 'templates');
     await fs.mkdir(templatesDir, { recursive: true });
 
@@ -37,9 +35,12 @@ describe('BaseGenerator', () => {
   });
 
   afterEach(async () => {
+    // Add delay to ensure file operations complete before cleanup
+    // Increased delay on Windows due to file system timing
+    await new Promise(resolve => setTimeout(resolve, 200));
     // Cleanup temp directory with retry logic
     if (tempDir) {
-      let retries = 3;
+      let retries = 5;
       while (retries > 0) {
         try {
           await fs.rm(tempDir, { recursive: true, force: true });
@@ -47,7 +48,7 @@ describe('BaseGenerator', () => {
         } catch (error) {
           retries--;
           if (retries > 0) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 200));
           }
         }
       }

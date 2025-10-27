@@ -5,6 +5,7 @@
 
 import { writeFile, appendFile, mkdir } from 'fs/promises';
 import { join } from 'path';
+import { logger } from '../logging/Logger.js';
 
 export class ProductionMonitor {
   constructor(options = {}) {
@@ -104,18 +105,29 @@ export class ProductionMonitor {
       }
     };
 
-    // Console output for development
-    const consoleMethod = level === 'error' || level === 'fatal' ? 'error' :
-                         level === 'warn' ? 'warn' : 'log';
-    console[consoleMethod](`[${level.toUpperCase()}] ${message}`, data);
+    // Use Logger for output
+    const methodMap = {
+      debug: 'debug',
+      info: 'info',
+      warn: 'warn',
+      error: 'error',
+      fatal: 'fatal'
+    };
+    
+    const logMethod = methodMap[level] || 'info';
+    logger[logMethod](message, data);
 
-    // File logging
+    // File logging through Logger
+    if (!this.config.logDir) {
+      this.config.logDir = 'logs';
+    }
     try {
       const logFile = join(this.config.logDir, `${new Date().toISOString().split('T')[0]}.log`);
-      const logLine = JSON.stringify(logEntry) + '\n';
-      await appendFile(logFile, logLine);
+      if (!logger.logFile) {
+        logger.setLogFile(logFile);
+      }
     } catch (error) {
-      console.error('Failed to write log file:', error);
+      logger.error('Failed to set up log file', { error: error.message });
     }
 
     // Track errors for metrics
@@ -354,7 +366,7 @@ export class ProductionMonitor {
       const metricsData = this.getDetailedMetrics();
       await writeFile(metricsFile, JSON.stringify(metricsData, null, 2));
     } catch (error) {
-      console.error('Failed to save metrics:', error);
+      logger.error('Failed to save metrics', { error: error.message });
     }
   }
 

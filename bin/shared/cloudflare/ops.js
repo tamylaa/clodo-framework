@@ -8,7 +8,7 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { executeWithRateLimit } from '../utils/rate-limiter.js';
-import { ErrorRecoveryManager } from '../utils/error-recovery.js';
+import { ErrorRecoveryManager } from '../utils/index.js';
 import { SecureTokenManager } from '../security/secure-token-manager.js';
 import { ProductionMonitor } from '../monitoring/production-monitor.js';
 import { DatabaseConnectionManager } from '../database/connection-manager.js';

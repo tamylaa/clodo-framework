@@ -19,6 +19,7 @@
 import { existsSync, writeFileSync, appendFileSync, mkdirSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { execSync } from 'child_process';
+import { logger } from '../logging/Logger.js';
 
 export class DeploymentAuditor {
   constructor(options = {}) {
@@ -253,7 +254,7 @@ export class DeploymentAuditor {
     const deployment = this.currentSession.deployments.get(deploymentId);
     
     if (!deployment) {
-      console.warn(`⚠️  Deployment not found for phase logging: ${deploymentId}`);
+      logger.warn('Deployment not found for phase logging', { deploymentId });
       return;
     }
 
@@ -319,7 +320,7 @@ export class DeploymentAuditor {
       context
     });
 
-    console.error(`❌ Deployment error logged: ${deploymentId}`);
+    logger.error('Deployment error logged', { deploymentId });
   }
 
   /**
@@ -519,7 +520,7 @@ export class DeploymentAuditor {
       }
 
     } catch (error) {
-      console.error(`⚠️  Failed to write audit log: ${error.message}`);
+      logger.error('Failed to write audit log', { error: error.message });
     }
   }
 
@@ -542,7 +543,7 @@ export class DeploymentAuditor {
       });
 
     } catch (error) {
-      console.error(`⚠️  Failed to rotate log file: ${error.message}`);
+      logger.error('Failed to rotate log file', { error: error.message });
     }
   }
 
@@ -555,7 +556,7 @@ export class DeploymentAuditor {
     const deployment = this.currentSession.deployments.get(deploymentId);
     
     if (!deployment) {
-      console.warn(`⚠️  Cannot generate report: deployment ${deploymentId} not found`);
+      logger.warn('Cannot generate report: deployment not found', { deploymentId });
       return null;
     }
 
@@ -808,7 +809,7 @@ export class DeploymentAuditor {
    */
   async sendSecurityAlert(securityEvent) {
     if (!this.config.alertWebhook) {
-      console.warn('⚠️  Security alert webhook not configured');
+      logger.warn('Security alert webhook not configured');
       return;
     }
 
@@ -830,7 +831,7 @@ export class DeploymentAuditor {
       });
 
     } catch (error) {
-      console.error(`❌ Failed to send security alert: ${error.message}`);
+      logger.error('Failed to send security alert', { error: error.message });
     }
   }
 
@@ -896,7 +897,7 @@ export class DeploymentAuditor {
       console.log(`🧹 Audit cleanup completed: ${cleanupResults.filesRemoved} files removed`);
 
     } catch (error) {
-      console.error(`❌ Audit cleanup failed: ${error.message}`);
+      logger.error('Audit cleanup failed', { error: error.message });
       cleanupResults.errors.push({ general: error.message });
     }
 

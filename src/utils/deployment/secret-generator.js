@@ -11,12 +11,16 @@
  */
 
 import { randomBytes, createHash } from 'crypto';
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, appendFileSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { FileManager } from '../../../bin/shared/utils/file-manager.js';
 
 let __filename, __dirname;
+
+// Module-level FileManager for standalone functions
+const moduleFileManager = new FileManager({ enableCache: true });
 
 // Handle test environment where import.meta might be transformed
 try {
@@ -47,6 +51,7 @@ const SECRET_CONFIGS = {
  */
 export class EnhancedSecretManager {
   constructor(options = {}) {
+    this.fileManager = new FileManager({ enableCache: true });
     this.projectRoot = options.projectRoot || join(__dirname, '..', '..');
     this.dryRun = options.dryRun || false;
     this.retryAttempts = options.retryAttempts || 3;
@@ -546,7 +551,7 @@ export class EnhancedSecretManager {
         throw new Error(`Unsupported format: ${format}`);
     }
 
-    writeFileSync(filepath, content);
+    this.fileManager.writeFile(filepath, content);
 
     return {
       format,
@@ -650,7 +655,7 @@ ${Object.entries(SECRET_CONFIGS).map(([key, config]) =>
 
     const readmeFile = join(domain, environment, 'README.md');
     const readmePath = join(this.secretPaths.distribution, readmeFile);
-    writeFileSync(readmePath, readmeContent);
+    this.fileManager.writeFile(readmePath, readmeContent);
 
     return {
       filename: 'README.md',
@@ -674,12 +679,12 @@ ${Object.entries(SECRET_CONFIGS).map(([key, config]) =>
   async loadDomainSecrets(domain, environment) {
     const filename = join(this.secretPaths.root, `${domain}-${environment}-secrets.json`);
     
-    if (!existsSync(filename)) {
+    if (!this.fileManager.exists(filename)) {
       return null;
     }
 
     try {
-      const data = JSON.parse(readFileSync(filename, 'utf8'));
+      const data = JSON.parse(this.fileManager.readFile(filename, 'utf8'));
       const { domain: d, environment: e, generated, generatedBy, secretCount, newSecrets, formats, ...secrets } = data;
       
       return {
@@ -700,15 +705,15 @@ ${Object.entries(SECRET_CONFIGS).map(([key, config]) =>
       return filename;
     }
 
-    writeFileSync(filename, JSON.stringify(secretData, null, 2));
+    this.fileManager.writeFile(filename, JSON.stringify(secretData, null, 2));
     console.log(`   💾 Secrets saved: ${filename}`);
     
     return filename;
   }
 
   ensureDirectory(path) {
-    if (!existsSync(path)) {
-      mkdirSync(path, { recursive: true });
+    if (!this.fileManager.exists(path)) {
+      this.fileManager.ensureDir(path);
     }
   }
 
@@ -731,10 +736,10 @@ ${Object.entries(SECRET_CONFIGS).map(([key, config]) =>
     try {
       const logLine = JSON.stringify(logEntry) + '\n';
       
-      if (existsSync(this.secretPaths.audit)) {
-        appendFileSync(this.secretPaths.audit, logLine);
+      if (this.fileManager.exists(this.secretPaths.audit)) {
+        this.fileManager.appendFile(this.secretPaths.audit, logLine);
       } else {
-        writeFileSync(this.secretPaths.audit, logLine);
+        this.fileManager.writeFile(this.secretPaths.audit, logLine);
       }
     } catch (error) {
       console.warn(`⚠️ Failed to log secret event: ${error.message}`);
@@ -760,8 +765,8 @@ export function generateSingleSecret(length = 32) {
 
 export function saveSecrets(domain, environment, secrets, additionalData = {}) {
   const secretsDir = 'secrets';
-  if (!existsSync(secretsDir)) {
-    mkdirSync(secretsDir, { recursive: true });
+  if (!moduleFileManager.exists(secretsDir)) {
+    moduleFileManager.ensureDir(secretsDir);
   }
 
   const data = {
@@ -774,18 +779,18 @@ export function saveSecrets(domain, environment, secrets, additionalData = {}) {
   };
 
   const filename = join(secretsDir, `${domain}-secrets.json`);
-  writeFileSync(filename, JSON.stringify(data, null, 2));
+  moduleFileManager.writeFile(filename, JSON.stringify(data, null, 2));
   return filename;
 }
 
 export function loadSecrets(domain) {
   const filename = join('secrets', `${domain}-secrets.json`);
-  if (!existsSync(filename)) {
+  if (!moduleFileManager.exists(filename)) {
     return null;
   }
 
   try {
-    const data = JSON.parse(readFileSync(filename, 'utf8'));
+    const data = JSON.parse(moduleFileManager.readFile(filename, 'utf8'));
     const { domain: d, environment, generated, note, ...secrets } = data;
     return { 
       secrets, 
@@ -799,7 +804,7 @@ export function loadSecrets(domain) {
 
 export function distributeSecrets(domain, secrets) {
   const distDir = join('secrets', 'distribution', domain);
-  mkdirSync(distDir, { recursive: true });
+  moduleFileManager.ensureDir(distDir);
 
   const files = {};
 
@@ -808,12 +813,12 @@ export function distributeSecrets(domain, secrets) {
     .map(([key, value]) => `${key}=${value}`)
     .join('\n');
   const envFile = join(distDir, '.env');
-  writeFileSync(envFile, envContent);
+  moduleFileManager.writeFile(envFile, envContent);
   files.env = envFile;
 
   // JSON format
   const jsonFile = join(distDir, 'secrets.json');
-  writeFileSync(jsonFile, JSON.stringify(secrets, null, 2));
+  moduleFileManager.writeFile(jsonFile, JSON.stringify(secrets, null, 2));
   files.json = jsonFile;
 
   // Shell script format (cross-platform)
@@ -821,7 +826,7 @@ export function distributeSecrets(domain, secrets) {
     .map(([key, value]) => `echo "${value}" | npx wrangler secret put ${key} --env production`)
     .join('\n');
   const shellFile = join(distDir, 'deploy-secrets.sh');
-  writeFileSync(shellFile, shellContent);
+  moduleFileManager.writeFile(shellFile, shellContent);
   files.shell = shellFile;
 
   // PowerShell script format
@@ -829,7 +834,7 @@ export function distributeSecrets(domain, secrets) {
     .map(([key, value]) => `"${value}" | npx wrangler secret put ${key} --env production`)
     .join('\n');
   const psFile = join(distDir, 'deploy-secrets.ps1');
-  writeFileSync(psFile, psContent);
+  moduleFileManager.writeFile(psFile, psContent);
   files.powershell = psFile;
 
   // README
@@ -868,7 +873,7 @@ chmod +x deploy-secrets.sh
 `;
   
   const readmeFile = join(distDir, 'README.md');
-  writeFileSync(readmeFile, readme);
+  moduleFileManager.writeFile(readmeFile, readme);
   files.readme = readmeFile;
   
   return { directory: distDir, files };
@@ -897,7 +902,7 @@ export function validateSecrets(secrets) {
 
 export function listSecretsFiles() {
   const secretsDir = 'secrets';
-  if (!existsSync(secretsDir)) {
+  if (!moduleFileManager.exists(secretsDir)) {
     return [];
   }
   

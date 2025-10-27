@@ -8,6 +8,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
+import { logger } from '../../bin/shared/logging/Logger.js';
 
 export class ErrorTracker {
   constructor() {
@@ -48,7 +49,7 @@ export class ErrorTracker {
 
     // Log to file asynchronously (don't block)
     this.logErrorToFile(errorEntry).catch(err => {
-      console.warn(chalk.yellow(`Failed to write error log: ${err.message}`));
+      logger.warn('Failed to write error log', { error: err.message });
     });
 
     return errorEntry;
@@ -167,7 +168,7 @@ export class ErrorTracker {
       await fs.appendFile(this.errorLogPath, logEntry);
     } catch (error) {
       // If we can't write to the log file, at least show a warning
-      console.warn(chalk.yellow(`Could not write to error log: ${error.message}`));
+      logger.warn('Could not write to error log', { error: error.message });
     }
   }
 

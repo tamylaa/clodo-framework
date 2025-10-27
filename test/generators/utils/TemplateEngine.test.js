@@ -4,11 +4,8 @@
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import os from 'os';
 import { TemplateEngine } from '../../../src/service-management/generators/utils/TemplateEngine.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 describe('TemplateEngine', () => {
   let tempDir;
@@ -17,8 +14,9 @@ describe('TemplateEngine', () => {
   let engine;
 
   beforeEach(async () => {
-    // Create temp directories
-    tempDir = path.join(__dirname, '..', '..', '..', 'tmp', `template-test-${Date.now()}`);
+    // Create temp directories using system temp directory
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    tempDir = path.join(os.tmpdir(), `clodo-template-test-${uniqueId}`);
     templatesDir = path.join(tempDir, 'templates');
     partialsDir = path.join(tempDir, 'templates', 'partials');
     
@@ -31,6 +29,8 @@ describe('TemplateEngine', () => {
   });
 
   afterEach(async () => {
+    // Add delay to ensure file operations complete before cleanup
+    await new Promise(resolve => setTimeout(resolve, 200));
     // Cleanup
     if (tempDir) {
       await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});

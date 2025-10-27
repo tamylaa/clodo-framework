@@ -5,7 +5,7 @@
 
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { askUser, askYesNo, askChoice } from '../shared/utils/interactive-prompts.js';
+import { askUser, askYesNo, askChoice } from '../../shared/utils/interactive-prompts.js';
 
 /**
  * Manages all deployment configuration including domain setup, 
@@ -105,7 +105,8 @@ export class DeploymentConfiguration {
     this.config.environment = ['production', 'staging', 'development'][envChoice];
 
     // Generate worker name and URL
-    this.config.worker.name = `${this.config.domain.replace(/\./g, '-')}-${this.config.environment}`;
+    const domainPrefix = this.config.domain.replace(/\./g, '-');
+    this.config.worker.name = `${domainPrefix}-${this.config.environment}`;
     this.config.worker.url = this.config.environment === 'production' 
       ? `https://${this.config.domain}` 
       : `https://${this.config.environment}.${this.config.domain}`;

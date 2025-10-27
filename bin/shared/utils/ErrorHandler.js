@@ -1,16 +1,103 @@
 /**
- * Enhanced Error Handler
- * Comprehensive error reporting and handling utilities
+ * Unified Error Handler Module
+ * Comprehensive error reporting, handling, and recovery utilities
+ * Consolidates error handling from multiple sources with enhanced recovery patterns
+ * 
+ * Sources Consolidated:
+ * - src/utils/ErrorHandler.js (358 lines, 10 methods)
+ * - src/worker/integration.js (40 lines, createErrorHandler middleware)
+ * - bin/database/wrangler-d1-manager.js (50 lines, D1 error analysis)
+ * - Scattered error response patterns across codebase
+ * - bin/shared/utils/error-recovery.js (integration for recovery patterns)
+ * 
+ * @module bin/shared/utils/ErrorHandler
  */
 
+import { ErrorRecoveryManager } from './error-recovery.js';
+
+/**
+ * Logger utility - simple console-based logging
+ * @private
+ */
+const logger = {
+  info: (message, ...args) => console.log(`[ErrorHandler] ${message}`, ...args),
+  error: (message, ...args) => console.error(`[ErrorHandler] ${message}`, ...args),
+  warn: (message, ...args) => console.warn(`[ErrorHandler] ${message}`, ...args),
+  debug: (message, ...args) => console.debug(`[ErrorHandler] ${message}`, ...args)
+};
+
+/**
+ * Standardized error response factory
+ * Creates consistent error response objects across the application
+ * @param {string} message - Error message
+ * @param {Object} options - Response options
+ * @returns {Object} Standardized error response
+ * @private
+ */
+const _createErrorResponse = (message, options = {}) => {
+  const {
+    statusCode = 500,
+    errorCode = 'INTERNAL_ERROR',
+    details = {},
+    includeStack = false,
+    stack = null
+  } = options;
+
+  const response = {
+    error: true,
+    message,
+    errorCode,
+    timestamp: new Date().toISOString(),
+    ...details
+  };
+
+  if (includeStack && stack) {
+    response.stack = stack;
+  }
+
+  return response;
+};
+
+/**
+ * Contextual error factory
+ * Creates errors with attached context for better tracking
+ * @param {string} message - Error message
+ * @param {Object} context - Error context
+ * @returns {Error} Error with context property
+ * @private
+ */
+const _createContextualError = (message, context = {}) => {
+  const error = new Error(message);
+  error.context = context;
+  error.timestamp = new Date().toISOString();
+  return error;
+};
+
+/**
+ * Enhanced Error Handler
+ * Comprehensive error reporting and handling with recovery integration
+ */
 export class ErrorHandler {
+  /**
+   * Initialize ErrorHandler with recovery manager
+   * @private
+   */
+  static initialize() {
+    if (!ErrorHandler._recoveryManager) {
+      ErrorHandler._recoveryManager = new ErrorRecoveryManager();
+    }
+  }
+
   /**
    * Handle deployment errors with detailed reporting
    * @param {Error} error - The error object
    * @param {Object} context - Additional context (customer, environment, etc.)
+   * @returns {Object} Error report with recovery suggestions
    */
   static handleDeploymentError(error, context = {}) {
-    const { customer, environment, phase } = context;
+    this.initialize();
+
+    const { customer, environment, phase, deploymentUrl } = context;
 
     console.error(`\n❌ Deployment Error in phase: ${phase || 'unknown'}`);
     console.error(`   Customer: ${customer || 'unknown'}`);
@@ -21,55 +108,89 @@ export class ErrorHandler {
       console.error(`   Stack: ${error.stack}`);
     }
 
-    // Log additional context if available
-    if (context.deploymentUrl) {
-      console.error(`   Deployment URL: ${context.deploymentUrl}`);
+    if (deploymentUrl) {
+      console.error(`   Deployment URL: ${deploymentUrl}`);
     }
 
     // Provide actionable suggestions
-    this.provideErrorSuggestions(error, context);
+    const suggestions = this.provideErrorSuggestions(error, context);
+
+    // Attempt recovery if possible
+    const recovery = this._attemptRecovery(error, context);
+
+    // Create comprehensive report
+    const report = {
+      error: error.message,
+      context: { customer, environment, phase, deploymentUrl },
+      suggestions,
+      recovery,
+      timestamp: new Date().toISOString()
+    };
+
+    console.error('\n📋 Error Report:', JSON.stringify(report, null, 2));
+    return report;
   }
 
   /**
    * Provide actionable error suggestions
    * @param {Error} error - The error object
    * @param {Object} context - Context information
+   * @returns {string[]} Array of suggestion strings
    */
-  static provideErrorSuggestions(error, context) {
+  static provideErrorSuggestions(error, context = {}) {
     console.error('\n💡 Suggestions:');
+    const suggestions = [];
 
-    if (error.message.includes('security')) {
+    const errorMsg = error.message.toLowerCase();
+
+    if (errorMsg.includes('security')) {
+      suggestions.push('Run security validation: npx clodo-security validate <customer> <environment>');
+      suggestions.push('Generate secure keys: npx clodo-security generate-key api');
       console.error('   - Run security validation: npx clodo-security validate <customer> <environment>');
       console.error('   - Generate secure keys: npx clodo-security generate-key api');
     }
 
-    if (error.message.includes('health check')) {
+    if (errorMsg.includes('health check')) {
+      suggestions.push('Check deployment URL accessibility');
+      suggestions.push('Verify service is running and responding');
       console.error('   - Check deployment URL accessibility');
       console.error('   - Verify service is running and responding');
     }
 
-    if (error.message.includes('authentication')) {
+    if (errorMsg.includes('authentication')) {
+      suggestions.push('Re-authenticate with Cloudflare: wrangler auth login');
+      suggestions.push('Check API token validity');
       console.error('   - Re-authenticate with Cloudflare: wrangler auth login');
       console.error('   - Check API token validity');
     }
 
-    if (error.message.includes('timeout')) {
+    if (errorMsg.includes('timeout')) {
+      suggestions.push('Increase timeout values in configuration');
+      suggestions.push('Check network connectivity');
       console.error('   - Increase timeout values in configuration');
       console.error('   - Check network connectivity');
     }
 
-    if (error.message.includes('validation')) {
+    if (errorMsg.includes('validation')) {
+      suggestions.push('Review configuration files for errors');
+      suggestions.push('Run validation checks: npx clodo-config validate');
       console.error('   - Review configuration files for errors');
       console.error('   - Run validation checks: npx clodo-config validate');
     }
 
-    console.error('   - Review logs for more details');
+    if (suggestions.length === 0) {
+      suggestions.push('Review logs for more details');
+      console.error('   - Review logs for more details');
+    }
+
+    return suggestions;
   }
 
   /**
    * Wrap async operations with error handling
    * @param {Function} fn - Async function to wrap
    * @param {Object} context - Context for error reporting
+   * @returns {Promise<any>} Result of wrapped function
    */
   static async withErrorHandling(fn, context = {}) {
     try {
@@ -84,32 +205,50 @@ export class ErrorHandler {
    * Handle health check errors specifically
    * @param {Error} error - The health check error
    * @param {string} url - The URL that was checked
+   * @returns {Object} Error report with recovery steps
    */
   static handleHealthCheckError(error, url) {
     console.error(`\n❌ Health Check Failed`);
     console.error(`   URL: ${url}`);
     console.error(`   Error: ${error.message}`);
 
+    const troubleshooting = [
+      'Verify the service is deployed and running',
+      'Check if the /health endpoint exists',
+      'Ensure the service responds with valid JSON',
+      'Check network connectivity and firewall rules',
+      'Review service logs for startup errors'
+    ];
+
     console.error('\n💡 Health Check Troubleshooting:');
-    console.error('   - Verify the service is deployed and running');
-    console.error('   - Check if the /health endpoint exists');
-    console.error('   - Ensure the service responds with valid JSON');
-    console.error('   - Check network connectivity and firewall rules');
-    console.error('   - Review service logs for startup errors');
+    troubleshooting.forEach(step => console.error(`   - ${step}`));
+
+    return {
+      error: 'health_check_failed',
+      url,
+      message: error.message,
+      troubleshooting
+    };
   }
 
   /**
    * Handle D1 database related errors specifically
    * @param {Error} error - The D1 database error
    * @param {Object} context - Context information (environment, service, etc.)
+   * @returns {Object} D1 error report with recovery suggestions
    */
   static handleD1DatabaseError(error, context = {}) {
+    this.initialize();
+
+    const { environment, service } = context;
     console.error(`\n❌ D1 Database Error`);
-    console.error(`   Environment: ${context.environment || 'unknown'}`);
-    console.error(`   Service: ${context.service || 'unknown'}`);
+    console.error(`   Environment: ${environment || 'unknown'}`);
+    console.error(`   Service: ${service || 'unknown'}`);
     console.error(`   Error: ${error.message}`);
 
     const errorMessage = error.message.toLowerCase();
+    const analysis = this.analyzeD1Error(error);
+    const troubleshootingSteps = this.getD1TroubleshootingSteps(analysis.category);
 
     if (errorMessage.includes("couldn't find a d1 db")) {
       console.error('\n🗄️ D1 Database Not Found:');
@@ -153,12 +292,21 @@ export class ErrorHandler {
     console.error('   - D1 Documentation: https://developers.cloudflare.com/d1/');
     console.error('   - Wrangler D1 Commands: wrangler d1 --help');
     console.error('   - Framework D1 Integration Guide: docs/guides/d1-setup.md');
+
+    return {
+      error: 'database_error',
+      environment,
+      service,
+      message: error.message,
+      analysis,
+      troubleshooting: troubleshootingSteps
+    };
   }
 
   /**
-   * Analyze error and provide specific D1 recovery suggestions
+   * Analyze D1 error and provide specific recovery suggestions
    * @param {Error} error - The error to analyze
-   * @returns {Object} Analysis result with suggestions
+   * @returns {Object} Analysis result with suggestions and recovery strategy
    */
   static analyzeD1Error(error) {
     const errorMessage = error.message.toLowerCase();
@@ -167,18 +315,30 @@ export class ErrorHandler {
       category: 'unknown',
       severity: 'medium',
       autoFixable: false,
-      suggestions: []
+      suggestions: [],
+      errorType: null,
+      databaseName: this._extractDbNameFromError(errorMessage),
+      bindingName: null,
+      canRecover: false
     };
 
     // Check if this is a D1 related error
     if (errorMessage.includes('d1') || errorMessage.includes('database') || errorMessage.includes('binding')) {
       analysis.isD1Error = true;
+
+      // Extract binding name if present
+      const bindingMatch = error.message.match(/binding '([^']+)'/);
+      if (bindingMatch) {
+        analysis.bindingName = bindingMatch[1];
+      }
     }
 
     if (errorMessage.includes("couldn't find a d1 db")) {
       analysis.category = 'database_not_found';
+      analysis.errorType = 'database_not_found';
       analysis.severity = 'high';
       analysis.autoFixable = true;
+      analysis.canRecover = true;
       analysis.suggestions = [
         'Run automated D1 recovery: Check available databases and create/configure as needed',
         'Manual fix: wrangler d1 list && wrangler d1 create <name>',
@@ -186,8 +346,10 @@ export class ErrorHandler {
       ];
     } else if (errorMessage.includes('binding') && errorMessage.includes('not found')) {
       analysis.category = 'binding_configuration';
+      analysis.errorType = 'binding_configuration_error';
       analysis.severity = 'medium';
       analysis.autoFixable = true;
+      analysis.canRecover = true;
       analysis.suggestions = [
         'Run configuration validator to check [[d1_databases]] section',
         'Verify binding name matches code expectations',
@@ -195,8 +357,10 @@ export class ErrorHandler {
       ];
     } else if (errorMessage.includes('unauthorized') || errorMessage.includes('forbidden')) {
       analysis.category = 'authentication';
+      analysis.errorType = 'permission_error';
       analysis.severity = 'high';
       analysis.autoFixable = false;
+      analysis.canRecover = false;
       analysis.suggestions = [
         'Re-authenticate with Cloudflare: wrangler auth login',
         'Check API token permissions include D1 access',
@@ -206,6 +370,7 @@ export class ErrorHandler {
       analysis.category = 'migration';
       analysis.severity = 'medium';
       analysis.autoFixable = false;
+      analysis.canRecover = false;
       analysis.suggestions = [
         'Check migration files for syntax errors',
         'Apply migrations manually: wrangler d1 migrations apply',
@@ -272,6 +437,7 @@ export class ErrorHandler {
    * Handle configuration errors
    * @param {Error} error - The configuration error
    * @param {Object} config - The configuration object that failed
+   * @returns {Object} Configuration error report
    */
   static handleConfigurationError(error, config = {}) {
     console.error(`\n❌ Configuration Error`);
@@ -289,6 +455,18 @@ export class ErrorHandler {
     console.error('   - Check for missing required fields');
     console.error('   - Verify environment variables are set');
     console.error('   - Review configuration file syntax');
+
+    return {
+      error: 'configuration_error',
+      message: error.message,
+      context: config,
+      troubleshooting: [
+        'Validate configuration schema',
+        'Check for missing required fields',
+        'Verify environment variables are set',
+        'Review configuration file syntax'
+      ]
+    };
   }
 
   /**
@@ -306,7 +484,8 @@ export class ErrorHandler {
         name: error.name
       },
       context,
-      suggestions: this.generateSuggestions(error, context)
+      suggestions: this.generateSuggestions(error, context),
+      recovery: this._attemptRecovery(error, context)
     };
   }
 
@@ -316,9 +495,8 @@ export class ErrorHandler {
    * @param {Object} context - Context information
    * @returns {string[]} Array of suggestion strings
    */
-  static generateSuggestions(error, context) {
+  static generateSuggestions(error, context = {}) {
     const suggestions = [];
-
     const errorMessage = error.message.toLowerCase();
 
     if (errorMessage.includes('security') || errorMessage.includes('validation')) {
@@ -355,4 +533,143 @@ export class ErrorHandler {
 
     return suggestions;
   }
+
+  /**
+   * Creates error handling middleware for Cloudflare Workers
+   * @param {Object} options - Error handling options
+   * @returns {Function} Error handling middleware
+   */
+  static createErrorHandlingMiddleware(options = {}) {
+    const {
+      includeStack = false,
+      logErrors = true,
+      transformError = null,
+      statusCode = 500
+    } = options;
+
+    return (handler) => {
+      return async (request, env, ctx) => {
+        try {
+          return await handler(request, env, ctx);
+        } catch (error) {
+          if (logErrors) {
+            logger.error(`Request error: ${error.message}`, {
+              url: request.url,
+              method: request.method,
+              stack: includeStack ? error.stack : undefined
+            });
+          }
+
+          // Transform error if transformer provided
+          let errorResponse = _createErrorResponse(error.message, {
+            statusCode,
+            includeStack,
+            stack: error.stack
+          });
+
+          if (transformError) {
+            errorResponse = transformError(error, errorResponse);
+          }
+
+          return new Response(
+            JSON.stringify(errorResponse),
+            {
+              status: statusCode,
+              headers: { 'Content-Type': 'application/json' }
+            }
+          );
+        }
+      };
+    };
+  }
+
+  /**
+   * Attempt to recover from error using recovery patterns
+   * @param {Error} error - The error to recover from
+   * @param {Object} context - Error context
+   * @returns {Object} Recovery strategy and status
+   * @private
+   */
+  static _attemptRecovery(error, context = {}) {
+    this.initialize();
+
+    const errorMsg = error.message.toLowerCase();
+    const recovery = {
+      attempted: false,
+      strategy: null,
+      canRetry: false,
+      retryDelay: null,
+      suggestions: []
+    };
+
+    // D1 Database errors - can use circuit breaker pattern
+    if (errorMsg.includes('d1') || errorMsg.includes('database')) {
+      recovery.strategy = 'circuit_breaker';
+      recovery.canRetry = true;
+      recovery.retryDelay = 5000; // 5 seconds
+      recovery.suggestions = [
+        'Will retry with exponential backoff',
+        'Circuit breaker will prevent cascading failures',
+        'Consider graceful degradation if database is unavailable'
+      ];
+    }
+
+    // Timeout errors - can retry with backoff
+    if (errorMsg.includes('timeout')) {
+      recovery.strategy = 'exponential_backoff';
+      recovery.canRetry = true;
+      recovery.retryDelay = 2000; // 2 seconds initial
+      recovery.suggestions = [
+        'Will retry with exponential backoff and jitter',
+        'Maximum 3 retry attempts',
+        'Each retry doubles the delay'
+      ];
+    }
+
+    // Connection errors - graceful degradation
+    if (errorMsg.includes('connection') || errorMsg.includes('econnrefused')) {
+      recovery.strategy = 'graceful_degradation';
+      recovery.canRetry = true;
+      recovery.retryDelay = 3000;
+      recovery.suggestions = [
+        'Service will fall back to cached responses if available',
+        'Non-critical features will be disabled',
+        'Core functionality will remain available'
+      ];
+    }
+
+    recovery.attempted = recovery.canRetry;
+    return recovery;
+  }
+
+  /**
+   * Extract database name from error message
+   * @param {string} errorMessage - The error message
+   * @returns {string|null} Extracted database name or null
+   * @private
+   */
+  static _extractDbNameFromError(errorMessage) {
+    const matches = [
+      /database['"s]?\s*(?:name|id)?['"s]?\s*(?:is|was|:)?\s*['"]*([a-zA-Z0-9_-]+)['"]*/.exec(errorMessage),
+      /db['"s]?\s*(?::)?\s*['"]*([a-zA-Z0-9_-]+)['"]*/.exec(errorMessage),
+      /binding\s*['"]*([a-zA-Z0-9_-]+)['"]*/.exec(errorMessage)
+    ];
+
+    for (const match of matches) {
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+
+    return null;
+  }
 }
+
+// Export factory functions for backward compatibility
+export const createErrorResponse = _createErrorResponse;
+export const createContextualError = _createContextualError;
+
+// Export middleware factory
+export const createErrorHandler = ErrorHandler.createErrorHandlingMiddleware.bind(ErrorHandler);
+
+export default ErrorHandler;

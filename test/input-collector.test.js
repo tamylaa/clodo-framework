@@ -153,7 +153,7 @@ describe('InputCollector', () => {
     });
 
     test('should generate correct production URL default', () => {
-      const coreInputs = { domainName: { value: 'example.com' } };
+      const coreInputs = { serviceName: { value: 'api' }, domainName: { value: 'example.com' } };
       const result = collector.generateSmartDefault('production-url', coreInputs);
       expect(result).toBe('https://api.example.com');
     });

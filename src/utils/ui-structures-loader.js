@@ -41,14 +41,17 @@ class UIStructuresLoader {
 
     // Load reference templates
     const referenceDir = path.join(uiStructuresDir, 'reference');
+    console.log('🔍 Reference dir:', referenceDir, 'exists:', fs.existsSync(referenceDir));
     if (fs.existsSync(referenceDir)) {
       const referenceFiles = fs.readdirSync(referenceDir).filter(f => f.endsWith('.json'));
+      console.log('🔍 Reference files:', referenceFiles);
       for (const file of referenceFiles) {
         const filePath = path.join(referenceDir, file);
         const content = fs.readFileSync(filePath, 'utf8');
         const template = JSON.parse(content);
         // Use template.name if available, otherwise filename
         const name = template.template?.name || path.basename(file, '.json');
+        console.log('🔍 Loaded template:', name);
         this.templates.set(name, template);
       }
     }

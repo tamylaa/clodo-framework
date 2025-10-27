@@ -3,9 +3,10 @@
  * Programmatic API for initializing services with configurations
  */
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync } from 'fs';
+import { readdirSync } from 'fs';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { FileManager } from '../../bin/shared/utils/file-manager.js';
 
 // Get framework root - handle both ES module and CommonJS environments
 const getFrameworkRoot = () => {
@@ -26,6 +27,7 @@ const SERVICE_TYPES = ['generic', 'data-service', 'auth-service', 'content-servi
 
 export class ServiceInitializer {
   constructor(options = {}) {
+    this.fileManager = new FileManager({ enableCache: true });
     this.frameworkRoot = options.frameworkRoot || FRAMEWORK_ROOT;
     this.templatesDir = options.templatesDir || TEMPLATES_DIR;
     this.serviceTypes = options.serviceTypes || SERVICE_TYPES;
@@ -432,16 +434,16 @@ ${domainInfo.domains.map(d => `- ${d.domain}`).join('\n')}
     const serviceDir = join(servicesDir, serviceName);
 
     // Create directories
-    mkdirSync(servicesDir, { recursive: true });
-    mkdirSync(serviceDir, { recursive: true });
-    mkdirSync(join(serviceDir, 'src', 'config'), { recursive: true });
-    mkdirSync(join(serviceDir, 'src', 'worker'), { recursive: true });
+    this.fileManager.ensureDir(servicesDir);
+    this.fileManager.ensureDir(serviceDir);
+    this.fileManager.ensureDir(join(serviceDir, 'src', 'config'));
+    this.fileManager.ensureDir(join(serviceDir, 'src', 'worker'));
 
     // Write configuration files
     for (const [filePath, content] of Object.entries(configs)) {
       const fullPath = join(serviceDir, filePath);
-      mkdirSync(dirname(fullPath), { recursive: true });
-      writeFileSync(fullPath, content, 'utf8');
+      this.fileManager.ensureDir(dirname(fullPath));
+      this.fileManager.writeFile(fullPath, content, 'utf8');
     }
 
     // Create basic worker file
@@ -459,7 +461,7 @@ export default {
   }
 };
 `;
-    writeFileSync(join(serviceDir, 'src', 'worker', 'index.js'), workerContent, 'utf8');
+    this.fileManager.writeFile(join(serviceDir, 'src', 'worker', 'index.js'), workerContent, 'utf8');
   }
 
   /**

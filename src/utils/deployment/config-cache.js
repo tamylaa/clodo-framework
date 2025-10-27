@@ -23,6 +23,7 @@ import { promisify } from 'util';
 import { exec } from 'child_process';
 
 import { frameworkConfig } from '../framework-config.js';
+import { NameFormatters } from '../../../bin/shared/utils/Formatters.js';
 
 const execAsync = promisify(exec);
 
@@ -858,11 +859,8 @@ export default config;`;
    * @returns {string} Display name
    */
   getDisplayName(domain) {
-    return domain
-      .split('.')[0]
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    const firstPart = domain.split('.')[0];
+    return NameFormatters.toDisplayName(firstPart);
   }
 
   /**

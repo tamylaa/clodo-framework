@@ -4,18 +4,16 @@
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import os from 'os';
 import { PackageJsonGenerator } from '../../../src/service-management/generators/core/PackageJsonGenerator.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 describe('PackageJsonGenerator', () => {
   let tempDir;
   let generator;
 
   beforeEach(async () => {
-    tempDir = path.join(__dirname, '..', '..', '..', 'tmp', `packagejson-test-${Date.now()}`);
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    tempDir = path.join(os.tmpdir(), `clodo-packagejson-test-${uniqueId}`);
     await fs.mkdir(tempDir, { recursive: true });
 
     generator = new PackageJsonGenerator({
@@ -24,6 +22,8 @@ describe('PackageJsonGenerator', () => {
   });
 
   afterEach(async () => {
+    // Add delay to ensure file operations complete before cleanup
+    await new Promise(resolve => setTimeout(resolve, 200));
     if (tempDir) {
       await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});
     }

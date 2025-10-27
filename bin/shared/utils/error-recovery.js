@@ -1,6 +1,14 @@
 /**
- * Error Recovery Module
+ * Error Recovery Module - UNIFIED
  * Implements circuit breakers, retries, and graceful degradation
+ * 
+ * Consolidation: Oct 26, 2025 - Phase 3.2.3a
+ * 
+ * Merged from:
+ * - src/utils/error-recovery.js (225 lines)
+ * - bin/shared/utils/error-recovery.js (225 lines - DUPLICATE)
+ * 
+ * This is the canonical version. All imports should use this version.
  */
 
 export class ErrorRecoveryManager {
@@ -16,17 +24,29 @@ export class ErrorRecoveryManager {
    */
   async initialize() {
     // Import framework config for consistent timing and retry settings
-    const { frameworkConfig } = await import('../../../dist/utils/framework-config.js');
-    const timing = frameworkConfig.getTiming();
-    
-    this.config = {
-      maxRetries: this.options.maxRetries || timing.retryAttempts,
-      retryDelay: this.options.retryDelay || timing.retryDelay,
-      circuitBreakerThreshold: this.options.circuitBreakerThreshold || timing.circuitBreakerThreshold,
-      circuitBreakerTimeout: this.options.circuitBreakerTimeout || timing.circuitBreakerTimeout,
-      gracefulDegradation: this.options.gracefulDegradation !== false,
-      ...this.options
-    };
+    try {
+      const { frameworkConfig } = await import('./framework-config.js');
+      const timing = frameworkConfig.getTiming();
+      
+      this.config = {
+        maxRetries: this.options.maxRetries || timing.retryAttempts,
+        retryDelay: this.options.retryDelay || timing.retryDelay,
+        circuitBreakerThreshold: this.options.circuitBreakerThreshold || timing.circuitBreakerThreshold,
+        circuitBreakerTimeout: this.options.circuitBreakerTimeout || timing.circuitBreakerTimeout,
+        gracefulDegradation: this.options.gracefulDegradation !== false,
+        ...this.options
+      };
+    } catch (error) {
+      // Fallback to defaults if framework config not available
+      this.config = {
+        maxRetries: this.options.maxRetries || 3,
+        retryDelay: this.options.retryDelay || 1000,
+        circuitBreakerThreshold: this.options.circuitBreakerThreshold || 5,
+        circuitBreakerTimeout: this.options.circuitBreakerTimeout || 60000,
+        gracefulDegradation: this.options.gracefulDegradation !== false,
+        ...this.options
+      };
+    }
   }
 
   /**

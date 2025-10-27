@@ -5,7 +5,7 @@
  * Manages cleanup, directory structures, and test isolation
  */
 
-import { mkdirSync, rmSync, existsSync, writeFileSync } from 'fs';
+import { mkdirSync, rmSync, existsSync, writeFileSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { execSync } from 'child_process';
@@ -52,6 +52,34 @@ export class TestEnvironment {
       join(this.testDir, 'package.json'),
       JSON.stringify(packageJson, null, 2)
     );
+
+    // Create .env file with required variables for CLI tests
+    const envContent = `# CLI Integration Test Environment Variables
+CLOUDFLARE_ACCOUNT_ID=acc_test_12345678901234567890
+CLOUDFLARE_ZONE_ID=zone_test_12345678901234567890
+CLOUDFLARE_API_TOKEN=test_token_abc123
+
+SERVICE_NAME=test-service
+SERVICE_TYPE=generic
+DOMAIN_NAME=test.example.com
+ENVIRONMENT=development
+
+API_BASE_PATH=/api/v1
+HEALTH_CHECK_PATH=/health
+
+DATABASE_NAME=test_db
+
+PRODUCTION_URL=https://api.example.com
+STAGING_URL=https://staging.example.com
+DEVELOPMENT_URL=http://localhost:3000
+DOCUMENTATION_URL=https://docs.example.com
+`;
+
+    writeFileSync(join(this.testDir, '.env'), envContent, 'utf8');
+
+    if (this.verbose) {
+      console.log(`   Created .env with required variables`);
+    }
 
     // Install framework
     await this.installFramework();
@@ -102,12 +130,34 @@ export class TestEnvironment {
       console.log(`\n💻 Running: ${fullCommand}`);
     }
 
+    // Load .env variables into the environment
+    let envVars = { ...process.env, ...env };
+    
+    // Add .env file variables
+    const envFilePath = join(this.testDir, '.env');
+    if (existsSync(envFilePath)) {
+      const envFileContent = readFileSync(envFilePath, 'utf8');
+      const envLines = envFileContent.split('\n');
+      
+      for (const line of envLines) {
+        const trimmed = line.trim();
+        // Skip comments and empty lines
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        
+        const [key, ...valueParts] = trimmed.split('=');
+        if (key && valueParts.length > 0) {
+          const value = valueParts.join('=');
+          envVars[key.trim()] = value.trim();
+        }
+      }
+    }
+
     try {
       const result = execSync(fullCommand, {
         cwd: this.testDir,
         encoding: 'utf8',
         timeout: timeout,
-        env: { ...process.env, ...env },
+        env: envVars,
         stdio: 'pipe'
       });
 

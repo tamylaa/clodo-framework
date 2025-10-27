@@ -1,5 +1,15 @@
-import { featureManager, COMMON_FEATURES } from '../config/features.js';
+import { COMMON_FEATURES, ConfigurationManager } from '../../bin/shared/config/ConfigurationManager.js';
 import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js';
+
+// Create a singleton instance of ConfigurationManager for use in integration
+export const configManager = new ConfigurationManager({});
+
+// Legacy featureManager compatibility interface using ConfigurationManager
+const featureManager = {
+  setDomain: (domainConfig) => configManager.setDomain(domainConfig),
+  getEnabledFeatures: () => configManager.getEnabledFeatures(),
+  isEnabled: (featureName) => configManager.isFeatureEnabled(featureName)
+};
 
 // Simple inline logger to avoid circular dependency with index.js
 const logger = {

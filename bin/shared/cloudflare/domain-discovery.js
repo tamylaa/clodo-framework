@@ -10,6 +10,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { NameFormatters, UrlFormatters, ResourceFormatters, EnvironmentFormatters } from '../utils/Formatters.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -206,7 +207,7 @@ export class DomainDiscovery {
     const config = {
       // Basic domain information
       name: cleanDomainName,
-      displayName: this.capitalizeFirst(cleanDomainName),
+      displayName: NameFormatters.toDisplayName(cleanDomainName),
       fullDomain: domainName,
       
       // Cloudflare infrastructure
@@ -229,19 +230,19 @@ export class DomainDiscovery {
       // Service URLs
       services: {
         frontend: {
-          production: `https://${domainName}`,
-          staging: `https://staging.${domainName}`,
-          development: `https://dev.${domainName}`
+          production: UrlFormatters.buildProductionUrl('www', domainName),
+          staging: UrlFormatters.buildStagingUrl('www', domainName),
+          development: UrlFormatters.buildDevUrl('www', domainName)
         },
         api: {
-          production: `https://api.${domainName}`,
-          staging: `https://api-staging.${domainName}`,
-          development: `https://api-dev.${domainName}`
+          production: UrlFormatters.buildProductionUrl('api', domainName),
+          staging: UrlFormatters.buildStagingUrl('api', domainName),
+          development: UrlFormatters.buildDevUrl('api', domainName)
         },
         auth: {
-          production: `https://auth.${domainName}`,
-          staging: `https://auth-staging.${domainName}`,
-          development: `https://auth-dev.${domainName}`
+          production: UrlFormatters.buildProductionUrl('auth', domainName),
+          staging: UrlFormatters.buildStagingUrl('auth', domainName),
+          development: UrlFormatters.buildDevUrl('auth', domainName)
         }
       },
 

@@ -15,6 +15,7 @@ import { createInterface } from 'readline';
 import chalk from 'chalk';
 import { validateServiceName, validateDomainName } from '../utils/validation.js';
 import { uiStructuresLoader } from '../utils/ui-structures-loader.js';
+import { NameFormatters, UrlFormatters, ResourceFormatters } from '../../bin/shared/utils/Formatters.js';
 
 // Assessment capabilities moved to @tamyla/clodo-orchestration (professional edition)
 
@@ -129,12 +130,12 @@ export class InputCollector {
 
     const autoTemplate = uiStructuresLoader.getAutomatedGenerationTemplate();
     if (autoTemplate) {
-      console.log(chalk.gray(`📊 ${autoTemplate.collectionStrategy.inputCount} configurations will be generated automatically`));
+      console.log(chalk.gray(`📊 ${autoTemplate.template.inputCount} configurations will be generated automatically`));
       console.log(chalk.gray(`⏱️ Estimated time: ${autoTemplate.template.estimatedTime}`));
 
       // Show some examples of what will be automated
       result.automatedGenerations = {
-        count: autoTemplate.collectionStrategy.inputCount,
+        count: autoTemplate.template.inputCount,
         estimatedTime: autoTemplate.template.estimatedTime,
         examples: [
           'Database connection strings',
@@ -162,13 +163,16 @@ export class InputCollector {
    * Generate smart defaults based on core inputs
    */
   generateSmartDefault(inputId, coreInputs) {
-    const serviceName = coreInputs.serviceName?.value || '';
-    const environment = coreInputs.environment?.value || 'development';
-    const domainName = coreInputs.domainName?.value || '';
+    const serviceName = (coreInputs['service-name']?.value || coreInputs.serviceName?.value || '');
+    const environment = (coreInputs['environment']?.value || coreInputs.environment?.value || 'development');
+    const domainName = (coreInputs['domain-name']?.value || coreInputs.domainName?.value || '');
+    const serviceType = (coreInputs['service-type']?.value || coreInputs.serviceType?.value || '');
+    const customerName = (coreInputs['customer-name']?.value || coreInputs.customerName?.value || '');
+    const cloudflareToken = (coreInputs['cloudflare-api-token']?.value || coreInputs.cloudflareApiToken?.value || '');
 
     switch (inputId) {
       case 'display-name':
-        return serviceName ? serviceName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : '';
+        return serviceName ? NameFormatters.toDisplayName(serviceName) : '';
       case 'description':
         return `A service built with CLODO Framework`;
       case 'version':
@@ -176,19 +180,21 @@ export class InputCollector {
       case 'author':
         return 'CLODO Framework';
       case 'production-url':
-        return domainName ? `https://api.${domainName}` : '';
+        return domainName && serviceName ? UrlFormatters.buildProductionUrl(serviceName, domainName) : '';
       case 'staging-url':
-        return domainName && serviceName ? `https://${serviceName}-staging.${domainName}` : '';
+        return domainName && serviceName ? UrlFormatters.buildStagingUrl(serviceName, domainName) : '';
       case 'development-url':
-        return domainName && serviceName ? `https://${serviceName}-dev.${domainName}` : '';
+        return domainName && serviceName ? UrlFormatters.buildDevUrl(serviceName, domainName) : '';
       case 'service-directory':
         return serviceName ? `./services/${serviceName}` : '';
       case 'database-name':
-        return serviceName ? `${serviceName}-db` : '';
+        return serviceName ? ResourceFormatters.databaseName(serviceName) : '';
       case 'worker-name':
-        return serviceName ? `${serviceName}-worker` : '';
+        return serviceName ? ResourceFormatters.workerName(serviceName) : '';
       case 'log-level':
         return environment === 'production' ? 'warn' : environment === 'staging' ? 'info' : 'debug';
+      case 'cors-policy':
+        return domainName ? `https://${domainName}` : '*';
       case 'env-prefix':
         return environment === 'production' ? 'PROD_' : environment === 'staging' ? 'STAGING_' : 'DEV_';
       default:
@@ -211,7 +217,7 @@ export class InputCollector {
    * Format field names for display
    */
   formatFieldName(inputId) {
-    return inputId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return NameFormatters.toDisplayName(inputId);
   }
 
   /**

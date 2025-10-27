@@ -4,24 +4,25 @@
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import os from 'os';
 import { FileWriter } from '../../../src/service-management/generators/utils/FileWriter.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 describe('FileWriter', () => {
   let tempDir;
   let writer;
 
   beforeEach(async () => {
-    tempDir = path.join(__dirname, '..', '..', '..', 'tmp', `filewriter-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+    // Use system temp directory with unique identifier to avoid conflicts
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    tempDir = path.join(os.tmpdir(), `clodo-filewriter-test-${uniqueId}`);
     await fs.mkdir(tempDir, { recursive: true });
     writer = new FileWriter({ basePath: tempDir });
   });
 
   afterEach(async () => {
     if (tempDir) {
+      // Add delay to ensure file operations complete before cleanup
+      await new Promise(resolve => setTimeout(resolve, 200));
       await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});
     }
   });

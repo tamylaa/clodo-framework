@@ -46,3 +46,13 @@ export const initializeFramework = (options = {}) => {
     options
   };
 };
+
+// Default worker export for Cloudflare Workers
+export default {
+  async fetch(request, env, ctx) {
+    // Default handler - can be overridden by specific implementations
+    return new Response('CLODO Framework Worker', {
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+};

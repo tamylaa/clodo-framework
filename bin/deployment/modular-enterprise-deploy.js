@@ -525,5 +525,3 @@ async function main() {
 if (process.argv[1] && import.meta.url.includes(process.argv[1].replace(/\\\\/g, '/'))) {
   main().catch(console.error);
 }
-
-export { ModularEnterpriseDeployer };

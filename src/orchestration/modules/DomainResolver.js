@@ -69,13 +69,14 @@ export class DomainResolver {
     };
 
     try {
-      // Validate required environment variables
-      const requiredEnvVars = ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID'];
-      const missing = requiredEnvVars.filter(envVar => !process.env[envVar]);
+      // Validate Cloudflare token
+      if (!process.env.CLOUDFLARE_API_TOKEN) {
+        validation.warnings.push('CLOUDFLARE_API_TOKEN not yet configured (will be set during deployment)');
+      }
       
-      if (missing.length > 0) {
-        validation.valid = false;
-        validation.issues.push(`Missing required environment variables: ${missing.join(', ')}`);
+      // Validate Cloudflare account ID
+      if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
+        validation.warnings.push('CLOUDFLARE_ACCOUNT_ID not yet configured (will be set during deployment)');
       }
       
       // Validate domain format

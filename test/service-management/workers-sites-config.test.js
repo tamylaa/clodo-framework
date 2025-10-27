@@ -20,18 +20,29 @@ describe('GenerationEngine - Workers Sites Configuration', () => {
       force: false
     });
 
-    // Create temp test directory
-    testDir = join(tmpdir(), `clodo-test-${Date.now()}`);
+    // Create temp test directory with unique ID
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    testDir = join(tmpdir(), `clodo-test-${uniqueId}`);
     mkdirSync(testDir, { recursive: true });
   });
 
-  afterEach(() => {
-    // Clean up temp directory
+  afterEach(async () => {
+    // Add delay to ensure async operations complete
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Clean up temp directory with retry logic
     if (testDir) {
-      try {
-        rmSync(testDir, { recursive: true, force: true });
-      } catch (error) {
-        // Ignore cleanup errors
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          rmSync(testDir, { recursive: true, force: true });
+          break;
+        } catch (error) {
+          retries--;
+          if (retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
       }
     }
   });

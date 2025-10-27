@@ -9,9 +9,9 @@ import {
   deploySecret, 
   runMigrations,
   checkHealth
-} from '../shared/cloudflare/ops.js';
+} from '../../shared/cloudflare/ops.js';
 import { WranglerDeployer } from '../../dist/deployment/wrangler-deployer.js';
-import { DeploymentDatabaseManager } from '../database/deployment-db-manager.js';
+import { DeploymentDatabaseManager } from '../../database/deployment-db-manager.js';
 import { DeploymentConfiguration } from './DeploymentConfiguration.js';
 
 /**

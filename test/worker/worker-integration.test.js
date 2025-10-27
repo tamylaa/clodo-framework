@@ -14,7 +14,9 @@ jest.doMock('../../src/config/domains.js', () => ({
   createEnvironmentConfig: mockCreateEnvironmentConfig
 }));
 
-import { featureManager, COMMON_FEATURES } from '../../src/config/features.js';
+// Import from consolidated ConfigurationManager instead of deleted features.js
+import { COMMON_FEATURES } from '../../bin/shared/config/ConfigurationManager.js';
+const featureManager = mockFeatureManager;
 
 import {
   initializeService,
@@ -24,7 +26,8 @@ import {
   createRateLimitGuard,
   createCorsMiddleware,
   createErrorHandler,
-  composeMiddleware
+  composeMiddleware,
+  configManager
 } from '../../src/worker/integration.js';
 
 describe('WorkerIntegration', () => {
@@ -36,18 +39,6 @@ describe('WorkerIntegration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Spy on featureManager methods
-    jest.spyOn(featureManager, 'getEnabledFeatures').mockReturnValue(['auth', 'logging']);
-    jest.spyOn(featureManager, 'isEnabled').mockReturnValue(false);
-    jest.spyOn(featureManager, 'setDomain').mockImplementation(() => {});
-
-    // Setup mock domain functions
-    mockGetDomainFromEnv.mockReturnValue('test.example.com');
-    mockCreateEnvironmentConfig.mockReturnValue({
-      name: 'test-domain',
-      settings: { environment: 'production' }
-    });
-
     // Setup mock environment
     mockEnv = {
       ENVIRONMENT: 'production',
@@ -58,7 +49,7 @@ describe('WorkerIntegration', () => {
     mockDomainConfigs = {
       'test.example.com': {
         name: 'test-domain',
-        features: ['auth', 'logging'],
+        features: { auth: true, logging: true },
         domains: {
           production: 'prod.example.com',
           staging: 'staging.example.com',
@@ -66,6 +57,18 @@ describe('WorkerIntegration', () => {
         }
       }
     };
+
+    // Spy on featureManager methods
+    jest.spyOn(featureManager, 'getEnabledFeatures').mockReturnValue(['auth', 'logging']);
+    jest.spyOn(featureManager, 'isEnabled').mockReturnValue(false);
+    jest.spyOn(featureManager, 'setDomain').mockImplementation(() => {});
+
+    // Setup mock domain functions - return the actual domain config object
+    mockGetDomainFromEnv.mockReturnValue(mockDomainConfigs['test.example.com']);
+    mockCreateEnvironmentConfig.mockReturnValue({
+      name: 'test-domain',
+      settings: { environment: 'production' }
+    });
 
     // Setup mock request/response
     mockRequest = {
@@ -143,12 +146,15 @@ describe('WorkerIntegration', () => {
 
   describe('createFeatureGuard', () => {
     test('should allow request when feature is enabled', async () => {
-      // The actual featureManager checks against domain config
-      // Since our mockDomainConfigs has features: ['auth', 'logging']
-      // We need to test with a feature that's in that list
-      featureManager.isEnabled.mockReturnValue(true);
+      // Initialize service first to set up ConfigurationManager with domain config
+      const serviceContext = initializeService(mockEnv, mockDomainConfigs);
+      
+      // Verify the features are properly initialized
+      expect(serviceContext.features).toContain('auth');
+      expect(serviceContext.features).toContain('logging');
 
-      const guard = createFeatureGuard('auth'); // Use 'auth' which is in the config
+      // Now test with a feature that's in the domain config
+      const guard = createFeatureGuard('auth');
       const handler = jest.fn().mockResolvedValue(mockResponse);
 
       const result = await guard(handler)(mockRequest, mockEnv, {});
@@ -202,7 +208,9 @@ describe('WorkerIntegration', () => {
 
   describe('createRouteGuard', () => {
     test('should allow request when all required features are enabled', async () => {
-      featureManager.isEnabled.mockReturnValue(true);
+      // Initialize service first to set up ConfigurationManager
+      const serviceContext = initializeService(mockEnv, mockDomainConfigs);
+      expect(serviceContext.features).toBeDefined();
 
       const routeConfig = { auth: true, logging: true };
       const guard = createRouteGuard(routeConfig);
@@ -216,9 +224,28 @@ describe('WorkerIntegration', () => {
     });
 
     test('should block request when required feature is disabled', async () => {
-      mockFeatureManager.isEnabled.mockReturnValueOnce(true).mockReturnValueOnce(false);
+      // Create a domain config with missing features for this test
+      const limitedConfig = {
+        'test.example.com': {
+          name: 'test-domain',
+          features: { auth: true, logging: false },  // Only 'auth', no 'logging'
+          domains: {
+            production: 'prod.example.com',
+            staging: 'staging.example.com',
+            development: 'dev.example.com'
+          }
+        }
+      };
+      
+      // Update mock to return the limited config
+      mockGetDomainFromEnv.mockReturnValue(limitedConfig['test.example.com']);
+      
+      // Initialize with limited features
+      const serviceContext = initializeService(mockEnv, limitedConfig);
+      expect(serviceContext.features).toContain('auth');
+      expect(serviceContext.features).not.toContain('logging');
 
-      const routeConfig = { auth: true, logging: true };
+      const routeConfig = { auth: true, logging: true };  // Require both
       const guard = createRouteGuard(routeConfig);
       const handler = jest.fn();
 
@@ -230,8 +257,11 @@ describe('WorkerIntegration', () => {
     });
 
     test('should allow request when optional features are disabled', async () => {
-      featureManager.isEnabled.mockReturnValue(true);
+      // Initialize service with full features
+      const serviceContext = initializeService(mockEnv, mockDomainConfigs);
+      expect(serviceContext.features).toContain('auth');
 
+      // Test with optional logging (false = not required)
       const routeConfig = { auth: true, logging: false };
       const guard = createRouteGuard(routeConfig);
       const handler = jest.fn().mockResolvedValue(mockResponse);
@@ -308,8 +338,12 @@ describe('WorkerIntegration', () => {
     afterEach(() => {
       jest.useRealTimers();
     });
-
     test('should allow request within rate limit', async () => {
+      // Mock isEnabled to return true for RATE_LIMITING feature
+      featureManager.isEnabled.mockImplementation((feature) => {
+        return feature === 'RATE_LIMITING';
+      });
+      
       const guard = createRateLimitGuard({ maxRequests: 5, windowMs: 60000 });
       const handler = jest.fn().mockResolvedValue(mockResponse);
 
@@ -320,9 +354,16 @@ describe('WorkerIntegration', () => {
     });
 
     test('should block request when rate limit exceeded', async () => {
-      featureManager.isEnabled.mockReturnValue(true);
+      // Initialize service to set up context
+      const serviceContext = initializeService(mockEnv, mockDomainConfigs);
+      expect(serviceContext).toBeDefined();
       
-      // Create a new guard for each test to get fresh state
+      // Mock isEnabled to return true for RATE_LIMITING feature
+      featureManager.isEnabled.mockImplementation((feature) => {
+        return feature === 'RATE_LIMITING';
+      });
+      
+      // Create a new guard for this test to get fresh state
       const guard = createRateLimitGuard({ maxRequests: 1, windowMs: 60000 });
       const handler = jest.fn().mockResolvedValue(mockResponse);
 
@@ -338,6 +379,11 @@ describe('WorkerIntegration', () => {
     });
 
     test('should reset counter after window expires', async () => {
+      // Mock isEnabled to return true for RATE_LIMITING feature
+      featureManager.isEnabled.mockImplementation((feature) => {
+        return feature === 'RATE_LIMITING';
+      });
+      
       const guard = createRateLimitGuard({ maxRequests: 1, windowMs: 1000 });
       const handler = jest.fn().mockResolvedValue(mockResponse);
 
@@ -355,7 +401,8 @@ describe('WorkerIntegration', () => {
     });
 
     test('should skip rate limiting when feature is disabled', async () => {
-      mockFeatureManager.isEnabled.mockReturnValue(false);
+      // Disable rate limiting using ConfigurationManager
+      configManager.setFeatureOverride('RATE_LIMITING', false);
 
       const guard = createRateLimitGuard({ maxRequests: 1 });
       const handler = jest.fn().mockResolvedValue(mockResponse);
@@ -366,9 +413,17 @@ describe('WorkerIntegration', () => {
 
       expect(handler).toHaveBeenCalledTimes(2);
       expect(result).toBe(mockResponse);
+      
+      // Clean up: re-enable the feature for other tests
+      configManager.removeFeatureOverride('RATE_LIMITING');
     });
 
     test('should use CF-Connecting-IP header for client identification', async () => {
+      // Mock isEnabled to return true for RATE_LIMITING feature
+      featureManager.isEnabled.mockImplementation((feature) => {
+        return feature === 'RATE_LIMITING';
+      });
+      
       const guard = createRateLimitGuard({ maxRequests: 1 });
       const handler = jest.fn().mockResolvedValue(mockResponse);
 
@@ -387,6 +442,11 @@ describe('WorkerIntegration', () => {
     });
 
     test('should skip successful requests from count when configured', async () => {
+      // Mock isEnabled to return true for RATE_LIMITING feature
+      featureManager.isEnabled.mockImplementation((feature) => {
+        return feature === 'RATE_LIMITING';
+      });
+      
       const guard = createRateLimitGuard({
         maxRequests: 1,
         skipSuccessfulRequests: true
@@ -402,6 +462,11 @@ describe('WorkerIntegration', () => {
     });
 
     test('should skip failed requests from count when configured', async () => {
+      // Mock isEnabled to return true for RATE_LIMITING feature
+      featureManager.isEnabled.mockImplementation((feature) => {
+        return feature === 'RATE_LIMITING';
+      });
+      
       const guard = createRateLimitGuard({
         maxRequests: 1,
         skipFailedRequests: true

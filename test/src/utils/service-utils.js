@@ -5,6 +5,8 @@
  * Service Type: generic
  */
 
+import { logger } from '../../../bin/shared/logging/Logger.js';
+
 /**
  * Utility functions for undefined
  */
@@ -19,7 +21,7 @@ export class DatabaseUtils {
       }
       return await stmt.all();
     } catch (error) {
-      console.error('Database query error:', error);
+      logger.error('Database query error', { error: error.message });
       throw new Error(`Database operation failed: ${error.message}`);
     }
   }
@@ -158,14 +160,13 @@ export class LoggingUtils {
   }
 
   static logError(error, context = {}) {
-    console.error(JSON.stringify({
+    logger.error('Error logged', {
       timestamp: new Date().toISOString(),
-      level: 'error',
       type: 'error',
       message: error.message,
       stack: error.stack,
       ...context
-    }));
+    });
   }
 
   static logPerformance(operation, startTime, context = {}) {

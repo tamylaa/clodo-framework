@@ -39,6 +39,9 @@ import { CrossDomainCoordinator } from '../../dist/orchestration/cross-domain-co
 import { askChoice, askUser, closePrompts } from '../shared/utils/interactive-prompts.js';
 import { CloudflareDomainManager } from '../shared/cloudflare/domain-manager.js';
 
+// Consolidated environment manager
+import { EnvironmentManager } from './modules/EnvironmentManager.js';
+
 class EnterpriseDeploymentCLI {
   constructor() {
     this.version = '2.0.0';
@@ -87,6 +90,19 @@ class EnterpriseDeploymentCLI {
       deploymentTimeout: 1800000, // 30 minutes
       outputFormat: 'enhanced' // 'minimal', 'standard', 'enhanced'
     };
+  }
+
+  /**
+   * Add unified environment option to command
+   * Consolidates -e, --env option definition across all commands
+   */
+  addEnvironmentOption(command, defaultValue) {
+    const envOpt = EnvironmentManager.getEnvironmentOption();
+    return command.option(
+      envOpt.flag,
+      envOpt.description,
+      defaultValue || this.globalConfig.defaultEnvironment
+    );
   }
 
   /**
@@ -146,10 +162,11 @@ class EnterpriseDeploymentCLI {
       .version(this.version);
 
     // Single domain deployment
-    program
-      .command('deploy [domain]')
-      .description('Deploy a single domain with enterprise features')
-      .option('-e, --env <environment>', 'deployment environment', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('deploy [domain]')
+        .description('Deploy a single domain with enterprise features')
+    )
       .option('-v, --validation <level>', 'validation level (basic|standard|comprehensive)', this.globalConfig.validationLevel)
       .option('-a, --audit <level>', 'audit level (minimal|standard|detailed|verbose)', this.globalConfig.auditLevel)
       .option('-i, --interactive', 'interactive mode - select domain from available options')
@@ -177,10 +194,11 @@ class EnterpriseDeploymentCLI {
       });
 
     // Multi-domain deployment
-    program
-      .command('deploy-multi <domains...>')
-      .description('Deploy multiple domains with coordination')
-      .option('-e, --env <environment>', 'deployment environment', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('deploy-multi <domains...>')
+        .description('Deploy multiple domains with coordination')
+    )
       .option('-b, --batch-size <size>', 'batch size for parallel deployments', '3')
       .option('--coordination', 'enable cross-domain coordination')
       .option('--shared-secrets', 'enable shared secret management')
@@ -197,10 +215,11 @@ class EnterpriseDeploymentCLI {
       });
 
     // Portfolio deployment
-    program
-      .command('deploy-portfolio')
-      .description('Deploy entire domain portfolio')
-      .option('-e, --env <environment>', 'deployment environment', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('deploy-portfolio')
+        .description('Deploy entire domain portfolio')
+    )
       .option('-f, --filter <pattern>', 'filter domains by pattern')
       .option('--exclude <pattern>', 'exclude domains matching pattern')
       .option('--health-check', 'run health checks before deployment')
@@ -241,18 +260,20 @@ class EnterpriseDeploymentCLI {
       .action((options) => this.discoverPortfolio(options));
 
     // Validation commands
-    program
-      .command('validate <domain>')
-      .description('Validate domain deployment readiness')
-      .option('-e, --env <environment>', 'environment to validate', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('validate <domain>')
+        .description('Validate domain deployment readiness')
+    )
       .option('-l, --level <level>', 'validation level', this.globalConfig.validationLevel)
       .option('--fix', 'attempt to fix validation issues')
       .action((domain, options) => this.validateDomain(domain, options));
 
-    program
-      .command('validate-portfolio')
-      .description('Validate entire portfolio deployment readiness')
-      .option('-e, --env <environment>', 'environment to validate', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('validate-portfolio')
+        .description('Validate entire portfolio deployment readiness')
+    )
       .option('--cross-domain', 'include cross-domain compatibility checks')
       .option('--report <format>', 'generate validation report (json|html|csv)', 'json')
       .action((options) => this.validatePortfolio(options));
@@ -276,36 +297,40 @@ class EnterpriseDeploymentCLI {
       .action((options) => this.testPortfolio(options));
 
     // Database commands
-    program
-      .command('db-migrate <domain>')
-      .description('Run database migrations for domain')
-      .option('-e, --env <environment>', 'environment', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('db-migrate <domain>')
+        .description('Run database migrations for domain')
+    )
       .option('--create-db', 'create database if it doesn\'t exist')
       .option('--dry-run', 'show migrations without executing')
       .action((domain, options) => this.migrateDomain(domain, options));
 
-    program
-      .command('db-migrate-all')
-      .description('Run database migrations for all domains')
-      .option('-e, --env <environment>', 'environment', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('db-migrate-all')
+        .description('Run database migrations for all domains')
+    )
       .option('--parallel', 'run migrations in parallel')
       .option('--safe-mode', 'enable extra safety checks')
       .action((options) => this.migrateAll(options));
 
     // Secret management commands
-    program
-      .command('secrets-generate <domain>')
-      .description('Generate secrets for domain')
-      .option('-e, --env <environment>', 'environment', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('secrets-generate <domain>')
+        .description('Generate secrets for domain')
+    )
       .option('--formats <formats>', 'output formats (comma-separated)', 'env,json,wrangler')
       .option('--coordinate', 'coordinate with other domains')
       .option('--deploy', 'deploy secrets to Cloudflare')
       .action((domain, options) => this.generateSecrets(domain, options));
 
-    program
-      .command('secrets-coordinate <domains...>')
-      .description('Coordinate secrets across multiple domains')
-      .option('-e, --env <environment>', 'environment', this.globalConfig.defaultEnvironment)
+    this.addEnvironmentOption(
+      program
+        .command('secrets-coordinate <domains...>')
+        .description('Coordinate secrets across multiple domains')
+    )
       .option('--sync-critical', 'sync critical secrets across domains')
       .option('--deploy', 'deploy coordinated secrets')
       .action((domains, options) => this.coordinateSecrets(domains, options));
