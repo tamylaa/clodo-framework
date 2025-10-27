@@ -1,3 +1,10 @@
+## [3.1.10](https://github.com/tamylaa/clodo-framework/compare/v3.1.9...v3.1.10) (2025-10-27)
+
+
+### Bug Fixes
+
+* correct import paths in bin/ to reference src/ not dist/ ([57d9740](https://github.com/tamylaa/clodo-framework/commit/57d974051d15ba263005aba8e48f5290823e24c9))
+
 ## [3.1.9](https://github.com/tamylaa/clodo-framework/compare/v3.1.8...v3.1.9) (2025-10-27)
 
 
