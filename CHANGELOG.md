@@ -1,3 +1,11 @@
+## [3.1.7](https://github.com/tamylaa/clodo-framework/compare/v3.1.6...v3.1.7) (2025-10-27)
+
+
+### Bug Fixes
+
+* allow validation-config.json warning in CLI test ([2d6870a](https://github.com/tamylaa/clodo-framework/commit/2d6870af85b2fe89168ba8a64a9c5d5b639a6c70))
+* exclude backup and archive directories from test discovery ([831eb98](https://github.com/tamylaa/clodo-framework/commit/831eb9835b5c816137cc07df8016612ed1f60334))
+
 ## [3.1.6](https://github.com/tamylaa/clodo-framework/compare/v3.1.5...v3.1.6) (2025-10-27)
 
 
