@@ -4,53 +4,106 @@ This folder contains **internal-only documentation** that is not intended for pu
 
 ## 📁 Contents
 
-### Enterprise Planning
-- **`ENTERPRISE_READINESS_ROADMAP.md`** - 12-month roadmap for enterprise maturation
-- **`CRITICAL_PATH_TO_CONFIDENCE.md`** - 8-week immediate action plan for confidence building
+### Architecture Documentation (`architecture/`)
+Comprehensive architectural analysis and design decisions for the framework.
 
-### Architecture & Implementation
-- **`FRAMEWORK-ARCHITECTURE-ANALYSIS.md`** - Deep architectural analysis and decisions
-- **`LEGO-OF-SOFTWARE-ARCHITECTURE.md`** - Core architectural philosophy and design
-- **`REUSABLE-FRAMEWORK-COMPONENTS.md`** - Component reusability analysis
-- **`ARCHITECTURE_AUDIT_REPORT.md`** - Architecture audit findings
-- **`BRIDGE_PATTERN_DESIGN.md`** - Bridge pattern implementation design
-- **`deployment-architecture-analysis.md`** - Deployment architecture analysis
-- **`IMPORT_STANDARDIZATION_REPORT.md`** - Import standardization analysis
-- **`INTEGRATION_STRATEGY.md`** - Integration strategy and planning
-- **`wrangler-deployer-modularization-plan.md`** - Wrangler deployer modularization plan
+- **`DOMAIN_ROUTES_AUTOMATION.md`** - Complete domain/routes automation system design, implementation, and usage guide
+- **`ROUTING_ARCHITECTURE.md`** - Complete routing architecture assessment, reuse strategy, and implementation guide
 
-### Development Reports & Summaries
-- **`integration-improvements-summary.md`** - Integration improvements summary
-- **`interactive-base-improvement-summary.md`** - Interactive base improvements
-- **`modularization-completion-summary.md`** - Modularization completion report
-- **`PHASE1_ANALYSIS.md`** - Phase 1 development analysis
-- **`PHASE1_TASK2_DESIGN.md`** - Phase 1 task 2 design document
-- **`PHASE1_TASK3-4_UPDATE_ERRORS.md`** - Phase 1 error analysis and updates
-- **`PHASE3_COMPLETION_REPORT.md`** - Phase 3 completion report
+### Analysis Documentation (`analysis/`)
+Technical analysis, optimization reports, and validation findings.
 
-### Development Planning
-- **`FRAMEWORK-EXTRACTION-PLAN.md`** - Framework extraction and modularization strategy
-- **`WORKFLOW-ORDER-ANALYSIS.md`** - Development workflow optimization
-- **`decision-framework.md`** - Decision-making framework for development choices
+- **`CODEBASE_OPTIMIZATION.md`** - Comprehensive codebase optimization analysis with executive summary, technical analysis, implementation blueprints, and quick reference
+- **`REFACTORING_ANALYSIS.md`** - Complete refactoring technical analysis, progress summary, implementation plan, and validation results
+- **`REDUNDANCY_ANALYSIS.md`** - Comprehensive redundancy analysis covering 38+ implementations across 61+ files, consolidation metrics, test results, and implementation strategy
+- **`FEATURE_VALIDATION.md`** - Complete feature validation guide with parity audit, detailed findings, and critical validation issues
+- **`TEST_ORGANIZATION.md`** - Test organization and coverage analysis with inventory, CLI tests, and coverage metrics
 
-### User Guides & Tutorials
-- **`FRAMEWORK-ARCHITECTURE-OVERVIEW.md`** - Detailed architecture overview (internal version)
-- **`INTEGRATION_GUIDE.md`** - Comprehensive integration guide (internal version)
-- **`cli-tutorial.md`** - CLI usage tutorial (internal version)
-- **`examples-gallery.md`** - Examples gallery (internal version)
-- **`getting-started.md`** - Getting started guide (internal version)
+### Deployment Documentation (`deployment/`)
+Deployment architecture, configuration, and operational guides.
 
-### Configuration & Deployment
+- **`WORKERS_SITES_CONFIG.md`** - Complete Workers Sites configuration design and user guide
+- **`DEPLOYMENT_ARCHITECTURE.md`** - Complete deployment architecture analysis with current state assessment and future modularization strategy
+
+### Developer Guides (`guides/`)
+Developer-focused guides, tutorials, and workflow documentation.
+
+- **`DEVELOPMENT_WORKFLOW.md`** - Complete development workflow covering git operations, build processes, distribution, and downstream consumption patterns
+- **`DOCUMENTATION_WORKFLOW_GUIDELINES.md`** - Framework for maintaining clean, organized documentation to prevent accumulation
+- **`project-structure.md`** - Project structure and organization guide
+- **`INTEGRATION_GUIDE.md`** - Comprehensive integration guide
+- **`cli-tutorial.md`** - CLI usage tutorial
+- **`examples-gallery.md`** - Examples gallery
+- **`getting-started.md`** - Getting started guide
 - **`customer-config-framework.md`** - Customer configuration framework
 - **`customer-config.md`** - Customer configuration guide
-- **`deployment-requirements.md`** - Deployment requirements guide
-- **`deployment/`** - Deployment guides and documentation
 
-### Developer Resources
-- **`examples/`** - Code examples and samples
-- **`guides/`** - Developer guides and tutorials
-- **`quickstart-templates/`** - Quickstart project templates
-- **`api/`** - API documentation (detailed internal version)
+### Session Reports (`session-reports/`)
+Historical development session summaries and progress reports.
+
+- **`RELEASE_CHECKLIST.md`** - Release preparation checklist with verification steps and deployment procedures
+
+### Roadmap & Planning (`roadmap/`)
+Strategic planning and roadmap documentation.
+
+### Commercialization (`commercialization/`)
+Business and commercialization strategy documents.
+
+### Examples (`examples/`)
+Code examples and implementation samples.
+
+### Quickstart Templates (`quickstart-templates/`)
+Project templates and quickstart guides.
+
+### API Documentation (`api/`)
+Detailed internal API documentation.
+
+## 🔒 Access Control
+
+These documents contain:
+- Internal planning and strategy information
+- Unreleased feature discussions
+- Security implementation details
+- Business-sensitive information
+- Raw analysis and decision-making processes
+
+**Do not share externally** without explicit approval from framework maintainers.
+
+## 📦 Package Distribution Policy
+
+**CRITICAL**: Files in this `i-docs/` folder are **NEVER** included in npm package distribution. Only essential, public-facing documentation from `../docs/` is bundled with the package.
+
+The following docs are distributed with the npm package:
+- `docs/README.md` - Main documentation index
+- `docs/overview.md` - Framework overview
+- `docs/SECURITY.md` - Security documentation
+- `docs/api-reference.md` - API reference
+
+All other documentation (including this i-docs folder) remains repository-only.
+
+## 📝 Contributing
+
+When adding new internal documentation:
+1. Place it in the appropriate subdirectory (`architecture/`, `analysis/`, `deployment/`, `guides/`, etc.)
+2. Add a brief description to this README under the relevant section
+3. Ensure no sensitive information is included
+4. Consider if the document should eventually be moved to public docs when appropriate
+
+## 🔄 Lifecycle
+
+Internal documents may be moved to the public `docs/` folder when:
+- Information becomes stable and developer-relevant
+- Security reviews are completed
+- Business approval is granted
+- Content is sanitized for public consumption
+
+## 📊 Recent Changes
+
+**Phase 2 Content Consolidation (October 2025)**:
+- Consolidated 40+ scattered documents into 8 comprehensive guides
+- Organized content into logical subdirectories (architecture/, analysis/, deployment/, guides/)
+- Eliminated redundancy while preserving all valuable technical content
+- Improved discoverability and maintenance efficiency
 
 ## 🔒 Access Control
 

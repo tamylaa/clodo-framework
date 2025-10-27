@@ -1,0 +1,258 @@
+{
+  "timestamp": "2025-10-27T10:32:08.503Z",
+  "summary": {
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0,
+    "duration": 40044
+  },
+  "categories": {
+    "cli": {
+      "tests": [
+        {
+          "name": "clodo-service --help",
+          "description": "Help command displays usage information",
+          "status": "passed",
+          "duration": 185,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\nUsage: clodo-service [options] [command]\n\nUnified conversational CLI for Clodo Framework service lifecycle management\n\nOptions:\n  -V, --version                      output the version number\n  -h, --help                         display help for command\n\nCommands:\n  create [options]                   Create a new Clodo service with\n                                     conversational setup\n  deploy [options]                   Deploy a Clodo service with smart\n                                     credential handling\n  validate <service-path>            Validate an existing service configuration\n  update [options] [service-path]    Update an existing service configuration\n  diagnose [options] [service-path]  Diagnose and report issues with an\n                                     existing service\n  assess [options] [service-path]    Run intelligent capability assessment\n                                     (requires @tamyla/clodo-orchestration)\n  list-types                         List available service types and their\n                                     features\n  help [command]                     display help for command\n",
+          "error": null
+        },
+        {
+          "name": "clodo-service list-types",
+          "description": "List available service types",
+          "status": "passed",
+          "duration": 187,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\nAvailable Clodo Framework Service Types:\n\n  data-service\n    • Authentication\n    • Authorization\n    • File Storage\n    • Search\n    • Filtering\n    • Pagination\n\n  auth-service\n    • Authentication\n    • Authorization\n    • User Profiles\n    • Email Notifications\n    • Magic Link Auth\n\n  content-service\n    • File Storage\n    • Search\n    • Filtering\n    • Pagination\n    • Caching\n\n  api-gateway\n    • Authentication\n    • Authorization\n    • Rate Limiting\n    • Caching\n    • Monitoring\n\n  generic\n    • Logging\n    • Monitoring\n    • Error Reporting\n\n",
+          "error": null
+        },
+        {
+          "name": "clodo-service invalid-command",
+          "description": "Invalid command shows error",
+          "status": "passed",
+          "duration": 155,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\n",
+          "error": null
+        },
+        {
+          "name": "clodo-service create --help",
+          "description": "Create command help",
+          "status": "passed",
+          "duration": 159,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\nUsage: clodo-service create [options]\n\nCreate a new Clodo service with conversational setup\n\nOptions:\n  -n, --non-interactive         Run in non-interactive mode with all required\n                                parameters\n  --service-name <name>         Service name (required in non-interactive mode)\n  --service-type <type>         Service type: data-service, auth-service,\n                                content-service, api-gateway, generic (default:\n                                \"generic\")\n  --domain-name <domain>        Domain name (required in non-interactive mode)\n  --cloudflare-token <token>    Cloudflare API token (required in\n                                non-interactive mode)\n  --cloudflare-account-id <id>  Cloudflare account ID (required in\n                                non-interactive mode)\n  --cloudflare-zone-id <id>     Cloudflare zone ID (required in non-interactive\n                                mode)\n  --environment <env>           Target environment: development, staging,\n                                production (default: \"development\")\n  --output-path <path>          Output directory for generated service\n                                (default: \".\")\n  --template-path <path>        Path to service templates (default:\n                                \"./templates\")\n  -h, --help                    display help for command\n",
+          "error": null
+        },
+        {
+          "name": "clodo-service deploy --help",
+          "description": "Deploy command help",
+          "status": "passed",
+          "duration": 163,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\nUsage: clodo-service deploy [options]\n\nDeploy a Clodo service with smart credential handling\n\nOptions:\n  --token <token>        Cloudflare API token\n  --account-id <id>      Cloudflare account ID\n  --zone-id <id>         Cloudflare zone ID\n  --dry-run              Simulate deployment without making changes\n  --quiet                Quiet mode - minimal output\n  --service-path <path>  Path to service directory (default: \".\")\n  -h, --help             display help for command\n",
+          "error": null
+        }
+      ],
+      "passed": 5,
+      "failed": 0
+    },
+    "deployment": {
+      "tests": [
+        {
+          "name": "deployment-testing-script",
+          "description": "Deployment testing script information collection phase",
+          "status": "passed",
+          "duration": 87,
+          "output": "",
+          "error": null
+        },
+        {
+          "name": "deployment-testing-script-consolidation",
+          "description": "Deployment testing script consolidation phase",
+          "status": "passed",
+          "duration": 89,
+          "output": "",
+          "error": null
+        },
+        {
+          "name": "deployment-testing-script-execution",
+          "description": "Deployment testing script execution simulation",
+          "status": "passed",
+          "duration": 110,
+          "output": "",
+          "error": null
+        },
+        {
+          "name": "deployment-testing-script-full",
+          "description": "Full deployment testing script run",
+          "status": "passed",
+          "duration": 105,
+          "output": "",
+          "error": null
+        },
+        {
+          "name": "deploy-level1-no-service-manifest",
+          "description": "Level 1: Deploy fails when no clodo-service-manifest.json exists",
+          "status": "passed",
+          "duration": 179,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\n\n🚀 Clodo Service Deployment\n\n",
+          "error": null
+        },
+        {
+          "name": "deploy-level2-missing-credentials",
+          "description": "Level 2: Deploy fails with valid manifest but missing credentials",
+          "status": "passed",
+          "duration": 189,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\n\n🚀 Clodo Service Deployment\n\nService: mock-deploy-test-service\nType: data-service\nPath: C:\\Users\\Admin\\Documents\\coding\\tamyla\\lego-framework\\clodo-framework\\test-automation\\mock-deploy-service\n\n",
+          "error": null
+        },
+        {
+          "name": "deploy-level2-credentials-via-flags",
+          "description": "Level 2: Deploy with credentials via command flags (tests credential parsing)",
+          "status": "passed",
+          "duration": 158,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\n\n🚀 Clodo Service Deployment\n\nService: mock-deploy-test-service\nType: data-service\nPath: C:\\Users\\Admin\\Documents\\coding\\tamyla\\lego-framework\\clodo-framework\\test-automation\\mock-deploy-service\n\n📋 Deployment Plan:\n──────────────────────────────────────────────────\nService:  mock-deploy-test-service\nType:     data-service\nDomain:   mock-test.example.com\nAccount:  test-acc...\nZone:     test-zon...\n──────────────────────────────────────────────────\n\n🔍 DRY RUN MODE - No changes will be made\n\n\n⚙️  Initializing deployment system...\n\n",
+          "error": null
+        },
+        {
+          "name": "deploy-level3-manifest-parsing",
+          "description": "Level 3: Deploy correctly parses service manifest and extracts configuration",
+          "status": "passed",
+          "duration": 171,
+          "output": "Service: mock-deploy-test-service\nService:  mock-deploy-test-service\n",
+          "error": null
+        }
+      ],
+      "passed": 8,
+      "failed": 0
+    },
+    "lifecycle": {
+      "tests": [
+        {
+          "name": "service-create-help",
+          "description": "Verify create command help works",
+          "status": "passed",
+          "duration": 199,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\nUsage: clodo-service create [options]\n\nCreate a new Clodo service with conversational setup\n\nOptions:\n  -n, --non-interactive         Run in non-interactive mode with all required\n                                parameters\n  --service-name <name>         Service name (required in non-interactive mode)\n  --service-type <type>         Service type: data-service, auth-service,\n                                content-service, api-gateway, generic (default:\n                                \"generic\")\n  --domain-name <domain>        Domain name (required in non-interactive mode)\n  --cloudflare-token <token>    Cloudflare API token (required in\n                                non-interactive mode)\n  --cloudflare-account-id <id>  Cloudflare account ID (required in\n                                non-interactive mode)\n  --cloudflare-zone-id <id>     Cloudflare zone ID (required in non-interactive\n                                mode)\n  --environment <env>           Target environment: development, staging,\n                                production (default: \"development\")\n  --output-path <path>          Output directory for generated service\n                                (default: \".\")\n  --template-path <path>        Path to service templates (default:\n                                \"./templates\")\n  -h, --help                    display help for command\n",
+          "error": null
+        },
+        {
+          "name": "service-validate-help",
+          "description": "Verify validate command help works",
+          "status": "passed",
+          "duration": 153,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\nUsage: clodo-service validate [options] <service-path>\n\nValidate an existing service configuration\n\nOptions:\n  -h, --help  display help for command\n",
+          "error": null
+        },
+        {
+          "name": "service-deploy-help",
+          "description": "Verify deploy command help works",
+          "status": "passed",
+          "duration": 165,
+          "output": "📋 Using default framework configuration\n✅ Environment variables validated successfully\nUsage: clodo-service deploy [options]\n\nDeploy a Clodo service with smart credential handling\n\nOptions:\n  --token <token>        Cloudflare API token\n  --account-id <id>      Cloudflare account ID\n  --zone-id <id>         Cloudflare zone ID\n  --dry-run              Simulate deployment without making changes\n  --quiet                Quiet mode - minimal output\n  --service-path <path>  Path to service directory (default: \".\")\n  -h, --help             display help for command\n",
+          "error": null
+        }
+      ],
+      "passed": 3,
+      "failed": 0
+    },
+    "integration": {
+      "tests": [
+        {
+          "name": "npm-test-suite",
+          "description": "Run the npm test suite (allowing some failures)",
+          "status": "passed",
+          "duration": 15,
+          "output": "\"Tests completed with some expected failures\"\r\n",
+          "error": null
+        },
+        {
+          "name": "build-and-test",
+          "description": "Build and type check integration",
+          "status": "passed",
+          "duration": 17268,
+          "output": "\n> @tamyla/clodo-framework@3.1.4 prebuild\n> npm run clean && npm run type-check\n\n\n> @tamyla/clodo-framework@3.1.4 clean\n> rimraf dist\n\n\n> @tamyla/clodo-framework@3.1.4 type-check\n> tsc --noEmit\n\n\n> @tamyla/clodo-framework@3.1.4 build\n> npm run prebuild && babel src/ --out-dir dist/ && babel bin/shared/ --out-dir dist/shared/ && babel bin/shared/production-tester/ --out-dir dist/deployment/testers/ && babel bin/shared/deployment/ --out-dir dist/deployment/ && node -e \"const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true});\" && npm run postbuild\n\n\n> @tamyla/clodo-framework@3.1.4 prebuild\n> npm run clean && npm run type-check\n\n\n> @tamyla/clodo-framework@3.1.4 clean\n> rimraf dist\n\n\n> @tamyla/clodo-framework@3.1.4 type-check\n> tsc --noEmit\n\nSuccessfully compiled 112 files with Babel (1818ms).\nSuccessfully compiled 43 files with Babel (1062ms).\nSuccessfully compiled 7 files with Babel (490ms).\nSuccessfully compiled 4 files with Babel (625ms).\n\n> @tamyla/clodo-framework@3.1.4 postbuild\n> npm run check:bundle\n\n\n> @tamyla/clodo-framework@3.1.4 check:bundle\n> node scripts/utilities/check-bundle.js || echo 'Bundle check passed'\n\nBundle check passed: 18 files in dist/\n- config\n- database\n- deployment\n- handlers\n- index.js\n- migration\n- modules\n- orchestration\n- routing\n- schema\n- security\n- service-management\n- services\n- shared\n- ui-structures\n- utils\n- version\n- worker\n\n> @tamyla/clodo-framework@3.1.4 postbuild\n> npm run check:bundle\n\n\n> @tamyla/clodo-framework@3.1.4 check:bundle\n> node scripts/utilities/check-bundle.js || echo 'Bundle check passed'\n\nBundle check passed: 18 files in dist/\n- config\n- database\n- deployment\n- handlers\n- index.js\n- migration\n- modules\n- orchestration\n- routing\n- schema\n- security\n- service-management\n- services\n- shared\n- ui-structures\n- utils\n- version\n- worker\n\n> @tamyla/clodo-framework@3.1.4 type-check\n> tsc --noEmit\n\n",
+          "error": null
+        },
+        {
+          "name": "lint-and-test",
+          "description": "Lint check integration",
+          "status": "passed",
+          "duration": 1928,
+          "output": "\n> @tamyla/clodo-framework@3.1.4 lint\n> eslint --config ./eslint.config.js src\n\n\"Lint completed successfully\"\r\n",
+          "error": null
+        }
+      ],
+      "passed": 3,
+      "failed": 0
+    },
+    "performance": {
+      "tests": [
+        {
+          "name": "build-performance",
+          "description": "Measure build performance",
+          "status": "passed",
+          "duration": 16648,
+          "output": "\n> @tamyla/clodo-framework@3.1.4 prebuild\n> npm run clean && npm run type-check\n\n\n> @tamyla/clodo-framework@3.1.4 clean\n> rimraf dist\n\n\n> @tamyla/clodo-framework@3.1.4 type-check\n> tsc --noEmit\n\n\n> @tamyla/clodo-framework@3.1.4 build\n> npm run prebuild && babel src/ --out-dir dist/ && babel bin/shared/ --out-dir dist/shared/ && babel bin/shared/production-tester/ --out-dir dist/deployment/testers/ && babel bin/shared/deployment/ --out-dir dist/deployment/ && node -e \"const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true});\" && npm run postbuild\n\n\n> @tamyla/clodo-framework@3.1.4 prebuild\n> npm run clean && npm run type-check\n\n\n> @tamyla/clodo-framework@3.1.4 clean\n> rimraf dist\n\n\n> @tamyla/clodo-framework@3.1.4 type-check\n> tsc --noEmit\n\nSuccessfully compiled 112 files with Babel (2410ms).\nSuccessfully compiled 43 files with Babel (1367ms).\nSuccessfully compiled 7 files with Babel (537ms).\nSuccessfully compiled 4 files with Babel (1080ms).\n\n> @tamyla/clodo-framework@3.1.4 postbuild\n> npm run check:bundle\n\n\n> @tamyla/clodo-framework@3.1.4 check:bundle\n> node scripts/utilities/check-bundle.js || echo 'Bundle check passed'\n\nBundle check passed: 18 files in dist/\n- config\n- database\n- deployment\n- handlers\n- index.js\n- migration\n- modules\n- orchestration\n- routing\n- schema\n- security\n- service-management\n- services\n- shared\n- ui-structures\n- utils\n- version\n- worker\n\n> @tamyla/clodo-framework@3.1.4 postbuild\n> npm run check:bundle\n\n\n> @tamyla/clodo-framework@3.1.4 check:bundle\n> node scripts/utilities/check-bundle.js || echo 'Bundle check passed'\n\nBundle check passed: 18 files in dist/\n- config\n- database\n- deployment\n- handlers\n- index.js\n- migration\n- modules\n- orchestration\n- routing\n- schema\n- security\n- service-management\n- services\n- shared\n- ui-structures\n- utils\n- version\n- worker\n",
+          "error": null
+        },
+        {
+          "name": "test-performance",
+          "description": "Measure test execution performance",
+          "status": "passed",
+          "duration": 20,
+          "output": "\"Tests completed with expected failures\"\r\n",
+          "error": null
+        }
+      ],
+      "passed": 2,
+      "failed": 0
+    },
+    "regression": {
+      "tests": [
+        {
+          "name": "no-missing-dependencies",
+          "description": "Ensure no missing dependencies",
+          "status": "passed",
+          "duration": 1271,
+          "output": "@tamyla/clodo-framework@3.1.4 C:\\Users\\Admin\\Documents\\coding\\tamyla\\lego-framework\\clodo-framework\n├── @babel/cli@7.28.3\n├── @babel/core@7.28.4\n├── @babel/plugin-syntax-import-meta@7.10.4\n├── @babel/preset-env@7.28.3\n├── @iarna/toml@2.2.5\n├── @semantic-release/changelog@6.0.3\n├── @semantic-release/git@10.0.1\n├── @types/node@20.19.19\n├── babel-plugin-transform-import-meta@2.3.3\n├── chalk@5.6.2\n├── commander@11.1.0\n├── cross-env@10.1.0\n├── eslint@8.57.1\n├── jest@29.7.0\n├── rimraf@5.0.10\n├── semantic-release@24.2.9\n├── typescript@5.9.3\n├── uuid@13.0.0\n└── wrangler@4.42.1\n\n",
+          "error": null
+        },
+        {
+          "name": "build-completeness",
+          "description": "Ensure build produces complete output",
+          "status": "passed",
+          "duration": 94,
+          "output": "OK\n",
+          "error": null
+        },
+        {
+          "name": "cli-commands-available",
+          "description": "Ensure all main CLI commands are available",
+          "status": "passed",
+          "duration": 218,
+          "output": "✅ Environment variables validated successfully\n  create [options]                   Create a new Clodo service with\n  deploy [options]                   Deploy a Clodo service with smart\n  validate <service-path>            Validate an existing service configuration\n",
+          "error": null
+        }
+      ],
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "failures": [],
+  "options": {
+    "testDir": "C:\\Users\\Admin\\Documents\\coding\\tamyla\\lego-framework\\clodo-framework\\test-automation",
+    "verbose": false,
+    "clean": false,
+    "parallel": false,
+    "categories": [
+      "all"
+    ],
+    "timeout": 300000
+  },
+  "environment": {
+    "rootDir": "C:\\Users\\Admin\\Documents\\coding\\tamyla\\lego-framework\\clodo-framework",
+    "testDir": "C:\\Users\\Admin\\Documents\\coding\\tamyla\\lego-framework\\clodo-framework\\test-automation",
+    "nodePath": "C:\\Program Files\\nodejs\\node.exe",
+    "npmPath": "C:\\Program Files\\nodejs\\npm\r\nC:\\Program Files\\nodejs\\npm.cmd",
+    "tempServices": []
+  }
+}

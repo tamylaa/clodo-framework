@@ -76,6 +76,7 @@
     "clean:generated": "rimraf generated",
     "clean:all": "npm run clean && npm run clean:generated",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests",
+    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:cli": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/cli-integration/ --verbose",
@@ -120,7 +121,14 @@
     "validate-service": "node bin/clodo-service.js validate",
     "customer-config": "node bin/shared/config/customer-cli.js",
     "push:safe": "powershell -ExecutionPolicy Bypass -File ./scripts/utilities/safe-push.ps1",
-    "sync": "git fetch && git rebase origin/master"
+    "sync": "git fetch && git rebase origin/master",
+    "test:automated": "node scripts/automated-testing-suite.js",
+    "test:automated:cli": "node scripts/automated-testing-suite.js cli",
+    "test:automated:deployment": "node scripts/automated-testing-suite.js deployment",
+    "test:automated:lifecycle": "node scripts/automated-testing-suite.js lifecycle",
+    "test:automated:integration": "node scripts/automated-testing-suite.js integration",
+    "test:automated:performance": "node scripts/automated-testing-suite.js performance",
+    "test:automated:regression": "node scripts/automated-testing-suite.js regression"
   },
   "keywords": [
     "cloudflare",
