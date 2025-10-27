@@ -78,6 +78,7 @@
     "clean:generated": "rimraf generated",
     "clean:all": "npm run clean && npm run clean:generated",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests",
+    "test:ci": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests --testPathIgnorePatterns=\"test/cli-integration\"",
     "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
