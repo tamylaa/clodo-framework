@@ -1,3 +1,10 @@
+## [3.1.8](https://github.com/tamylaa/clodo-framework/compare/v3.1.7...v3.1.8) (2025-10-27)
+
+
+### Bug Fixes
+
+* change prepublishOnly to use build:ci instead of full validation ([e001791](https://github.com/tamylaa/clodo-framework/commit/e0017913df28b86320b6a71eb583a8ed37a45c38))
+
 ## [3.1.7](https://github.com/tamylaa/clodo-framework/compare/v3.1.6...v3.1.7) (2025-10-27)
 
 
