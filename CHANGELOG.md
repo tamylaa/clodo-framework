@@ -1,3 +1,10 @@
+## [3.1.17](https://github.com/tamylaa/clodo-framework/compare/v3.1.16...v3.1.17) (2025-10-28)
+
+
+### Bug Fixes
+
+* Correct re-export path depth in cloudflare ops wrapper (3 levels not 4) ([fa72b2b](https://github.com/tamylaa/clodo-framework/commit/fa72b2b2f1ba0ada932ba42a7a1788a41a7798a1))
+
 ## [3.1.16](https://github.com/tamylaa/clodo-framework/compare/v3.1.15...v3.1.16) (2025-10-28)
 
 
