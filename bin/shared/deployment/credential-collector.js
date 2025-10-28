@@ -39,7 +39,9 @@ export class DeploymentCredentialCollector {
     // All credentials provided - quick path
     if (startCredentials.token && startCredentials.accountId && startCredentials.zoneId) {
       if (!this.quiet) {
-        console.log(chalk.green('\n✅ All credentials provided via flags or environment variables'));
+        const tokenSource = options.token ? '--token flag' : 'environment variable';
+        console.log(chalk.blue(`\nℹ️  Using credentials from: ${tokenSource}`));
+        console.log(chalk.green('✅ All credentials provided via flags or environment variables'));
       }
       return startCredentials;
     }

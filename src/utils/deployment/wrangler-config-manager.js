@@ -200,48 +200,35 @@ export class WranglerConfigManager {
       database_id: databaseId
     };
     
-    if (environment === 'production') {
-      // Add to top-level d1_databases array
-      if (!config.d1_databases) {
-        config.d1_databases = [];
-      }
-      
-      // Check if binding already exists
-      const existingIndex = config.d1_databases.findIndex(
-        db => db.binding === binding || db.database_name === databaseName
-      );
-      
-      if (existingIndex >= 0) {
-        console.log(`   🔄 Updating existing database binding`);
-        config.d1_databases[existingIndex] = dbBinding;
-      } else {
-        console.log(`   ➕ Adding new database binding`);
-        config.d1_databases.push(dbBinding);
-      }
+    // Always add to environment-specific section for consistency
+    // This ensures database bindings are scoped to their environment
+    if (!config.env) {
+      config.env = {};
+    }
+    
+    if (!config.env[environment]) {
+      // Create environment section with proper name
+      const envName = environment === 'production' 
+        ? `${config.name}-prod` 
+        : config.name || 'worker';
+      config.env[environment] = { name: envName };
+    }
+    
+    if (!config.env[environment].d1_databases) {
+      config.env[environment].d1_databases = [];
+    }
+    
+    // Check if binding already exists
+    const existingIndex = config.env[environment].d1_databases.findIndex(
+      db => db.binding === binding || db.database_name === databaseName
+    );
+    
+    if (existingIndex >= 0) {
+      console.log(`   🔄 Updating existing database binding`);
+      config.env[environment].d1_databases[existingIndex] = dbBinding;
     } else {
-      // Add to environment-specific section
-      if (!config.env) {
-        config.env = {};
-      }
-      if (!config.env[environment]) {
-        config.env[environment] = { name: config.name || 'worker' };
-      }
-      if (!config.env[environment].d1_databases) {
-        config.env[environment].d1_databases = [];
-      }
-      
-      // Check if binding already exists
-      const existingIndex = config.env[environment].d1_databases.findIndex(
-        db => db.binding === binding || db.database_name === databaseName
-      );
-      
-      if (existingIndex >= 0) {
-        console.log(`   🔄 Updating existing database binding`);
-        config.env[environment].d1_databases[existingIndex] = dbBinding;
-      } else {
-        console.log(`   ➕ Adding new database binding`);
-        config.env[environment].d1_databases.push(dbBinding);
-      }
+      console.log(`   ➕ Adding new database binding`);
+      config.env[environment].d1_databases.push(dbBinding);
     }
     
     await this.writeConfig(config);
@@ -259,22 +246,13 @@ export class WranglerConfigManager {
     const config = await this.readConfig();
     let removed = false;
     
-    if (environment === 'production') {
-      if (config.d1_databases) {
-        const initialLength = config.d1_databases.length;
-        config.d1_databases = config.d1_databases.filter(
-          db => db.binding !== bindingOrName && db.database_name !== bindingOrName
-        );
-        removed = config.d1_databases.length < initialLength;
-      }
-    } else {
-      if (config.env?.[environment]?.d1_databases) {
-        const initialLength = config.env[environment].d1_databases.length;
-        config.env[environment].d1_databases = config.env[environment].d1_databases.filter(
-          db => db.binding !== bindingOrName && db.database_name !== bindingOrName
-        );
-        removed = config.env[environment].d1_databases.length < initialLength;
-      }
+    // Always remove from environment-specific section
+    if (config.env?.[environment]?.d1_databases) {
+      const initialLength = config.env[environment].d1_databases.length;
+      config.env[environment].d1_databases = config.env[environment].d1_databases.filter(
+        db => db.binding !== bindingOrName && db.database_name !== bindingOrName
+      );
+      removed = config.env[environment].d1_databases.length < initialLength;
     }
     
     if (removed) {

@@ -8,6 +8,7 @@
  * - Gathers credentials smartly: env vars → flags → interactive collection with auto-fetch
  * - Validates token and fetches account ID & zone ID from Cloudflare
  * - REFACTORED (Task 3.2): Integrates with MultiDomainOrchestrator for full deployment orchestration
+ * - REFACTORED (UX): Modularized with helper functions for better maintainability
  */
 
 import chalk from 'chalk';
@@ -19,6 +20,12 @@ import { StandardOptions } from '../shared/utils/cli-options.js';
 import { ConfigLoader } from '../shared/utils/config-loader.js';
 import { DomainRouter } from '../shared/routing/domain-router.js';
 import { MultiDomainOrchestrator } from '../../src/orchestration/multi-domain-orchestrator.js';
+
+// Import modular helpers
+import { detectExistingResources, displayDeploymentPlan } from './helpers/resource-detection.js';
+import { confirmDeployment, displayDeploymentResults, displayNextSteps } from './helpers/deployment-ui.js';
+import { runPostDeploymentVerification } from './helpers/deployment-verification.js';
+import { handleDeploymentError } from './helpers/error-recovery.js';
 
 export function registerDeployCommand(program) {
   const command = program
@@ -32,6 +39,7 @@ export function registerDeployCommand(program) {
     .option('--environment <env>', 'Target environment (development, staging, production)', 'production')
     .option('--all-domains', 'Deploy to all configured domains (ignores --domain flag)')
     .option('--dry-run', 'Simulate deployment without making changes')
+    .option('-y, --yes', 'Skip confirmation prompts (for CI/CD)')
     .option('--service-path <path>', 'Path to service directory', '.')
   
   // Add standard options (--verbose, --quiet, --json, --no-color, --config-file)
@@ -77,7 +85,7 @@ export function registerDeployCommand(program) {
           CloudflareServiceValidator.printValidationReport(serviceConfig.validationResult.validation);
         }
         ManifestLoader.printManifestInfo(serviceConfig.manifest);
-        output.info(`Configuration loaded from: ${serviceConfig.foundAt}`);
+        console.log(chalk.blue(`ℹ️  Configuration loaded from: ${serviceConfig.foundAt}`));
 
         // Step 2: Smart credential gathering with interactive collection
         // Uses DeploymentCredentialCollector which:
@@ -136,17 +144,26 @@ export function registerDeployCommand(program) {
         if (detectedDomains.length === 0 && manifest._source === 'cloudflare-service-detected') {
           // For detected CF services, use default
           detectedDomains = ['workers.cloudflare.com'];
+          if (!options.quiet) {
+            console.log(chalk.blue(`ℹ️  No custom domains configured, using default: workers.cloudflare.com`));
+          }
+        } else if (detectedDomains.length > 0 && !options.quiet) {
+          console.log(chalk.blue(`ℹ️  Found ${detectedDomains.length} configured domain(s) in manifest`));
         }
 
         // Domain selection: check CLI flag first, then prompt user
         let selectedDomain = mergedOptions.domain;
+        
+        if (selectedDomain && !options.quiet) {
+          console.log(chalk.blue(`ℹ️  Using domain from --domain flag: ${selectedDomain}`));
+        }
 
         if (!selectedDomain && detectedDomains.length > 0) {
           if (detectedDomains.length === 1) {
             // Only one domain, use it directly
             selectedDomain = detectedDomains[0];
             if (!options.quiet) {
-              console.log(chalk.green(`✓ Selected domain: ${selectedDomain}`));
+              console.log(chalk.green(`✓ Auto-selected only available domain: ${selectedDomain}`));
             }
           } else {
             // Multiple domains available - let user choose
@@ -215,20 +232,27 @@ export function registerDeployCommand(program) {
         const serviceName = manifest.serviceName || 'unknown-service';
         const serviceType = manifest.serviceType || 'generic';
 
-        // Display deployment plan
-        console.log(chalk.cyan('\n📋 Deployment Plan:'));
-        console.log(chalk.gray('─'.repeat(60)));
-        console.log(chalk.white(`Service:         ${serviceName}`));
-        console.log(chalk.white(`Type:            ${serviceType}`));
-        console.log(chalk.white(`Domain:          ${selectedDomain}`));
-        console.log(chalk.white(`Environment:     ${mergedOptions.environment || 'production'}`));
-        console.log(chalk.white(`Account:         ${credentials.accountId.substring(0, 8)}...`));
-        console.log(chalk.white(`Zone:            ${credentials.zoneId.substring(0, 8)}...`));
-        console.log(chalk.white(`Deployment Mode: ${options.dryRun ? 'DRY RUN' : 'LIVE'}`));
-        console.log(chalk.gray('─'.repeat(60)));
+        // Step 5: Detect existing resources and display deployment plan
+        const { existingWorker, existingDatabases, resourceDetectionFailed } = 
+          await detectExistingResources(serviceName, manifest, credentials, output, options.verbose);
 
-        if (options.dryRun) {
-          console.log(chalk.yellow('\n🔍 DRY RUN MODE - No changes will be made\n'));
+        displayDeploymentPlan({
+          serviceName,
+          serviceType,
+          selectedDomain,
+          environment: mergedOptions.environment,
+          credentials,
+          dryRun: options.dryRun,
+          existingWorker,
+          existingDatabases,
+          resourceDetectionFailed,
+          manifest
+        });
+
+        // Step 6: Get user confirmation
+        const confirmed = await confirmDeployment(options);
+        if (!confirmed) {
+          process.exit(0);
         }
 
         // Step 5: Initialize MultiDomainOrchestrator for deployment
@@ -260,7 +284,7 @@ export function registerDeployCommand(program) {
           process.exit(1);
         }
 
-        // Step 6: Execute deployment via orchestrator
+        // Step 7: Execute deployment via orchestrator
         console.log(chalk.cyan('🚀 Starting deployment via orchestrator...\n'));
 
         let result;
@@ -272,81 +296,28 @@ export function registerDeployCommand(program) {
             environment: mergedOptions.environment || 'production'
           });
         } catch (deployError) {
-          console.error(chalk.red('\n❌ Deployment failed during orchestration\n'));
-          console.error(chalk.yellow(`Error: ${deployError.message}`));
-
-          // Provide helpful error context
-          if (deployError.message.includes('credentials') || deployError.message.includes('auth')) {
-            console.error(chalk.yellow('\n💡 Credential Issue:'));
-            console.error(chalk.white('  Check your API token, account ID, and zone ID'));
-            console.error(chalk.white('  Visit: https://dash.cloudflare.com/profile/api-tokens'));
-          }
-
-          if (deployError.message.includes('domain') || deployError.message.includes('zone')) {
-            console.error(chalk.yellow('\n� Domain Issue:'));
-            console.error(chalk.white('  Verify domain exists in Cloudflare'));
-            console.error(chalk.white('  Check API token has zone:read permissions'));
-          }
-
-          if (process.env.DEBUG) {
-            console.error(chalk.gray('\nFull Stack Trace:'));
-            console.error(chalk.gray(deployError.stack));
-          }
-
-          process.exit(1);
+          await handleDeploymentError(deployError, command, options);
         }
 
-        // Step 7: Display deployment results
-        console.log(chalk.green('\n✅ Deployment Completed Successfully!\n'));
-        console.log(chalk.gray('─'.repeat(60)));
+        // Step 8: Display deployment results
+        displayDeploymentResults({
+          result,
+          serviceName,
+          serviceType,
+          selectedDomain,
+          environment: mergedOptions.environment
+        });
 
-        // Display results from orchestrator
-        if (result.url) {
-          console.log(chalk.white(`🌐 Service URL:     ${chalk.bold(result.url)}`));
-        }
+        // Step 9: Run post-deployment verification and health check
+        await runPostDeploymentVerification(serviceName, result, credentials, options);
 
-        console.log(chalk.white(`📦 Service:         ${serviceName}`));
-        console.log(chalk.white(`🔧 Type:            ${serviceType}`));
-        console.log(chalk.white(`🌍 Domain:          ${selectedDomain}`));
-        console.log(chalk.white(`🌎 Environment:     ${mergedOptions.environment || 'production'}`));
-
-        if (result.workerId) {
-          console.log(chalk.white(`👤 Worker ID:       ${result.workerId}`));
-        }
-
-        if (result.deploymentId) {
-          console.log(chalk.white(`📋 Deployment ID:   ${result.deploymentId}`));
-        }
-
-        if (result.status) {
-          const statusColor = result.status.toLowerCase().includes('success') 
-            ? chalk.green 
-            : chalk.yellow;
-          console.log(chalk.white(`📊 Status:          ${statusColor(result.status)}`));
-        }
-
-        // Display audit information if available
-        if (result.auditLog) {
-          console.log(chalk.cyan('\n📋 Deployment Audit:'));
-          console.log(chalk.gray(`  Started:  ${result.auditLog.startTime}`));
-          console.log(chalk.gray(`  Completed: ${result.auditLog.endTime}`));
-          console.log(chalk.gray(`  Duration: ${result.auditLog.duration}ms`));
-        }
-
-        console.log(chalk.gray('─'.repeat(60)));
-
-        // Display next steps
-        if (!options.dryRun) {
-          console.log(chalk.cyan('\n💡 Next Steps:'));
-          console.log(chalk.white(`  • Test deployment: curl ${result.url || `https://${selectedDomain}`}`));
-          console.log(chalk.white(`  • View logs: wrangler tail ${serviceName}`));
-          console.log(chalk.white(`  • Monitor: https://dash.cloudflare.com`));
-          console.log(chalk.white(`  • Check audit logs: See deployment ID above\n`));
-        } else {
-          console.log(chalk.cyan('\n💡 Dry Run Complete'));
-          console.log(chalk.white(`  • Review the plan above`));
-          console.log(chalk.white(`  • Remove --dry-run to execute deployment\n`));
-        }
+        // Step 10: Display next steps
+        displayNextSteps({
+          result,
+          selectedDomain,
+          serviceName,
+          dryRun: options.dryRun
+        });
 
         if (process.env.DEBUG && result.details) {
           console.log(chalk.gray('📋 Full Result:'));

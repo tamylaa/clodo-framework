@@ -482,3 +482,138 @@ export function formatD1HealthResults(d1Results) {
 
   return lines.join('\n');
 }
+
+/**
+ * Modern fetch-based health check with exponential backoff
+ * @param {string} baseUrl - Base URL of the service
+ * @param {Object} options - Health check options
+ * @returns {Promise<Object>} Health check result
+ */
+export async function healthCheckWithBackoff(baseUrl, options = {}) {
+  const { 
+    maxAttempts = 10, 
+    initialDelay = 1000, 
+    maxDelay = 8000, 
+    timeout = 5000,
+    silent = false
+  } = options;
+  
+  let attempt = 0;
+  let delay = initialDelay;
+
+  while (attempt < maxAttempts) {
+    attempt++;
+    
+    try {
+      if (!silent) {
+        process.stdout.write(`   Attempt ${attempt}/${maxAttempts}... `);
+      }
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      
+      const startTime = Date.now();
+      const response = await fetch(`${baseUrl}/health`, {
+        signal: controller.signal,
+        headers: { 'User-Agent': 'clodo-service-health-check' }
+      });
+      clearTimeout(timeoutId);
+      
+      const responseTime = Date.now() - startTime;
+
+      if (response.ok) {
+        // Success!
+        let status = null;
+        try {
+          const data = await response.json();
+          status = data.status || 'healthy';
+        } catch {
+          // Not JSON, that's ok
+        }
+        
+        if (!silent) console.log('✓');
+        return {
+          healthy: true,
+          responseTime,
+          attempts: attempt,
+          status
+        };
+      }
+      
+      // Non-200 but got response
+      if (!silent) console.log(`✗ (HTTP ${response.status})`);
+      
+    } catch (error) {
+      if (!silent) {
+        if (error.name === 'AbortError') {
+          console.log('✗ (timeout)');
+        } else {
+          console.log(`✗ (${error.message})`);
+        }
+      }
+    }
+
+    // Wait before retry (exponential backoff)
+    if (attempt < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+      delay = Math.min(delay * 2, maxDelay); // Exponential backoff, capped
+    }
+  }
+
+  return { healthy: false, attempts: maxAttempts };
+}
+
+/**
+ * Verify worker deployment via Cloudflare API
+ * @param {string} workerName - Name of the worker to verify
+ * @param {Object} credentials - Cloudflare credentials
+ * @param {Object} options - Verification options
+ * @returns {Promise<Object>} Verification result
+ */
+export async function verifyWorkerDeployment(workerName, credentials, options = {}) {
+  const { maxAttempts = 5, delay = 2000, silent = false } = options;
+  let attempt = 0;
+
+  while (attempt < maxAttempts) {
+    attempt++;
+    
+    try {
+      if (!silent) {
+        process.stdout.write(`   Checking deployment status (attempt ${attempt}/${maxAttempts})... `);
+      }
+      
+      const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
+      const cfApi = new CloudflareAPI(credentials.token);
+      
+      // List all workers to find ours
+      const workers = await cfApi.listWorkers(credentials.accountId);
+      const deployedWorker = workers.find(w => w.name === workerName);
+      
+      if (deployedWorker) {
+        if (!silent) console.log('✓');
+        return {
+          success: true,
+          status: 'Active',
+          modifiedOn: deployedWorker.modifiedOn ? 
+            new Date(deployedWorker.modifiedOn).toLocaleString() : null,
+          etag: deployedWorker.etag
+        };
+      }
+      
+      if (!silent) console.log('Not found yet');
+      
+    } catch (error) {
+      if (!silent) console.log(`✗ (${error.message})`);
+    }
+
+    // Wait before retry
+    if (attempt < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  return { 
+    success: false, 
+    error: 'Worker not found in Cloudflare API after deployment'
+  };
+}
