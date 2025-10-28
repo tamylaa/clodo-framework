@@ -1,3 +1,10 @@
+## [3.1.15](https://github.com/tamylaa/clodo-framework/compare/v3.1.14...v3.1.15) (2025-10-28)
+
+
+### Bug Fixes
+
+* Complete comprehensive clodo-framework refactoring (Tasks 3.1-3.4) ([0949b8b](https://github.com/tamylaa/clodo-framework/commit/0949b8be5f4f6522c0e4e4050e858ce82be5d034))
+
 ## [3.1.14](https://github.com/tamylaa/clodo-framework/compare/v3.1.13...v3.1.14) (2025-10-27)
 
 
