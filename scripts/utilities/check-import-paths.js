@@ -3,10 +3,15 @@
 /**
  * Check Import Paths Validator
  * 
- * Validates that all re-export wrappers in src/utils/ have correct paths that work
+ * Validates that all re-export wrappers AND dynamic imports have correct paths that work
  * when compiled to dist/. This prevents module resolution errors in published packages.
  * 
  * Purpose: Catch path issues BEFORE publication to npm
+ * 
+ * Checks:
+ * 1. Static imports in re-export wrappers (src/utils/)
+ * 2. Dynamic imports in bin/ files (must NOT reference dist/)
+ * 3. Compiled dist/ structure integrity
  */
 
 import fs from 'fs';
@@ -45,6 +50,15 @@ const RULES = {
   }
 };
 
+// Check for problematic dynamic imports that reference dist/ from bin/
+const DYNAMIC_IMPORT_CHECKS = {
+  'bin/shared/cloudflare/ops.js': {
+    pattern: /import\(['"]([^'"]*dist[^'"]*)['"]\)/g,
+    shouldNotContain: 'dist/',
+    description: 'Dynamic imports in bin/ must not reference dist/ (causes dist/dist/ bug)'
+  }
+};
+
 let passCount = 0;
 let failCount = 0;
 const failures = [];
@@ -75,6 +89,34 @@ for (const [filePath, rule] of Object.entries(RULES)) {
   } else {
     console.log(`✅ CORRECT: ${filePath}`);
     console.log(`   → ${rule.shouldContain}\n`);
+    passCount++;
+  }
+}
+
+// Check for problematic dynamic imports
+console.log('\n🔍 Checking dynamic imports in bin/ files...\n');
+
+for (const [filePath, rule] of Object.entries(DYNAMIC_IMPORT_CHECKS)) {
+  const fullPath = path.join(projectRoot, filePath);
+  
+  if (!fs.existsSync(fullPath)) {
+    console.log(`⚠️  SKIPPED: ${filePath} (file not found)`);
+    continue;
+  }
+
+  const content = fs.readFileSync(fullPath, 'utf8');
+  const matches = [...content.matchAll(rule.pattern)];
+  
+  if (matches.length > 0) {
+    console.log(`❌ PROBLEMATIC IMPORTS: ${filePath}`);
+    matches.forEach(match => {
+      console.log(`   → ${match[1]}`);
+    });
+    console.log(`   Issue: ${rule.description}\n`);
+    failCount += matches.length;
+    failures.push(`${filePath}: contains ${matches.length} dynamic import(s) referencing dist/`);
+  } else {
+    console.log(`✅ NO DIST/ IMPORTS: ${filePath}\n`);
     passCount++;
   }
 }
