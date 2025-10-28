@@ -16,7 +16,7 @@
 import { readdirSync, statSync } from 'fs';
 import { resolve, join } from 'path';
 import { getDirname } from '../esm-helper.js';
-import { FileManager } from '../../../bin/shared/utils/file-manager.js';
+import { FileManager } from '../file-manager.js';
 
 const __dirname = getDirname(import.meta.url, 'src/utils/config');
 

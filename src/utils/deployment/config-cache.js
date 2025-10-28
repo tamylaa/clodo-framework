@@ -23,7 +23,7 @@ import { promisify } from 'util';
 import { exec } from 'child_process';
 
 import { frameworkConfig } from '../framework-config.js';
-import { NameFormatters } from '../../../bin/shared/utils/Formatters.js';
+import { NameFormatters } from '../formatters.js';
 
 const execAsync = promisify(exec);
 

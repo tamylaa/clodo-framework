@@ -15,7 +15,7 @@ import { readdirSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
-import { FileManager } from '../../../bin/shared/utils/file-manager.js';
+import { FileManager } from '../file-manager.js';
 
 let __filename, __dirname;
 

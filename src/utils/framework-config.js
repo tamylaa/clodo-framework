@@ -8,7 +8,7 @@
 
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { FileManager } from '../../bin/shared/utils/file-manager.js';
+import { FileManager } from './file-manager.js';
 
 export class FrameworkConfig {
   constructor(configPath = null) {

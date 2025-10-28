@@ -50,8 +50,7 @@ export {
   parseZoneSelection
 } from './api.js';
 
-// CLI-based operations (re-export from ops.js for convenience)
-// Note: These are also available directly from bin/shared/cloudflare/ops.js
+// CLI-based operations (re-export from compiled ops.js)
 export {
   // Authentication
   checkAuth,
@@ -80,7 +79,7 @@ export {
   
   // Utilities
   validatePrerequisites
-} from '../../bin/shared/cloudflare/ops.js';
+} from './ops.js';
 
 /**
  * Helper: Choose the right tool for the job

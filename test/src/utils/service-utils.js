@@ -5,7 +5,8 @@
  * Service Type: generic
  */
 
-import { logger } from '../../../bin/shared/logging/Logger.js';
+import { Logger } from '../../../utils/logger.js';
+const logger = new Logger({ enableCache: true });
 
 /**
  * Utility functions for undefined
