@@ -1,3 +1,10 @@
+## [3.1.19](https://github.com/tamylaa/clodo-framework/compare/v3.1.18...v3.1.19) (2025-10-28)
+
+
+### Bug Fixes
+
+* Correct re-export wrapper paths to use ../../bin (two levels up from dist/utils) ([992136e](https://github.com/tamylaa/clodo-framework/commit/992136e7b143424e2807f49a94599e8d71a91079))
+
 ## [3.1.18](https://github.com/tamylaa/clodo-framework/compare/v3.1.17...v3.1.18) (2025-10-28)
 
 
