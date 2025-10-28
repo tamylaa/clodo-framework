@@ -17,31 +17,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../../');
 
 const RULES = {
-  // Re-export wrappers in src/utils/ should use '../../bin/...' paths
-  // After compilation: src/utils/X.js → dist/utils/X.js
-  // And: bin/shared/X.js → dist/bin/shared/X.js
-  // So the relative path from dist/utils/ to dist/bin/ is '../../bin/'
-  // (up from utils to dist, then into bin)
+  // Re-export wrappers in src/utils/ need correct paths based on NESTING DEPTH
+  // After compilation to dist/, the relative path depends on how deep the file is
   
+  // Files at dist/utils/X.js (2 levels: dist/utils/) use '../bin/...'
   'src/utils/file-manager.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../bin/shared/utils/file-manager.js',
-    description: 'file-manager re-export wrapper'
+    shouldContain: '../bin/shared/utils/file-manager.js',
+    description: 'file-manager re-export wrapper (depth: dist/utils/)'
   },
   'src/utils/formatters.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../bin/shared/utils/Formatters.js',
-    description: 'formatters re-export wrapper'
+    shouldContain: '../bin/shared/utils/Formatters.js',
+    description: 'formatters re-export wrapper (depth: dist/utils/)'
   },
   'src/utils/logger.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../bin/shared/logging/Logger.js',
-    description: 'logger re-export wrapper'
+    shouldContain: '../bin/shared/logging/Logger.js',
+    description: 'logger re-export wrapper (depth: dist/utils/)'
   },
+  
+  // Files at dist/utils/cloudflare/X.js (3 levels: dist/utils/cloudflare/) use '../../bin/...'
   'src/utils/cloudflare/ops.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
     shouldContain: '../../bin/shared/cloudflare/ops.js',
-    description: 'cloudflare ops re-export wrapper'
+    description: 'cloudflare ops re-export wrapper (depth: dist/utils/cloudflare/)'
   }
 };
 
