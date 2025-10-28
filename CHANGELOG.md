@@ -1,3 +1,10 @@
+## [3.1.20](https://github.com/tamylaa/clodo-framework/compare/v3.1.19...v3.1.20) (2025-10-28)
+
+
+### Bug Fixes
+
+* use depth-aware import paths in re-export wrappers ([db383fe](https://github.com/tamylaa/clodo-framework/commit/db383fe22e67b3d6a99b9465253c1169f509db13))
+
 ## [3.1.19](https://github.com/tamylaa/clodo-framework/compare/v3.1.18...v3.1.19) (2025-10-28)
 
 
