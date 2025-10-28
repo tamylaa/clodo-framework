@@ -1,3 +1,12 @@
+## [3.1.16](https://github.com/tamylaa/clodo-framework/compare/v3.1.15...v3.1.16) (2025-10-28)
+
+
+### Bug Fixes
+
+* Correct import path for cloudflare ops.js module ([b61de66](https://github.com/tamylaa/clodo-framework/commit/b61de66da57dfbd5d4157b2dfd0d5819db99b89b))
+* Correct import path in cloudflare ops re-export wrapper ([5bda1d2](https://github.com/tamylaa/clodo-framework/commit/5bda1d2d76f6577f2475adc7d4fe21284ded91e2))
+* Resolve all bin/ import paths by creating library re-export wrappers ([a6a2147](https://github.com/tamylaa/clodo-framework/commit/a6a2147562578945d4fb630086facfcdf8df66e5))
+
 ## [3.1.15](https://github.com/tamylaa/clodo-framework/compare/v3.1.14...v3.1.15) (2025-10-28)
 
 
