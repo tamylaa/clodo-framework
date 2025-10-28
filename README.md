@@ -8,6 +8,59 @@ A comprehensive framework for building enterprise-grade software architecture on
 
 Just like Clodo bricks snap together to build anything you can imagine, this framework provides the base components that your services snap into. Focus on your business logic while the framework handles the infrastructure, configuration, and deployment patterns.
 
+## Two Ways to Use Clodo Framework
+
+### 📦 As a Library (Public API)
+
+Import framework modules into your project for programmatic use:
+
+```javascript
+// Import core services
+import { GenericDataService } from '@tamyla/clodo-framework/services';
+import { EnhancedRouter } from '@tamyla/clodo-framework/routing';
+import { CloudflareAPI } from '@tamyla/clodo-framework/utils/cloudflare';
+import { DeploymentOrchestrator } from '@tamyla/clodo-framework/deployment';
+
+// Use framework utilities
+const api = new CloudflareAPI(token);
+const zones = await api.listZones();
+```
+
+**All public exports are defined in `package.json`** - use only these documented paths.
+
+### 🔧 As CLI Tools (Commands)
+
+Run framework commands in your terminal:
+
+```bash
+# Deploy your service
+clodo-service deploy
+
+# Create a new service
+clodo-create-service my-service
+
+# Security auditing
+clodo-security audit
+```
+
+**CLI tools are for terminal use only** - they use interactive prompts, colored output, and are not meant for programmatic import.
+
+### ⚠️ Important: Don't Import from `dist/bin/`
+
+The `bin/` directory contains CLI implementation details and should **never** be imported directly:
+
+```javascript
+// ❌ WRONG - Don't do this
+import { healthCheckWithBackoff } from '@tamyla/clodo-framework/dist/bin/shared/monitoring/health-checker.js';
+import { deploymentUI } from '@tamyla/clodo-framework/dist/bin/commands/helpers/deployment-ui.js';
+
+// ✅ CORRECT - Use public API
+import { DeploymentOrchestrator } from '@tamyla/clodo-framework/deployment';
+import { CloudflareAPI } from '@tamyla/clodo-framework/utils/cloudflare';
+```
+
+If you need functionality that's currently only in `bin/`, please open an issue - we'll consider adding it to the public API.
+
 ## Project Structure
 
 The project is organized for maximum clarity and maintainability:
