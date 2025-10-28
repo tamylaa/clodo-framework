@@ -1,3 +1,10 @@
+## [3.1.18](https://github.com/tamylaa/clodo-framework/compare/v3.1.17...v3.1.18) (2025-10-28)
+
+
+### Bug Fixes
+
+* Correct re-export wrapper import paths and add build-time path validator ([293f7b1](https://github.com/tamylaa/clodo-framework/commit/293f7b1537bed9a3c9eafcc96131be863044f313))
+
 ## [3.1.17](https://github.com/tamylaa/clodo-framework/compare/v3.1.16...v3.1.17) (2025-10-28)
 
 
