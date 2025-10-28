@@ -1,0 +1,26 @@
+{
+  "// Comment": "Example configuration for 'npx clodo-service create' command",
+  "// Instructions": "Copy this file and customize for your needs, then use: npx clodo-service create --config-file your-config.json",
+  "// CLI Override": "Any CLI options passed on command line will override values from this config file",
+  
+  "projectName": "my-cloudflare-worker",
+  "description": "A sample Cloudflare Worker project",
+  "environment": "development",
+  "region": "us-west-1",
+  "template": "basic",
+  "typescript": true,
+  "installDependencies": true,
+  
+  "advanced": {
+    "nodeVersion": "18.x",
+    "packageManager": "npm",
+    "outputDir": "./dist",
+    "sourceDir": "./src"
+  },
+  
+  "metadata": {
+    "author": "your-name",
+    "license": "MIT",
+    "version": "0.1.0"
+  }
+}

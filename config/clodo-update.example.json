@@ -1,0 +1,46 @@
+{
+  "// Comment": "Example configuration for 'npx clodo-service update' command",
+  "// Instructions": "Copy this file and customize for your needs, then use: npx clodo-service update --config-file your-config.json",
+  
+  "domain": "api.example.com",
+  "environment": "production",
+  "cloudflareToken": "${CLOUDFLARE_TOKEN}",
+  
+  "preview": true,
+  "force": false,
+  
+  "updates": {
+    "updateDependencies": true,
+    "updateConfiguration": true,
+    "updateScripts": true,
+    "updateWorkerConfig": true
+  },
+  
+  "migration": {
+    "runMigrations": true,
+    "backupBeforeUpdate": true,
+    "backupLocation": "./backups",
+    "rollbackOnError": true
+  },
+  
+  "validation": {
+    "validateBeforeUpdate": true,
+    "validateAfterUpdate": true,
+    "runTests": true
+  },
+  
+  "notification": {
+    "notifyOnStart": true,
+    "notifyOnComplete": true,
+    "notifyEmail": "admin@example.com",
+    "notifySlack": false,
+    "slackWebhook": ""
+  },
+  
+  "performance": {
+    "parallelUpdates": 2,
+    "timeout": 60000,
+    "retryOnFailure": true,
+    "maxRetries": 3
+  }
+}

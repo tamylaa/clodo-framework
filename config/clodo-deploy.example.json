@@ -1,0 +1,41 @@
+{
+  "// Comment": "Example configuration for 'npx clodo-service deploy' command",
+  "// Instructions": "Copy this file and customize for your needs, then use: npx clodo-service deploy --config-file your-config.json",
+  "// EnvVars": "You can use environment variable substitution: ${ENV_VAR_NAME} will be replaced with the value of ENV_VAR_NAME",
+  
+  "domain": "api.example.com",
+  "environment": "production",
+  "cloudflareToken": "${CLOUDFLARE_TOKEN}",
+  "cloudflareZoneId": "${CLOUDFLARE_ZONE_ID}",
+  
+  "deployment": {
+    "strategy": "blue-green",
+    "replicas": 3,
+    "maxConcurrency": 100,
+    "timeout": 30000,
+    "healthCheckInterval": 5000,
+    "rollbackOnFailure": true
+  },
+  
+  "routing": {
+    "enableLoadBalancing": true,
+    "loadBalancingPolicy": "round-robin",
+    "corsEnabled": true,
+    "corsOrigins": ["https://example.com", "https://app.example.com"]
+  },
+  
+  "monitoring": {
+    "enableMetrics": true,
+    "metricsEndpoint": "https://metrics.example.com",
+    "alertOnFailure": true,
+    "alertEmail": "alerts@example.com"
+  },
+  
+  "security": {
+    "enableSSL": true,
+    "minTLSVersion": "1.2",
+    "enableWAF": true,
+    "rateLimit": 1000,
+    "rateLimitWindow": 60
+  }
+}

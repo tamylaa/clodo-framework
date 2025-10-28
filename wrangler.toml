@@ -1,0 +1,19 @@
+name = "worker"
+main = "src/index.js"
+compatibility_date = "2025-10-28"
+
+[env.development]
+name = "worker"
+
+  [[env.development.d1_databases]]
+  binding = "DB"
+  database_name = "api2-com-development-db"
+  database_id = "0ca068af-625d-4587-81f4-85b1a754b2b4"
+
+[env.staging]
+name = "worker-staging"
+
+  [[env.staging.d1_databases]]
+  binding = "DB"
+  database_name = "api2-com-staging-db"
+  database_id = "0ca068af-625d-4587-81f4-85b1a754b2b4"

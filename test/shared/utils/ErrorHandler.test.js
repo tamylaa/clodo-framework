@@ -654,3 +654,176 @@ describe('ErrorHandler - Unified Error Handling Module', () => {
  * Regression: 0% expected
  * ============================================================================
  */
+
+/**
+ * SECTION: Telemetry and Error Tracking Tests
+ * Tests for error tracking, statistics, and telemetry features
+ */
+describe('ErrorHandler - Error Telemetry and Tracking', () => {
+  beforeEach(() => {
+    ErrorHandler.clearErrorLogs();
+    ErrorHandler.initialize({ telemetryEnabled: true });
+  });
+
+  test('T1: Should track errors when telemetry enabled', () => {
+    const error = new Error('Test error');
+    ErrorHandler._trackError(error, 'test_category');
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBe(1);
+    expect(stats.errorsByCategory.test_category).toBe(1);
+  });
+
+  test('T2: Should not track errors when telemetry disabled', () => {
+    ErrorHandler.initialize({ telemetryEnabled: false });
+    const error = new Error('Test error');
+    ErrorHandler._trackError(error, 'test_category');
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBe(0);
+  });
+
+  test('T3: Should update error counts correctly', () => {
+    ErrorHandler._trackError(new Error('Error 1'), 'category_a');
+    ErrorHandler._trackError(new Error('Error 2'), 'category_a');
+    ErrorHandler._trackError(new Error('Error 3'), 'category_b');
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.errorsByCategory.category_a).toBe(2);
+    expect(stats.errorsByCategory.category_b).toBe(1);
+  });
+
+  test('T4: Should track category statistics with timestamp', () => {
+    ErrorHandler._trackError(new Error('Error'), 'test_cat');
+    const stats = ErrorHandler.getErrorStatistics();
+
+    expect(stats.categories.test_cat).toBeDefined();
+    expect(stats.categories.test_cat.count).toBe(1);
+    expect(stats.categories.test_cat.lastOccurrence).toBeDefined();
+  });
+
+  test('T5: Should track unique error messages per category', () => {
+    ErrorHandler._trackError(new Error('Message A'), 'cat');
+    ErrorHandler._trackError(new Error('Message B'), 'cat');
+    ErrorHandler._trackError(new Error('Message A'), 'cat');
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.categories.cat.uniqueMessages).toBe(2);
+  });
+
+  test('T6: Should enforce maxLogSize limit', () => {
+    ErrorHandler.initialize({ maxLogSize: 5 });
+    for (let i = 0; i < 10; i++) {
+      ErrorHandler._trackError(new Error(`Error ${i}`), 'cat');
+    }
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBeLessThanOrEqual(5);
+  });
+
+  test('T7: Should clear all error logs', () => {
+    ErrorHandler._trackError(new Error('Error 1'), 'cat');
+    ErrorHandler._trackError(new Error('Error 2'), 'cat');
+
+    let stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBe(2);
+
+    ErrorHandler.clearErrorLogs();
+    stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBe(0);
+  });
+
+  test('T8: Should provide recent errors in statistics', () => {
+    for (let i = 1; i <= 15; i++) {
+      ErrorHandler._trackError(new Error(`Error ${i}`), 'cat');
+    }
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.recentErrors.length).toBeLessThanOrEqual(10);
+  });
+
+  test('T9: Should categorize deployment errors correctly', () => {
+    const testCases = [
+      { error: new Error('Security token invalid'), expected: 'security' },
+      { error: new Error('Authentication failed'), expected: 'authentication' },
+      { error: new Error('Connection timeout'), expected: 'timeout' },
+      { error: new Error('D1 database error'), expected: 'database' },
+      { error: new Error('Network unreachable'), expected: 'network' },
+      { error: new Error('Health check failed'), expected: 'health_check' }
+    ];
+
+    testCases.forEach(({ error, expected }) => {
+      const category = ErrorHandler._categorizeDeploymentError(error);
+      expect(category).toBe(expected);
+    });
+  });
+
+  test('T10: Should handle null/undefined errors in categorization', () => {
+    const category1 = ErrorHandler._categorizeDeploymentError(null);
+    const category2 = ErrorHandler._categorizeDeploymentError(undefined);
+
+    expect(category1).toBe('deployment');
+    expect(category2).toBe('deployment');
+  });
+
+  test('T11: Should track errors during deployment handling', () => {
+    const error = new Error('Unauthorized deployment');
+    // Suppress console output
+    const originalError = console.error;
+    console.error = () => {};
+
+    ErrorHandler.handleDeploymentError(error, { phase: 'deploy' });
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBe(1);
+    expect(stats.errorsByCategory.security).toBe(1);
+
+    console.error = originalError;
+  });
+
+  test('T12: Should track D1 database errors', () => {
+    const error = new Error("Couldn't find a D1 db");
+    // Suppress console output
+    const originalError = console.error;
+    console.error = () => {};
+
+    ErrorHandler.handleD1DatabaseError(error, { environment: 'production' });
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBe(1);
+    expect(stats.errorsByCategory.database).toBe(1);
+
+    console.error = originalError;
+  });
+
+  test('T13: Should return empty statistics when no errors', () => {
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.totalErrors).toBe(0);
+    expect(Object.keys(stats.errorsByCategory).length).toBe(0);
+  });
+
+  test('T14: Should maintain separate statistics per category', () => {
+    ErrorHandler._trackError(new Error('Error A'), 'auth');
+    ErrorHandler._trackError(new Error('Error B'), 'auth');
+    ErrorHandler._trackError(new Error('Error C'), 'database');
+    ErrorHandler._trackError(new Error('Error D'), 'network');
+    ErrorHandler._trackError(new Error('Error E'), 'network');
+    ErrorHandler._trackError(new Error('Error F'), 'network');
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats.errorsByCategory.auth).toBe(2);
+    expect(stats.errorsByCategory.database).toBe(1);
+    expect(stats.errorsByCategory.network).toBe(3);
+  });
+
+  test('T15: Should provide complete error statistics', () => {
+    ErrorHandler._trackError(new Error('Error 1'), 'test');
+    ErrorHandler._trackError(new Error('Error 2'), 'test');
+
+    const stats = ErrorHandler.getErrorStatistics();
+    expect(stats).toHaveProperty('totalErrors');
+    expect(stats).toHaveProperty('errorsByCategory');
+    expect(stats).toHaveProperty('categories');
+    expect(stats).toHaveProperty('recentErrors');
+  });
+});

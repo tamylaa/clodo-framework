@@ -1,0 +1,168 @@
+{
+  "environments": {
+    "production": {
+      "domains": {
+        "api.example.com": {
+          "serviceName": "api-service-prod",
+          "serviceType": "data-service",
+          "cloudflareToken": "CLOUDFLARE_PROD_TOKEN_PLACEHOLDER",
+          "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+          "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+          "displayName": "Production API Service",
+          "description": "Production API service with maximum reliability",
+          "deploymentStrategy": "blue-green",
+          "healthCheck": {
+            "enabled": true,
+            "path": "/health",
+            "interval": 30,
+            "timeout": 10
+          },
+          "routing": {
+            "rules": [
+              {
+                "pattern": "/api/*",
+                "target": "api-prod-worker",
+                "methods": ["GET", "POST", "PUT", "DELETE"]
+              }
+            ]
+          },
+          "security": {
+            "cors": {
+              "enabled": true,
+              "origins": ["https://app.example.com"],
+              "methods": ["GET", "POST", "PUT", "DELETE"],
+              "headers": ["Content-Type", "Authorization"]
+            },
+            "rateLimit": {
+              "enabled": true,
+              "requests": 10000,
+              "window": 60
+            },
+            "waf": {
+              "enabled": true,
+              "rules": ["sql-injection", "xss", "csrf", "ddos"]
+            }
+          },
+          "monitoring": {
+            "enabled": true,
+            "metrics": ["response-time", "error-rate", "throughput"],
+            "alerts": {
+              "errorRateThreshold": 0.05,
+              "responseTimeThreshold": 500
+            }
+          }
+        }
+      }
+    },
+    "staging": {
+      "domains": {
+        "api.staging.example.com": {
+          "serviceName": "api-service-staging",
+          "serviceType": "data-service",
+          "cloudflareToken": "CLOUDFLARE_STAGING_TOKEN_PLACEHOLDER",
+          "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+          "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+          "displayName": "Staging API Service",
+          "description": "Staging environment for testing and validation",
+          "deploymentStrategy": "rolling",
+          "healthCheck": {
+            "enabled": true,
+            "path": "/health",
+            "interval": 60,
+            "timeout": 15
+          },
+          "routing": {
+            "rules": [
+              {
+                "pattern": "/api/*",
+                "target": "api-staging-worker",
+                "methods": ["GET", "POST", "PUT", "DELETE"]
+              }
+            ]
+          },
+          "security": {
+            "cors": {
+              "enabled": true,
+              "origins": ["https://staging.example.com"],
+              "methods": ["GET", "POST", "PUT", "DELETE"],
+              "headers": ["Content-Type", "Authorization"]
+            },
+            "rateLimit": {
+              "enabled": true,
+              "requests": 1000,
+              "window": 60
+            }
+          },
+          "monitoring": {
+            "enabled": true,
+            "metrics": ["response-time", "error-rate"],
+            "alerts": {
+              "errorRateThreshold": 0.10,
+              "responseTimeThreshold": 1000
+            }
+          }
+        }
+      }
+    },
+    "development": {
+      "domains": {
+        "api.dev.example.com": {
+          "serviceName": "api-service-dev",
+          "serviceType": "data-service",
+          "cloudflareToken": "CLOUDFLARE_DEV_TOKEN_PLACEHOLDER",
+          "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+          "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+          "displayName": "Development API Service",
+          "description": "Development environment for active development",
+          "deploymentStrategy": "instant",
+          "healthCheck": {
+            "enabled": true,
+            "path": "/health",
+            "interval": 120,
+            "timeout": 30
+          },
+          "routing": {
+            "rules": [
+              {
+                "pattern": "/api/*",
+                "target": "api-dev-worker",
+                "methods": ["GET", "POST", "PUT", "DELETE"]
+              }
+            ]
+          },
+          "security": {
+            "cors": {
+              "enabled": true,
+              "origins": ["http://localhost:3000", "https://dev.example.com"],
+              "methods": ["GET", "POST", "PUT", "DELETE"],
+              "headers": ["Content-Type", "Authorization"]
+            },
+            "rateLimit": {
+              "enabled": false
+            }
+          },
+          "monitoring": {
+            "enabled": false
+          }
+        }
+      }
+    }
+  },
+  "global": {
+    "customer": "example-company",
+    "organization": "Example Corp",
+    "contact": "devops@example.com",
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-28",
+    "environmentMapping": {
+      "enabled": true,
+      "defaultEnvironment": "development",
+      "allowedEnvironments": ["development", "staging", "production"],
+      "domainSuffixes": {
+        "production": "",
+        "staging": ".staging",
+        "development": ".dev"
+      }
+    }
+  }
+}

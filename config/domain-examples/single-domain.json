@@ -1,0 +1,50 @@
+{
+  "domains": {
+    "api.example.com": {
+      "environment": "production",
+      "serviceName": "api-service",
+      "serviceType": "data-service",
+      "cloudflareToken": "CLOUDFLARE_API_TOKEN_PLACEHOLDER",
+      "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+      "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+      "displayName": "Example API Service",
+      "description": "Single domain configuration for production API service",
+      "deploymentStrategy": "rolling",
+      "healthCheck": {
+        "enabled": true,
+        "path": "/health",
+        "interval": 30,
+        "timeout": 10
+      },
+      "routing": {
+        "rules": [
+          {
+            "pattern": "/api/*",
+            "target": "api-worker",
+            "methods": ["GET", "POST", "PUT", "DELETE"]
+          }
+        ]
+      },
+      "security": {
+        "cors": {
+          "enabled": true,
+          "origins": ["https://app.example.com"],
+          "methods": ["GET", "POST", "PUT", "DELETE"],
+          "headers": ["Content-Type", "Authorization"]
+        },
+        "rateLimit": {
+          "enabled": true,
+          "requests": 1000,
+          "window": 60
+        }
+      }
+    }
+  },
+  "global": {
+    "customer": "example-company",
+    "organization": "Example Corp",
+    "contact": "devops@example.com",
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-28"
+  }
+}

@@ -178,14 +178,13 @@ export class DeploymentCredentialCollector {
         console.log(chalk.white('Found multiple accounts:\n'));
       }
 
-      const choices = accounts.map((acc, idx) => `${idx + 1}. ${acc.name} (${acc.id})`);
-      const selection = await askChoice(
+      const choices = accounts.map((acc, idx) => `${acc.name} (${acc.id})`);
+      const selectedIndex = await askChoice(
         'Select account:',
         choices,
         0
       );
 
-      const selectedIndex = parseInt(selection.split('.')[0]) - 1;
       const selectedAccount = accounts[selectedIndex];
 
       if (!this.quiet) {
@@ -231,15 +230,14 @@ export class DeploymentCredentialCollector {
       }
 
       const choices = zones.map((zone, idx) => 
-        `${idx + 1}. ${zone.name} (Status: ${zone.status})`
+        `${zone.name} (Status: ${zone.status})`
       );
-      const selection = await askChoice(
+      const selectedIndex = await askChoice(
         'Select domain for deployment:',
         choices,
         0
       );
 
-      const selectedIndex = parseInt(selection.split('.')[0]) - 1;
       const selectedZone = zones[selectedIndex];
 
       if (!this.quiet) {

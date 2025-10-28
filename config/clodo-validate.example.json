@@ -1,0 +1,41 @@
+{
+  "// Comment": "Example configuration for 'npx clodo-service validate' command",
+  "// Instructions": "Copy this file and customize for your needs, then use: npx clodo-service validate --config-file your-config.json",
+  
+  "environment": "production",
+  "deepScan": true,
+  "exportReport": "validation-report.json",
+  
+  "checks": {
+    "validateDependencies": true,
+    "validateScripts": true,
+    "validateConfiguration": true,
+    "validateDeploymentConfig": true,
+    "validateEnvironmentVariables": true,
+    "validateSecuritySettings": true,
+    "validateNetworkConnectivity": true,
+    "validateCloudflareConfig": true
+  },
+  
+  "validation": {
+    "strict": true,
+    "allowWarnings": false,
+    "checkVersionCompatibility": true,
+    "checkSecurityIssues": true,
+    "checkDummySecrets": true
+  },
+  
+  "requirements": {
+    "minNodeVersion": "16.x",
+    "requiredFiles": ["package.json", "wrangler.toml", "src/index.js"],
+    "requiredDependencies": ["@cloudflare/wrangler"],
+    "requiredEnvironmentVars": ["CLOUDFLARE_TOKEN"]
+  },
+  
+  "reporting": {
+    "verbose": false,
+    "includePassedChecks": true,
+    "includeDependencyTree": true,
+    "includeSuggestions": true
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "// Comment": "Staging deployment configuration for clodo-framework",
+  "// Instructions": "This config deploys to staging environment using environment-mapped domain configuration",
+  "// Domain": "Uses staging.example.com domain from environment-mapped.json",
+  "// Environment": "Staging environment with moderate security and monitoring",
+
+  "domain": "staging.example.com",
+  "environment": "staging",
+  "cloudflareToken": "${CLOUDFLARE_API_TOKEN}",
+  "cloudflareAccountId": "${CLOUDFLARE_ACCOUNT_ID}",
+  "cloudflareZoneId": "${CLOUDFLARE_ZONE_ID}",
+
+  "deployment": {
+    "strategy": "rolling",
+    "replicas": 2,
+    "maxConcurrency": 50,
+    "timeout": 60000,
+    "healthCheckInterval": 10000,
+    "rollbackOnFailure": true
+  },
+
+  "routing": {
+    "enableLoadBalancing": true,
+    "loadBalancingPolicy": "round-robin",
+    "corsEnabled": true,
+    "corsOrigins": ["https://staging.example.com", "https://app-staging.example.com"]
+  },
+
+  "monitoring": {
+    "enableMetrics": true,
+    "metricsEndpoint": "https://metrics-staging.example.com",
+    "alertOnFailure": true,
+    "alertEmail": "staging-alerts@example.com"
+  },
+
+  "security": {
+    "enableSSL": true,
+    "minTLSVersion": "1.2",
+    "enableWAF": true,
+    "rateLimit": 500,
+    "rateLimitWindow": 60,
+    "wafRules": ["sql-injection", "xss"]
+  },
+
+  "healthCheck": {
+    "enabled": true,
+    "endpoint": "/health",
+    "interval": 30000,
+    "timeout": 10000,
+    "healthyThreshold": 2,
+    "unhealthyThreshold": 3
+  },
+
+  "logging": {
+    "level": "info",
+    "includeRequestId": true,
+    "includeTimestamp": true,
+    "maskSensitiveData": true
+  }
+}

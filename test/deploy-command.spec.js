@@ -61,7 +61,7 @@ describe('Deploy Command', () => {
       expect(optionNames).toContain('--account-id <id>');
       expect(optionNames).toContain('--zone-id <id>');
       expect(optionNames).toContain('--dry-run');
-      expect(optionNames).toContain('--quiet');
+      expect(optionNames).toContain('-q, --quiet');
       expect(optionNames).toContain('--service-path <path>');
     });
 

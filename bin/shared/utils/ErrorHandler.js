@@ -78,14 +78,130 @@ const _createContextualError = (message, context = {}) => {
  * Comprehensive error reporting and handling with recovery integration
  */
 export class ErrorHandler {
+  // Static telemetry tracking
+  static _errorLog = [];
+  static _errorCounts = {};
+  static _errorCategories = {};
+  static _recoveryManager = null;
+  static _telemetryEnabled = true;
+  static _maxLogSize = 1000;
+
   /**
-   * Initialize ErrorHandler with recovery manager
+   * Initialize ErrorHandler with recovery manager and telemetry
    * @private
    */
-  static initialize() {
+  static initialize(options = {}) {
     if (!ErrorHandler._recoveryManager) {
       ErrorHandler._recoveryManager = new ErrorRecoveryManager();
     }
+    if (options.telemetryEnabled !== undefined) {
+      ErrorHandler._telemetryEnabled = options.telemetryEnabled;
+    }
+    if (options.maxLogSize !== undefined) {
+      ErrorHandler._maxLogSize = options.maxLogSize;
+    }
+  }
+
+  /**
+   * Track error for telemetry and statistics
+   * @private
+   */
+  static _trackError(error, category = 'unknown') {
+    if (!ErrorHandler._telemetryEnabled) return;
+
+    const errorRecord = {
+      timestamp: new Date().toISOString(),
+      category,
+      message: error?.message || String(error),
+      type: error?.name || 'Error'
+    };
+
+    ErrorHandler._errorLog.push(errorRecord);
+    
+    // Prevent log from growing indefinitely
+    if (ErrorHandler._errorLog.length > ErrorHandler._maxLogSize) {
+      ErrorHandler._errorLog.shift();
+    }
+
+    // Update error counts
+    ErrorHandler._errorCounts[category] = (ErrorHandler._errorCounts[category] || 0) + 1;
+    
+    // Track category statistics
+    if (!ErrorHandler._errorCategories[category]) {
+      ErrorHandler._errorCategories[category] = {
+        count: 0,
+        lastOccurrence: null,
+        messages: new Set()
+      };
+    }
+    ErrorHandler._errorCategories[category].count++;
+    ErrorHandler._errorCategories[category].lastOccurrence = new Date().toISOString();
+    ErrorHandler._errorCategories[category].messages.add(error?.message || String(error));
+  }
+
+  /**
+   * Get error statistics and summary
+   * @returns {Object} Error statistics
+   */
+  static getErrorStatistics() {
+    return {
+      totalErrors: ErrorHandler._errorLog.length,
+      errorsByCategory: Object.entries(ErrorHandler._errorCounts).reduce((acc, [cat, count]) => {
+        acc[cat] = count;
+        return acc;
+      }, {}),
+      categories: Object.entries(ErrorHandler._errorCategories).reduce((acc, [cat, data]) => {
+        acc[cat] = {
+          count: data.count,
+          lastOccurrence: data.lastOccurrence,
+          uniqueMessages: Array.from(data.messages).length
+        };
+        return acc;
+      }, {}),
+      recentErrors: ErrorHandler._errorLog.slice(-10)
+    };
+  }
+
+  /**
+   * Clear error logs
+   */
+  static clearErrorLogs() {
+    ErrorHandler._errorLog = [];
+    ErrorHandler._errorCounts = {};
+    ErrorHandler._errorCategories = {};
+  }
+
+  /**
+   * Categorize deployment errors
+   * @param {Error} error - Error to categorize
+   * @returns {string} Error category
+   * @private
+   */
+  static _categorizeDeploymentError(error) {
+    const message = error?.message?.toLowerCase() || '';
+    
+    if (message.includes('security') || message.includes('unauthorized') || message.includes('forbidden')) {
+      return 'security';
+    }
+    if (message.includes('health') || message.includes('health check')) {
+      return 'health_check';
+    }
+    if (message.includes('authentication') || message.includes('auth') || message.includes('token')) {
+      return 'authentication';
+    }
+    if (message.includes('timeout')) {
+      return 'timeout';
+    }
+    if (message.includes('validation') || message.includes('invalid')) {
+      return 'validation';
+    }
+    if (message.includes('d1') || message.includes('database')) {
+      return 'database';
+    }
+    if (message.includes('connection') || message.includes('network')) {
+      return 'network';
+    }
+    return 'deployment';
   }
 
   /**
@@ -98,6 +214,10 @@ export class ErrorHandler {
     this.initialize();
 
     const { customer, environment, phase, deploymentUrl } = context;
+
+    // Categorize and track error
+    const category = this._categorizeDeploymentError(error);
+    this._trackError(error, category);
 
     console.error(`\n❌ Deployment Error in phase: ${phase || 'unknown'}`);
     console.error(`   Customer: ${customer || 'unknown'}`);
@@ -239,6 +359,9 @@ export class ErrorHandler {
    */
   static handleD1DatabaseError(error, context = {}) {
     this.initialize();
+
+    // Track database error
+    this._trackError(error, 'database');
 
     const { environment, service } = context;
     console.error(`\n❌ D1 Database Error`);

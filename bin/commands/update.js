@@ -4,9 +4,11 @@
 
 import chalk from 'chalk';
 import { ServiceOrchestrator } from '../../src/service-management/ServiceOrchestrator.js';
+import { StandardOptions } from '../shared/utils/cli-options.js';
+import { ConfigLoader } from '../shared/utils/config-loader.js';
 
 export function registerUpdateCommand(program) {
-  program
+  const command = program
     .command('update [service-path]')
     .description('Update an existing service configuration')
     .option('-i, --interactive', 'Run in interactive mode to select what to update')
@@ -19,52 +21,69 @@ export function registerUpdateCommand(program) {
     .option('--remove-feature <feature>', 'Remove a feature flag')
     .option('--regenerate-configs', 'Regenerate all configuration files')
     .option('--fix-errors', 'Attempt to fix common configuration errors')
+    .option('--preview', 'Show what would be changed without applying')
+    .option('--force', 'Skip confirmation prompts')
+  
+  // Add standard options (--verbose, --quiet, --json, --no-color, --config-file)
+  StandardOptions.define(command)
     .action(async (servicePath, options) => {
       try {
+        const output = new (await import('../shared/utils/output-formatter.js')).OutputFormatter(options);
+        const configLoader = new ConfigLoader({ verbose: options.verbose, quiet: options.quiet, json: options.json });
+
+        // Load config from file if specified
+        let configFileData = {};
+        if (options.configFile) {
+          configFileData = configLoader.loadSafe(options.configFile, {});
+          if (options.verbose && !options.quiet) {
+            output.info(`Loaded configuration from: ${options.configFile}`);
+          }
+        }
+
+        // Merge config file defaults with CLI options (CLI takes precedence)
+        const mergedOptions = configLoader.merge(configFileData, options);
+
         const orchestrator = new ServiceOrchestrator();
 
         // Auto-detect service path if not provided
         if (!servicePath) {
           servicePath = await orchestrator.detectServicePath();
           if (!servicePath) {
-            console.error(chalk.red('No service path provided and could not auto-detect service directory'));
-            console.log(chalk.white('Please run this command from within a service directory or specify the path'));
+            output.error('No service path provided and could not auto-detect service directory');
+            output.info('Please run this command from within a service directory or specify the path');
             process.exit(1);
           }
-          console.log(chalk.cyan(`Auto-detected service at: ${servicePath}`));
+          output.info(`Auto-detected service at: ${servicePath}`);
         }
 
         // Validate it's a service directory
         const isValid = await orchestrator.validateService(servicePath);
         if (!isValid.valid) {
-          console.log(chalk.yellow('⚠️  Service has configuration issues. Use --fix-errors to attempt automatic fixes.'));
-          if (!options.fixErrors) {
-            console.log(chalk.white('Issues found:'));
-            isValid.issues.forEach(issue => {
-              console.log(chalk.yellow(`  • ${issue}`));
-            });
+          output.warning('Service has configuration issues. Use --fix-errors to attempt automatic fixes.');
+          if (!mergedOptions.fixErrors) {
+            output.info('Issues found:');
+            output.list(isValid.issues || []);
             process.exit(1);
           }
         }
 
-        if (options.interactive) {
+        if (mergedOptions.interactive) {
           await orchestrator.runInteractiveUpdate(servicePath);
         } else {
-          await orchestrator.runNonInteractiveUpdate(servicePath, options);
+          await orchestrator.runNonInteractiveUpdate(servicePath, mergedOptions);
         }
 
-        console.log(chalk.green('\n✓ Service update completed successfully!'));
+        output.success('Service update completed successfully!');
 
       } catch (error) {
-        console.error(chalk.red(`\n✗ Service update failed: ${error.message}`));
+        const output = new (await import('../shared/utils/output-formatter.js')).OutputFormatter(options || {});
+        output.error(`Service update failed: ${error.message}`);
         if (error.details) {
-          console.error(chalk.yellow(`Details: ${error.details}`));
+          output.warning(`Details: ${error.details}`);
         }
         if (error.recovery) {
-          console.log(chalk.cyan('\n💡 Recovery suggestions:'));
-          error.recovery.forEach(suggestion => {
-            console.log(chalk.white(`  • ${suggestion}`));
-          });
+          output.info('Recovery suggestions:');
+          output.list(error.recovery);
         }
         process.exit(1);
       }

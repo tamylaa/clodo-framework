@@ -1,0 +1,530 @@
+# System Architecture: How All Pieces Connect
+
+## Current Architecture (v3.1.14)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     CLI ENTRY POINT                             │
+│                   bin/clodo-service.js                          │
+│              (73 lines, command registration)                   │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+          ┌──────────┼──────────┐
+          │          │          │
+    ┌─────▼──────┐ ┌─┴─────┐ ┌─┴──────────┐
+    │   create   │ │deploy │ │  validate  │  ... (6 commands)
+    │ (76 lines) │ │(206)  │ │   (32)     │
+    └──────┬─────┘ └───┬───┘ └────┬───────┘
+           │           │          │
+     ┌─────┴───────────┼──────────┴──────┐
+     │                 │                 │
+  ┌──▼───────┐   ┌────▼─────┐   ┌──────▼─────┐
+  │ServiceOrch │  │Manifest  │   │CloudflareAPI
+  │estrator    │  │Loader    │   │(Auto-fetch)│
+  │(creates)   │  │(detects) │   │            │
+  └────────────┘  └──────────┘   └────────────┘
+```
+
+### Current Limitations
+- ❌ No unified output handling (each command logs differently)
+- ❌ No shared CLI options (--verbose, --json not everywhere)
+- ❌ No config file loading in most commands
+- ❌ Duplicated validation/error code
+- ❌ Inconsistent error messages
+- ❌ No progress indicators except in deploy
+
+---
+
+## Target Architecture (After v4.0.0)
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     CLI ENTRY POINT                              │
+│                   bin/clodo-service.js                           │
+│         (Enhanced with help/version/login registration)          │
+└──────────────────────────┬───────────────────────────────────────┘
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+   ┌────▼─────┐       ┌────▼─────┐      ┌───▼──────┐
+   │ Core Cmds │       │Advanced  │      │Legacy    │
+   │(6 cmds)   │       │Commands  │      │Aliases   │
+   │           │       │(3 cmds)  │      │(2 cmds)  │
+   └──────┬────┘       └────┬─────┘      └───┬──────┘
+          │                 │                │
+        All use standardized layer:
+          │                 │                │
+   ┌──────┴─────────────────┼────────────────┴──────┐
+   │                        │                       │
+   ├─────────────────────────────────────────────────┤
+   │                                                 │
+   │         STANDARDIZATION LAYER (Phase 1)        │
+   │                                                 │
+   ├─────────────────────────────────────────────────┤
+   │                                                 │
+   │  1. StandardOptions         --verbose, --json  │
+   │     • Defines 5 global options                 │
+   │     • Applied to all commands                  │
+   │                                                 │
+   │  2. OutputFormatter         Unified logging    │
+   │     • 8 methods: success(), error(), etc       │
+   │     • Respects --quiet, --verbose, --json      │
+   │     • All commands use this                    │
+   │                                                 │
+   │  3. ProgressManager         Visual feedback    │
+   │     • Spinners, step progress, bars            │
+   │     • Used in deploy, create, validate         │
+   │                                                 │
+   │  4. ConfigLoader            --config-file      │
+   │     • Load defaults from JSON                  │
+   │     • Merge with CLI options                   │
+   │     • All commands support this                │
+   │                                                 │
+   └─────────────────────────────────────────────────┘
+          │
+   ┌──────▼──────────────────────────────────────────┐
+   │                                                 │
+   │      FEATURE PARITY LAYER (Phase 2)            │
+   │                                                 │
+   ├─────────────────────────────────────────────────┤
+   │                                                 │
+   │  5. Shared Utilities        DRY Principle      │
+   │     • validation-helpers.js (validateToken)    │
+   │     • error-helpers.js (handleServiceNotFound) │
+   │     • service-helpers.js (loadService)         │
+   │     • Exit codes & error messages              │
+   │     • All commands import from shared/         │
+   │                                                 │
+   │  6. Consistent Error Handling                  │
+   │     • Exit codes: SUCCESS(0) to UNKNOWN(99)    │
+   │     • Error messages: catalog system           │
+   │     • Context in all error reports             │
+   │                                                 │
+   │  7. Feature Parity                             │
+   │     • All commands: --verbose, --quiet, --json │
+   │     • All commands: config file support        │
+   │     • All commands: proper exit codes          │
+   │     • Optional features: preview, dry-run      │
+   │                                                 │
+   └─────────────────────────────────────────────────┘
+          │
+   ┌──────▼──────────────────────────────────────────┐
+   │                                                 │
+   │      SERVICE ORCHESTRATION LAYER              │
+   │                                                 │
+   ├─────────────────────────────────────────────────┤
+   │                                                 │
+   │  Core Orchestrators                            │
+   │  • ServiceOrchestrator (create, validate)      │
+   │  • ManifestLoader (detects service type)       │
+   │  • CloudflareAPI (auto-fetch credentials)      │
+   │  • CloudflareServiceValidator                  │
+   │                                                 │
+   └─────────────────────────────────────────────────┘
+```
+
+---
+
+## Data Flow: How It All Connects
+
+### Example: Deploy Command Flow
+
+```
+User Input
+    ↓
+npx clodo-service deploy --verbose --json --domain example.com
+    │
+    ├─ Parse with StandardOptions
+    │  ├─ --verbose → OutputFormatter.verbose = true
+    │  ├─ --json    → OutputFormatter.json = true
+    │  └─ --domain  → deployOptions.domain = 'example.com'
+    │
+    ├─ Load defaults from ConfigLoader (if --config-file specified)
+    │
+    ├─ Start credential collection with ProgressManager
+    │  ├─ Spinner: "Validating token..."
+    │  ├─ DeploymentCredentialCollector.collectCredentials()
+    │  │  ├─ Prompt for token (or use flag/env)
+    │  │  ├─ Validate with CloudflareAPI
+    │  │  ├─ Auto-fetch account ID (if needed)
+    │  │  └─ Auto-fetch zone ID (if needed)
+    │  └─ Spinner: "✓ Credentials validated"
+    │
+    ├─ Detect service with ManifestLoader
+    │  ├─ Load clodo.manifest.json (if Clodo service)
+    │  ├─ Extract serviceName, serviceType, domain
+    │  └─ Override domain if --domain flag provided
+    │
+    ├─ Validate service with CloudflareServiceValidator
+    │
+    ├─ Build deployment context
+    │
+    ├─ Output results with OutputFormatter
+    │  ├─ If --json: output valid JSON object
+    │  ├─ If --verbose: include debug details
+    │  ├─ If --quiet: only show errors/warnings
+    │  └─ Use error-messages catalog for consistency
+    │
+    └─ Exit with proper code
+       ├─ 0 = SUCCESS
+       ├─ 3 = INVALID_CONFIG
+       ├─ 4 = CREDENTIAL_ERROR
+       └─ 99 = UNKNOWN
+```
+
+### Connections in Service.yaml
+
+```
+Manifest File (clodo.manifest.json / wrangler.toml)
+         │
+         ├─ read by ManifestLoader
+         │     ├─ Extract: serviceName
+         │     ├─ Extract: serviceType
+         │     ├─ Extract: domain
+         │     └─ Detect: Is this Clodo or Cloudflare?
+         │
+         ├─ used by deploy.js
+         │     ├─ Know what service to deploy
+         │     ├─ Know where to deploy
+         │     └─ Know what type of service
+         │
+         ├─ used by validate.js
+         │     ├─ Check for required fields
+         │     ├─ Validate field formats
+         │     └─ Report issues via OutputFormatter
+         │
+         └─ used by update.js
+               ├─ Load current config
+               ├─ Merge with user changes
+               ├─ Validate before saving
+               └─ Use ProgressManager to show progress
+```
+
+---
+
+## Shared Utilities Dependency Map
+
+```
+StandardOptions (Phase 1.1)
+    ↓
+    Used by: all 6 commands + new commands
+    Defines: --verbose, --quiet, --json, --no-color, --config-file
+
+OutputFormatter (Phase 1.2)
+    ↑ depends on StandardOptions
+    ↓
+    Used by: all 6 commands + new commands
+    Methods: success(), error(), warning(), info(), section(), list(), table(), progress()
+
+ProgressManager (Phase 1.3)
+    ↑ depends on StandardOptions
+    ↓
+    Used by: deploy, create, validate, diagnose
+    Methods: startSpinner(), updateSpinner(), stopSpinner(), step(), progress()
+
+ConfigLoader (Phase 1.4)
+    ↑ depends on StandardOptions
+    ↓
+    Used by: all 6 commands + new commands
+    Methods: loadConfig(), validateConfigFile(), mergeConfigWithOptions()
+
+ExitCodes (Phase 2.2)
+    ↓
+    Used by: all 6 commands + helpers
+    Defines: SUCCESS(0), MISSING_ARGS(2), INVALID_CONFIG(3), CREDENTIAL_ERROR(4)
+
+ErrorMessages (Phase 2.2)
+    ↑ depends on ExitCodes
+    ↓
+    Used by: all commands + error-helpers
+    Format: Consistent "Invalid {field}: {value}. Expected: {format}"
+
+ValidationHelpers (Phase 2.1)
+    ↑ depends on ErrorMessages, ExitCodes
+    ↓
+    Used by: deploy, create, update, validate
+    Methods: validateToken(), validateDomain(), validatePath()
+
+ErrorHelpers (Phase 2.1)
+    ↑ depends on ExitCodes, ErrorMessages
+    ↓
+    Used by: all commands
+    Methods: handleServiceNotFound(), handleInvalidConfig(), handleCredentialError()
+
+ServiceHelpers (Phase 2.1)
+    ↑ depends on ValidationHelpers, ErrorHelpers
+    ↓
+    Used by: all commands
+    Methods: loadService(), detectServiceType(), buildServiceContext()
+
+Logger (Phase 4.2)
+    ↑ depends on OutputFormatter
+    ↓
+    Used by: all commands
+    Methods: debug(), info(), warn(), error()
+    Features: file logging, log levels, timestamps
+```
+
+---
+
+## How Each Command Uses the Layers
+
+### Create Command Flow
+```
+User: npx clodo-service create --config-file my-config.json --json
+
+1. StandardOptions
+   └─ Parse --config-file, --json
+
+2. ConfigLoader
+   └─ Load defaults from my-config.json
+
+3. ServiceOrchestrator
+   └─ Collect 88 fields (three-tier input: flags → env → prompts)
+
+4. ProgressManager
+   └─ Show step progress: "1/5 Collecting inputs"
+
+5. ServiceCreator
+   └─ Generate service files
+
+6. OutputFormatter
+   └─ Output success as JSON if --json specified
+   └─ Use error-messages catalog for any issues
+
+7. ExitCodes
+   └─ Exit with 0 (SUCCESS) or 1 (error)
+```
+
+### Deploy Command Flow
+```
+User: npx clodo-service deploy --verbose --domain prod.com --dry-run
+
+1. StandardOptions
+   └─ Parse --verbose, --domain, --dry-run
+
+2. ProgressManager
+   └─ Show spinner: "Validating credentials..."
+
+3. DeploymentCredentialCollector
+   └─ Collect token, auto-fetch account/zone IDs
+   └─ Cache via ApiTokenManager
+
+4. ManifestLoader
+   └─ Load service config
+   └─ Extract serviceName, serviceType
+
+5. ValidationHelpers + CloudflareServiceValidator
+   └─ Validate service + credentials
+
+6. ProgressManager
+   └─ Show step: "2/3 Preparing deployment"
+
+7. Deployment Engine
+   └─ Perform (or dry-run) deployment
+
+8. OutputFormatter
+   └─ If --verbose: show all deployment details
+   └─ If --dry-run: show what WOULD have happened
+   └─ Include timing, resource info, etc
+
+9. ExitCodes
+   └─ Exit with code based on result
+```
+
+### Validate Command Flow
+```
+User: npx clodo-service validate ./my-service --export-report report.json
+
+1. StandardOptions
+   └─ Parse --export-report
+
+2. ConfigLoader
+   └─ Load validation rules (if from config file)
+
+3. ServiceOrchestrator
+   └─ Validate service structure
+
+4. ValidationHelpers
+   └─ Validate each field format
+
+5. CloudflareServiceValidator
+   └─ Check Cloudflare-specific requirements
+
+6. ProgressManager
+   └─ Show spinner: "Validating configuration..."
+
+7. OutputFormatter
+   └─ List issues with colors (errors in red, warnings in yellow)
+   └─ Export JSON report if --export-report
+
+8. ExitCodes
+   └─ Exit with 0 (valid) or 8 (VALIDATION_ERROR)
+```
+
+---
+
+## Example Integration: New Feature "Dry-Run Everywhere"
+
+**Goal**: Add --dry-run to validate, update, and diagnose (already in deploy)
+
+### Implementation Plan
+
+1. Add to StandardOptions (Phase 1.1)
+   ```javascript
+   options.push({
+     name: '--dry-run',
+     description: 'Simulate action without making changes',
+     applies: ['deploy', 'update', 'diagnose']
+   })
+   ```
+
+2. Update validate.js
+   ```javascript
+   if (options.dryRun) {
+     formatter.info('Running in dry-run mode - no changes will be made')
+     // Load service but don't modify anything
+     // Report what WOULD be changed
+   }
+   ```
+
+3. Update update.js
+   ```javascript
+   if (options.dryRun) {
+     formatter.info('Preview mode: changes will NOT be applied')
+     // Show what would be updated
+     formatter.list(proposedChanges, 'Proposed Changes')
+   }
+   ```
+
+4. Update diagnose.js
+   ```javascript
+   if (options.dryRun) {
+     formatter.info('Dry-run: showing diagnosis without fixes')
+     // Report issues without attempting repairs
+   }
+   ```
+
+5. Create test: test/scenarios/dry-run-all-commands.test.js
+   ```javascript
+   describe('Dry-run feature parity', () => {
+     it('validate --dry-run shows what would be checked')
+     it('update --dry-run shows what would be changed')
+     it('diagnose --dry-run shows what would be fixed')
+   })
+   ```
+
+### Result
+- ✅ Feature consistent across 4 commands
+- ✅ Users can preview changes before committing
+- ✅ No duplicated code (logic in helpers)
+- ✅ Documented in CLI_OPTIONS_GUIDE.md
+- ✅ Version bump: v3.3.2
+
+---
+
+## Quality Assurance: Testing the Connections
+
+### Test Strategy
+
+```
+Unit Tests (Level 1)
+├─ StandardOptions: parse options correctly
+├─ OutputFormatter: format output correctly
+├─ ProgressManager: show spinners correctly
+├─ ConfigLoader: load/merge configs correctly
+└─ All shared helpers: work independently
+
+Integration Tests (Level 2)
+├─ create.js uses StandardOptions + OutputFormatter
+├─ deploy.js uses ProgressManager + ConfigLoader
+├─ validate.js uses ValidationHelpers + ErrorHelpers
+├─ update.js uses ConfigLoader + ProgressManager
+├─ diagnose.js uses ProgressManager + ExitCodes
+└─ assess.js uses OutputFormatter + ExitCodes
+
+Scenario Tests (Level 3)
+├─ create → validate → deploy workflow
+├─ update → diagnose → fix workflow
+├─ deploy with auto-fetch workflow
+└─ config-file override workflow
+
+Coverage Goals
+├─ Phase 1: >80% coverage on new files
+├─ Phase 2: >85% coverage on modified commands
+├─ Phase 3: >90% coverage overall
+└─ Phase 4: Maintain >90% coverage
+```
+
+---
+
+## Troubleshooting: How to Debug Issues
+
+### Issue: Command shows duplicate messages
+**Root Cause**: OutputFormatter not being used everywhere
+**Fix**: Search `console.log` in all commands, replace with `formatter.info()`
+
+### Issue: Different error messages for same error
+**Root Cause**: Not using error-messages catalog
+**Fix**: Add error to catalog, import from error-messages.js
+
+### Issue: --json output not parseable
+**Root Cause**: OutputFormatter not removing colors/spinners in JSON mode
+**Fix**: Check OutputFormatter.json flag, suppress formatting
+
+### Issue: Config file options not overriding CLI options
+**Root Cause**: Wrong merge order in mergeConfigWithOptions()
+**Fix**: CLI options should override config file (priority: CLI > config > env)
+
+### Issue: Progress spinners appearing in tests
+**Root Cause**: ProgressManager always showing spinners
+**Fix**: Detect test environment, suppress output during testing
+
+---
+
+## Performance Targets
+
+```
+Command Startup Time
+├─ create:   <2 seconds (before prompting)
+├─ deploy:   <2 seconds (before credential collection)
+├─ validate: <1 second
+├─ update:   <1 second
+├─ diagnose: <1 second
+└─ assess:   <1 second
+
+Memory Usage
+├─ Base:     <20 MB
+├─ With all options: <50 MB
+└─ During processing: <100 MB
+
+Test Execution
+├─ Unit tests:        <5 seconds
+├─ Integration tests: <15 seconds
+├─ Scenario tests:    <10 seconds
+└─ Full suite:        <30 seconds
+```
+
+---
+
+## Success: How to Know Everything Is Connected
+
+1. ✅ **Code Duplication**: `grep -r "validateToken" bin/commands/` returns ≤1 result
+2. ✅ **Consistent Output**: Run all 6 commands with `--json`, all produce valid JSON
+3. ✅ **Error Consistency**: All errors use EXIT_CODES and error-messages
+4. ✅ **Test Coverage**: `npm test -- --coverage` shows >90% overall
+5. ✅ **Feature Parity**: Each command has same standard options
+6. ✅ **Performance**: All commands start in <2 seconds
+7. ✅ **Backward Compat**: Old command names still work
+8. ✅ **Documentation**: CLI_OPTIONS_GUIDE.md lists all options once
+
+---
+
+**This architecture ensures**:
+- 🎯 No duplicated code (DRY principle)
+- 🎯 Consistent user experience (all commands feel the same)
+- 🎯 Easy to maintain (changes in one place affect all)
+- 🎯 Easy to extend (new commands follow same pattern)
+- 🎯 Easy to test (shared code is unit tested once)
+- 🎯 Professional quality (proper error handling, logging, output)
+

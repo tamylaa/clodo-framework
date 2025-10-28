@@ -1,0 +1,144 @@
+{
+  "domains": {
+    "api.example.com": {
+      "environment": "production",
+      "serviceName": "api-service",
+      "serviceType": "data-service",
+      "cloudflareToken": "CLOUDFLARE_API_TOKEN_PLACEHOLDER",
+      "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+      "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+      "displayName": "Production API Service",
+      "description": "Production API service with high availability",
+      "deploymentStrategy": "blue-green",
+      "healthCheck": {
+        "enabled": true,
+        "path": "/health",
+        "interval": 30,
+        "timeout": 10
+      },
+      "routing": {
+        "rules": [
+          {
+            "pattern": "/api/v1/*",
+            "target": "api-v1-worker",
+            "methods": ["GET", "POST", "PUT", "DELETE"]
+          },
+          {
+            "pattern": "/api/v2/*",
+            "target": "api-v2-worker",
+            "methods": ["GET", "POST", "PUT", "DELETE"]
+          }
+        ]
+      },
+      "security": {
+        "cors": {
+          "enabled": true,
+          "origins": ["https://app.example.com", "https://admin.example.com"],
+          "methods": ["GET", "POST", "PUT", "DELETE"],
+          "headers": ["Content-Type", "Authorization", "X-API-Key"]
+        },
+        "rateLimit": {
+          "enabled": true,
+          "requests": 5000,
+          "window": 60
+        }
+      }
+    },
+    "admin.example.com": {
+      "environment": "production",
+      "serviceName": "admin-service",
+      "serviceType": "web-service",
+      "cloudflareToken": "CLOUDFLARE_API_TOKEN_PLACEHOLDER",
+      "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+      "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+      "displayName": "Admin Dashboard Service",
+      "description": "Administrative dashboard with restricted access",
+      "deploymentStrategy": "rolling",
+      "healthCheck": {
+        "enabled": true,
+        "path": "/admin/health",
+        "interval": 60,
+        "timeout": 15
+      },
+      "routing": {
+        "rules": [
+          {
+            "pattern": "/admin/*",
+            "target": "admin-worker",
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+            "auth": {
+              "required": true,
+              "type": "jwt"
+            }
+          }
+        ]
+      },
+      "security": {
+        "cors": {
+          "enabled": false
+        },
+        "rateLimit": {
+          "enabled": true,
+          "requests": 100,
+          "window": 60
+        },
+        "waf": {
+          "enabled": true,
+          "rules": ["sql-injection", "xss", "csrf"]
+        }
+      }
+    },
+    "cdn.example.com": {
+      "environment": "production",
+      "serviceName": "cdn-service",
+      "serviceType": "static-site",
+      "cloudflareToken": "CLOUDFLARE_API_TOKEN_PLACEHOLDER",
+      "cloudflareAccountId": "1234567890abcdef1234567890abcdef",
+      "cloudflareZoneId": "0987654321fedcba0987654321fedcba",
+      "displayName": "CDN Static Assets",
+      "description": "Content delivery network for static assets",
+      "deploymentStrategy": "instant",
+      "healthCheck": {
+        "enabled": false
+      },
+      "routing": {
+        "rules": [
+          {
+            "pattern": "/*",
+            "target": "cdn-worker",
+            "methods": ["GET", "HEAD"],
+            "cache": {
+              "enabled": true,
+              "ttl": 3600,
+              "purgeOnDeploy": true
+            }
+          }
+        ]
+      },
+      "security": {
+        "cors": {
+          "enabled": true,
+          "origins": ["*"],
+          "methods": ["GET", "HEAD"],
+          "headers": ["Cache-Control", "ETag"]
+        },
+        "rateLimit": {
+          "enabled": false
+        }
+      }
+    }
+  },
+  "global": {
+    "customer": "example-company",
+    "organization": "Example Corp",
+    "contact": "devops@example.com",
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-28",
+    "multiDomain": {
+      "enabled": true,
+      "parallelDeployments": 2,
+      "rollbackOnFailure": true,
+      "healthCheckTimeout": 300
+    }
+  }
+}
