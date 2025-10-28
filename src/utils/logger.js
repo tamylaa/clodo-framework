@@ -5,4 +5,4 @@
  * Gets compiled to dist/ for published package.
  */
 
-export { Logger } from '../bin/shared/logging/Logger.js';
+export { Logger } from '../../bin/shared/logging/Logger.js';

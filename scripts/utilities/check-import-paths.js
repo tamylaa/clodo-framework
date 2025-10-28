@@ -17,29 +17,30 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../../');
 
 const RULES = {
-  // Re-export wrappers in src/utils/ should use '../bin/...' paths
+  // Re-export wrappers in src/utils/ should use '../../bin/...' paths
   // After compilation: src/utils/X.js → dist/utils/X.js
   // And: bin/shared/X.js → dist/bin/shared/X.js
-  // So the relative path from dist/utils/ to dist/bin/ is '../bin/'
+  // So the relative path from dist/utils/ to dist/bin/ is '../../bin/'
+  // (up from utils to dist, then into bin)
   
   'src/utils/file-manager.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../bin/shared/utils/file-manager.js',
+    shouldContain: '../../bin/shared/utils/file-manager.js',
     description: 'file-manager re-export wrapper'
   },
   'src/utils/formatters.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../bin/shared/utils/Formatters.js',
+    shouldContain: '../../bin/shared/utils/Formatters.js',
     description: 'formatters re-export wrapper'
   },
   'src/utils/logger.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../bin/shared/logging/Logger.js',
+    shouldContain: '../../bin/shared/logging/Logger.js',
     description: 'logger re-export wrapper'
   },
   'src/utils/cloudflare/ops.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../bin/shared/cloudflare/ops.js',
+    shouldContain: '../../bin/shared/cloudflare/ops.js',
     description: 'cloudflare ops re-export wrapper'
   }
 };
@@ -124,8 +125,8 @@ if (failCount > 0) {
   console.log('Issues found:');
   failures.forEach(f => console.log(`  • ${f}`));
   console.log('\nRecommendations:');
-  console.log('1. Ensure all src/utils/*.js re-export wrappers use "../bin/shared/..." paths');
-  console.log('2. These paths are relative to the compiled dist/ structure');
+  console.log('1. Ensure all src/utils/*.js re-export wrappers use "../../bin/shared/..." paths');
+  console.log('2. These paths must work AFTER Babel compilation to dist/');
   console.log('3. Run: npm run build && npm run check:imports\n');
   process.exit(1);
 } else {
