@@ -80,7 +80,7 @@ export {
   
   // Utilities
   validatePrerequisites
-} from '../../../bin/shared/cloudflare/ops.js';
+} from '../../bin/shared/cloudflare/ops.js';
 
 /**
  * Helper: Choose the right tool for the job
