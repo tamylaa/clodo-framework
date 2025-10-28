@@ -1,3 +1,10 @@
+## [3.1.21](https://github.com/tamylaa/clodo-framework/compare/v3.1.20...v3.1.21) (2025-10-28)
+
+
+### Bug Fixes
+
+* remove dist/ references from dynamic imports in bin/ ([e3dd2c4](https://github.com/tamylaa/clodo-framework/commit/e3dd2c4a21e86b90985352cdafc3742eaa8a573e))
+
 ## [3.1.20](https://github.com/tamylaa/clodo-framework/compare/v3.1.19...v3.1.20) (2025-10-28)
 
 
