@@ -19,14 +19,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-// Import command registration functions
-import { registerCreateCommand } from './commands/create.js';
-import { registerDeployCommand } from './commands/deploy.js';
-import { registerValidateCommand } from './commands/validate.js';
-import { registerUpdateCommand } from './commands/update.js';
-import { registerDiagnoseCommand } from './commands/diagnose.js';
-import { registerAssessCommand } from './commands/assess.js';
-
 // Create program instance
 const program = new Command();
 
@@ -35,13 +27,30 @@ program
   .description('Unified conversational CLI for Clodo Framework service lifecycle management')
   .version('1.0.0');
 
-// Register all command modules
-registerCreateCommand(program);
-registerDeployCommand(program);
-registerValidateCommand(program);
-registerUpdateCommand(program);
-registerDiagnoseCommand(program);
-registerAssessCommand(program);
+// Dynamically load available command modules
+// This makes the CLI resilient if some commands are excluded from the package
+async function registerAvailableCommands() {
+  const commands = [
+    { name: 'create', path: './commands/create.js', register: 'registerCreateCommand' },
+    { name: 'deploy', path: './commands/deploy.js', register: 'registerDeployCommand' },
+    { name: 'validate', path: './commands/validate.js', register: 'registerValidateCommand' },
+    { name: 'update', path: './commands/update.js', register: 'registerUpdateCommand' },
+    { name: 'diagnose', path: './commands/diagnose.js', register: 'registerDiagnoseCommand' },
+    { name: 'assess', path: './commands/assess.js', register: 'registerAssessCommand' }
+  ];
+
+  for (const cmd of commands) {
+    try {
+      const module = await import(cmd.path);
+      if (module[cmd.register]) {
+        module[cmd.register](program);
+      }
+    } catch (error) {
+      // Command module not available in this package - skip silently
+      // This allows for minimal CLI distributions
+    }
+  }
+}
 
 // List available service types
 program
@@ -67,6 +76,9 @@ program
       console.log('');
     });
   });
+
+// Register available commands dynamically
+await registerAvailableCommands();
 
 // Parse command line arguments
 program.parse();

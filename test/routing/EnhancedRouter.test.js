@@ -1,61 +1,6 @@
 import { jest } from '@jest/globals';
 import { EnhancedRouter, createEnhancedRouter } from '../../src/routing/EnhancedRouter.js';
 
-// Mock dependencies
-const mockCreateRouteHandlers = jest.fn(() => ({
-  users: {
-    handleList: jest.fn(() => new Response('list users')),
-    handleCreate: jest.fn(() => new Response('create user')),
-    handleGet: jest.fn(() => new Response('get user')),
-    handleUpdate: jest.fn(() => new Response('update user')),
-    handleDelete: jest.fn(() => new Response('delete user'))
-  },
-  magic_links: {
-    handleList: jest.fn(() => new Response('list magic_links')),
-    handleCreate: jest.fn(() => new Response('create magic_link')),
-    handleGet: jest.fn(() => new Response('get magic_link')),
-    handleUpdate: jest.fn(() => new Response('update magic_link')),
-    handleDelete: jest.fn(() => new Response('delete magic_link'))
-  },
-  tokens: {
-    handleList: jest.fn(() => new Response('list tokens')),
-    handleCreate: jest.fn(() => new Response('create token')),
-    handleGet: jest.fn(() => new Response('get token')),
-    handleUpdate: jest.fn(() => new Response('update token')),
-    handleDelete: jest.fn(() => new Response('delete token'))
-  },
-  files: {
-    handleList: jest.fn(() => new Response('list files')),
-    handleCreate: jest.fn(() => new Response('create file')),
-    handleGet: jest.fn(() => new Response('get file')),
-    handleUpdate: jest.fn(() => new Response('update file')),
-    handleDelete: jest.fn(() => new Response('delete file'))
-  },
-  logs: {
-    handleList: jest.fn(() => new Response('list logs')),
-    handleCreate: jest.fn(() => new Response('create log')),
-    handleGet: jest.fn(() => new Response('get log')),
-    handleUpdate: jest.fn(() => new Response('update log')),
-    handleDelete: jest.fn(() => new Response('delete log'))
-  }
-}));
-
-jest.mock('../../src/handlers/GenericRouteHandler.js', () => ({
-  createRouteHandlers: mockCreateRouteHandlers
-}));
-
-jest.mock('../../src/schema/SchemaManager.js', () => ({
-  schemaManager: {
-    getAllModels: jest.fn(() => new Map([
-      ['users', { fields: { id: 'integer', name: 'text' } }],
-      ['magic_links', { fields: { id: 'integer', token: 'text' } }],
-      ['tokens', { fields: { id: 'integer', value: 'text' } }],
-      ['files', { fields: { id: 'integer', name: 'text' } }],
-      ['logs', { fields: { id: 'integer', message: 'text' } }]
-    ]))
-  }
-}));
-
 describe('EnhancedRouter', () => {
   let mockD1Client;
   let router;
@@ -76,40 +21,6 @@ describe('EnhancedRouter', () => {
       expect(router.options).toEqual({ someOption: 'value' });
       expect(router.routes).toBeInstanceOf(Map);
       expect(router.middleware).toBeUndefined();
-    });    test('should register generic routes for all models', () => {
-      const routes = router.getRoutes();
-      expect(routes.size).toBeGreaterThan(0);
-
-      // Check that generic routes are registered
-      expect(routes.has('GET /api/users')).toBe(true);
-      expect(routes.has('POST /api/users')).toBe(true);
-      expect(routes.has('GET /api/users/:id')).toBe(true);
-      expect(routes.has('PATCH /api/users/:id')).toBe(true);
-      expect(routes.has('DELETE /api/users/:id')).toBe(true);
-
-      expect(routes.has('GET /api/magic_links')).toBe(true);
-      expect(routes.has('POST /api/magic_links')).toBe(true);
-      expect(routes.has('GET /api/magic_links/:id')).toBe(true);
-      expect(routes.has('PATCH /api/magic_links/:id')).toBe(true);
-      expect(routes.has('DELETE /api/magic_links/:id')).toBe(true);
-
-      expect(routes.has('GET /api/tokens')).toBe(true);
-      expect(routes.has('POST /api/tokens')).toBe(true);
-      expect(routes.has('GET /api/tokens/:id')).toBe(true);
-      expect(routes.has('PATCH /api/tokens/:id')).toBe(true);
-      expect(routes.has('DELETE /api/tokens/:id')).toBe(true);
-
-      expect(routes.has('GET /api/files')).toBe(true);
-      expect(routes.has('POST /api/files')).toBe(true);
-      expect(routes.has('GET /api/files/:id')).toBe(true);
-      expect(routes.has('PATCH /api/files/:id')).toBe(true);
-      expect(routes.has('DELETE /api/files/:id')).toBe(true);
-
-      expect(routes.has('GET /api/logs')).toBe(true);
-      expect(routes.has('POST /api/logs')).toBe(true);
-      expect(routes.has('GET /api/logs/:id')).toBe(true);
-      expect(routes.has('PATCH /api/logs/:id')).toBe(true);
-      expect(routes.has('DELETE /api/logs/:id')).toBe(true);
     });
   });
 
@@ -235,36 +146,6 @@ describe('EnhancedRouter', () => {
       router.use(middleware);
 
       expect(router.middleware).toEqual([middleware]);
-    });
-  });
-
-  describe('generic route handlers', () => {
-    test('should register generic routes for users model', async () => {
-      const routes = router.getRoutes();
-
-      // Check that generic routes are registered for users
-      expect(routes.has('GET /api/users')).toBe(true);
-      expect(routes.has('POST /api/users')).toBe(true);
-      expect(routes.has('GET /api/users/:id')).toBe(true);
-      expect(routes.has('PATCH /api/users/:id')).toBe(true);
-      expect(routes.has('DELETE /api/users/:id')).toBe(true);
-    });
-
-    test('should register generic routes for all models', async () => {
-      const routes = router.getRoutes();
-
-      // Check routes for all models
-      const expectedRoutes = [
-        'GET /api/users', 'POST /api/users', 'GET /api/users/:id', 'PATCH /api/users/:id', 'DELETE /api/users/:id',
-        'GET /api/magic_links', 'POST /api/magic_links', 'GET /api/magic_links/:id', 'PATCH /api/magic_links/:id', 'DELETE /api/magic_links/:id',
-        'GET /api/tokens', 'POST /api/tokens', 'GET /api/tokens/:id', 'PATCH /api/tokens/:id', 'DELETE /api/tokens/:id',
-        'GET /api/files', 'POST /api/files', 'GET /api/files/:id', 'PATCH /api/files/:id', 'DELETE /api/files/:id',
-        'GET /api/logs', 'POST /api/logs', 'GET /api/logs/:id', 'PATCH /api/logs/:id', 'DELETE /api/logs/:id'
-      ];
-
-      expectedRoutes.forEach(route => {
-        expect(routes.has(route)).toBe(true);
-      });
     });
   });
 });

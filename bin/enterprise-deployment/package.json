@@ -1,0 +1,40 @@
+{
+  "name": "clodo-enterprise-deployment",
+  "version": "1.0.0",
+  "description": "Enterprise deployment suite for Clodo Framework - Advanced deployment tools for enterprise customers",
+  "main": "index.js",
+  "bin": {
+    "clodo-enterprise-deploy": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "portfolio": "node enterprise-deploy.js",
+    "interactive": "node master-deploy.js",
+    "modular": "node modular-enterprise-deploy.js"
+  },
+  "keywords": [
+    "deployment",
+    "enterprise",
+    "cloudflare",
+    "portfolio",
+    "orchestration",
+    "auditing",
+    "rollback"
+  ],
+  "author": "Clodo Framework Team",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^9.0.0"
+  },
+  "peerDependencies": {
+    "clodo-framework": "*"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamylaa/clodo-framework",
+    "directory": "bin/enterprise-deployment"
+  }
+}

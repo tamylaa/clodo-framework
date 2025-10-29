@@ -15,7 +15,6 @@ import { WranglerConfigManager } from '../utils/deployment/wrangler-config-manag
 import { ValidationHandler } from './handlers/ValidationHandler.js';
 
 // Legacy imports for backward compatibility
-import { ServiceCreator } from './ServiceCreator.js';
 import { ErrorTracker } from './ErrorTracker.js';
 import chalk from 'chalk';
 import fs from 'fs/promises';
@@ -38,7 +37,6 @@ export class ServiceOrchestrator {
     this.validationHandler = new ValidationHandler();
 
     // Initialize legacy components for backward compatibility
-    this.serviceCreator = new ServiceCreator();
     this.errorTracker = new ErrorTracker();
   }
 

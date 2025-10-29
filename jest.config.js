@@ -2,7 +2,9 @@ export default {
   preset: null,
   testEnvironment: 'node',
   setupFilesAfterEnv: [],
-  transform: {},
+  transform: {
+    '^.+\\.js$': 'babel-jest'
+  },
   // Transform all JS files, including those in node_modules if needed
   transformIgnorePatterns: [
     'node_modules/(?!(@babel|@jest)/)'

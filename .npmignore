@@ -46,6 +46,15 @@ types/
 # Development CLI tools (compiled to dist/bin/)
 bin/
 
+# Exclude old/test files from dist/bin/
+dist/bin/clodo-service-old.js
+dist/bin/clodo-service-test.js
+dist/bin/commands/assess.js
+dist/bin/commands/create.js
+dist/bin/commands/diagnose.js
+dist/bin/commands/update.js
+dist/bin/commands/helpers.js
+
 # Lock files
 package-lock.json
 yarn.lock

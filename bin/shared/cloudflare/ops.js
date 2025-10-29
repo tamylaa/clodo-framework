@@ -232,7 +232,7 @@ export async function listDatabases(options = {}) {
   
   // Use API-based operation if credentials provided
   if (apiToken && accountId) {
-    const { CloudflareAPI } = await import('../../../utils/cloudflare/api.js');
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
     const cf = new CloudflareAPI(apiToken);
     return await cf.listD1Databases(accountId);
   }
@@ -251,7 +251,7 @@ export async function databaseExists(databaseName, options = {}) {
   
   // Use API-based operation if credentials provided
   if (apiToken && accountId) {
-    const { CloudflareAPI } = await import('../../../utils/cloudflare/api.js');
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
     const cf = new CloudflareAPI(apiToken);
     return await cf.d1DatabaseExists(accountId, databaseName);
   }
@@ -270,7 +270,7 @@ export async function createDatabase(name, options = {}) {
   
   // Use API-based operation if credentials provided
   if (apiToken && accountId) {
-    const { CloudflareAPI } = await import('../../../utils/cloudflare/api.js');
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
     const cf = new CloudflareAPI(apiToken);
     const result = await cf.createD1Database(accountId, name);
     return result.uuid; // Return UUID to match CLI behavior
@@ -355,7 +355,7 @@ export async function getDatabaseId(databaseName, options = {}) {
   
   // Use API-based operation if credentials provided
   if (apiToken && accountId) {
-    const { CloudflareAPI } = await import('../../../utils/cloudflare/api.js');
+    const { CloudflareAPI } = await import('../../../src/utils/cloudflare/api.js');
     const cf = new CloudflareAPI(apiToken);
     const db = await cf.getD1Database(accountId, databaseName);
     return db?.uuid || null;

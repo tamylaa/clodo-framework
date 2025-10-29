@@ -4,8 +4,71 @@
  */
 
 import { verifyWorkerDeployment, healthCheckWithBackoff } from '../../shared/monitoring/health-checker.js';
+import { checkHealth } from '../../shared/monitoring/health-checker.js';
 import chalk from 'chalk';
 import readline from 'readline';
+
+/**
+ * Run comprehensive post-deployment verification
+ * @param {string} serviceName - Name of the service
+ * @param {Object} deploymentResult - Result from deployment
+ * @param {Object} credentials - Cloudflare credentials
+ * @param {Object} options - Verification options
+ * @returns {Promise<Object>} Verification result
+ */
+export async function runPostDeploymentVerification(serviceName, deploymentResult, credentials, options = {}) {
+  console.log('\n🔍 Post-deployment Verification');
+
+  try {
+    // Wait for deployment to propagate
+    console.log('   ⏳ Waiting for deployment to propagate...');
+    await new Promise(resolve => setTimeout(resolve, 10000));
+
+    // Run health checks
+    console.log('   🏥 Running health checks...');
+    const workerUrl = deploymentResult?.url || options.workerUrl;
+    
+    if (workerUrl) {
+      const health = await checkHealth(workerUrl).catch(err => {
+        console.log(chalk.yellow(`   ⚠️  Health check skipped: ${err.message}`));
+        return { status: 'unknown' };
+      });
+      
+      if (health && health.status === 'ok') {
+        console.log(`   ✅ Deployment verified: ${health.framework?.models?.length || 0} models active`);
+        return {
+          success: true,
+          healthCheckPassed: true,
+          healthData: health
+        };
+      } else {
+        console.log(`   ⚠️ Health check returned: ${health?.status || 'unknown'}`);
+        // Don't fail deployment for health check issues
+        return {
+          success: true,
+          healthCheckPassed: false,
+          healthData: health
+        };
+      }
+    } else {
+      console.log(chalk.yellow('   ⚠️  No worker URL available for health checks'));
+      return {
+        success: true,
+        healthCheckPassed: null,
+        reason: 'no-url'
+      };
+    }
+
+  } catch (error) {
+    console.log(chalk.yellow(`   ⚠️  Post-deployment verification warning: ${error.message}`));
+    // Don't fail overall deployment for verification issues
+    return {
+      success: true,
+      healthCheckPassed: false,
+      error: error.message
+    };
+  }
+}
 
 /**
  * Verify deployment via Cloudflare API (UI wrapper)

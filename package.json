@@ -51,7 +51,14 @@
     "access": "public"
   },
   "files": [
-    "dist",
+    "dist/!(bin)",
+    "dist/bin/clodo-service.js",
+    "dist/bin/commands/deploy.js",
+    "dist/bin/commands/validate.js",
+    "dist/bin/commands/helpers/",
+    "dist/bin/shared/",
+    "dist/bin/security/",
+    "dist/bin/service-management/",
     "types",
     "templates",
     "ui-structures",
