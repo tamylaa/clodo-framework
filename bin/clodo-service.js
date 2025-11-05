@@ -36,7 +36,8 @@ async function registerAvailableCommands() {
     { name: 'validate', path: './commands/validate.js', register: 'registerValidateCommand' },
     { name: 'update', path: './commands/update.js', register: 'registerUpdateCommand' },
     { name: 'diagnose', path: './commands/diagnose.js', register: 'registerDiagnoseCommand' },
-    { name: 'assess', path: './commands/assess.js', register: 'registerAssessCommand' }
+    { name: 'assess', path: './commands/assess.js', register: 'registerAssessCommand' },
+    { name: 'init-config', path: './commands/init-config.js', register: 'registerInitConfigCommand' }
   ];
 
   for (const cmd of commands) {

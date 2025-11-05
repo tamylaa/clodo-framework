@@ -15,6 +15,7 @@ import { DatabaseOrchestrator } from '../database/database-orchestrator.js';
 import { EnhancedSecretManager } from '../utils/deployment/secret-generator.js';
 import { WranglerConfigManager } from '../utils/deployment/wrangler-config-manager.js';
 import { ConfigurationValidator } from '../security/ConfigurationValidator.js';
+import { buildCustomDomain } from '../utils/constants.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { join } from 'path';
@@ -36,13 +37,24 @@ export class MultiDomainOrchestrator {
     this.skipTests = options.skipTests || false;
     this.parallelDeployments = options.parallelDeployments || 3;
     this.servicePath = options.servicePath || process.cwd();
+    this.serviceName = options.serviceName || 'worker'; // Service name for custom domain
+    
+    // Wrangler config path - allows using customer-specific wrangler.toml files
+    // If not specified, wrangler uses the default wrangler.toml in servicePath
+    this.wranglerConfigPath = options.wranglerConfigPath;
     
     // Cloudflare credentials for API-based operations
-    this.cloudflareToken = options.cloudflareToken;
-    this.cloudflareAccountId = options.cloudflareAccountId;
+    // Support both legacy individual params and new cloudflareSettings object
+    const cfSettings = options.cloudflareSettings || {};
+    this.cloudflareToken = options.cloudflareToken || cfSettings.token;
+    this.cloudflareAccountId = options.cloudflareAccountId || cfSettings.accountId;
+    this.cloudflareZoneId = options.cloudflareZoneId || cfSettings.zoneId;
+    this.cloudflareZoneName = options.cloudflareZoneName || cfSettings.zoneName;
     
     // Configure wrangler to use API token when available
-    // This ensures all wrangler operations use the same account as API operations
+    // Configure wrangler authentication via environment variables
+    // Note: account_id comes from wrangler.toml, not env var
+    // (env var would be ignored by wrangler when wrangler.toml has account_id)
     if (this.cloudflareToken) {
       process.env.CLOUDFLARE_API_TOKEN = this.cloudflareToken;
       console.log(`🔑 Configured wrangler to use API token authentication`);
@@ -53,9 +65,13 @@ export class MultiDomainOrchestrator {
       console.log(`🔑 Configured wrangler to use account ID: ${this.cloudflareAccountId}`);
     }
     
-    if (this.cloudflareAccountId) {
-      process.env.CLOUDFLARE_ACCOUNT_ID = this.cloudflareAccountId;
-      console.log(`🔑 Configured wrangler to use account ID: ${this.cloudflareAccountId}`);
+    if (this.cloudflareZoneId) {
+      process.env.CLOUDFLARE_ZONE_ID = this.cloudflareZoneId;
+      console.log(`🔑 Configured wrangler to use zone ID: ${this.cloudflareZoneId}`);
+    }
+    
+    if (this.cloudflareZoneName) {
+      console.log(`🌐 Deploying to zone: ${this.cloudflareZoneName}`);
     }
     
     // Initialize modular components
@@ -86,7 +102,8 @@ export class MultiDomainOrchestrator {
       projectRoot: this.servicePath,
       dryRun: this.dryRun,
       cloudflareToken: this.cloudflareToken,
-      cloudflareAccountId: this.cloudflareAccountId
+      cloudflareAccountId: this.cloudflareAccountId,
+      cloudflareZoneId: this.cloudflareZoneId
     });
 
     this.secretManager = new EnhancedSecretManager({
@@ -536,12 +553,40 @@ export class MultiDomainOrchestrator {
     
     if (this.dryRun) {
       console.log(`   🔍 DRY RUN: Would deploy worker for ${domain}`);
-      const subdomain = this.environment === 'production' ? 'api' : `${this.environment}-api`;
-      return { url: `https://${subdomain}.${domain}`, deployed: false, dryRun: true };
+      // Use centralized domain template from validation-config.json
+      const customUrl = buildCustomDomain(this.serviceName, domain, this.environment);
+      return { url: customUrl, deployed: false, dryRun: true };
     }
     
     try {
-      // CRITICAL: Ensure environment section exists in wrangler.toml BEFORE deploying
+      // Generate/update customer-specific wrangler.toml, then copy to root
+      // This implements the architecture where:
+      // 1. Customer configs are persistent (deployment history/state)
+      // 2. Root wrangler.toml is ephemeral (reflects current active deployment)
+      if (this.cloudflareZoneName) {
+        console.log(`   🔧 Preparing customer config for zone: ${this.cloudflareZoneName}`);
+        
+        // Generate or update customer config with current deployment parameters
+        const customerConfigPath = await this.wranglerConfigManager.generateCustomerConfig(
+          this.cloudflareZoneName,
+          {
+            accountId: this.cloudflareAccountId,
+            environment: this.environment
+          }
+        );
+        
+        // Copy customer config to root (ephemeral working copy for this deployment)
+        console.log(`   📋 Copying customer config to root wrangler.toml`);
+        await this.wranglerConfigManager.copyCustomerConfig(customerConfigPath);
+      } else {
+        // Fallback: Update root wrangler.toml directly if no zone name available
+        console.log(`   ⚠️  No zone name available, updating root wrangler.toml directly`);
+        if (this.cloudflareAccountId) {
+          await this.wranglerConfigManager.setAccountId(this.cloudflareAccountId);
+        }
+      }
+      
+      // Ensure environment section exists in wrangler.toml
       console.log(`   📝 Verifying wrangler.toml configuration...`);
       
       try {
@@ -551,19 +596,19 @@ export class MultiDomainOrchestrator {
         // Continue anyway - wrangler will provide clearer error if config is wrong
       }
       
-      // Find wrangler.toml in service path
-      const wranglerConfigPath = join(this.servicePath, 'wrangler.toml');
-      
-      // Build deploy command with environment
+      // Build deploy command
+      // Note: We already copied customer config to root wrangler.toml above
+      // So wrangler will use root wrangler.toml which has the correct account_id
       let deployCommand = `npx wrangler deploy`;
       
-      // Add environment flag for non-production
-      if (this.environment !== 'production') {
-        deployCommand += ` --env ${this.environment}`;
-      }
+      // ALWAYS add environment flag to use environment-specific config
+      // Even for production, we use [env.production] section which has the correct worker name and DB
+      deployCommand += ` --env ${this.environment}`;
       
-      console.log(`   � Executing: ${deployCommand}`);
+      console.log(`   🔧 Executing: ${deployCommand}`);
       console.log(`   📁 Working directory: ${this.servicePath}`);
+      console.log(`   📄 Using wrangler.toml from service root (already updated with customer config)`);
+      console.log(`   🌍 Environment: ${this.environment}`);
       
       // Execute deployment with timeout
       const { stdout, stderr } = await execAsync(deployCommand, {
@@ -589,9 +634,9 @@ export class MultiDomainOrchestrator {
       const urlMatch = stdout.match(/https:\/\/[^\s]+/);
       const workerUrl = urlMatch ? urlMatch[0] : null;
       
-      // Also construct custom domain URL
-      const subdomain = this.environment === 'production' ? 'api' : `${this.environment}-api`;
-      const customUrl = `https://${subdomain}.${domain}`;
+      // Construct custom domain URL using centralized template from validation-config.json
+      // Handles all environment patterns: production, staging, development
+      const customUrl = buildCustomDomain(this.serviceName, domain, this.environment);
       
       // Store URLs in domain state
       const domainState = this.portfolioState.domainStates.get(domain);

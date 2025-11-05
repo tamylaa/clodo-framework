@@ -417,7 +417,7 @@ describe('ProgressManager Utility', () => {
       expect(logOutput.length).toBe(0);
     });
 
-    test.skip('should still allow state tracking in quiet mode', () => {
+    test('should still allow state tracking in quiet mode', () => {
       // Create a fresh instance for this test
       const newPm = new ProgressManager({ quiet: true });
       newPm.initialize(['Step 1', 'Step 2']);

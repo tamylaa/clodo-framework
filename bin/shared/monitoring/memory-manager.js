@@ -47,7 +47,10 @@ export class MemoryManager {
     // Register process cleanup handlers
     this.registerProcessHandlers();
 
-    console.log('🧠 Memory monitoring started');
+    // Only log if verbose mode or DEBUG is enabled
+    if (process.env.DEBUG || process.env.VERBOSE) {
+      console.log('🧠 Memory monitoring started');
+    }
   }
 
   /**
@@ -94,16 +97,23 @@ export class MemoryManager {
     const heapUsagePercent = memUsage.heapUsed / memUsage.heapTotal;
 
     if (heapUsagePercent > this.config.memoryThreshold) {
-      console.warn(`⚠️  High memory usage detected: ${(heapUsagePercent * 100).toFixed(1)}%`);
+      // Only warn if verbose/debug mode or if usage is critically high (>95%)
+      if (process.env.DEBUG || process.env.VERBOSE || heapUsagePercent > 0.95) {
+        console.warn(`⚠️  High memory usage detected: ${(heapUsagePercent * 100).toFixed(1)}%`);
+      }
 
       // Force garbage collection if available
-      if (global.gc) {
-        console.log('🗑️  Running forced garbage collection');
+      if (global.gc && heapUsagePercent > 0.90) {
+        if (process.env.DEBUG) {
+          console.log('🗑️  Running forced garbage collection');
+        }
         global.gc();
       }
 
-      // Run cleanup routines
-      this.runCleanupRoutines();
+      // Run cleanup routines only if critically high
+      if (heapUsagePercent > 0.90) {
+        this.runCleanupRoutines();
+      }
     }
 
     // Check for memory leaks

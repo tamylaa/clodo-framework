@@ -45,13 +45,16 @@ const dbManager = new DatabaseConnectionManager({
   maxPoolSize: 5
 });
 
-// Memory management
-const memoryManager = startMemoryMonitoring({
-  gcInterval: 300000, // 5 minutes
-  memoryThreshold: 0.8,
-  cleanupInterval: 60000, // 1 minute
-  leakDetection: true
-});
+// Memory management - Disabled for CLI commands (short-lived processes)
+// Only enable for long-running server processes
+const memoryManager = process.env.ENABLE_MEMORY_MONITORING === 'true' 
+  ? startMemoryMonitoring({
+      gcInterval: 300000, // 5 minutes
+      memoryThreshold: 0.9, // 90% threshold (increased from 80%)
+      cleanupInterval: 60000, // 1 minute
+      leakDetection: true
+    })
+  : null;
 
 // Graceful shutdown handling (lazy initialization to avoid sync issues)
 let shutdownManager = null;

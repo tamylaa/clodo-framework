@@ -27,6 +27,12 @@ bower_components
 dist/
 .wrangler/
 
+# Ephemeral configuration (working copy of customer configs)
+# Root wrangler.toml is copied from config/customers/{customer}/wrangler.toml before deployment
+# Customer configs are the source of truth (versioned)
+# Root config is ephemeral (reflects last deployment)
+wrangler.toml
+
 # Environment variables
 .env
 .env.local

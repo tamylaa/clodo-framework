@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
+import fs from 'fs';
 // eslint-disable-next-line no-unused-vars
 import { resolve, join } from 'path';
 import toml from '@iarna/toml';
@@ -40,8 +40,10 @@ export class CustomerConfigurationManager {
     const customerDir = resolve(this.configDir, 'customers', customerName);
 
     // Create customer directory structure
-    if (!existsSync(customerDir)) {
-      mkdirSync(customerDir, { recursive: true });
+    console.log(`DEBUG: Checking if directory exists: ${customerDir}`);
+    if (!fs.existsSync(customerDir)) {
+      console.log(`DEBUG: Creating directory: ${customerDir}`);
+      fs.mkdirSync(customerDir, { recursive: true });
       logger.info(`Created customer directory: ${customerDir}`);
     }
 
@@ -122,20 +124,20 @@ export class CustomerConfigurationManager {
     const outputPath = resolve(this.configDir, 'customers', customerName, `${environment}.env`);
 
     // Check if template exists
-    if (!existsSync(templatePath)) {
+    if (!fs.existsSync(templatePath)) {
       logger.warn(`Template not found: ${templatePath}, skipping ${environment} config`);
       return;
     }
 
     // Skip if config already exists
-    if (existsSync(outputPath)) {
+    if (fs.existsSync(outputPath)) {
       logger.info(`Config already exists: ${outputPath}, skipping`);
       return;
     }
 
     try {
       // Read template and replace placeholders
-      let template = readFileSync(templatePath, 'utf8');
+      let template = fs.readFileSync(templatePath, 'utf8');
 
       // Replace customer-specific placeholders
       template = template.replace(/\{\{CUSTOMER_NAME\}\}/g, customerName);
@@ -147,7 +149,7 @@ export class CustomerConfigurationManager {
       template = template.replace(/\{\{DOMAIN\}\}/g, envDomains[environment]);
 
       // Write customer config
-      writeFileSync(outputPath, template);
+      fs.writeFileSync(outputPath, template);
       logger.info(`Created customer config: ${environment}.env for ${customerName}`);
 
     } catch (error) {
@@ -181,7 +183,7 @@ export class CustomerConfigurationManager {
     const baseFiles = ['wrangler.base.toml', 'variables.base.env'];
     for (const file of baseFiles) {
       const path = resolve(this.configDir, 'base', file);
-      if (!existsSync(path)) {
+      if (!fs.existsSync(path)) {
         errors.push(`Missing base config: ${file}`);
         valid = false;
       }
@@ -191,7 +193,7 @@ export class CustomerConfigurationManager {
     for (const env of this.environments) {
       const envFile = `${env}.toml`;
       const path = resolve(this.configDir, 'environments', envFile);
-      if (!existsSync(path)) {
+      if (!fs.existsSync(path)) {
         errors.push(`Missing environment config: ${envFile}`);
         valid = false;
       }
@@ -199,7 +201,7 @@ export class CustomerConfigurationManager {
 
     // Validate customer configs
     const customersDir = resolve(this.configDir, 'customers');
-    if (existsSync(customersDir)) {
+    if (fs.existsSync(customersDir)) {
       const customerDirs = this.getCustomerDirectories();
 
       for (const customerName of customerDirs) {
@@ -228,7 +230,7 @@ export class CustomerConfigurationManager {
     // Check environment files exist
     for (const env of this.environments) {
       const envFile = resolve(customerDir, `${env}.env`);
-      if (!existsSync(envFile)) {
+      if (!fs.existsSync(envFile)) {
         logger.error(`Missing ${env}.env for customer ${customerName}`);
         valid = false;
       }
@@ -285,13 +287,13 @@ export class CustomerConfigurationManager {
 
     // Load base variables
     const baseVarsPath = resolve(this.configDir, 'base', 'variables.base.env');
-    if (existsSync(baseVarsPath)) {
+    if (fs.existsSync(baseVarsPath)) {
       config.variables.base = this.parseEnvFile(baseVarsPath);
     }
 
     // Load customer environment variables
     const customerConfigPath = resolve(this.configDir, 'customers', customerName, `${environment}.env`);
-    if (existsSync(customerConfigPath)) {
+    if (fs.existsSync(customerConfigPath)) {
       config.variables.customer = this.parseEnvFile(customerConfigPath);
     }
 
@@ -354,7 +356,7 @@ export class CustomerConfigurationManager {
    */
   async loadExistingCustomers() {
     const customersDir = resolve(this.configDir, 'customers');
-    if (!existsSync(customersDir)) {
+    if (!fs.existsSync(customersDir)) {
       return;
     }
 
@@ -364,9 +366,9 @@ export class CustomerConfigurationManager {
       let wranglerConfig = null;
       let globalAccountId = null;
       
-      if (existsSync(rootWranglerPath)) {
+      if (fs.existsSync(rootWranglerPath)) {
         try {
-          const wranglerContent = readFileSync(rootWranglerPath, 'utf8');
+          const wranglerContent = fs.readFileSync(rootWranglerPath, 'utf8');
           wranglerConfig = toml.parse(wranglerContent);
           globalAccountId = wranglerConfig.account_id;
           logger.info(`Loaded wrangler.toml with account_id: ${globalAccountId ? globalAccountId.substring(0, 8) + '...' : 'not found'}`);
@@ -426,7 +428,7 @@ export class CustomerConfigurationManager {
 
         // Read customer-specific env file to get CUSTOMER_DOMAIN and other info
         const prodConfigPath = resolve(customerDir, 'production.env');
-        if (existsSync(prodConfigPath)) {
+        if (fs.existsSync(prodConfigPath)) {
           try {
             const prodConfig = this.parseEnvFile(prodConfigPath);
             
@@ -487,16 +489,16 @@ export class CustomerConfigurationManager {
    */
   getCustomerDirectories() {
     const customersDir = resolve(this.configDir, 'customers');
-    if (!existsSync(customersDir)) {
+    if (!fs.existsSync(customersDir)) {
       return [];
     }
 
     try {
       // Read directory contents
-      const items = readdirSync(customersDir);
+      const items = fs.readdirSync(customersDir);
       return items.filter(item => {
         const itemPath = resolve(customersDir, item);
-        return statSync(itemPath).isDirectory() && item !== 'template';
+        return fs.statSync(itemPath).isDirectory() && item !== 'template';
       });
     } catch (error) {
       logger.error('Error reading customer directories:', error.message);
@@ -508,7 +510,7 @@ export class CustomerConfigurationManager {
    * Parse environment file
    */
   parseEnvFile(filePath) {
-    const content = readFileSync(filePath, 'utf8');
+    const content = fs.readFileSync(filePath, 'utf8');
     const variables = {};
 
     content.split('\n').forEach(line => {
@@ -535,8 +537,8 @@ export class CustomerConfigurationManager {
       let existingConfig = {};
       
       // Read existing config if file exists
-      if (existsSync(wranglerPath)) {
-        const content = readFileSync(wranglerPath, 'utf8');
+      if (fs.existsSync(wranglerPath)) {
+        const content = fs.readFileSync(wranglerPath, 'utf8');
         existingConfig = toml.parse(content);
       }
 
@@ -545,7 +547,7 @@ export class CustomerConfigurationManager {
 
       // Write back to file
       const tomlContent = toml.stringify(mergedConfig);
-      writeFileSync(wranglerPath, tomlContent, 'utf8');
+      fs.writeFileSync(wranglerPath, tomlContent, 'utf8');
 
       logger.info(`Updated wrangler.toml: ${wranglerPath}`);
       return true;
@@ -601,7 +603,7 @@ export class CustomerConfigurationManager {
    */
   addD1Database(wranglerPath, environment, databaseConfig) {
     try {
-      const content = readFileSync(wranglerPath, 'utf8');
+      const content = fs.readFileSync(wranglerPath, 'utf8');
       const config = toml.parse(content);
 
       // Ensure env section exists
@@ -625,7 +627,7 @@ export class CustomerConfigurationManager {
       }
 
       // Write back
-      writeFileSync(wranglerPath, toml.stringify(config), 'utf8');
+      fs.writeFileSync(wranglerPath, toml.stringify(config), 'utf8');
       logger.info(`Added D1 database to ${environment} environment`);
       return true;
     } catch (error) {

@@ -7,7 +7,14 @@
  */
 
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+// Get the directory of this module (framework's bin directory)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+// Navigate up to framework root, then to config directory
+const FRAMEWORK_CONFIG_PATH = join(__dirname, '../../../config/validation-config.json');
 
 export class CommandConfigManager {
   constructor(configPath = null) {
@@ -21,12 +28,21 @@ export class CommandConfigManager {
    */
   loadConfig() {
     try {
+      // First try to load from service directory
       const configData = readFileSync(this.configPath, 'utf-8');
       this.config = JSON.parse(configData);
       console.log('📋 Loaded command configuration from validation-config.json');
     } catch (error) {
-      console.log('⚠️ Could not load command config, using defaults');
-      this.config = this.getDefaultConfig();
+      // If service config not found, try framework's internal config
+      try {
+        const frameworkConfigData = readFileSync(FRAMEWORK_CONFIG_PATH, 'utf-8');
+        this.config = JSON.parse(frameworkConfigData);
+        console.log('📋 Loaded command configuration from framework defaults');
+      } catch (frameworkError) {
+        // If neither exists, use hardcoded defaults
+        console.log('⚠️ Could not load command config, using minimal defaults');
+        this.config = this.getDefaultConfig();
+      }
     }
   }
 

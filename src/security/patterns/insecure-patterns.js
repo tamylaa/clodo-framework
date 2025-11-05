@@ -12,6 +12,7 @@ export const INSECURE_PATTERNS = {
     'test-key',
     'dev-key',
     'dummy-key',
+    'dummy-api-key',
     'placeholder-key',
     'example-key',
     'sample-key',

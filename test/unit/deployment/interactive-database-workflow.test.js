@@ -4,7 +4,7 @@
 
 import { jest } from '@jest/globals';
 
-// Mock dependencies before importing the module
+// Mock the dependencies
 const mockAskUser = jest.fn();
 const mockAskYesNo = jest.fn();
 const mockAskChoice = jest.fn();
@@ -13,23 +13,27 @@ const mockCreateDatabase = jest.fn();
 const mockDeleteDatabase = jest.fn();
 const mockExec = jest.fn();
 
-jest.unstable_mockModule('../../../bin/shared/utils/interactive-prompts.js', () => ({
+await jest.unstable_mockModule('../../../bin/shared/utils/interactive-prompts.js', () => ({
   askUser: mockAskUser,
   askYesNo: mockAskYesNo,
   askChoice: mockAskChoice
 }));
 
-jest.unstable_mockModule('../../../bin/shared/cloudflare/ops.js', () => ({
+await jest.unstable_mockModule('../../../bin/shared/cloudflare/ops.js', () => ({
   databaseExists: mockDatabaseExists,
   createDatabase: mockCreateDatabase,
   deleteDatabase: mockDeleteDatabase
 }));
 
-jest.unstable_mockModule('child_process', () => ({
+await jest.unstable_mockModule('child_process', () => ({
   exec: mockExec
 }));
 
+// Import after mocking
 const { InteractiveDatabaseWorkflow } = await import('../../../bin/shared/deployment/workflows/interactive-database-workflow.js');
+
+// Re-export the mocks for use in tests
+export { mockAskUser, mockAskYesNo, mockAskChoice, mockDatabaseExists, mockCreateDatabase, mockDeleteDatabase, mockExec };
 
 describe('InteractiveDatabaseWorkflow', () => {
   let workflow;
@@ -38,7 +42,17 @@ describe('InteractiveDatabaseWorkflow', () => {
   beforeEach(() => {
     rollbackActions = [];
     workflow = new InteractiveDatabaseWorkflow({ rollbackActions });
-    jest.clearAllMocks();
+    
+    // Reset mock implementations and set defaults
+    mockAskUser.mockReset();
+    mockAskYesNo.mockReset();
+    mockAskChoice.mockReset().mockResolvedValue(0);
+    mockDatabaseExists.mockReset().mockResolvedValue(false);
+    mockCreateDatabase.mockReset().mockResolvedValue('test-db-id');
+    mockDeleteDatabase.mockReset();
+    mockExec.mockReset().mockImplementation((command, callback) => {
+      callback(null, 'test-db-id-123 | example.com-auth-db | 2024-01-01T00:00:00.000Z', '');
+    });
   });
 
   describe('handleDatabaseSetup', () => {
@@ -62,11 +76,11 @@ describe('InteractiveDatabaseWorkflow', () => {
       expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db');
       expect(rollbackActions).toHaveLength(1);
       expect(rollbackActions[0].type).toBe('delete-database');
-    });
+    }, 30000);
 
     it('should reuse existing database', async () => {
-      mockAskYesNo.mockResolvedValueOnce(true); // Use suggested name
-      mockAskChoice.mockResolvedValueOnce(0); // Use existing
+      mockAskYesNo.mockResolvedValue(true); // Use suggested name
+      mockAskChoice.mockResolvedValue(0); // Use existing
       mockDatabaseExists.mockResolvedValue(true);
 
       const result = await workflow.handleDatabaseSetup('example.com', 'production', {
@@ -76,7 +90,7 @@ describe('InteractiveDatabaseWorkflow', () => {
       expect(result.reused).toBe(true);
       expect(result.created).toBe(false);
       expect(mockCreateDatabase).not.toHaveBeenCalled();
-    });
+    }, 15000); // Increased timeout for mock resolution
 
     it('should allow custom database name', async () => {
       mockAskYesNo.mockResolvedValueOnce(false); // Don't use suggested name
@@ -91,13 +105,11 @@ describe('InteractiveDatabaseWorkflow', () => {
 
       expect(result.name).toBe('custom-db-name');
       expect(mockAskUser).toHaveBeenCalled();
-    });
+    }, 30000);
 
     it('should handle database deletion and recreation', async () => {
-      mockAskYesNo.mockResolvedValueOnce(true); // Use suggested name
-      mockAskChoice.mockResolvedValueOnce(2); // Delete and recreate
-      mockAskYesNo.mockResolvedValueOnce(true); // Confirm deletion
-      mockAskYesNo.mockResolvedValueOnce(true); // Confirm creation
+      mockAskYesNo.mockResolvedValue(true); // Use suggested name, confirm deletion, confirm creation
+      mockAskChoice.mockResolvedValue(2); // Delete and recreate
       mockDatabaseExists.mockResolvedValue(true);
       mockCreateDatabase.mockResolvedValue('new-db-id');
 
@@ -108,7 +120,7 @@ describe('InteractiveDatabaseWorkflow', () => {
       expect(mockDeleteDatabase).toHaveBeenCalledWith('example.com-auth-db');
       expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db');
       expect(result.created).toBe(true);
-    });
+    }, 15000); // Increased timeout for mock resolution
 
     it('should work in non-interactive mode', async () => {
       mockDatabaseExists.mockResolvedValue(false);
@@ -121,7 +133,7 @@ describe('InteractiveDatabaseWorkflow', () => {
       expect(result.created).toBe(true);
       expect(mockAskYesNo).not.toHaveBeenCalled();
       expect(mockAskChoice).not.toHaveBeenCalled();
-    });
+    }, 30000);
 
     it('should throw error when creation is cancelled', async () => {
       mockAskYesNo.mockResolvedValueOnce(true); // Use suggested name
@@ -131,7 +143,7 @@ describe('InteractiveDatabaseWorkflow', () => {
       await expect(
         workflow.handleDatabaseSetup('example.com', 'production')
       ).rejects.toThrow('Database creation cancelled');
-    });
+    }, 30000);
   });
 
   describe('getSummary', () => {

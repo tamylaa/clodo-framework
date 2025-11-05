@@ -7,37 +7,6 @@ import { existsSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
 
 /**
- * Load JSON configuration file
- */
-export function loadJsonConfig(configPath) {
-  try {
-    const fullPath = resolve(configPath);
-    if (!existsSync(fullPath)) {
-      throw new Error(`Configuration file not found: ${fullPath}`);
-    }
-
-    const content = readFileSync(fullPath, 'utf8');
-    const config = JSON.parse(content);
-
-    // Validate required fields
-    const required = ['customer', 'environment', 'domainName', 'cloudflareToken'];
-    const missing = required.filter(field => !config[field]);
-
-    if (missing.length > 0) {
-      throw new Error(`Missing required configuration fields: ${missing.join(', ')}`);
-    }
-
-    console.log(chalk.green(`✅ Loaded configuration from: ${fullPath}`));
-    return config;
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      throw new Error(`Invalid JSON in configuration file: ${error.message}`);
-    }
-    throw error;
-  }
-}
-
-/**
  * Show progress indicator for deployment steps
  */
 export function showProgress(message, duration = 2000) {

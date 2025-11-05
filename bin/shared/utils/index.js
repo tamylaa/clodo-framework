@@ -17,3 +17,15 @@ export { executeWithRateLimit, queueRequest, getRateLimitStatus, clearQueues, RA
 
 // Unified error handling module (Phase 3.2.3d - consolidated from 5 sources)
 export { default as ErrorHandler, createErrorResponse, createContextualError, createErrorHandler } from './ErrorHandler.js';
+
+// Progress display utilities
+export { showProgressSpinner, showProgressWithSpinner } from './progress-spinner.js';
+
+// Deployment validation
+export { validateDeploymentPrerequisites, validateDeploymentInputs } from './deployment-validator.js';
+
+// Sensitive information redaction
+export { redactSensitiveInfo, redactSensitiveObject } from './sensitive-redactor.js';
+
+// Configuration loading
+export { ConfigLoader } from './config-loader.js';

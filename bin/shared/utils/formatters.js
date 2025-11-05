@@ -147,7 +147,18 @@ export const ResourceFormatters = {
    */
   configKey(camelCase) {
     return NameFormatters.toKebabCase(camelCase);
-  }
+  },
+
+  /**
+   * Format package name for NPM
+   * Example: 'my-service' → 'my-service'
+   */
+  packageName(serviceName) {
+    if (!serviceName) return '';
+    // For NPM packages, just use the service name as-is
+    // Scoped packages would be handled separately (e.g., @company/my-service)
+    return serviceName;
+  },
 };
 
 /**

@@ -319,6 +319,30 @@ export class DataServiceAdapter {
   }
 
   /**
+   * Query with optional advanced features
+   */
+  async query(sql, params = [], options = {}) {
+    return this._withAsyncMigrationLogging('query', async () => {
+      return featureManager.withFeature(
+        FEATURES.ENABLE_ADVANCED_QUERIES,
+        async () => {
+          return await this.enhanced.query(sql, params, {
+            ...options,
+            usePreparedStatements: true,
+            enableQueryAnalysis: true
+          });
+        },
+        async () => {
+          if (this.legacy && this.legacy.query) {
+            return await this.legacy.query(sql, params, options);
+          }
+          return await this.enhanced.queryDirect(sql, params, options);
+        }
+      );
+    });
+  }
+
+  /**
    * List with optional advanced pagination
    */
   async list(tableName, options = {}) {
@@ -356,9 +380,12 @@ export class DataServiceAdapter {
    * Get migration progress and statistics
    */
   getMigrationStats() {
+    // Get enhanced service stats and merge with adapter stats
+    const enhancedStats = this.enhanced.getMigrationStats ? this.enhanced.getMigrationStats() : {};
+    
     return {
-      callCounts: Object.fromEntries(this.migrationState.callCounts),
-      cacheHitRates: Object.fromEntries(this.migrationState.cacheHitRates),
+      callCounts: { ...enhancedStats.callCounts, ...Object.fromEntries(this.migrationState.callCounts) },
+      cacheHitRates: { ...enhancedStats.cacheHitRates, ...Object.fromEntries(this.migrationState.cacheHitRates) },
       performanceGains: Object.fromEntries(this.migrationState.performanceGains),
       featureUsage: this._getFeatureUsageStats()
     };
@@ -485,6 +512,14 @@ export class ModuleManagerAdapter {
   }
 
   /**
+   * Execute single hook (convenience method)
+   */
+  async executeHook(hookName, context = {}) {
+    const results = await this.executeHooks(hookName, context);
+    return results && results.length > 0 ? results[0] : { success: false };
+  }
+
+  /**
    * Get hook metrics if available
    */
   getHookMetrics() {
@@ -499,9 +534,12 @@ export class ModuleManagerAdapter {
    * Get migration statistics
    */
   getMigrationStats() {
+    // Get enhanced service stats and merge with adapter stats
+    const enhancedStats = this.enhanced.getMigrationStats ? this.enhanced.getMigrationStats() : {};
+    
     return {
-      hookExecutions: Object.fromEntries(this.migrationState.hookExecutions),
-      timeoutEvents: Object.fromEntries(this.migrationState.timeoutEvents),
+      hookExecutions: { ...enhancedStats.hookExecutions, ...Object.fromEntries(this.migrationState.hookExecutions) },
+      timeoutEvents: { ...enhancedStats.timeoutEvents, ...Object.fromEntries(this.migrationState.timeoutEvents) },
       performanceMetrics: Object.fromEntries(this.migrationState.performanceMetrics),
       featureUsage: this._getFeatureUsageStats()
     };

@@ -4,7 +4,7 @@
  */
 
 export { DeploymentValidator } from './validator.js';
-export { MultiDomainOrchestrator } from '../../src/orchestration/multi-domain-orchestrator.js';
-export { CrossDomainCoordinator } from '../../src/orchestration/cross-domain-coordinator.js';
+export { MultiDomainOrchestrator } from '../../orchestration/multi-domain-orchestrator.js';
+export { CrossDomainCoordinator } from '../../orchestration/cross-domain-coordinator.js';
 export { DeploymentAuditor } from './auditor.js';
 export { RollbackManager } from './rollback-manager.js';

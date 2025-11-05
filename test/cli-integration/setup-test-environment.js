@@ -124,7 +124,22 @@ DOCUMENTATION_URL=https://docs.example.com
       env = {}
     } = options;
 
-    const fullCommand = `npx ${commandWithArgs}`;
+    // Use the local dist path directly to avoid bin script issues
+    const commandParts = commandWithArgs.split(' ');
+    const mainCommand = commandParts[0];
+    const args = commandParts.slice(1).join(' ');
+    
+    let fullCommand;
+    if (mainCommand === 'clodo-security') {
+      fullCommand = `node "${this.localPackagePath}/dist/bin/security/security-cli.js" ${args}`;
+    } else if (mainCommand === 'clodo-service') {
+      fullCommand = `node "${this.localPackagePath}/dist/bin/clodo-service.js" ${args}`;
+    } else if (mainCommand === 'clodo-create-service') {
+      fullCommand = `node "${this.localPackagePath}/dist/bin/commands/create.js" ${args}`;
+    } else {
+      // Fallback to npx for other commands
+      fullCommand = `npx ${commandWithArgs}`;
+    }
     
     if (this.verbose) {
       console.log(`\n💻 Running: ${fullCommand}`);

@@ -3,7 +3,7 @@
  */
 
 import chalk from 'chalk';
-import { ServiceOrchestrator } from '../../src/service-management/ServiceOrchestrator.js';
+import { ServiceOrchestrator } from '../../service-management/ServiceOrchestrator.js';
 import { StandardOptions } from '../shared/utils/cli-options.js';
 import { ConfigLoader } from '../shared/utils/config-loader.js';
 

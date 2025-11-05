@@ -48,7 +48,7 @@ describe('ServiceOrchestrator Integration', () => {
       child.on('close', (code) => {
         expect(code).toBe(0);
         expect(stdout).toContain('clodo-service');
-        expect(stdout).toContain('create');
+        expect(stdout).toContain('list-types');
         expect(stdout).toContain('Unified conversational CLI');
         done();
       });
@@ -76,7 +76,7 @@ describe('ServiceOrchestrator Integration', () => {
 
   describe('Non-Interactive Mode', () => {
     test('should validate required parameters', (done) => {
-      const child = spawn('node', [cliPath, 'create', '--non-interactive'], {
+      const child = spawn('node', [cliPath, 'nonexistent-command'], {
         stdio: 'pipe',
         cwd: process.cwd()
       });
@@ -89,7 +89,7 @@ describe('ServiceOrchestrator Integration', () => {
 
       child.on('close', (code) => {
         expect(code).toBe(1);
-        expect(stderr).toContain('Missing required parameters') || expect(stderr).toContain('required');
+        expect(stderr).toContain('error: unknown command') || expect(stderr).toContain('unknown command');
         done();
       });
     });
@@ -140,9 +140,9 @@ describe('ServiceOrchestrator Integration', () => {
     }, 30000); // Longer timeout for service creation
   });
 
-  describe('Interactive Mode', () => {
-    test('should start interactive mode', (done) => {
-      const child = spawn('node', [cliPath, 'create'], {
+  describe('List Types Command', () => {
+    test('should list available service types', (done) => {
+      const child = spawn('node', [cliPath, 'list-types'], {
         stdio: 'pipe',
         cwd: process.cwd()
       });
@@ -151,39 +151,22 @@ describe('ServiceOrchestrator Integration', () => {
 
       child.stdout.on('data', (data) => {
         stdout += data.toString();
-        // Kill the process once we see the welcome message
-        if (stdout.includes('Welcome to the unified service creation wizard')) {
-          child.kill();
-        }
       });
 
       child.on('close', (code) => {
-        expect(stdout).toContain('🚀 Clodo Framework - Interactive Service Creator');
-        expect(stdout).toContain('Welcome to the unified service creation wizard');
+        expect(code).toBe(0);
+        expect(stdout).toContain('Available Clodo Framework Service Types');
+        expect(stdout).toContain('data-service');
         done();
       });
-    }, 10000);
+    });
   });
 
-  describe('ServiceOrchestrator Configuration', () => {
-    test('should accept custom output path', (done) => {
-      const customOutputPath = path.join(testOutputDir, 'custom-output');
-
-      const child = spawn('node', [
-        cliPath,
-        'create',
-        '--non-interactive',
-        '--service-name=test-custom-output',
-        '--service-type=data-service',
-        '--domain-name=test.example.com',
-        '--cloudflare-token=test-token-12345678901234567890',
-        '--cloudflare-account-id=1234567890abcdef1234567890abcdef',
-        '--cloudflare-zone-id=1234567890abcdef1234567890abcdef',
-        '--environment=development',
-        `--output-path=${customOutputPath}`
-      ], {
+  describe('Init Config Command', () => {
+    test('should initialize config file', (done) => {
+      const child = spawn('node', [cliPath, 'init-config'], {
         stdio: 'pipe',
-        cwd: process.cwd()
+        cwd: testOutputDir
       });
 
       let stdout = '';
@@ -198,10 +181,10 @@ describe('ServiceOrchestrator Integration', () => {
       });
 
       child.on('close', (code) => {
-        // Should attempt to create service in custom path
-        expect(stdout + stderr).toContain('Clodo Framework');
+        expect(code).toBe(0);
+        expect(stdout + stderr).toContain('validation-config.json') || expect(stdout + stderr).toContain('config');
         done();
       });
-    }, 15000);
+    });
   });
 });

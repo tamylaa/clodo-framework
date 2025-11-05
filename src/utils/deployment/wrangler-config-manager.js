@@ -99,6 +99,194 @@ export class WranglerConfigManager {
   }
 
   /**
+   * Get customer config path based on zone name
+   * Maps zone names to customer config directories using conventions:
+   * - clodo.dev → config/customers/clodo/wrangler.toml
+   * - tamyla.com → config/customers/tamyla/wrangler.toml
+   * - wetechfounders.com → config/customers/wetechfounders/wrangler.toml
+   * 
+   * @param {string} zoneName - Cloudflare zone name (domain)
+   * @returns {string} Path to customer config (may not exist yet)
+   */
+  getCustomerConfigPath(zoneName) {
+    if (!zoneName) {
+      throw new Error('Zone name is required to get customer config path');
+    }
+
+    // Extract base name from domain (e.g., clodo.dev → clodo)
+    const baseName = zoneName.split('.')[0];
+    
+    // Return customer directory path based on base name
+    return join(this.projectRoot, 'config', 'customers', baseName, 'wrangler.toml');
+  }
+
+  /**
+   * Generate or update customer-specific wrangler.toml
+   * Creates a persistent config for the customer based on current deployment parameters
+   * This serves as deployment history and source of truth for reruns
+   * 
+   * @param {string} zoneName - Cloudflare zone name (domain)
+   * @param {Object} params - Deployment parameters
+   * @param {string} params.accountId - Cloudflare account ID
+   * @param {string} params.environment - Deployment environment (production, staging, development)
+   * @returns {Promise<string>} Path to generated/updated customer config
+   */
+  async generateCustomerConfig(zoneName, params = {}) {
+    const { accountId, environment = 'production' } = params;
+    
+    if (!zoneName) {
+      throw new Error('Zone name is required to generate customer config');
+    }
+
+    const customerConfigPath = this.getCustomerConfigPath(zoneName);
+    const customerDir = dirname(customerConfigPath);
+
+    if (this.dryRun) {
+      console.log(`   🔍 DRY RUN: Would generate/update customer config at ${customerConfigPath}`);
+      return customerConfigPath;
+    }
+
+    // Ensure customer directory exists
+    await mkdir(customerDir, { recursive: true });
+
+    // Read existing config or start with current root config as template
+    let config;
+    try {
+      await access(customerConfigPath, constants.F_OK);
+      // Customer config exists - read and update it
+      const content = await readFile(customerConfigPath, 'utf-8');
+      config = parseToml(content);
+      if (this.verbose) {
+        console.log(`   📋 Updating existing customer config: ${customerConfigPath}`);
+      }
+    } catch (error) {
+      // Customer config doesn't exist - use root config as template
+      try {
+        config = await this.readConfig();
+        if (this.verbose) {
+          console.log(`   📋 Creating new customer config from root template: ${customerConfigPath}`);
+        }
+      } catch (readError) {
+        // No root config either - create minimal config
+        config = {
+          name: 'worker',
+          main: 'src/index.js',
+          compatibility_date: new Date().toISOString().split('T')[0],
+          env: {}
+        };
+        if (this.verbose) {
+          console.log(`   📋 Creating new minimal customer config: ${customerConfigPath}`);
+        }
+      }
+    }
+
+    // Update account_id if provided
+    if (accountId) {
+      config.account_id = accountId;
+      console.log(`   ✅ Set account_id to ${accountId} in customer config`);
+    }
+
+    // Update worker name based on zone
+    // Extract base service name and apply zone-based naming
+    const customerPrefix = zoneName.split('.')[0]; // clodo.dev → clodo
+    
+    // Update root-level worker name
+    if (config.name) {
+      const baseName = config.name.replace(/^[^-]+-/, ''); // Remove existing prefix
+      const newWorkerName = `${customerPrefix}-${baseName}`;
+      config.name = newWorkerName;
+      console.log(`   ✅ Set worker name to ${newWorkerName} in customer config`);
+    }
+
+    // Update SERVICE_DOMAIN in environment variables (all environments)
+    const updateServiceDomain = (varsObj) => {
+      if (varsObj && 'SERVICE_DOMAIN' in varsObj) {
+        varsObj.SERVICE_DOMAIN = customerPrefix;
+        console.log(`   ✅ Set SERVICE_DOMAIN to ${customerPrefix}`);
+      }
+    };
+
+    // Update top-level vars if they exist
+    if (config.vars) {
+      updateServiceDomain(config.vars);
+    }
+
+    // Ensure environment section exists
+    if (environment !== 'production') {
+      if (!config.env) {
+        config.env = {};
+      }
+      if (!config.env[environment]) {
+        config.env[environment] = {
+          name: config.name || 'worker'
+        };
+      }
+    }
+
+    // Update worker name and SERVICE_DOMAIN in all environment sections
+    if (config.env) {
+      for (const [envName, envConfig] of Object.entries(config.env)) {
+        if (envConfig.name) {
+          const baseName = envConfig.name.replace(/^[^-]+-/, ''); // Remove existing prefix
+          envConfig.name = `${customerPrefix}-${baseName}`;
+          console.log(`   ✅ Set [env.${envName}] worker name to ${envConfig.name}`);
+        }
+        
+        if (envConfig.vars) {
+          updateServiceDomain(envConfig.vars);
+        }
+      }
+    }
+
+    // Write customer config
+    const tomlContent = stringifyToml(config);
+    await writeFile(customerConfigPath, tomlContent, 'utf-8');
+    
+    console.log(`   ✅ Customer config saved: ${customerConfigPath}`);
+    return customerConfigPath;
+  }
+
+  /**
+   * Copy customer-specific wrangler.toml to root (ephemeral working copy)
+   * This implements the architecture where:
+   * - config/customers/{customer}/wrangler.toml = source of truth (versioned)
+   * - wrangler.toml (root) = ephemeral working copy (reflects last deployment)
+   * 
+   * @param {string} customerConfigPath - Path to customer's wrangler.toml
+   * @returns {Promise<void>}
+   */
+  async copyCustomerConfig(customerConfigPath) {
+    if (!customerConfigPath) {
+      throw new Error('Customer config path is required');
+    }
+
+    if (this.dryRun) {
+      console.log(`   🔍 DRY RUN: Would copy ${customerConfigPath} → ${this.configPath}`);
+      return;
+    }
+
+    try {
+      // Read customer config
+      const customerContent = await readFile(customerConfigPath, 'utf-8');
+      
+      if (this.verbose) {
+        console.log(`   📋 Copying customer config: ${customerConfigPath}`);
+      }
+
+      // Write to root wrangler.toml (ephemeral working copy)
+      await mkdir(dirname(this.configPath), { recursive: true });
+      await writeFile(this.configPath, customerContent, 'utf-8');
+      
+      console.log(`   ✅ Copied customer config to root wrangler.toml`);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new Error(`Customer config not found: ${customerConfigPath}`);
+      }
+      throw new Error(`Failed to copy customer config: ${error.message}`);
+    }
+  }
+
+  /**
    * Set account_id in wrangler.toml
    * @param {string} accountId - Cloudflare account ID
    * @returns {Promise<boolean>} True if account_id was set

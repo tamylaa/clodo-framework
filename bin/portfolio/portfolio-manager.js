@@ -27,11 +27,11 @@ import { join } from 'path';
 import { createWriteStream } from 'fs';
 
 // Enterprise module imports - organized shared modules
-import { CrossDomainCoordinator } from '../../src/orchestration/cross-domain-coordinator.js';
-import { MultiDomainOrchestrator } from '../../src/orchestration/multi-domain-orchestrator.js';
+import { CrossDomainCoordinator } from '../../orchestration/cross-domain-coordinator.js';
+import { MultiDomainOrchestrator } from '../../orchestration/multi-domain-orchestrator.js';
 import { DeploymentValidator } from '../shared/deployment/validator.js';
 import { DomainDiscovery } from '../shared/cloudflare/domain-discovery.js';
-import { DatabaseOrchestrator } from '../../src/database/database-orchestrator.js';
+import { DatabaseOrchestrator } from '../../database/database-orchestrator.js';
 import { EnhancedSecretManager } from '../shared/security/secret-generator.js';
 import { ConfigurationCacheManager } from '../shared/config/cache.js';
 import { ProductionTester } from '../shared/production-tester/index.js';

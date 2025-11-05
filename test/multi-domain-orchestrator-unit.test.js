@@ -8,76 +8,67 @@ import { jest } from '@jest/globals';
 import os from 'os';
 import path from 'path';
 
-// Mock all dependencies using unstable_mockModule for ES modules
-await jest.unstable_mockModule('../src/orchestration/modules/DomainResolver.js', () => ({
-  DomainResolver: jest.fn().mockImplementation(() => ({
-    resolveDomain: jest.fn().mockResolvedValue({ name: 'test.example.com' }),
-    validateDomain: jest.fn().mockResolvedValue({ valid: true }),
-    validateDomainPrerequisites: jest.fn().mockResolvedValue({ valid: true }),
-    resolveMultipleDomains: jest.fn().mockResolvedValue({ 'test.example.com': { name: 'test.example.com' } })
-  }))
-}));
-await jest.unstable_mockModule('../src/orchestration/modules/DeploymentCoordinator.js', () => ({
-  DeploymentCoordinator: jest.fn().mockImplementation(() => ({
-    coordinateDeployment: jest.fn().mockResolvedValue({ success: true }),
-    validatePrerequisites: jest.fn().mockResolvedValue({ valid: true }),
-    deployPortfolio: jest.fn().mockResolvedValue({ success: true, domains: ['test.example.com'] }),
-    deploySingleDomain: jest.fn().mockResolvedValue({ success: true })
-  }))
-}));
-await jest.unstable_mockModule('../src/orchestration/modules/StateManager.js', () => ({
-  StateManager: jest.fn().mockImplementation(() => ({
-    initializeState: jest.fn().mockResolvedValue(),
-    updateState: jest.fn().mockResolvedValue(),
-    getState: jest.fn().mockResolvedValue({ status: 'initialized' }),
-    initializeDomainStates: jest.fn().mockResolvedValue(),
-    updateDomainState: jest.fn().mockResolvedValue(),
-    logAuditEvent: jest.fn().mockResolvedValue(),
-    portfolioState: { orchestrationId: 'test-id', domainStates: new Map(), rollbackPlan: [] }
-  }))
-}));
-await jest.unstable_mockModule('../src/database/database-orchestrator.js', () => ({
-  DatabaseOrchestrator: jest.fn().mockImplementation(() => ({
-    setupDomainDatabase: jest.fn().mockResolvedValue({ success: true }),
-    applyDatabaseMigrations: jest.fn().mockResolvedValue({ success: true })
-  }))
-}));
-await jest.unstable_mockModule('../src/utils/deployment/secret-generator.js', () => ({
-  EnhancedSecretManager: jest.fn().mockImplementation(() => ({
-    generateSecrets: jest.fn().mockResolvedValue({ success: true }),
-    validateSecrets: jest.fn().mockResolvedValue({ valid: true })
-  }))
-}));
-await jest.unstable_mockModule('../src/utils/deployment/wrangler-config-manager.js', () => ({
-  WranglerConfigManager: jest.fn().mockImplementation(() => ({
-    generateConfig: jest.fn().mockResolvedValue({ success: true }),
-    validateConfig: jest.fn().mockResolvedValue({ valid: true })
-  }))
-}));
-await jest.unstable_mockModule('../src/security/ConfigurationValidator.js', () => ({
-  ConfigurationValidator: jest.fn().mockImplementation(() => ({
-    validate: jest.fn().mockResolvedValue({ valid: true })
-  }))
-}));
-await jest.unstable_mockModule('../src/utils/cloudflare/index.js', () => ({
-  databaseExists: jest.fn().mockResolvedValue(false),
-  createDatabase: jest.fn().mockResolvedValue({ success: true, databaseId: 'test-db-id' })
-}));
-
-// Import mocked modules
-import { DomainResolver } from '../src/orchestration/modules/DomainResolver.js';
-import { DeploymentCoordinator } from '../src/orchestration/modules/DeploymentCoordinator.js';
-import { StateManager } from '../src/orchestration/modules/StateManager.js';
-import { DatabaseOrchestrator } from '../src/database/database-orchestrator.js';
-import { EnhancedSecretManager } from '../src/utils/deployment/secret-generator.js';
-import { WranglerConfigManager } from '../src/utils/deployment/wrangler-config-manager.js';
-import { ConfigurationValidator } from '../src/security/ConfigurationValidator.js';
-import { createDatabase } from '../src/utils/cloudflare/index.js';
-
 // Import the MultiDomainOrchestrator class
 import { MultiDomainOrchestrator } from '../src/orchestration/multi-domain-orchestrator.js';
 
 describe('MultiDomainOrchestrator Unit Tests', () => {
+  beforeAll(async () => {
+    // Mock all dependencies using unstable_mockModule for ES modules
+    await jest.unstable_mockModule('../src/orchestration/modules/DomainResolver.js', () => ({
+      DomainResolver: jest.fn().mockImplementation(() => ({
+        resolveDomain: jest.fn().mockResolvedValue({ name: 'test.example.com' }),
+        validateDomain: jest.fn().mockResolvedValue({ valid: true }),
+        validateDomainPrerequisites: jest.fn().mockResolvedValue({ valid: true }),
+        resolveMultipleDomains: jest.fn().mockResolvedValue({ 'test.example.com': { name: 'test.example.com' } })
+      }))
+    }));
+    await jest.unstable_mockModule('../src/orchestration/modules/DeploymentCoordinator.js', () => ({
+      DeploymentCoordinator: jest.fn().mockImplementation(() => ({
+        coordinateDeployment: jest.fn().mockResolvedValue({ success: true }),
+        validatePrerequisites: jest.fn().mockResolvedValue({ valid: true }),
+        deployPortfolio: jest.fn().mockResolvedValue({ success: true, domains: ['test.example.com'] }),
+        deploySingleDomain: jest.fn().mockResolvedValue({ success: true })
+      }))
+    }));
+    await jest.unstable_mockModule('../src/orchestration/modules/StateManager.js', () => ({
+      StateManager: jest.fn().mockImplementation(() => ({
+        initializeState: jest.fn().mockResolvedValue(),
+        updateState: jest.fn().mockResolvedValue(),
+        getState: jest.fn().mockResolvedValue({ status: 'initialized' }),
+        initializeDomainStates: jest.fn().mockResolvedValue(),
+        updateDomainState: jest.fn().mockResolvedValue(),
+        logAuditEvent: jest.fn().mockResolvedValue(),
+        portfolioState: { orchestrationId: 'test-id', domainStates: new Map(), rollbackPlan: [] }
+      }))
+    }));
+    await jest.unstable_mockModule('../src/database/database-orchestrator.js', () => ({
+      DatabaseOrchestrator: jest.fn().mockImplementation(() => ({
+        setupDomainDatabase: jest.fn().mockResolvedValue({ success: true }),
+        applyDatabaseMigrations: jest.fn().mockResolvedValue({ success: true })
+      }))
+    }));
+    await jest.unstable_mockModule('../src/utils/deployment/secret-generator.js', () => ({
+      EnhancedSecretManager: jest.fn().mockImplementation(() => ({
+        generateSecrets: jest.fn().mockResolvedValue({ success: true }),
+        validateSecrets: jest.fn().mockResolvedValue({ valid: true })
+      }))
+    }));
+    await jest.unstable_mockModule('../src/utils/deployment/wrangler-config-manager.js', () => ({
+      WranglerConfigManager: jest.fn().mockImplementation(() => ({
+        generateConfig: jest.fn().mockResolvedValue({ success: true }),
+        validateConfig: jest.fn().mockResolvedValue({ valid: true })
+      }))
+    }));
+    await jest.unstable_mockModule('../src/security/ConfigurationValidator.js', () => ({
+      ConfigurationValidator: jest.fn().mockImplementation(() => ({
+        validate: jest.fn().mockResolvedValue({ valid: true })
+      }))
+    }));
+    await jest.unstable_mockModule('../src/utils/cloudflare/index.js', () => ({
+      databaseExists: jest.fn().mockResolvedValue(false),
+      createDatabase: jest.fn().mockResolvedValue({ success: true, databaseId: 'test-db-id' })
+    }));
+  });
   let orchestrator;
   let mockDomainResolver;
   let mockDeploymentCoordinator;

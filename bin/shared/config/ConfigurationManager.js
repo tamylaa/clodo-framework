@@ -75,7 +75,29 @@ export class ConfigurationManager {
     this._validateConfiguration();
   }
 
-  // ============ FEATURE FLAG MANAGEMENT ============
+  /**
+   * Deep merge two configuration objects
+   * @param {Object} defaults - Default configuration
+   * @param {Object} userConfig - User-provided configuration
+   * @returns {Object} Merged configuration
+   */
+  mergeConfigurations(defaults, userConfig) {
+    const output = { ...defaults };
+
+    for (const key in userConfig) {
+      if (userConfig[key] && typeof userConfig[key] === 'object' && !Array.isArray(userConfig[key])) {
+        // Recursively merge objects
+        output[key] = this.mergeConfigurations(defaults[key] || {}, userConfig[key]);
+      } else {
+        // Overwrite arrays and primitives
+        output[key] = userConfig[key];
+      }
+    }
+
+    return output;
+  }
+
+  // ============ UTILITY METHODS ============
 
   /**
    * Check if a feature is enabled

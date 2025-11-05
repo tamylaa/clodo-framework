@@ -7,7 +7,7 @@
 export { ConfigCache } from './cache.js';
 export { ConfigManager } from './manager.js';
 export { CommandConfigManager } from './command-config-manager.js';
-export { CustomerConfigurationManager } from '../../../src/config/customers.js';
+export { CustomerConfigurationManager } from '../../../config/customers.js';
 
 // Phase 3.2 consolidated configuration management
 export { 

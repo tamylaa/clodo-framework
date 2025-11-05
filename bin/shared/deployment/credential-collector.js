@@ -33,7 +33,8 @@ export class DeploymentCredentialCollector {
     const startCredentials = {
       token: options.token || process.env.CLOUDFLARE_API_TOKEN || null,
       accountId: options.accountId || process.env.CLOUDFLARE_ACCOUNT_ID || null,
-      zoneId: options.zoneId || process.env.CLOUDFLARE_ZONE_ID || null
+      zoneId: options.zoneId || process.env.CLOUDFLARE_ZONE_ID || null,
+      zoneName: null // Will be populated when fetching zone
     };
 
     // All credentials provided - quick path
@@ -69,6 +70,7 @@ export class DeploymentCredentialCollector {
 
     let accountId = startCredentials.accountId;
     let zoneId = startCredentials.zoneId;
+    let zoneName = startCredentials.zoneName;
 
     try {
       const cloudflareAPI = new CloudflareAPI(token);
@@ -92,7 +94,9 @@ export class DeploymentCredentialCollector {
 
       // If zone ID not provided, fetch from Cloudflare
       if (!zoneId) {
-        zoneId = await this.fetchZoneId(cloudflareAPI);
+        const zoneInfo = await this.fetchZoneId(cloudflareAPI);
+        zoneId = zoneInfo.id;
+        zoneName = zoneInfo.name;
       }
     } catch (error) {
       console.error(chalk.red(`\n❌ Credential validation failed:`));
@@ -104,7 +108,21 @@ export class DeploymentCredentialCollector {
       console.log(chalk.green('\n✅ All credentials collected and validated\n'));
     }
 
-    return { token, accountId, zoneId };
+    // Return structured Cloudflare settings object
+    // This encapsulates all zone-specific configuration for multi-domain deployments
+    return { 
+      token, 
+      accountId, 
+      zoneId, 
+      zoneName,
+      // Convenience: cloudflareSettings object for passing to orchestrators
+      cloudflareSettings: {
+        token,
+        accountId,
+        zoneId,
+        zoneName
+      }
+    };
   }
 
   /**
@@ -223,7 +241,7 @@ export class DeploymentCredentialCollector {
         if (!this.quiet) {
           console.log(chalk.green(`✅ Found domain: ${zones[0].name}\n`));
         }
-        return zones[0].id;
+        return { id: zones[0].id, name: zones[0].name };
       }
 
       // Multiple zones - let user choose
@@ -246,7 +264,7 @@ export class DeploymentCredentialCollector {
         console.log(chalk.green(`✅ Selected: ${selectedZone.name}\n`));
       }
 
-      return selectedZone.id;
+      return { id: selectedZone.id, name: selectedZone.name };
     } catch (error) {
       console.error(chalk.red('❌ Failed to fetch domains:'));
       console.error(chalk.yellow(error.message));

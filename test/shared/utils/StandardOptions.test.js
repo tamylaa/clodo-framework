@@ -166,8 +166,7 @@ describe('StandardOptions Utility', () => {
       const opts = {
         verbose: true,
         json: true,
-        noColor: true,
-        configFile: '/path/to/config.json'
+        noColor: true
       };
       const result = StandardOptions.validate(opts);
       expect(result.valid).toBe(true);

@@ -11,17 +11,17 @@ const mockWranglerDeployer = jest.fn().mockImplementation(() => ({
   handleD1BindingError: mockHandleD1BindingError
 }));
 
-jest.unstable_mockModule('../../../dist/deployment/wrangler-deployer.js', () => ({
-  WranglerDeployer: mockWranglerDeployer
-}));
-
 describe('D1ErrorRecoveryManager', () => {
   let manager;
   let rollbackActions;
 
   beforeEach(() => {
     rollbackActions = [];
-    manager = new D1ErrorRecoveryManager({ rollbackActions });
+    const mockDeployerInstance = new mockWranglerDeployer();
+    manager = new D1ErrorRecoveryManager({ 
+      rollbackActions,
+      wranglerDeployer: mockDeployerInstance
+    });
     jest.clearAllMocks();
   });
 

@@ -40,42 +40,78 @@ export function registerAssessCommand(program) {
 
         // Try to load professional orchestration package
         let orchestrationModule;
+        let hasEnterprisePackage = false;
         try {
           orchestrationModule = await import('@tamyla/clodo-orchestration');
+          hasEnterprisePackage = true;
         } catch (err) {
-          output.error('❌ clodo-orchestration package not found');
-          output.info('💡 Install with: npm install @tamyla/clodo-orchestration');
-          process.exit(1);
+          output.warning('⚠️  Enterprise orchestration package not found');
+          output.info('💡 Using basic assessment capabilities');
+          output.info('💡 For advanced assessment: npm install @tamyla/clodo-orchestration');
         }
 
-        const { 
-          CapabilityAssessmentEngine, 
-          ServiceAutoDiscovery,
-          runAssessmentWorkflow 
-        } = orchestrationModule;
-
+        let assessment;
         const targetPath = servicePath || process.cwd();
-        output.section('Professional Capability Assessment');
-        output.list([
-          `Service Path: ${targetPath}`,
-          mergedOptions.domain ? `Domain: ${mergedOptions.domain}` : null,
-          mergedOptions.serviceType ? `Service Type: ${mergedOptions.serviceType}` : null
-        ].filter(Boolean));
+        
+        if (hasEnterprisePackage) {
+          output.section('Professional Capability Assessment');
+          output.list([
+            `Service Path: ${targetPath}`,
+            mergedOptions.domain ? `Domain: ${mergedOptions.domain}` : null,
+            mergedOptions.serviceType ? `Service Type: ${mergedOptions.serviceType}` : null,
+            'Enterprise Package: ✅ Available'
+          ].filter(Boolean));
+          
+          // Use enterprise assessment
+          const { 
+            CapabilityAssessmentEngine, 
+            ServiceAutoDiscovery,
+            runAssessmentWorkflow 
+          } = orchestrationModule;
 
-        // Use the assessment workflow
-        const assessment = await runAssessmentWorkflow({
-          servicePath: targetPath,
-          domain: mergedOptions.domain,
-          serviceType: mergedOptions.serviceType,
-          token: mergedOptions.token || process.env.CLOUDFLARE_API_TOKEN
-        });
+          assessment = await runAssessmentWorkflow({
+            servicePath: targetPath,
+            domain: mergedOptions.domain,
+            serviceType: mergedOptions.serviceType,
+            token: mergedOptions.token || process.env.CLOUDFLARE_API_TOKEN
+          });
+        } else {
+          output.section('Basic Capability Assessment');
+          output.list([
+            `Service Path: ${targetPath}`,
+            mergedOptions.domain ? `Domain: ${mergedOptions.domain}` : null,
+            mergedOptions.serviceType ? `Service Type: ${mergedOptions.serviceType}` : null,
+            'Enterprise Package: ⚠️  Not Available (using basic checks)'
+          ].filter(Boolean));
+          
+          // Use basic assessment with available testers
+          assessment = await runBasicAssessment(targetPath, mergedOptions);
+        }
 
         // Display results
         output.section('✅ Assessment Results');
-        output.list([
-          `Service Type: ${assessment.mergedInputs?.serviceType || assessment.serviceType || 'Not determined'}`,
-          `Confidence: ${assessment.confidence}%`
-        ]);
+        
+        if (hasEnterprisePackage) {
+          output.list([
+            `Service Type: ${assessment.mergedInputs?.serviceType || assessment.serviceType || 'Not determined'}`,
+            `Confidence: ${assessment.confidence}%`
+          ]);
+        } else {
+          output.list([
+            `Service Type: ${assessment.serviceType || 'Not determined'}`,
+            `Confidence: ${assessment.confidence}%`,
+            `Basic Checks: ${assessment.basicChecks?.length || 0} performed`
+          ]);
+          
+          if (assessment.basicChecks && assessment.basicChecks.length > 0) {
+            output.info('\n📋 Basic Checks:');
+            assessment.basicChecks.forEach(check => output.info(`  ${check}`));
+          }
+          
+          if (assessment.availableTesters && assessment.availableTesters.length > 0) {
+            output.info(`\n✅ Available Testers: ${assessment.availableTesters.join(', ')}`);
+          }
+        }
         
         if (assessment.gapAnalysis?.missing) {
           if (assessment.gapAnalysis.missing.length > 0) {
@@ -103,4 +139,70 @@ export function registerAssessCommand(program) {
         process.exit(1);
       }
     });
+}
+
+/**
+ * Run basic assessment using available framework capabilities
+ * @param {string} servicePath - Path to the service
+ * @param {Object} options - Assessment options
+ * @returns {Promise<Object>} Basic assessment results
+ */
+async function runBasicAssessment(servicePath, options) {
+  const { existsSync, readFileSync } = await import('fs');
+  const { join } = await import('path');
+  
+  const results = {
+    serviceType: 'unknown',
+    confidence: 0,
+    mergedInputs: {},
+    gapAnalysis: { missing: [] },
+    basicChecks: []
+  };
+
+  // Check package.json for service type
+  const packagePath = join(servicePath, 'package.json');
+  if (existsSync(packagePath)) {
+    try {
+      const packageJson = JSON.parse(readFileSync(packagePath, 'utf8'));
+      results.serviceType = packageJson.name?.includes('data') ? 'data-service' : 
+                           packageJson.name?.includes('auth') ? 'auth-service' : 'generic';
+      results.confidence = 60;
+      results.basicChecks.push('✅ Package.json found and parsed');
+    } catch (error) {
+      results.basicChecks.push('❌ Package.json parsing failed');
+    }
+  }
+
+  // Check for required files
+  const requiredFiles = ['wrangler.toml', 'src/config/domains.js', 'src/worker/index.js'];
+  for (const file of requiredFiles) {
+    const filePath = join(servicePath, file);
+    if (existsSync(filePath)) {
+      results.basicChecks.push(`✅ ${file} found`);
+      results.confidence += 10;
+    } else {
+      results.basicChecks.push(`❌ ${file} missing`);
+      results.gapAnalysis.missing.push({
+        capability: file,
+        reason: 'Required file not found'
+      });
+    }
+  }
+
+  // Check for available testers
+  const testers = ['api-tester', 'auth-tester', 'database-tester'];
+  results.availableTesters = [];
+  for (const tester of testers) {
+    try {
+      await import(`../shared/production-tester/${tester}.js`);
+      results.availableTesters.push(tester);
+      results.basicChecks.push(`✅ ${tester} available`);
+    } catch (error) {
+      results.basicChecks.push(`⚠️  ${tester} not available`);
+    }
+  }
+
+  results.confidence = Math.min(results.confidence, 85); // Cap at 85% for basic assessment
+  
+  return results;
 }

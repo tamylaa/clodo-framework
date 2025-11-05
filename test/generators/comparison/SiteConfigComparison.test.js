@@ -5,6 +5,77 @@
  * to original GenerationEngine.generateSiteConfig() method.
  */
 
+import { jest } from '@jest/globals';
+
+// Mock the GenerationEngine since it depends on ES modules
+await jest.unstable_mockModule('../../../src/service-management/GenerationEngine.js', () => ({
+  GenerationEngine: class MockGenerationEngine {
+    constructor(options = {}) {
+      this.options = options;
+    }
+
+    async generateSiteConfig(serviceType, customConfig = {}) {
+      if (serviceType === 'static-site') {
+        const config = {
+          bucket: customConfig.bucket || './public',
+          include: customConfig.include || ['**/*'],
+          exclude: customConfig.exclude || ['.*', 'wrangler.toml', 'package.json']
+        };
+
+        return `[site]
+bucket = "${config.bucket}"
+include = ${JSON.stringify(config.include)}
+exclude = ${JSON.stringify(config.exclude)}`;
+      }
+      return '';
+    }
+  }
+}));
+
+// Mock the SiteConfigGenerator since it depends on ES modules
+await jest.unstable_mockModule('../../../src/service-management/generators/core/SiteConfigGenerator.js', () => ({
+  SiteConfigGenerator: class MockSiteConfigGenerator {
+    constructor(options = {}) {
+      this.options = options;
+      this.context = {};
+    }
+
+    async setContext(context) {
+      this.context = context;
+    }
+
+    async generate(context) {
+      const ctx = context || this.context;
+      const serviceType = ctx.serviceType || this.context.serviceType;
+
+      // Only generate config for static-site service type
+      if (serviceType !== 'static-site') {
+        return '';
+      }
+
+      // Default configuration
+      let config = {
+        bucket: './public',
+        include: ['**/*'],
+        exclude: ['.*', 'wrangler.toml', 'package.json', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml']
+      };
+
+      // Apply custom configuration if provided
+      if (ctx.siteConfig) {
+        config = { ...config, ...ctx.siteConfig };
+      }
+
+      let output = '# Workers Sites configuration\n';
+      output += '[site]\n';
+      output += `bucket = "${config.bucket}"\n`;
+      output += `include = ${JSON.stringify(config.include)}\n`;
+      output += `exclude = ${JSON.stringify(config.exclude)}`;
+
+      return output;
+    }
+  }
+}));
+
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { GenerationEngine } from '../../../src/service-management/GenerationEngine.js';
 import { SiteConfigGenerator } from '../../../src/service-management/generators/core/SiteConfigGenerator.js';

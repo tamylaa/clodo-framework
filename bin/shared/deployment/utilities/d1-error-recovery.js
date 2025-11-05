@@ -15,9 +15,11 @@ export class D1ErrorRecoveryManager {
   /**
    * @param {Object} options - Configuration options
    * @param {Array} options.rollbackActions - Array to track rollback actions
+   * @param {Object} options.wranglerDeployer - Optional WranglerDeployer instance for testing
    */
   constructor(options = {}) {
     this.rollbackActions = options.rollbackActions || [];
+    this.wranglerDeployer = options.wranglerDeployer;
   }
 
   /**
@@ -32,15 +34,19 @@ export class D1ErrorRecoveryManager {
    */
   async handleD1BindingError(error, config = {}) {
     try {
-      // Import WranglerDeployer for D1 error handling
-      const { WranglerDeployer } = await import('../../../dist/deployment/wrangler-deployer.js');
+      // Use provided WranglerDeployer or import dynamically
+      let deployer;
+      if (this.wranglerDeployer) {
+        deployer = this.wranglerDeployer;
+      } else {
+        // Import WranglerDeployer for D1 error handling
+        const { WranglerDeployer } = await import('../../../src/deployment/wrangler-deployer.js');
+        deployer = new WranglerDeployer({
+          cwd: config.cwd || process.cwd(),
+          environment: config.environment
+        });
+      }
       
-      // Create deployer instance with configuration
-      const deployer = new WranglerDeployer({
-        cwd: config.cwd || process.cwd(),
-        environment: config.environment
-      });
-
       // Attempt D1 error recovery
       const recoveryResult = await deployer.handleD1BindingError(error, {
         configPath: config.configPath || 'wrangler.toml',

@@ -33,13 +33,6 @@ describe('CLODO Framework Deployment & Security Features v3.0.3', () => {
     expect(content).toContain('ErrorHandler');
   });
 
-  test.skip('should validate configuration module structure (DEPRECATED - ConfigurationManager removed)', () => {
-    // ConfigurationManager.js was deprecated and replaced by:
-    // - InputCollector (3-tier architecture)
-    // - UnifiedConfigManager (customer configs)
-    // - WranglerConfigManager (wrangler.toml)
-  });
-
   test('should validate error handler structure', () => {
     // Test that the error handler has the expected methods
     // Updated to use consolidated location in bin/shared/utils

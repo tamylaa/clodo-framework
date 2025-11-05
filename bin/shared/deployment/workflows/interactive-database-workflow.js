@@ -7,12 +7,12 @@
  * @module interactive-database-workflow
  */
 
-import { askUser, askYesNo, askChoice } from '../utils/interactive-prompts.js';
+import { askUser, askYesNo, askChoice } from '../../utils/interactive-prompts.js';
 import { 
   databaseExists, 
   createDatabase, 
   deleteDatabase 
-} from '../cloudflare/ops.js';
+} from '../../cloudflare/ops.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 

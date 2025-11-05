@@ -71,12 +71,12 @@ export class ProgressManager {
    * @returns {ProgressManager} This instance for chaining
    */
   nextStep(stepName = null) {
+    this.currentStep++;
+    this.stepStartTime = Date.now();
+
     if (this.quiet) {
       return this;
     }
-
-    this.currentStep++;
-    this.stepStartTime = Date.now();
 
     const name = stepName || (this.steps[this.currentStep - 1] || `Step ${this.currentStep}`);
     const progress = this.totalSteps > 0 

@@ -4,7 +4,7 @@
  */
 
 import { featureManager, FEATURES } from '../config/FeatureManager.js';
-import { MigrationFactory } from './MigrationAdapters.js';
+import { MigrationFactory } from '../migration/MigrationAdapters.js';
 
 /**
  * Version Detection and Compatibility Manager
@@ -21,11 +21,45 @@ export class VersionDetector {
   }
 
   /**
+   * Detect current version on initialization
+   * @private
+   */
+  _detectCurrentVersion() {
+    try {
+      this.currentVersion = this._performVersionDetection();
+      if (this.currentVersion && this.currentVersion.version) {
+        // Parse version string to extract major, minor, patch
+        const versionParts = this.currentVersion.version.split('.').map(Number);
+        this.currentVersion.major = versionParts[0] || 0;
+        this.currentVersion.minor = versionParts[1] || 0;
+        this.currentVersion.patch = versionParts[2] || 0;
+      }
+    } catch (error) {
+      // If detection fails, set a default version
+      this.currentVersion = {
+        version: '1.0.0',
+        major: 1,
+        minor: 0,
+        patch: 0,
+        type: 'basic',
+        confidence: 0.5,
+        method: 'default',
+        features: ['basic']
+      };
+    }
+  }
+
+  /**
    * Detect the current framework version
    * @returns {Object} Version information
    */
   detectVersion() {
     if (this.currentVersion) {
+      // Ensure cache is set for consistency
+      const cacheKey = 'framework_version';
+      if (!this.detectionCache.has(cacheKey)) {
+        this.detectionCache.set(cacheKey, this.currentVersion);
+      }
       return this.currentVersion;
     }
 
@@ -35,6 +69,14 @@ export class VersionDetector {
     }
 
     const versionInfo = this._performVersionDetection();
+    if (versionInfo && versionInfo.version) {
+      // Parse version string to extract major, minor, patch
+      const versionParts = versionInfo.version.split('.').map(Number);
+      versionInfo.major = versionParts[0] || 0;
+      versionInfo.minor = versionParts[1] || 0;
+      versionInfo.patch = versionParts[2] || 0;
+    }
+    
     this.detectionCache.set(cacheKey, versionInfo);
     this.currentVersion = versionInfo;
 
@@ -187,14 +229,6 @@ export class VersionDetector {
       const key = `${rule.source}->${rule.target}`;
       this.compatibilityMatrix.set(key, rule);
     });
-  }
-
-  /**
-   * Detect current framework version
-   * @private
-   */
-  _detectCurrentVersion() {
-    this.currentVersion = this._performVersionDetection();
   }
 
   /**
@@ -763,6 +797,53 @@ export class VersionDetector {
       moduleManager: components.moduleManager,
       direct: true,
       version: version.version
+    };
+  }
+
+  /**
+   * Determine migration strategy
+   * @private
+   */
+  _determineMigrationStrategy(currentVersion, targetVersion, compatibility) {
+    if (!compatibility.compatible) {
+      return 'incompatible';
+    }
+    return compatibility.requiresAdapters ? 'adapter_based' : 'direct';
+  }
+
+  /**
+   * Generate migration phases
+   * @private
+   */
+  _generateMigrationPhases(currentVersion, targetVersion) {
+    return [
+      { phase: 'backup', description: 'Create backup of current configuration' },
+      { phase: 'adapters', description: 'Install compatibility adapters' },
+      { phase: 'migration', description: 'Migrate configuration and data' },
+      { phase: 'validation', description: 'Validate migration success' }
+    ];
+  }
+
+  /**
+   * Assess migration risks
+   * @private
+   */
+  _assessMigrationRisks(currentVersion, targetVersion) {
+    return [
+      { level: 'low', description: 'Data loss risk is minimal' },
+      { level: 'medium', description: 'Configuration changes may require manual review' }
+    ];
+  }
+
+  /**
+   * Estimate migration timeline
+   * @private
+   */
+  _estimateMigrationTimeline(currentVersion, targetVersion) {
+    return {
+      estimatedHours: 2,
+      complexity: 'low',
+      requiresDowntime: false
     };
   }
 }

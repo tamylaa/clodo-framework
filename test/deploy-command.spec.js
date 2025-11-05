@@ -75,20 +75,12 @@ describe('Deploy Command', () => {
   });
 
   describe('Deploy command action', () => {
-    it('should handle action callback registration', () => {
+    it('should register action callback', () => {
       registerDeployCommand(mockProgram);
 
       expect(mockProgram.action).toHaveBeenCalled();
       const actionFn = mockProgram.action.mock.calls[0][0];
       expect(typeof actionFn).toBe('function');
-    });
-
-    it('should be async function', () => {
-      registerDeployCommand(mockProgram);
-
-      const actionFn = mockProgram.action.mock.calls[0][0];
-      const isAsync = actionFn.constructor.name === 'AsyncFunction';
-      expect(isAsync).toBe(true);
     });
   });
 

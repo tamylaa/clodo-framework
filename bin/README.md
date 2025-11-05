@@ -199,3 +199,39 @@ When adding new functionality:
 4. **Shared CLI utils**: Add to `bin/shared/` (only if truly CLI-specific)
 
 Remember: `bin/` should be thin UI wrappers around the rich framework in `src/`.
+
+## Configuration System
+
+### Framework Configuration (`validation-config.json`)
+
+The framework includes a comprehensive configuration file at `config/validation-config.json` with:
+- **Timing settings**: Timeouts, retry delays, intervals
+- **Command definitions**: Platform-specific commands (wrangler, npm, etc.)
+- **Network endpoints**: API endpoints for validation
+- **Environment settings**: Production, staging, development presets
+
+### Service-Level Configuration (Optional)
+
+**Most services DON'T need their own config** - the framework provides sensible defaults.
+
+However, if you need to customize settings for your service:
+
+```bash
+# Initialize configuration in your service directory
+npx clodo-service init-config
+
+# This copies the framework's config to your service directory
+# Edit validation-config.json to customize
+```
+
+**When to use custom config:**
+- Custom timeout values for your specific use case
+- Additional service-specific endpoints to validate
+- Platform-specific command overrides
+- Environment-specific requirements
+
+**Config priority:**
+1. Service's `validation-config.json` (if exists)
+2. Framework's `config/validation-config.json` (bundled)
+3. Hardcoded defaults (fallback)
+

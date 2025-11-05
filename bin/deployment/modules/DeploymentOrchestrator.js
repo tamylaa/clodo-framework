@@ -10,7 +10,7 @@ import {
   runMigrations,
   checkHealth
 } from '../../shared/cloudflare/ops.js';
-import { WranglerDeployer } from '../../src/deployment/wrangler-deployer.js';
+import { WranglerDeployer } from '../../deployment/wrangler-deployer.js';
 import { DeploymentDatabaseManager } from '../../database/deployment-db-manager.js';
 import { DeploymentConfiguration } from './DeploymentConfiguration.js';
 

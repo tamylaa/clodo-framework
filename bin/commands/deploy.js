@@ -12,7 +12,8 @@
  */
 
 import chalk from 'chalk';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
+import { existsSync } from 'fs';
 import { ManifestLoader } from '../shared/config/manifest-loader.js';
 import { CloudflareServiceValidator } from '../shared/config/cloudflare-service-validator.js';
 import { DeploymentCredentialCollector } from '../shared/deployment/credential-collector.js';
@@ -37,6 +38,9 @@ export function registerDeployCommand(program) {
     .option('--zone-id <id>', 'Cloudflare zone ID')
     .option('--domain <domain>', 'Specific domain to deploy to (otherwise prompted if multiple exist)')
     .option('--environment <env>', 'Target environment (development, staging, production)', 'production')
+    .option('--development', 'Deploy to development environment (shorthand for --environment development)')
+    .option('--staging', 'Deploy to staging environment (shorthand for --environment staging)')
+    .option('--production', 'Deploy to production environment (shorthand for --environment production)')
     .option('--all-domains', 'Deploy to all configured domains (ignores --domain flag)')
     .option('--dry-run', 'Simulate deployment without making changes')
     .option('-y, --yes', 'Skip confirmation prompts (for CI/CD)')
@@ -48,6 +52,15 @@ export function registerDeployCommand(program) {
       try {
         const output = new (await import('../shared/utils/output-formatter.js')).OutputFormatter(options);
         const configLoader = new ConfigLoader({ verbose: options.verbose, quiet: options.quiet, json: options.json });
+
+        // Handle shorthand environment flags
+        if (options.development) {
+          options.environment = 'development';
+        } else if (options.staging) {
+          options.environment = 'staging';
+        } else if (options.production) {
+          options.environment = 'production';
+        }
 
         // Load config from file if specified
         let configFileData = {};
@@ -140,14 +153,22 @@ export function registerDeployCommand(program) {
           }).filter(d => d !== null);
         }
 
-        // If no domains in config, try to detect from environment
+        // If no domains in manifest but we have a selected zone from credentials, use that
+        if (detectedDomains.length === 0 && credentials.zoneName) {
+          detectedDomains = [credentials.zoneName];
+          if (!options.quiet) {
+            console.log(chalk.blue(`ℹ️  Using selected Cloudflare domain: ${credentials.zoneName}`));
+          }
+        }
+
+        // If still no domains and it's a detected CF service, use default
         if (detectedDomains.length === 0 && manifest._source === 'cloudflare-service-detected') {
           // For detected CF services, use default
           detectedDomains = ['workers.cloudflare.com'];
           if (!options.quiet) {
             console.log(chalk.blue(`ℹ️  No custom domains configured, using default: workers.cloudflare.com`));
           }
-        } else if (detectedDomains.length > 0 && !options.quiet) {
+        } else if (detectedDomains.length > 0 && !options.quiet && !credentials.zoneName) {
           console.log(chalk.blue(`ℹ️  Found ${detectedDomains.length} configured domain(s) in manifest`));
         }
 
@@ -259,6 +280,30 @@ export function registerDeployCommand(program) {
         // REFACTORED (Task 3.2): Direct orchestrator integration instead of external deployer
         console.log(chalk.cyan('\n⚙️  Initializing orchestration system...\n'));
 
+        // Determine wrangler config path based on selected domain/zone
+        // For multi-customer deployments, use customer-specific config if available
+        let wranglerConfigPath;
+        const configDir = join(servicePath, 'config');
+        
+        // Map domain to config file (customize this mapping for your setup)
+        if (selectedDomain === 'clodo.dev' || credentials.cloudflareSettings?.zoneName === 'clodo.dev') {
+          // Use config/wrangler.toml for clodo.dev domain
+          const clodoConfigPath = join(configDir, 'wrangler.toml');
+          if (existsSync(clodoConfigPath)) {
+            wranglerConfigPath = clodoConfigPath;
+            console.log(chalk.green(`✓ Using clodo.dev config: ${clodoConfigPath}`));
+          }
+        }
+        // Add more domain mappings as needed:
+        // else if (selectedDomain === 'customer2.com') {
+        //   wranglerConfigPath = path.join(configDir, 'customers', 'customer2-wrangler.toml');
+        // }
+        
+        // If no specific config found, use default (root wrangler.toml)
+        if (!wranglerConfigPath) {
+          console.log(chalk.yellow(`ℹ Using default wrangler.toml from service root`));
+        }
+
         const orchestrator = new MultiDomainOrchestrator({
           domains: [selectedDomain],
           environment: mergedOptions.environment || 'production',
@@ -266,8 +311,10 @@ export function registerDeployCommand(program) {
           skipTests: false,
           parallelDeployments: 1, // Single domain in this flow
           servicePath: servicePath,
-          cloudflareToken: credentials.token,
-          cloudflareAccountId: credentials.accountId,
+          serviceName: serviceName, // Pass service name for custom domain construction
+          wranglerConfigPath: wranglerConfigPath, // Pass custom config path if found
+          // Use cloudflareSettings object for complete zone-specific configuration
+          cloudflareSettings: credentials.cloudflareSettings,
           enablePersistence: !options.dryRun,
           rollbackEnabled: !options.dryRun,
           verbose: options.verbose
@@ -309,7 +356,11 @@ export function registerDeployCommand(program) {
         });
 
         // Step 9: Run post-deployment verification and health check
-        await runPostDeploymentVerification(serviceName, result, credentials, options);
+        await runPostDeploymentVerification(serviceName, result, credentials, {
+          ...options,
+          serviceName,
+          customDomain: selectedDomain !== 'workers.cloudflare.com' ? selectedDomain : null
+        });
 
         // Step 10: Display next steps
         displayNextSteps({

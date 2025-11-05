@@ -1,16 +1,21 @@
 export default {
   preset: null,
   testEnvironment: 'node',
-  setupFilesAfterEnv: [],
-  transform: {
-    '^.+\\.js$': 'babel-jest'
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
   },
-  // Transform all JS files, including those in node_modules if needed
+  moduleNameMapper: {
+    // Removed .js extension stripping for ES modules
+  },
+  transform: {
+    '^.+\\.js$': ['babel-jest', { presets: ['@babel/preset-env'] }],
+  },
   transformIgnorePatterns: [
-    'node_modules/(?!(@babel|@jest)/)'
+    'node_modules/(?!(@babel|@jest|uuid|chalk)/)'
   ],
-  // Only ignore node_modules, not test files
-  moduleNameMapper: {},
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleDirectories: ['node_modules', '<rootDir>'],
   forceExit: true,
   collectCoverageFrom: [
@@ -30,10 +35,8 @@ export default {
     '**/__tests__/**/*.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)'
   ],
-  // ESM-specific settings
   moduleFileExtensions: ['js', 'mjs', 'json'],
   testEnvironmentOptions: {
-    // Ensure Node.js ESM support
     customExportConditions: ['node']
   }
 };

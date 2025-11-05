@@ -52,7 +52,7 @@ export class FrameworkConfig {
     }
 
     // Return null instead of throwing - will use default config
-    console.warn('⚠️  validation-config.json not found. Using default configuration values.');
+    // Note: This is expected behavior - services don't need their own config
     return null;
   }
 
@@ -61,8 +61,8 @@ export class FrameworkConfig {
    */
   loadConfig() {
     // If no config file found, return default configuration
+    // This is normal - services use framework defaults unless they need custom settings
     if (!this.configPath) {
-      console.log('📋 Using default framework configuration');
       return this.getDefaultConfig();
     }
 

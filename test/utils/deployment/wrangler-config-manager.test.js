@@ -429,4 +429,212 @@ database_id = "test-id"
       ).rejects.toThrow();
     });
   });
+
+  describe('Customer Config Management', () => {
+    describe('getCustomerConfigPath', () => {
+      it('should generate correct path for zone name', () => {
+        manager = new WranglerConfigManager(testConfigPath);
+        
+        const path1 = manager.getCustomerConfigPath('clodo.dev');
+        expect(path1).toContain('config');
+        expect(path1).toContain('customers');
+        expect(path1).toContain('clodo');
+        expect(path1).toContain('wrangler.toml');
+        
+        const path2 = manager.getCustomerConfigPath('wetechfounders.com');
+        expect(path2).toContain('wetechfounders');
+      });
+
+      it('should handle zone names with multiple dots', () => {
+        manager = new WranglerConfigManager(testConfigPath);
+        
+        const configPath = manager.getCustomerConfigPath('api.example.co.uk');
+        expect(configPath).toContain('api');
+        expect(configPath).toContain('wrangler.toml');
+      });
+    });
+
+    describe('generateCustomerConfig', () => {
+      beforeEach(async () => {
+        // Create a base config to use as template
+        manager = new WranglerConfigManager(testConfigPath);
+        const baseConfig = {
+          name: 'testcorp-data-service',
+          main: 'src/worker/index.js',
+          compatibility_date: '2023-07-17',
+          account_id: 'old-account-id',
+          env: {
+            production: {
+              name: 'testcorp-data-service',
+              vars: {
+                SERVICE_DOMAIN: 'testcorp',
+                SERVICE_NAME: 'data-service'
+              }
+            },
+            staging: {
+              name: 'testcorp-data-service',
+              vars: {
+                SERVICE_DOMAIN: 'testcorp'
+              }
+            }
+          }
+        };
+        await manager.writeConfig(baseConfig);
+      });
+
+      it('should update account_id in customer config', async () => {
+        const customerPath = await manager.generateCustomerConfig('clodo.dev', {
+          accountId: 'new-account-123',
+          environment: 'production'
+        });
+        
+        expect(customerPath).toBeDefined();
+        expect(customerPath).toContain('clodo');
+        
+        // Verify the customer config was created with new account_id
+        const customerContent = await fs.readFile(customerPath, 'utf-8');
+        expect(customerContent).toContain('new-account-123');
+        expect(customerContent).not.toContain('old-account-id');
+      });
+
+      it('should update worker name with zone prefix', async () => {
+        const customerPath = await manager.generateCustomerConfig('clodo.dev', {
+          accountId: 'account-123',
+          environment: 'production'
+        });
+        
+        const customerContent = await fs.readFile(customerPath, 'utf-8');
+        
+        // Should replace testcorp- with clodo-
+        expect(customerContent).toContain('clodo-data-service');
+        expect(customerContent).not.toContain('testcorp-data-service');
+      });
+
+      it('should update SERVICE_DOMAIN environment variable', async () => {
+        const customerPath = await manager.generateCustomerConfig('clodo.dev', {
+          accountId: 'account-123',
+          environment: 'production'
+        });
+        
+        const customerContent = await fs.readFile(customerPath, 'utf-8');
+        
+        // SERVICE_DOMAIN should be updated to zone prefix
+        expect(customerContent).toContain('SERVICE_DOMAIN = "clodo"');
+        expect(customerContent).not.toContain('SERVICE_DOMAIN = "testcorp"');
+      });
+
+      it('should update all environment sections', async () => {
+        const customerPath = await manager.generateCustomerConfig('acme.com', {
+          accountId: 'account-456',
+          environment: 'production'
+        });
+        
+        const customerContent = await fs.readFile(customerPath, 'utf-8');
+        
+        // Both production and staging should be updated
+        expect(customerContent).toContain('acme-data-service');
+        expect(customerContent).toContain('SERVICE_DOMAIN = "acme"');
+        
+        // Count occurrences - should appear in multiple environments
+        const matches = customerContent.match(/acme-data-service/g);
+        expect(matches.length).toBeGreaterThan(1);
+      });
+
+      it('should create new customer config if none exists', async () => {
+        const newCustomerPath = await manager.generateCustomerConfig('newzone.dev', {
+          accountId: 'new-account-789',
+          environment: 'production'
+        });
+        
+        // Verify file was created
+        const exists = await fs.access(newCustomerPath).then(() => true).catch(() => false);
+        expect(exists).toBe(true);
+        
+        const content = await fs.readFile(newCustomerPath, 'utf-8');
+        expect(content).toContain('new-account-789');
+        expect(content).toContain('newzone-data-service');
+        expect(content).toContain('SERVICE_DOMAIN = "newzone"');
+      });
+
+      it('should handle zones with hyphens in name', async () => {
+        const customerPath = await manager.generateCustomerConfig('my-company.dev', {
+          accountId: 'account-123',
+          environment: 'production'
+        });
+        
+        const customerContent = await fs.readFile(customerPath, 'utf-8');
+        
+        // Should use first part before dot as prefix
+        expect(customerContent).toContain('my-company-data-service');
+        expect(customerContent).toContain('SERVICE_DOMAIN = "my-company"');
+      });
+
+      it('should throw error if zone name is missing', async () => {
+        await expect(
+          manager.generateCustomerConfig('', {
+            accountId: 'account-123'
+          })
+        ).rejects.toThrow('Zone name is required');
+      });
+    });
+
+    describe('copyCustomerConfig', () => {
+      it('should copy customer config to root', async () => {
+        manager = new WranglerConfigManager(testConfigPath);
+        
+        // Set up a base config first (to use as template)
+        const baseConfig = {
+          name: 'testcorp-data-service',
+          main: 'src/worker/index.js',
+          compatibility_date: '2023-07-17',
+          account_id: 'old-account-id',
+          env: {
+            production: {
+              name: 'testcorp-data-service',
+              vars: {
+                SERVICE_DOMAIN: 'testcorp',
+                SERVICE_NAME: 'data-service'
+              }
+            }
+          }
+        };
+        await manager.writeConfig(baseConfig);
+        
+        // Generate a customer config (will use base config as template)
+        const customerPath = await manager.generateCustomerConfig('clodo.dev', {
+          accountId: 'customer-account-id',
+          environment: 'production'
+        });
+        
+        // Copy to root
+        await manager.copyCustomerConfig(customerPath);
+        
+        // Verify root config now matches customer config
+        const rootContent = await fs.readFile(testConfigPath, 'utf-8');
+        const customerContent = await fs.readFile(customerPath, 'utf-8');
+        
+        expect(rootContent).toBe(customerContent);
+        expect(rootContent).toContain('customer-account-id');
+        expect(rootContent).toContain('clodo-data-service');
+      });
+
+      it('should throw error if customer config path is missing', async () => {
+        manager = new WranglerConfigManager(testConfigPath);
+        
+        await expect(
+          manager.copyCustomerConfig('')
+        ).rejects.toThrow('Customer config path is required');
+      });
+
+      it('should handle non-existent customer config gracefully', async () => {
+        manager = new WranglerConfigManager(testConfigPath);
+        
+        const nonExistentPath = path.join(testDir, 'does-not-exist.toml');
+        
+        await expect(
+          manager.copyCustomerConfig(nonExistentPath)
+        ).rejects.toThrow();
+      });
+    });
+  });
 });

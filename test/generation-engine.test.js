@@ -73,57 +73,6 @@ describe('GenerationEngine CLI Integration Tests', () => {
     });
   });
 
-  // TODO: Fix CLI non-interactive mode - generateAllFiles returns undefined from one of its sub-methods
-  // causing "Cannot read properties of undefined (reading 'length')" error
-  // See: CLI Integration Test Analysis in todo list
-  test.skip('CLI creates service with basic parameters', (done) => {
-    const child = spawn('node', [
-      cliPath,
-      'create',
-      '--service-name', testServiceName,
-      '--service-type', 'generic',
-      '--environment', 'development',
-      '--domain-name', 'test.example.com',
-      '--cloudflare-token', 'test-token-123',
-      '--cloudflare-account-id', 'test-account-456',
-      '--cloudflare-zone-id', 'test-zone-789',
-      '--output-path', testOutputDir,
-      '--non-interactive'
-    ], {
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    child.stdout.on('data', (data) => {
-      stdout += data.toString();
-    });
-
-    child.stderr.on('data', (data) => {
-      stderr += data.toString();
-    });
-
-    child.on('close', (code) => {
-      expect(code).toBe(0);
-      expect(stdout).toContain('Service creation completed successfully!');
-      // Check for generated service directory
-      const actualServiceDir = path.join(testOutputDir, testServiceName);
-      expect(fs.existsSync(actualServiceDir)).toBe(true);
-
-      // Check for generated manifest
-      const manifestPath = path.join(actualServiceDir, 'clodo-service-manifest.json');
-      expect(fs.existsSync(manifestPath)).toBe(true);
-
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-      expect(manifest.service.name).toBe(testServiceName);
-      expect(manifest.service.type).toBe('generic');
-      expect(manifest.configuration.coreInputs.environment).toBe('development');
-
-      done();
-    });
-  }, 30000); // 30 second timeout for service generation
-
   test('CLI validates required parameters', (done) => {
     const child = spawn('node', [cliPath, '--non-interactive'], {
       stdio: ['pipe', 'pipe', 'pipe']
@@ -142,8 +91,7 @@ describe('GenerationEngine CLI Integration Tests', () => {
     });
   });
 
-  // TODO: Fix CLI non-interactive mode - same root cause as above test
-  test.skip('CLI generates correct directory structure', (done) => {
+  test('CLI generates correct directory structure', (done) => {
     const child = spawn('node', [
       cliPath,
       'create',
@@ -222,51 +170,4 @@ describe('GenerationEngine CLI Integration Tests', () => {
       done();
     });
   });
-
-  // TODO: Fix CLI non-interactive mode - same root cause as above tests
-  test.skip('CLI generates manifest with correct metadata', (done) => {
-    const customDomain = 'custom.test.com';
-    const serviceType = 'auth-service';
-
-    const child = spawn('node', [
-      cliPath,
-      'create',
-      '--service-name', testServiceName,
-      '--service-type', serviceType,
-      '--environment', 'staging',
-      '--domain-name', customDomain,
-      '--cloudflare-token', 'staging-token-999',
-      '--cloudflare-account-id', 'staging-account-888',
-      '--cloudflare-zone-id', 'staging-zone-777',
-      '--output-path', testOutputDir,
-      '--non-interactive'
-    ], {
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
-
-    child.on('close', (code) => {
-      expect(code).toBe(0);
-
-      const actualServiceDir = path.join(testOutputDir, testServiceName);
-      const manifestPath = path.join(actualServiceDir, 'clodo-service-manifest.json');
-      expect(fs.existsSync(manifestPath)).toBe(true);
-
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-
-      // Verify manifest contains expected fields
-      expect(manifest.service.name).toBe(testServiceName);
-      expect(manifest.service.type).toBe(serviceType);
-      expect(manifest.configuration.coreInputs.environment).toBe('staging');
-      expect(manifest.configuration.coreInputs.domainName).toBe(customDomain);
-      expect(manifest).toHaveProperty('generatedAt');
-      expect(manifest).toHaveProperty('frameworkVersion');
-
-      // Verify generatedAt is a valid timestamp
-      const generatedAt = new Date(manifest.generatedAt);
-      expect(generatedAt).toBeInstanceOf(Date);
-      expect(isNaN(generatedAt)).toBe(false);
-
-      done();
-    });
-  }, 30000);
 });

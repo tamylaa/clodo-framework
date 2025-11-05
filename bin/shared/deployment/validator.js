@@ -11,8 +11,15 @@ import { access, readFile } from 'fs/promises';
 import { readFileSync } from 'fs';
 import { promisify } from 'util';
 import { exec } from 'child_process';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { getCommandConfig } from '../config/command-config-manager.js';
+
+// Get the directory of this module (framework's bin directory)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+// Navigate up to framework root, then to config directory
+const FRAMEWORK_CONFIG_PATH = join(__dirname, '../../../config/validation-config.json');
 
 const execAsync = promisify(exec);
 
@@ -61,6 +68,7 @@ export class DeploymentValidator {
     const configPath = join(process.cwd(), 'validation-config.json');
     
     try {
+      // First try to load from service directory
       const configData = readFileSync(configPath, 'utf-8');
       const userConfig = JSON.parse(configData);
       
@@ -93,18 +101,42 @@ export class DeploymentValidator {
       return defaultConfig;
       
     } catch (error) {
-      // Fall back to defaults if file doesn't exist or is invalid
-      console.log('📋 Using default validation config (validation-config.json not found or invalid)');
-      return {
-        requiredCommands: Object.keys(this.cmdConfig?.config?.requiredCommands || {}) || ['npx', 'node', 'npm', 'wrangler'],
-        requiredFiles: ['package.json', 'wrangler.toml'],
-        requiredEnvironmentVars: [],
-        networkEndpoints: [
-          'https://api.cloudflare.com',
-          'https://registry.npmjs.org'
-        ],
-        expectedEndpoints: this.getExpectedEndpoints()
-      };
+      // If service config not found, try framework's internal config
+      try {
+        const frameworkConfigData = readFileSync(FRAMEWORK_CONFIG_PATH, 'utf-8');
+        const frameworkConfig = JSON.parse(frameworkConfigData);
+        
+        // Extract relevant parts for validation
+        const defaultConfig = {
+          requiredCommands: Object.values(frameworkConfig.commands?.required || {}) || ['npx', 'node', 'npm', 'wrangler'],
+          requiredFiles: ['package.json', 'wrangler.toml'],
+          requiredEnvironmentVars: [],
+          networkEndpoints: Object.values(frameworkConfig.networking?.endpoints || {}),
+          expectedEndpoints: this.getExpectedEndpoints(),
+          // Include timing and other framework config
+          timing: frameworkConfig.timing,
+          networking: frameworkConfig.networking,
+          caching: frameworkConfig.caching,
+          environments: frameworkConfig.environments
+        };
+
+        console.log('📋 Loaded validation config from framework defaults');
+        return defaultConfig;
+        
+      } catch (frameworkError) {
+        // If neither exists, use hardcoded defaults
+        console.log('📋 Using minimal validation config (no config files found)');
+        return {
+          requiredCommands: Object.keys(this.cmdConfig?.config?.requiredCommands || {}) || ['npx', 'node', 'npm', 'wrangler'],
+          requiredFiles: ['package.json', 'wrangler.toml'],
+          requiredEnvironmentVars: [],
+          networkEndpoints: [
+            'https://api.cloudflare.com',
+            'https://registry.npmjs.org'
+          ],
+          expectedEndpoints: this.getExpectedEndpoints()
+        };
+      }
     }
   }
 
