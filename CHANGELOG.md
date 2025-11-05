@@ -1,3 +1,12 @@
+## [3.1.22](https://github.com/tamylaa/clodo-framework/compare/v3.1.21...v3.1.22) (2025-11-05)
+
+
+### Bug Fixes
+
+* clarify bin/ is private CLI implementation, not public API ([a092d30](https://github.com/tamylaa/clodo-framework/commit/a092d30c9c9c72f0bcb9d6b132175b4a6d6ce0bf))
+* Separate clodo-enterprise: remove enterprise code/docs, fix imports, update README ([58aabff](https://github.com/tamylaa/clodo-framework/commit/58aabff0b0fa193cd2acf37027e43a872fccd8f2))
+* wire helpers to shared infra and fix CloudflareAPI import casing ([7d0b27f](https://github.com/tamylaa/clodo-framework/commit/7d0b27f8dbd0a82f01d52a4d00324ab72507ab30))
+
 ## [3.1.21](https://github.com/tamylaa/clodo-framework/compare/v3.1.20...v3.1.21) (2025-10-28)
 
 
