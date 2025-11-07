@@ -33,7 +33,7 @@ const RULES = {
   },
   'src/utils/formatters.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../lib/shared/utils/Formatters.js',
+    shouldContain: '../../lib/shared/utils/formatters.js',
     description: 'formatters re-export wrapper (works from both src/ and dist/)'
   },
   'src/utils/logger.js': {
