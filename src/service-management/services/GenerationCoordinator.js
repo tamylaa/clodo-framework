@@ -213,3 +213,4 @@ export class GenerationCoordinator {
     return files;
   }
 }
+

@@ -4,7 +4,7 @@
  * Tests: loading, validation, merging, env substitution, safe loading, and error handling
  */
 
-import { ConfigLoader } from '../../../bin/shared/utils/config-loader.js';
+import { ConfigLoader } from '../../../lib/shared/utils/config-loader.js';
 import { writeFileSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';

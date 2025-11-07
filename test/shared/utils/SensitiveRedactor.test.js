@@ -4,7 +4,7 @@
  * Tests: redactSensitiveInfo, redactSensitiveObject
  */
 
-import { redactSensitiveInfo, redactSensitiveObject } from '../../../bin/shared/utils/sensitive-redactor.js';
+import { redactSensitiveInfo, redactSensitiveObject } from '../../../lib/shared/utils/sensitive-redactor.js';
 
 describe('Sensitive Redactor Utilities', () => {
   describe('redactSensitiveInfo', () => {

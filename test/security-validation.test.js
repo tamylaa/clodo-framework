@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Security Validation Unit Tests - Critical External Security Methods
  *
  * Tests the security validation methods that prevent insecure configurations

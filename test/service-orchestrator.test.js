@@ -10,7 +10,7 @@ import path from 'path';
 import fs from 'fs';
 
 describe('ServiceOrchestrator Integration', () => {
-  const cliPath = path.join(process.cwd(), 'bin', 'clodo-service.js');
+  const cliPath = path.join(process.cwd(), 'cli', 'clodo-service.js');
   const testOutputDir = path.join(process.cwd(), 'test-output');
 
   beforeAll(() => {

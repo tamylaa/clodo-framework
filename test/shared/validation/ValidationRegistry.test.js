@@ -3,7 +3,7 @@
  * Tests validation rules, custom validators, and edge cases
  */
 
-import { ValidationRegistry } from '../../../bin/shared/validation/ValidationRegistry.js';
+import { ValidationRegistry } from '../../../lib/shared/validation/ValidationRegistry.js';
 import { describe, test, expect } from '@jest/globals';
 
 describe('ValidationRegistry Utility', () => {

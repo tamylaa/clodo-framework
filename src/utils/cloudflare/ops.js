@@ -24,4 +24,5 @@ export {
   executeSql,
   getDatabaseId,
   validatePrerequisites
-} from '../../bin/shared/cloudflare/ops.js';
+} from '../../../lib/shared/cloudflare/ops.js';
+

@@ -18,7 +18,7 @@ import ErrorHandler, {
   createErrorResponse,
   createContextualError,
   createErrorHandler
-} from '../../../bin/shared/utils/ErrorHandler.js';
+} from '../../../lib/shared/utils/ErrorHandler.js';
 
 describe('ErrorHandler - Unified Error Handling Module', () => {
   // Note: Jest globals (describe, test, expect, jest) are automatically available

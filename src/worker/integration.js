@@ -1,4 +1,4 @@
-import { COMMON_FEATURES, ConfigurationManager } from '../../bin/shared/config/ConfigurationManager.js';
+import { COMMON_FEATURES, ConfigurationManager } from '../../lib/shared/config/ConfigurationManager.js';
 import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js';
 
 // Create a singleton instance of ConfigurationManager for use in integration

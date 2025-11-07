@@ -15,7 +15,7 @@ jest.doMock('../../src/config/domains.js', () => ({
 }));
 
 // Import from consolidated ConfigurationManager instead of deleted features.js
-import { COMMON_FEATURES } from '../../bin/shared/config/ConfigurationManager.js';
+import { COMMON_FEATURES } from '../../lib/shared/config/ConfigurationManager.js';
 const featureManager = mockFeatureManager;
 
 import {

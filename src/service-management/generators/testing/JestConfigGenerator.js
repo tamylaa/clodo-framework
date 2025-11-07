@@ -69,3 +69,4 @@ export default {
     return true; // Always generate Jest config
   }
 }
+

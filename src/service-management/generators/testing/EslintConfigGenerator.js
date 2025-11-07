@@ -82,3 +82,4 @@ export class EslintConfigGenerator extends BaseGenerator {
     return true; // Always generate ESLint config
   }
 }
+

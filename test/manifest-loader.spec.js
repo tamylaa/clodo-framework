@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { ManifestLoader } from '../bin/shared/config/manifest-loader.js';
+import { ManifestLoader } from '../lib/shared/config/manifest-loader.js';
 import { writeFileSync, mkdirSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';

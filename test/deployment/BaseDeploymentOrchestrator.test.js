@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { BaseDeploymentOrchestrator, DEPLOYMENT_PHASES, PHASE_SEQUENCE } from '../../bin/deployment/orchestration/BaseDeploymentOrchestrator.js';
+import { BaseDeploymentOrchestrator, DEPLOYMENT_PHASES, PHASE_SEQUENCE } from '../../lib/deployment/orchestration/BaseDeploymentOrchestrator.js';
 
 /**
  * Concrete test implementation of BaseDeploymentOrchestrator

@@ -4,7 +4,7 @@
  */
 
 export { ServiceCreator, createService } from './ServiceCreator.js';
-export { ServiceInitializer, initializeService } from './ServiceInitializer.js';
+export { ServiceOrchestrator } from './ServiceOrchestrator.js';
 
 // Assessment capabilities moved to @tamyla/clodo-orchestration
 // - AssessmentCache

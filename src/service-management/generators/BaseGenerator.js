@@ -235,3 +235,4 @@ export class BaseGenerator {
 }
 
 export default BaseGenerator;
+

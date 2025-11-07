@@ -5,7 +5,7 @@
  * into the deployment systems and eliminates scattered environment option definitions.
  */
 
-import { EnvironmentManager } from '../../bin/deployment/modules/EnvironmentManager.js';
+import { EnvironmentManager } from '../../lib/deployment/modules/EnvironmentManager.js';
 
 describe('Phase 3.3.5d: EnvironmentManager Integration', () => {
   

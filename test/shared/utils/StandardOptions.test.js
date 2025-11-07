@@ -3,7 +3,7 @@
  * Tests all CLI option definitions, validation logic, and Command.js integration
  */
 
-import { StandardOptions } from '../../../bin/shared/utils/cli-options.js';
+import { StandardOptions } from '../../../lib/shared/utils/cli-options.js';
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { Command } from 'commander';
 

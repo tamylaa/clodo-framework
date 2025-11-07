@@ -3,7 +3,7 @@
  * Tests all output formatting methods, flag combinations, and edge cases
  */
 
-import { OutputFormatter } from '../../../bin/shared/utils/output-formatter.js';
+import { OutputFormatter } from '../../../lib/shared/utils/output-formatter.js';
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import chalk from 'chalk';
 

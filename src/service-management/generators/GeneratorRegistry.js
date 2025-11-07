@@ -258,3 +258,4 @@ export class GeneratorRegistry {
 }
 
 export default GeneratorRegistry;
+

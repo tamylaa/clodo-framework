@@ -3,7 +3,7 @@
  * Tests all file operation methods, error handling, and edge cases
  */
 
-import { FileManager } from '../../../bin/shared/utils/file-manager.js';
+import { FileManager } from '../../../lib/shared/utils/file-manager.js';
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { mkdirSync, rmSync, writeFileSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';

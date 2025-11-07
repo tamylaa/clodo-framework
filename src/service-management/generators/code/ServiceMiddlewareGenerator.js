@@ -113,3 +113,4 @@ export function createServiceMiddleware(serviceConfig, env) {
     return true; // Always generate middleware
   }
 }
+

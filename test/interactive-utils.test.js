@@ -3,7 +3,7 @@
  * Tests the enhanced interactive base improvements without requiring user input
  */
 
-import { DeploymentInteractiveUtils } from '../bin/shared/utils/interactive-utils.js';
+import { DeploymentInteractiveUtils } from '../lib/shared/utils/interactive-utils.js';
 
 describe('Enhanced Interactive Utils', () => {
   let deployUtils;
@@ -80,7 +80,7 @@ describe('Interactive Utils Integration', () => {
       DeploymentInteractiveUtils,
       startProgress,
       closePrompts 
-    } = await import('../bin/shared/utils/interactive-utils.js');
+    } = await import('../lib/shared/utils/interactive-utils.js');
 
     expect(typeof askUser).toBe('function');
     expect(typeof askYesNo).toBe('function');
@@ -91,7 +91,7 @@ describe('Interactive Utils Integration', () => {
   });
 
   test('should handle progress tracking initialization', async () => {
-    const { startProgress, closePrompts } = await import('../bin/shared/utils/interactive-utils.js');
+    const { startProgress, closePrompts } = await import('../lib/shared/utils/interactive-utils.js');
     
     const progressTracker = startProgress(3, 'Test Progress');
     expect(progressTracker).toBeDefined();

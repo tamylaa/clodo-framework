@@ -3,9 +3,9 @@
  * Tests all progress tracking methods, step management, and output integration
  */
 
-import { ProgressManager } from '../../../bin/shared/utils/progress-manager.js';
+import { ProgressManager } from '../../../lib/shared/utils/progress-manager.js';
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { OutputFormatter } from '../../../bin/shared/utils/output-formatter.js';
+import { OutputFormatter } from '../../../lib/shared/utils/output-formatter.js';
 
 describe('ProgressManager Utility', () => {
   let progressManager;

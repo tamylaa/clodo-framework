@@ -35,8 +35,8 @@ describe('CLODO Framework Deployment & Security Features v3.0.3', () => {
 
   test('should validate error handler structure', () => {
     // Test that the error handler has the expected methods
-    // Updated to use consolidated location in bin/shared/utils
-    const errorHandlerPath = path.join(process.cwd(), 'bin', 'shared', 'utils', 'ErrorHandler.js');
+    // Updated to use consolidated location in lib/shared/utils
+    const errorHandlerPath = path.join(process.cwd(), 'lib', 'shared', 'utils', 'ErrorHandler.js');
     const content = fs.readFileSync(errorHandlerPath, 'utf8');
 
     // Should contain the methods that were demonstrated

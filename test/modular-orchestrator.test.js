@@ -1,4 +1,4 @@
-﻿import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { MultiDomainOrchestrator } from '../src/orchestration/multi-domain-orchestrator.js';
 
 describe('Modular MultiDomainOrchestrator', () => {

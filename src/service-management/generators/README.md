@@ -14,10 +14,11 @@ generators/
 ├── config/         # Environment and configuration file generators
 ├── code/           # Code generation (schemas, handlers, middleware, utils)
 ├── scripts/        # Script generators (deploy, setup, health-check)
-├── tests/          # Test file generators (unit, integration, jest config)
-├── docs/           # Documentation generators (README, API docs, deployment docs)
-├── ci/             # CI/CD workflow generators (GitHub Actions, etc.)
+├── testing/        # Test file generators (unit, integration, jest config)
+├── documentation/  # Documentation generators (README, API docs, deployment docs)
+├── cicd/           # CI/CD workflow generators (GitHub Actions, etc.)
 ├── service-types/  # Service-type specific generators (data, auth, content, etc.)
+├── tooling/        # Tooling generators (.gitignore, docker-compose, etc.)
 └── utils/          # Shared utilities (TemplateEngine, FileWriter, PathResolver)
 ```
 

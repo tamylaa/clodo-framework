@@ -236,3 +236,4 @@ describe('${confirmedValues.displayName} - Integration Tests', () => {
     return true; // Always generate integration tests
   }
 }
+

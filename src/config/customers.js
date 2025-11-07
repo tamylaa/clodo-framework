@@ -659,3 +659,4 @@ export const showCustomerConfig = (customer, env) =>
 
 export const getCustomerDeployCommand = (customer, env) =>
   customerConfigManager.getDeployCommand(customer, env);
+

@@ -74,8 +74,8 @@ describe('UI Structures Validation', () => {
       const data = JSON.parse(content);
 
       // Test that it has some structure (either template or metadata)
-      const hasTemplate = data.hasOwnProperty('template');
-      const hasMetadata = data.hasOwnProperty('metadata');
+      const hasTemplate = Object.hasOwn(data, 'template');
+      const hasMetadata = Object.hasOwn(data, 'metadata');
       expect(hasTemplate || hasMetadata).toBe(true);
     });
   });

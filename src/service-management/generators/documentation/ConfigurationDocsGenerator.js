@@ -294,3 +294,4 @@ wrangler dev --dry-run
     return true; // Always generate configuration documentation
   }
 }
+

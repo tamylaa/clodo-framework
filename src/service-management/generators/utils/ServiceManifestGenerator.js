@@ -111,3 +111,4 @@ export class ServiceManifestGenerator {
     return Math.abs(hash).toString(16);
   }
 }
+

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { CloudflareServiceValidator } from '../bin/shared/config/cloudflare-service-validator.js';
+import { CloudflareServiceValidator } from '../lib/shared/config/cloudflare-service-validator.js';
 import { writeFileSync, mkdirSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';

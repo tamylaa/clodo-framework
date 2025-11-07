@@ -142,3 +142,4 @@ export class SiteConfigGenerator extends BaseGenerator {
 }
 
 export default SiteConfigGenerator;
+

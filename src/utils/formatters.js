@@ -5,4 +5,5 @@
  * Gets compiled to dist/ for published package.
  */
 
-export { NameFormatters } from '../bin/shared/utils/Formatters.js';
+export { NameFormatters } from '../../lib/shared/utils/formatters.js';
+

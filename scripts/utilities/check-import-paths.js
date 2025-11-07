@@ -22,40 +22,40 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../../');
 
 const RULES = {
-  // Re-export wrappers in src/utils/ need correct paths based on NESTING DEPTH
-  // After compilation to dist/, the relative path depends on how deep the file is
+  // Re-export wrappers in src/utils/ need correct paths that work from src/ AND dist/
+  // Since both src/ and dist/ are at the same level relative to lib/, use ../../lib/
   
-  // Files at dist/utils/X.js (2 levels: dist/utils/) use '../bin/...'
+  // Files at src/utils/X.js and dist/utils/X.js (both 2 levels deep) use '../../lib/...'
   'src/utils/file-manager.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../bin/shared/utils/file-manager.js',
-    description: 'file-manager re-export wrapper (depth: dist/utils/)'
+    shouldContain: '../../lib/shared/utils/file-manager.js',
+    description: 'file-manager re-export wrapper (works from both src/ and dist/)'
   },
   'src/utils/formatters.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../bin/shared/utils/Formatters.js',
-    description: 'formatters re-export wrapper (depth: dist/utils/)'
+    shouldContain: '../../lib/shared/utils/Formatters.js',
+    description: 'formatters re-export wrapper (works from both src/ and dist/)'
   },
   'src/utils/logger.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../bin/shared/logging/Logger.js',
-    description: 'logger re-export wrapper (depth: dist/utils/)'
+    shouldContain: '../../lib/shared/logging/Logger.js',
+    description: 'logger re-export wrapper (works from both src/ and dist/)'
   },
   
-  // Files at dist/utils/cloudflare/X.js (3 levels: dist/utils/cloudflare/) use '../../bin/...'
+  // Files at src/utils/cloudflare/X.js and dist/utils/cloudflare/X.js (both 3 levels deep) use '../../../lib/...'
   'src/utils/cloudflare/ops.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../bin/shared/cloudflare/ops.js',
-    description: 'cloudflare ops re-export wrapper (depth: dist/utils/cloudflare/)'
+    shouldContain: '../../../lib/shared/cloudflare/ops.js',
+    description: 'cloudflare ops re-export wrapper (works from both src/ and dist/)'
   }
 };
 
 // Check for problematic dynamic imports that reference dist/ from bin/
 const DYNAMIC_IMPORT_CHECKS = {
-  'bin/shared/cloudflare/ops.js': {
+  'lib/shared/cloudflare/ops.js': {
     pattern: /import\(['"]([^'"]*dist[^'"]*)['"]\)/g,
     shouldNotContain: 'dist/',
-    description: 'Dynamic imports in bin/ must not reference dist/ (causes dist/dist/ bug)'
+    description: 'Dynamic imports in lib/ must not reference dist/ (causes dist/dist/ bug)'
   }
 };
 
@@ -144,16 +144,27 @@ for (const file of distFiles) {
   }
 }
 
-// Check dist/bin/ exists
-console.log('\n📂 Verifying bin/ was compiled to dist/bin/...\n');
+// Check dist/cli/ and dist/lib/ exist
+console.log('\n📂 Verifying cli/ and lib/ were compiled to dist/...\n');
 
-const binPath = path.join(projectRoot, 'dist/bin');
-if (!fs.existsSync(binPath)) {
-  console.log(`❌ MISSING: dist/bin/ directory`);
+const cliPath = path.join(projectRoot, 'dist/cli');
+const libPath = path.join(projectRoot, 'dist/lib');
+
+if (!fs.existsSync(cliPath)) {
+  console.log(`❌ MISSING: dist/cli/ directory`);
   failCount++;
-  failures.push('dist/bin/ directory not found - bin/ not compiled');
+  failures.push('dist/cli/ directory not found - cli/ not compiled');
 } else {
-  console.log(`✅ EXISTS: dist/bin/ directory\n`);
+  console.log(`✅ EXISTS: dist/cli/ directory`);
+  passCount++;
+}
+
+if (!fs.existsSync(libPath)) {
+  console.log(`❌ MISSING: dist/lib/ directory`);
+  failCount++;
+  failures.push('dist/lib/ directory not found - lib/ not compiled');
+} else {
+  console.log(`✅ EXISTS: dist/lib/ directory\n`);
   passCount++;
 }
 

@@ -131,9 +131,9 @@ DOCUMENTATION_URL=https://docs.example.com
     
     let fullCommand;
     if (mainCommand === 'clodo-security') {
-      fullCommand = `node "${this.localPackagePath}/dist/bin/security/security-cli.js" ${args}`;
+      fullCommand = `node "${this.localPackagePath}/dist/cli/security-cli.js" ${args}`;
     } else if (mainCommand === 'clodo-service') {
-      fullCommand = `node "${this.localPackagePath}/dist/bin/clodo-service.js" ${args}`;
+      fullCommand = `node "${this.localPackagePath}/dist/cli/clodo-service.js" ${args}`;
     } else if (mainCommand === 'clodo-create-service') {
       fullCommand = `node "${this.localPackagePath}/dist/bin/commands/create.js" ${args}`;
     } else {

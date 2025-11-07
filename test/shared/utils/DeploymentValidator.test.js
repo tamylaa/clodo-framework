@@ -5,7 +5,7 @@
  */
 
 import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { validateDeploymentPrerequisites, validateDeploymentInputs } from '../../../bin/shared/utils/deployment-validator.js';
+import { validateDeploymentPrerequisites, validateDeploymentInputs } from '../../../lib/shared/utils/deployment-validator.js';
 
 describe('Deployment Validator Utilities', () => {
   let consoleSpy;

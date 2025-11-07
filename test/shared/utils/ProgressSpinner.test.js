@@ -5,7 +5,7 @@
  */
 
 import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import { showProgressSpinner, showProgressWithSpinner } from '../../../bin/shared/utils/progress-spinner.js';
+import { showProgressSpinner, showProgressWithSpinner } from '../../../lib/shared/utils/progress-spinner.js';
 
 describe('Progress Spinner Utilities', () => {
   let originalStdout;

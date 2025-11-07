@@ -3,7 +3,7 @@
  * Tests for unified configuration management
  */
 
-import { ConfigurationManager, configManager, isFeatureEnabled, getEnabledFeatures, withFeature, FEATURES, COMMON_FEATURES } from '../../../bin/shared/config/ConfigurationManager.js';
+import { ConfigurationManager, configManager, isFeatureEnabled, getEnabledFeatures, withFeature, FEATURES, COMMON_FEATURES } from '../../../lib/shared/config/ConfigurationManager.js';
 
 describe('ConfigurationManager', () => {
   describe('Feature Flag Management', () => {

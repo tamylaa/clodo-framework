@@ -3,7 +3,7 @@
  * Comprehensive test suite for domain routing, auto-detection, and multi-domain deployments
  */
 
-import { DomainRouter } from '../../../bin/shared/routing/domain-router.js';
+import { DomainRouter } from '../../../lib/shared/routing/domain-router.js';
 import { writeFileSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';

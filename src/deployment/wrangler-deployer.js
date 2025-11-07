@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { WranglerD1Manager } from '../../bin/database/wrangler-d1-manager.js';
+import { WranglerD1Manager } from '../../lib/database/wrangler-d1-manager.js';
 
 /**
  * WranglerDeployer - Executes actual Cloudflare Workers deployments using wrangler CLI

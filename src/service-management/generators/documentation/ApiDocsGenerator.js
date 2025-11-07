@@ -334,3 +334,4 @@ Get service information and capabilities.
     return true; // Always generate API documentation
   }
 }
+

@@ -5,7 +5,7 @@
  * from all 3 deployment systems without compromising functionality.
  */
 
-import { UnifiedDeploymentOrchestrator, CAPABILITY_DEFINITIONS } from '../../bin/deployment/orchestration/UnifiedDeploymentOrchestrator.js';
+import { UnifiedDeploymentOrchestrator, CAPABILITY_DEFINITIONS } from '../../lib/deployment/orchestration/UnifiedDeploymentOrchestrator.js';
 
 describe('Phase 3.3.5e: Unified Deployment Orchestration', () => {
   

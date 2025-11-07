@@ -13,13 +13,13 @@ const mockCreateDatabase = jest.fn();
 const mockDeleteDatabase = jest.fn();
 const mockExec = jest.fn();
 
-await jest.unstable_mockModule('../../../bin/shared/utils/interactive-prompts.js', () => ({
+await jest.unstable_mockModule('../../../lib/shared/utils/interactive-prompts.js', () => ({
   askUser: mockAskUser,
   askYesNo: mockAskYesNo,
   askChoice: mockAskChoice
 }));
 
-await jest.unstable_mockModule('../../../bin/shared/cloudflare/ops.js', () => ({
+await jest.unstable_mockModule('../../../lib/shared/cloudflare/ops.js', () => ({
   databaseExists: mockDatabaseExists,
   createDatabase: mockCreateDatabase,
   deleteDatabase: mockDeleteDatabase
@@ -30,7 +30,7 @@ await jest.unstable_mockModule('child_process', () => ({
 }));
 
 // Import after mocking
-const { InteractiveDatabaseWorkflow } = await import('../../../bin/shared/deployment/workflows/interactive-database-workflow.js');
+const { InteractiveDatabaseWorkflow } = await import('../../../lib/shared/deployment/workflows/interactive-database-workflow.js');
 
 // Re-export the mocks for use in tests
 export { mockAskUser, mockAskYesNo, mockAskChoice, mockDatabaseExists, mockCreateDatabase, mockDeleteDatabase, mockExec };

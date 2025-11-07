@@ -9,7 +9,7 @@ import {
   ResourceFormatters,
   EnvironmentFormatters,
   VersionFormatters
-} from '../../../bin/shared/utils/Formatters.js';
+} from '../../../lib/shared/utils/formatters.js';
 import { describe, test, expect } from '@jest/globals';
 
 describe('Formatters Utility', () => {

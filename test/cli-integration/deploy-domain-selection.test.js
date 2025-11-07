@@ -18,7 +18,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { DomainRouter } from '../../bin/shared/routing/domain-router.js';
+import { DomainRouter } from '../../lib/shared/routing/domain-router.js';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';

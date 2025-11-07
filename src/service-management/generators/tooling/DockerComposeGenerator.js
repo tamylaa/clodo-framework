@@ -68,3 +68,4 @@ services:
     return true; // Always generate docker-compose.yml
   }
 }
+

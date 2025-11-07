@@ -5,9 +5,9 @@
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import { SingleServiceOrchestrator } from '../../bin/deployment/orchestration/SingleServiceOrchestrator.js';
-import { PortfolioOrchestrator } from '../../bin/deployment/orchestration/PortfolioOrchestrator.js';
-import { EnterpriseOrchestrator } from '../../bin/deployment/orchestration/EnterpriseOrchestrator.js';
+import { SingleServiceOrchestrator } from '../../lib/deployment/orchestration/SingleServiceOrchestrator.js';
+import { PortfolioOrchestrator } from '../../lib/deployment/orchestration/PortfolioOrchestrator.js';
+import { EnterpriseOrchestrator } from '../../lib/deployment/orchestration/EnterpriseOrchestrator.js';
 
 describe('Orchestrator Subclasses', () => {
   describe('SingleServiceOrchestrator', () => {
@@ -210,131 +210,22 @@ describe('Orchestrator Subclasses', () => {
   });
 
   describe('EnterpriseOrchestrator', () => {
-    let orchestrator;
-
-    beforeEach(() => {
-      orchestrator = new EnterpriseOrchestrator({
-        deploymentId: 'enterprise-deploy-001',
-        config: {
-          domain: 'enterprise.com',
-          environment: 'production',
-          complianceLevel: 'sox',
-          enableDisasterRecovery: true,
-          enableHighAvailability: true
-        }
-      });
+    it('should throw error for enterprise features in basic package', () => {
+      expect(() => {
+        new EnterpriseOrchestrator({
+          deploymentId: 'enterprise-deploy-001',
+          config: {
+            domain: 'enterprise.com',
+            environment: 'production'
+          }
+        });
+      }).toThrow('Enterprise deployment features are not available in the basic clodo-framework package');
     });
 
-    it('should initialize with correct type', () => {
-      expect(orchestrator.orchestratorType).toBe('enterprise');
-    });
-
-    it('should have compliance configuration', () => {
-      expect(orchestrator.complianceLevel).toBe('sox');
-      expect(orchestrator.enableHA).toBe(true);
-      expect(orchestrator.enableDR).toBe(true);
-    });
-
-    it('should complete full deployment pipeline', async () => {
-      const result = await orchestrator.execute();
-
-      expect(result.stats.completed).toBe(6);
-      expect(result.stats.failed).toBe(0);
-      expect(result.stats.successRate).toBe(100);
-    });
-
-    it('should initialize enterprise environment', async () => {
-      await orchestrator.execute();
-
-      const initResult = orchestrator.getPhaseResult('initialization');
-      expect(initResult.result.status).toBe('initialized');
-      expect(initResult.result.complianceLevel).toBe('sox');
-      expect(initResult.result.capabilities.highAvailability).toBe(true);
-      expect(initResult.result.capabilities.disasterRecovery).toBe(true);
-    });
-
-    it('should perform security and compliance validation', async () => {
-      await orchestrator.execute();
-
-      const valResult = orchestrator.getPhaseResult('validation');
-      expect(valResult.result.status).toBe('validated');
-      expect(valResult.result.securityChecks).toBeDefined();
-      expect(valResult.result.complianceChecks).toBeDefined();
-      expect(valResult.result.securityChecks.length).toBeGreaterThan(0);
-      expect(valResult.result.complianceChecks.length).toBeGreaterThan(0);
-    });
-
-    it('should prepare enterprise resources with redundancy', async () => {
-      await orchestrator.execute();
-
-      const prepResult = orchestrator.getPhaseResult('preparation');
-      expect(prepResult.result.status).toBe('prepared');
-      expect(prepResult.result.resources.primary).toBeDefined();
-      expect(prepResult.result.resources.secondary).toBeDefined();
-      expect(prepResult.result.resources.drSite).toBeDefined();
-    });
-
-    it('should deploy with multi-region setup', async () => {
-      await orchestrator.execute();
-
-      const deployResult = orchestrator.getPhaseResult('deployment');
-      expect(deployResult.result.status).toBe('deployed');
-      expect(deployResult.result.primaryDeployment).toBeDefined();
-      expect(deployResult.result.secondaryDeployment).toBeDefined();
-      expect(deployResult.result.drDeployment).toBeDefined();
-      expect(deployResult.result.globalLoadBalancer).toBeDefined();
-    });
-
-    it('should verify multi-region deployment', async () => {
-      await orchestrator.execute();
-
-      const verifyResult = orchestrator.getPhaseResult('verification');
-      expect(verifyResult.result.status).toBe('verified');
-      expect(verifyResult.result.primaryHealth).toBeDefined();
-      expect(verifyResult.result.secondaryHealth).toBeDefined();
-      expect(verifyResult.result.drVerification).toBeDefined();
-      expect(verifyResult.result.globalHealth).toBeDefined();
-    });
-
-    it('should setup enterprise monitoring', async () => {
-      await orchestrator.execute();
-
-      const monResult = orchestrator.getPhaseResult('monitoring');
-      expect(monResult.result.status).toBe('monitoring_enabled');
-      expect(monResult.result.monitoringTiers).toBeDefined();
-      expect(monResult.result.dashboards.length).toBeGreaterThan(5);
-      expect(monResult.result.features.anomalyDetection).toBe(true);
-      expect(monResult.result.features.complianceReporting).toBe(true);
-    });
-
-    it('should provide compliance status', async () => {
-      await orchestrator.execute();
-
-      const complianceStatus = orchestrator.getComplianceStatus();
-      expect(complianceStatus.complianceLevel).toBe('sox');
-      expect(complianceStatus.allChecksPassed).toBe(true);
-    });
-
-    it('should provide correct metadata', () => {
-      const metadata = orchestrator.getMetadata();
-
-      expect(metadata.type).toBe('enterprise');
-      expect(metadata.deploymentType).toBe('enterprise');
-      expect(metadata.complianceLevel).toBe('sox');
-      expect(metadata.capabilities).toContain('multi-region');
-      expect(metadata.capabilities).toContain('disaster-recovery');
-      expect(metadata.specialFeatures).toContain('compliance-automation');
-    });
-
-    it('should have enterprise SLA', () => {
-      const metadata = orchestrator.getMetadata();
-      expect(metadata.sla.availability).toBe('99.99%');
-      expect(metadata.sla.supportLevel).toBe('24/7');
-    });
-
-    it('should have longer deployment time', () => {
-      const metadata = orchestrator.getMetadata();
-      expect(metadata.averageDeploymentTime).toContain('10-20 minutes');
+    it('should throw error when accessed without enterprise package', () => {
+      expect(() => {
+        new EnterpriseOrchestrator();
+      }).toThrow(/enterprise package/);
     });
   });
 
@@ -346,41 +237,31 @@ describe('Orchestrator Subclasses', () => {
       const portfolio = new PortfolioOrchestrator({
         config: { domains: ['a.com', 'b.com'], environment: 'production' }
       });
-      const enterprise = new EnterpriseOrchestrator({
-        config: { domain: 'ent.com', environment: 'production' }
-      });
 
       const singleResult = await single.execute();
       const portfolioResult = await portfolio.execute();
-      const enterpriseResult = await enterprise.execute();
 
       expect(singleResult.stats.completed).toBe(6);
       expect(portfolioResult.stats.completed).toBe(6);
-      expect(enterpriseResult.stats.completed).toBe(6);
     });
 
     it('should have different metadata', () => {
       const single = new SingleServiceOrchestrator();
       const portfolio = new PortfolioOrchestrator();
-      const enterprise = new EnterpriseOrchestrator();
 
       const singleMeta = single.getMetadata();
       const portfolioMeta = portfolio.getMetadata();
-      const enterpriseMeta = enterprise.getMetadata();
 
       expect(singleMeta.type).toBe('single-service');
       expect(portfolioMeta.type).toBe('portfolio');
-      expect(enterpriseMeta.type).toBe('enterprise');
 
       expect(singleMeta.capabilities.length).toBeLessThan(portfolioMeta.capabilities.length);
-      expect(portfolioMeta.capabilities.length).toBeLessThan(enterpriseMeta.capabilities.length);
     });
 
     it('should follow same phase pipeline', async () => {
       const orchestrators = [
         new SingleServiceOrchestrator({ config: { domain: 'a.com' } }),
-        new PortfolioOrchestrator({ config: { domains: ['a.com'] } }),
-        new EnterpriseOrchestrator({ config: { domain: 'a.com' } })
+        new PortfolioOrchestrator({ config: { domains: ['a.com'] } })
       ];
 
       for (const orch of orchestrators) {
@@ -393,6 +274,12 @@ describe('Orchestrator Subclasses', () => {
         expect(Object.keys(result.phases)).toContain('verification');
         expect(Object.keys(result.phases)).toContain('monitoring');
       }
+    });
+
+    it('should throw error for enterprise orchestrator in basic package', () => {
+      expect(() => {
+        new EnterpriseOrchestrator({ config: { domain: 'ent.com' } });
+      }).toThrow('Enterprise deployment features are not available in the basic clodo-framework package');
     });
   });
 });

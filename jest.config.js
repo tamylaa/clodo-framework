@@ -16,7 +16,7 @@ export default {
     'node_modules/(?!(@babel|@jest|uuid|chalk)/)'
   ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  moduleDirectories: ['node_modules', '<rootDir>'],
+  moduleDirectories: ['node_modules', '<rootDir>', '<rootDir>/lib'],
   forceExit: true,
   collectCoverageFrom: [
     'src/**/*.{js,ts}',

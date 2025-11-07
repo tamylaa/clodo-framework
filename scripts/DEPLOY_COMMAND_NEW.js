@@ -1,4 +1,8 @@
 // Deploy command - Smart minimal input for service projects only
+import { program } from 'commander';
+import chalk from 'chalk';
+import { join } from 'path';
+
 program
   .command('deploy')
   .description('Deploy a Clodo Framework service to Cloudflare Workers')

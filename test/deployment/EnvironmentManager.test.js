@@ -3,7 +3,7 @@
  * Tests for consolidated environment setup from enterprise-deploy.js and master-deploy.js
  */
 
-import { EnvironmentManager } from '../../bin/deployment/modules/EnvironmentManager.js';
+import { EnvironmentManager } from '../../lib/deployment/modules/EnvironmentManager.js';
 
 describe('EnvironmentManager - Consolidation Tests', () => {
   let manager;

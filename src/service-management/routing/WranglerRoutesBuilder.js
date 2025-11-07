@@ -305,3 +305,4 @@ export class WranglerRoutesBuilder {
     return config.trim() + '\n';
   }
 }
+

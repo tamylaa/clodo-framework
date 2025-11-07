@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/clodo-framework",
-  "version": "3.1.21",
+  "version": "3.1.22",
   "description": "Reusable framework for Clodo-style software architecture on Cloudflare Workers + D1",
   "type": "module",
   "sideEffects": [
@@ -42,23 +42,15 @@
     "./modules/security": "./dist/modules/security.js"
   },
   "bin": {
-    "clodo-service": "./dist/bin/clodo-service.js",
-    "clodo-security": "./dist/bin/security/security-cli.js"
+    "clodo-service": "./dist/cli/clodo-service.js",
+    "clodo-security": "./dist/cli/security-cli.js"
   },
   "publishConfig": {
     "access": "public"
   },
   "files": [
-    "dist/!(bin)",
-    "dist/bin/clodo-service.js",
-    "dist/bin/commands/deploy.js",
-    "dist/bin/commands/validate.js",
-    "dist/bin/commands/helpers/",
-    "dist/bin/shared/",
-    "dist/bin/security/",
-    "dist/bin/service-management/",
-    "dist/security/",
-    "dist/utils/",
+    "dist/",
+    "!dist/internal/",
     "types",
     "templates",
     "ui-structures",
@@ -71,8 +63,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run prebuild && babel src/ --out-dir dist/ && babel bin/ --out-dir dist/bin/ --ignore 'bin/**/*.test.js' && node -e \"const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true}); fs.cpSync('config', 'dist/config', {recursive: true});\" && npm run postbuild",
-    "build:ci": "npm run prebuild:ci && babel src/ --out-dir dist/ && babel bin/ --out-dir dist/bin/ --ignore 'bin/**/*.test.js' && node -e \"const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true}); fs.cpSync('config', 'dist/config', {recursive: true});\" && npm run postbuild",
+    "build": "npm run prebuild && babel src/ --out-dir dist/ && babel cli/ --out-dir dist/cli/ --ignore 'cli/**/*.test.js' && babel lib/ --out-dir dist/lib/ --ignore 'lib/**/*.test.js' && node -e \"const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true}); fs.cpSync('config', 'dist/config', {recursive: true});\" && npm run postbuild",
+    "build:ci": "npm run prebuild:ci && babel src/ --out-dir dist/ && babel cli/ --out-dir dist/cli/ --ignore 'cli/**/*.test.js' && babel lib/ --out-dir dist/lib/ --ignore 'lib/**/*.test.js' && node -e \"const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true}); fs.cpSync('config', 'dist/config', {recursive: true});\" && npm run postbuild",
     "prebuild": "npm run clean && npm run type-check",
     "prebuild:ci": "npm run clean && npm run type-check",
     "postbuild": "npm run check:bundle && npm run check:imports && node scripts/utilities/fix-dist-imports.js",

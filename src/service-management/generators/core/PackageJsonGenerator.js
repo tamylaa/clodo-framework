@@ -259,3 +259,4 @@ export class PackageJsonGenerator extends BaseGenerator {
 }
 
 export default PackageJsonGenerator;
+

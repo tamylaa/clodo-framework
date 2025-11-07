@@ -28,12 +28,7 @@ describe('GenericDataService', () => {
     const service = new GenericDataService(mockD1Client, 'test');
     
     // Test missing required field
-    try {
-      await service.create({ email: 'test@example.com' }); // Missing required 'name'
-      fail('Expected validation error for missing name');
-    } catch (error) {
-      expect(error.message).toContain('name');
-    }
+    await expect(service.create({ email: 'test@example.com' })).rejects.toThrow('name');
   });
 
   test('should create service successfully with valid data', async () => {

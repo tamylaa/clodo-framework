@@ -3,7 +3,7 @@
  */
 
 import { jest } from '@jest/globals';
-import { D1ErrorRecoveryManager } from '../../../bin/shared/deployment/utilities/d1-error-recovery.js';
+import { D1ErrorRecoveryManager } from '../../../lib/shared/deployment/utilities/d1-error-recovery.js';
 
 // Mock WranglerDeployer
 const mockHandleD1BindingError = jest.fn();

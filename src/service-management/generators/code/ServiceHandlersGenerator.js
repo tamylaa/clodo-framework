@@ -232,3 +232,4 @@ export function createServiceHandlers(serviceConfig, env) {
     return true; // Always generate handlers
   }
 }
+

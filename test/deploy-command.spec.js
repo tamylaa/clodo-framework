@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { registerDeployCommand } from '../bin/commands/deploy.js';
+import { registerDeployCommand } from '../cli/commands/deploy.js';
 import { writeFileSync, mkdirSync, rmSync, existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';

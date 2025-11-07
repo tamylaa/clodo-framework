@@ -3,7 +3,7 @@
  * Tests all logging methods, error handling, and edge cases
  */
 
-import { logger } from '../../../bin/shared/logging/Logger.js';
+import { logger } from '../../../lib/shared/logging/Logger.js';
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { mkdirSync, rmSync } from 'fs';
 import { join } from 'path';

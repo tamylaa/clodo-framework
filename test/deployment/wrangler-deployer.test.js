@@ -43,7 +43,7 @@ jest.unstable_mockModule('path', () => ({
   basename: jest.fn()
 }));
 
-jest.unstable_mockModule('../../bin/database/wrangler-d1-manager.js', () => ({
+jest.unstable_mockModule('../../lib/database/wrangler-d1-manager.js', () => ({
   WranglerD1Manager: class MockWranglerD1Manager {
     constructor(options) {
       mockWranglerD1ManagerConstructor(options);

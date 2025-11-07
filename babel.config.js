@@ -15,4 +15,4 @@
     '@babel/plugin-syntax-import-meta',
     '@babel/plugin-syntax-top-level-await'
   ]
-};;
+};

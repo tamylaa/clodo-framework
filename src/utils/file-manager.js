@@ -5,4 +5,5 @@
  * Gets compiled to dist/ for published package.
  */
 
-export { FileManager } from '../bin/shared/utils/file-manager.js';
+export { FileManager } from '../../lib/shared/utils/file-manager.js';
+

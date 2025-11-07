@@ -1223,3 +1223,4 @@ export async function discoverConfig(domain, cloudflareToken) {
   const cache = new ConfigurationCacheManager({ enableRuntimeDiscovery: true });
   return cache.discoverDomainConfiguration(domain, { cloudflareToken });
 }
+
