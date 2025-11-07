@@ -1,3 +1,11 @@
+## [3.1.23](https://github.com/tamylaa/clodo-framework/compare/v3.1.22...v3.1.23) (2025-11-07)
+
+
+### Bug Fixes
+
+* Complete framework evolution from promise to production-ready reality ([3341508](https://github.com/tamylaa/clodo-framework/commit/33415083e0f8c81267831b4d295b181e3aef3758))
+* Correct import path validation for formatters.js ([763a137](https://github.com/tamylaa/clodo-framework/commit/763a137b5cff4845fc6335dec2fa9357e1c141c5))
+
 ## [3.1.22](https://github.com/tamylaa/clodo-framework/compare/v3.1.21...v3.1.22) (2025-11-05)
 
 
