@@ -13,7 +13,7 @@ import path from 'path';
 const __dirname = path.resolve();
 
 describe('GenerationEngine CLI Integration Tests', () => {
-  const cliPath = path.join(__dirname, 'dist', 'cli', 'clodo-service.js');
+  const cliPath = path.join(__dirname, 'cli', 'clodo-service.js');
   const testServiceName = 'test-service-integration';
   const testOutputDir = path.join(__dirname, 'test-output', testServiceName);
 
@@ -91,10 +91,10 @@ describe('GenerationEngine CLI Integration Tests', () => {
     });
   });
 
-  // NOTE: CLI service creation is not implemented - use ServiceOrchestrator API instead
+  // NOTE: CLI service creation is tested here using the source CLI
   // Service creation is tested in e2e-test/e2e-test.js
 
-  test.skip('CLI generates correct directory structure', (done) => {
+  test('CLI generates correct directory structure', (done) => {
     const child = spawn('node', [
       cliPath,
       'create',
@@ -144,7 +144,7 @@ describe('GenerationEngine CLI Integration Tests', () => {
     });
   }, 30000);
 
-  test.skip('CLI handles invalid service type', (done) => {
+  test('CLI handles invalid service type', (done) => {
     const child = spawn('node', [
       cliPath,
       'create',

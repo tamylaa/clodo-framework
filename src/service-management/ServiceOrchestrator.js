@@ -18,6 +18,7 @@ import { ValidationHandler } from './handlers/ValidationHandler.js';
 import { ErrorTracker } from './ErrorTracker.js';
 import chalk from 'chalk';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 import path from 'path';
 
 export class ServiceOrchestrator {
@@ -101,8 +102,20 @@ export class ServiceOrchestrator {
   /**
    * Validate an existing service configuration
    */
-  async validateService(servicePath) {
-    return await this.validationHandler.validateService(servicePath);
+  async validateService(servicePath, options = {}) {
+    // Create ValidationHandler with custom config if provided
+    const validationHandler = options.customConfig 
+      ? new ValidationHandler({ customConfig: options.customConfig })
+      : this.validationHandler;
+    
+    const result = await validationHandler.validateService(servicePath);
+
+    // Export report if requested
+    if (options.exportReport) {
+      await this.exportValidationReport(result, options.exportReport);
+    }
+
+    return result;
   }
 
   /**
@@ -565,6 +578,12 @@ export class ServiceOrchestrator {
    * Export diagnostic report
    */
   async exportDiagnosticReport(diagnosis, filePath) {
+    // Ensure directory exists
+    const dir = path.dirname(filePath);
+    if (!fsSync.existsSync(dir)) {
+      fsSync.mkdirSync(dir, { recursive: true });
+    }
+
     const report = {
       timestamp: new Date().toISOString(),
       serviceName: diagnosis.serviceName,
@@ -576,6 +595,30 @@ export class ServiceOrchestrator {
       errors: diagnosis.errors,
       warnings: diagnosis.warnings,
       recommendations: diagnosis.recommendations
+    };
+
+    await fs.writeFile(filePath, JSON.stringify(report, null, 2), 'utf8');
+  }
+
+  /**
+   * Export validation report
+   */
+  async exportValidationReport(validation, filePath) {
+    // Ensure directory exists
+    const dir = path.dirname(filePath);
+    if (!fsSync.existsSync(dir)) {
+      fsSync.mkdirSync(dir, { recursive: true });
+    }
+
+    const report = {
+      timestamp: new Date().toISOString(),
+      servicePath: validation.servicePath || 'unknown',
+      valid: validation.valid,
+      summary: {
+        issues: validation.issues ? validation.issues.length : 0
+      },
+      issues: validation.issues || [],
+      valid: validation.valid
     };
 
     await fs.writeFile(filePath, JSON.stringify(report, null, 2), 'utf8');

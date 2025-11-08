@@ -3,9 +3,10 @@
  */
 
 import chalk from 'chalk';
+import path from 'path';
 import { ServiceOrchestrator } from '../../src/service-management/ServiceOrchestrator.js';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
-import { ConfigLoader } from '../../lib/shared/utils/config-loader.js';
+import { ServiceConfigManager } from '../../lib/shared/utils/service-config-manager.js';
 
 export function registerUpdateCommand(program) {
   const command = program
@@ -22,30 +23,59 @@ export function registerUpdateCommand(program) {
     .option('--regenerate-configs', 'Regenerate all configuration files')
     .option('--fix-errors', 'Attempt to fix common configuration errors')
     .option('--preview', 'Show what would be changed without applying')
+    .option('--show-config-sources', 'Display all configuration sources and merged result')
     .option('--force', 'Skip confirmation prompts')
   
   // Add standard options (--verbose, --quiet, --json, --no-color, --config-file)
   StandardOptions.define(command)
     .action(async (servicePath, options) => {
       try {
-        const output = new (await import('../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
-        const configLoader = new ConfigLoader({ verbose: options.verbose, quiet: options.quiet, json: options.json });
-
-        // Load config from file if specified
-        let configFileData = {};
-        if (options.configFile) {
-          configFileData = configLoader.loadSafe(options.configFile, {});
-          if (options.verbose && !options.quiet) {
-            output.info(`Loaded configuration from: ${options.configFile}`);
-          }
-        }
-
-        // Merge config file defaults with CLI options (CLI takes precedence)
-        const mergedOptions = configLoader.merge(configFileData, options);
+        const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
+        const configManager = new ServiceConfigManager({
+          verbose: options.verbose,
+          quiet: options.quiet,
+          json: options.json,
+          showSources: options.showConfigSources
+        });
 
         const orchestrator = new ServiceOrchestrator();
 
         // Auto-detect service path if not provided
+        if (!servicePath) {
+          servicePath = await orchestrator.detectServicePath();
+          if (!servicePath) {
+            output.error('No service path provided and could not auto-detect service directory');
+            process.exit(1);
+          }
+        }
+
+        // Validate service path with better error handling
+        try {
+          servicePath = await configManager.validateServicePath(servicePath, orchestrator);
+        } catch (error) {
+          output.error(error.message);
+          if (error.suggestions) {
+            output.info('Suggestions:');
+            output.list(error.suggestions);
+          }
+          process.exit(1);
+        }
+
+        // Load and merge all configurations
+        const mergedOptions = await configManager.loadServiceConfig(servicePath, options, {
+          interactive: false,
+          domainName: null,
+          cloudflareToken: null,
+          cloudflareAccountId: null,
+          cloudflareZoneId: null,
+          environment: null,
+          addFeature: null,
+          removeFeature: null,
+          regenerateConfigs: false,
+          fixErrors: false,
+          preview: false,
+          force: false
+        });
         if (!servicePath) {
           servicePath = await orchestrator.detectServicePath();
           if (!servicePath) {
@@ -57,7 +87,7 @@ export function registerUpdateCommand(program) {
         }
 
         // Validate it's a service directory
-        const isValid = await orchestrator.validateService(servicePath);
+        const isValid = await orchestrator.validateService(servicePath, { customConfig: mergedOptions });
         if (!isValid.valid) {
           output.warning('Service has configuration issues. Use --fix-errors to attempt automatic fixes.');
           if (!mergedOptions.fixErrors) {
@@ -76,7 +106,7 @@ export function registerUpdateCommand(program) {
         output.success('Service update completed successfully!');
 
       } catch (error) {
-        const output = new (await import('../lib/shared/utils/output-formatter.js')).OutputFormatter(options || {});
+        const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options || {});
         output.error(`Service update failed: ${error.message}`);
         if (error.details) {
           output.warning(`Details: ${error.details}`);

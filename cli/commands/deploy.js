@@ -19,6 +19,7 @@ import { CloudflareServiceValidator } from '../../lib/shared/config/cloudflare-s
 import { DeploymentCredentialCollector } from '../../lib/shared/deployment/credential-collector.js';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
 import { ConfigLoader } from '../../lib/shared/utils/config-loader.js';
+import { ServiceConfigManager } from '../../lib/shared/utils/service-config-manager.js';
 import { DomainRouter } from '../../lib/shared/routing/domain-router.js';
 import { MultiDomainOrchestrator } from '../../src/orchestration/multi-domain-orchestrator.js';
 
@@ -45,12 +46,13 @@ export function registerDeployCommand(program) {
     .option('--dry-run', 'Simulate deployment without making changes')
     .option('-y, --yes', 'Skip confirmation prompts (for CI/CD)')
     .option('--service-path <path>', 'Path to service directory', '.')
+    .option('--show-config-sources', 'Display all configuration sources and merged result')
   
   // Add standard options (--verbose, --quiet, --json, --no-color, --config-file)
   StandardOptions.define(command)
     .action(async (options) => {
       try {
-        const output = new (await import('../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
+        const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
         const configLoader = new ConfigLoader({ verbose: options.verbose, quiet: options.quiet, json: options.json });
 
         // Handle shorthand environment flags
@@ -71,16 +73,37 @@ export function registerDeployCommand(program) {
           }
         }
 
-        // Substitute environment variables in config
-        configFileData = configLoader.substituteEnvironmentVariables(configFileData);
+        // Use ServiceConfigManager for standardized config loading
+        const configManager = new ServiceConfigManager({
+          verbose: options.verbose,
+          quiet: options.quiet,
+          json: options.json,
+          showSources: options.showConfigSources
+        });
 
-        // Merge config file defaults with CLI options (CLI takes precedence)
-        const mergedOptions = configLoader.merge(configFileData, options);
+        // For deploy command, we use current directory as service path
+        const deployServicePath = resolve(options.servicePath || '.');
+
+        // Load and merge all configurations
+        const mergedOptions = await configManager.loadServiceConfig(deployServicePath, {
+          ...options,
+          configFile: options.configFile // Pass through the config file option
+        }, {
+          token: null,
+          accountId: null,
+          zoneId: null,
+          domain: null,
+          environment: 'production',
+          allDomains: false,
+          dryRun: false,
+          yes: false,
+          servicePath: '.'
+        });
 
         output.info('🚀 Clodo Service Deployment');
 
         // Step 1: Load and validate service configuration
-        const servicePath = resolve(mergedOptions.servicePath || '.');
+        const servicePath = resolve(mergedOptions.servicePath || deployServicePath);
         const serviceConfig = await ManifestLoader.loadAndValidateCloudflareService(servicePath);
 
         if (!serviceConfig.manifest) {

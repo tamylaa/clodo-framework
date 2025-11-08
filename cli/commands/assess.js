@@ -4,8 +4,10 @@
  */
 
 import chalk from 'chalk';
+import path from 'path';
+import { ServiceOrchestrator } from '../../src/service-management/ServiceOrchestrator.js';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
-import { ConfigLoader } from '../../lib/shared/utils/config-loader.js';
+import { ServiceConfigManager } from '../../lib/shared/utils/service-config-manager.js';
 
 export function registerAssessCommand(program) {
   const command = program
@@ -15,28 +17,44 @@ export function registerAssessCommand(program) {
     .option('--domain <domain>', 'Domain name for assessment')
     .option('--service-type <type>', 'Service type for assessment')
     .option('--token <token>', 'Cloudflare API token')
+    .option('--show-config-sources', 'Display all configuration sources and merged result')
   
   // Add standard options (--verbose, --quiet, --json, --no-color, --config-file)
   StandardOptions.define(command)
     .action(async (servicePath, options) => {
       try {
-        const output = new (await import('../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
-        const configLoader = new ConfigLoader({ verbose: options.verbose, quiet: options.quiet, json: options.json });
+        const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
+        const configManager = new ServiceConfigManager({
+          verbose: options.verbose,
+          quiet: options.quiet,
+          json: options.json,
+          showSources: options.showConfigSources
+        });
 
-        // Load config from file if specified
-        let configFileData = {};
-        if (options.configFile) {
-          configFileData = configLoader.loadSafe(options.configFile, {});
-          if (options.verbose && !options.quiet) {
-            output.info(`Loaded configuration from: ${options.configFile}`);
+        const orchestrator = new ServiceOrchestrator();
+        const targetPath = servicePath || process.cwd();
+
+        // Validate service path with better error handling
+        try {
+          servicePath = await configManager.validateServicePath(targetPath, orchestrator);
+        } catch (error) {
+          output.error(error.message);
+          if (error.suggestions) {
+            output.info('Suggestions:');
+            output.list(error.suggestions);
           }
+          process.exit(1);
         }
 
-        // Substitute environment variables
-        configFileData = configLoader.substituteEnvironmentVariables(configFileData);
+        // Load and merge all configurations
+        const mergedOptions = await configManager.loadServiceConfig(servicePath, options, {
+          export: null,
+          domain: null,
+          serviceType: null,
+          token: null
+        });
 
-        // Merge config file defaults with CLI options (CLI takes precedence)
-        const mergedOptions = configLoader.merge(configFileData, options);
+        let assessment; // Declare here so it's available in the entire scope
 
         // Try to load professional orchestration package
         let orchestrationModule;
@@ -49,9 +67,6 @@ export function registerAssessCommand(program) {
           output.info('💡 Using basic assessment capabilities');
           output.info('💡 For advanced assessment: npm install @tamyla/clodo-orchestration');
         }
-
-        let assessment;
-        const targetPath = servicePath || process.cwd();
         
         if (hasEnterprisePackage) {
           output.section('Professional Capability Assessment');
@@ -131,7 +146,7 @@ export function registerAssessCommand(program) {
         }
 
       } catch (error) {
-        const output = new (await import('../lib/shared/utils/output-formatter.js')).OutputFormatter(options || {});
+        const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options || {});
         output.error(`Assessment failed: ${error.message}`);
         if (process.env.DEBUG) {
           output.debug(error.stack);

@@ -9,6 +9,34 @@ import path from 'path';
 export class ValidationHandler {
   constructor(options = {}) {
     this.strict = options.strict || false;
+    this.customConfig = options.customConfig || {};
+    
+    // Use custom validation config if provided, otherwise use defaults
+    this.validationConfig = {
+      requiredFiles: this.customConfig.requiredFiles || [
+        'package.json',
+        'src/config/domains.js',
+        'src/worker/index.js',
+        'wrangler.toml'
+      ],
+      optionalFiles: this.customConfig.optionalFiles || [
+        'README.md',
+        'LICENSE',
+        '.gitignore'
+      ],
+      requiredFields: this.customConfig.requiredFields || {
+        'package.json': ['name', 'version', 'type', 'main'],
+        'wrangler.toml': ['name', 'main', 'compatibility_date']
+      },
+      serviceTypes: this.customConfig.serviceTypes || [
+        'data-service',
+        'auth-service',
+        'content-service',
+        'api-gateway',
+        'static-site',
+        'generic'
+      ]
+    };
   }
 
   /**
@@ -17,15 +45,8 @@ export class ValidationHandler {
   async validateService(servicePath) {
     const issues = [];
 
-    // Check for required files
-    const requiredFiles = [
-      'package.json',
-      'src/config/domains.js',
-      'src/worker/index.js',
-      'wrangler.toml'
-    ];
-
-    for (const file of requiredFiles) {
+    // Check for required files using custom config
+    for (const file of this.validationConfig.requiredFiles) {
       const filePath = path.join(servicePath, file);
       try {
         await fs.access(filePath);
@@ -63,13 +84,13 @@ export class ValidationHandler {
     try {
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
 
-      if (!packageJson.name) {
-        issues.push('package.json: Missing name field');
-      }
-
-      if (!packageJson.version) {
-        issues.push('package.json: Missing version field');
-      }
+      // Check custom required fields for package.json
+      const requiredPackageFields = this.validationConfig.requiredFields['package.json'] || ['name', 'version'];
+      requiredPackageFields.forEach(field => {
+        if (!packageJson[field]) {
+          issues.push(`package.json: Missing required field: ${field}`);
+        }
+      });
 
       if (!packageJson.type || packageJson.type !== 'module') {
         issues.push('package.json: Should use "type": "module" for ES modules');
