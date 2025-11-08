@@ -1,3 +1,11 @@
+## [3.1.24](https://github.com/tamylaa/clodo-framework/compare/v3.1.23...v3.1.24) (2025-11-08)
+
+
+### Bug Fixes
+
+* Add comprehensive framework assessment and strategic evolution plan ([bed4108](https://github.com/tamylaa/clodo-framework/commit/bed41085c253e025bd065e507296efe261616652))
+* resolve linting error and enhance CI pipeline ([ece5b5a](https://github.com/tamylaa/clodo-framework/commit/ece5b5aa7232bc990b1d85d3e53ccf7e2d215c98))
+
 ## [3.1.23](https://github.com/tamylaa/clodo-framework/compare/v3.1.22...v3.1.23) (2025-11-07)
 
 
