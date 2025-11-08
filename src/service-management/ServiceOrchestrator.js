@@ -617,8 +617,7 @@ export class ServiceOrchestrator {
       summary: {
         issues: validation.issues ? validation.issues.length : 0
       },
-      issues: validation.issues || [],
-      valid: validation.valid
+      issues: validation.issues || []
     };
 
     await fs.writeFile(filePath, JSON.stringify(report, null, 2), 'utf8');

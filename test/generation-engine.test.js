@@ -13,7 +13,7 @@ import path from 'path';
 const __dirname = path.resolve();
 
 describe('GenerationEngine CLI Integration Tests', () => {
-  const cliPath = path.join(__dirname, 'cli', 'clodo-service.js');
+  const cliPath = path.join(process.cwd(), 'cli', 'clodo-service.js');
   const testServiceName = 'test-service-integration';
   const testOutputDir = path.join(__dirname, 'test-output', testServiceName);
 

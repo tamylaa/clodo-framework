@@ -40,6 +40,30 @@ jobs:
         run: npm run test:ci
         continue-on-error: true
 
+  cli-integration-tests:
+    name: CLI Integration Tests
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build:ci
+
+      - name: Run full test suite (including CLI integration)
+        run: npm test
+        continue-on-error: true
+
   release:
     name: Release
     runs-on: ubuntu-latest
