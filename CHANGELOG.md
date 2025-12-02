@@ -1,3 +1,10 @@
+## [3.1.25](https://github.com/tamylaa/clodo-framework/compare/v3.1.24...v3.1.25) (2025-12-02)
+
+
+### Bug Fixes
+
+* correct all import paths and add prevention documentation ([dbd3ce6](https://github.com/tamylaa/clodo-framework/commit/dbd3ce6d6b3ceceb9aa839358923c6096c762ceb))
+
 ## [3.1.24](https://github.com/tamylaa/clodo-framework/compare/v3.1.23...v3.1.24) (2025-11-08)
 
 
