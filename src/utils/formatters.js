@@ -8,5 +8,5 @@
  * correctly resolves to dist/lib/ in npm packages.
  */
 
-export { NameFormatters } from '../lib/shared/utils/formatters.js';
+export { NameFormatters, UrlFormatters, ResourceFormatters } from '../lib/shared/utils/formatters.js';
 

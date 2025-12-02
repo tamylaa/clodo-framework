@@ -34,7 +34,7 @@
 import { createInterface } from 'readline';
 import chalk from 'chalk';
 import { validateServiceName, validateDomainName } from '../utils/validation.js';
-import { NameFormatters, UrlFormatters, ResourceFormatters } from '../lib/shared/utils/formatters.js';
+import { NameFormatters, UrlFormatters, ResourceFormatters } from '../utils/formatters.js';
 
 export class ConfirmationEngine {
   constructor(options = {}) {

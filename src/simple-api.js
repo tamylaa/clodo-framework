@@ -8,7 +8,6 @@
 import { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
 import { MultiDomainOrchestrator } from './orchestration/multi-domain-orchestrator.js';
 import { initializeService } from './worker/integration.js';
-import { ConfigurationManager } from './lib/shared/config/ConfigurationManager.js';
 
 /**
  * Simple API for Clodo Framework
