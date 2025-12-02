@@ -17,7 +17,8 @@ try {
   const configPath = join(__dirname, '..', '..', 'config', 'validation-config.json');
   validationConfig = JSON.parse(readFileSync(configPath, 'utf-8'));
 } catch (error) {
-  console.warn('⚠️  Could not load validation-config.json, using fallback constants');
+  // Config file not found - this is expected in npm distribution
+  // The module has fallback constants for all needed values
   validationConfig = null;
 }
 
