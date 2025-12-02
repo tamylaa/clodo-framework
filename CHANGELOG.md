@@ -1,3 +1,10 @@
+## [3.1.26](https://github.com/tamylaa/clodo-framework/compare/v3.1.25...v3.1.26) (2025-12-02)
+
+
+### Bug Fixes
+
+* correct import paths for npm package distribution - use proper depth for compiled dist/ files ([d346563](https://github.com/tamylaa/clodo-framework/commit/d3465637e02077e014661e1039421e9cd0010d97))
+
 ## [3.1.25](https://github.com/tamylaa/clodo-framework/compare/v3.1.24...v3.1.25) (2025-12-02)
 
 
