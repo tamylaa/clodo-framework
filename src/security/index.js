@@ -40,7 +40,19 @@ export function generateSecureKey(type = 'api', options = {}) {
 
 // Main error handling function
 export function handleDeploymentError(error, context = {}) {
-  return ErrorHandler.handleDeploymentError(error, context);
+  // Error handler - provides structured error response
+  const errorResponse = {
+    error: error.message || 'Deployment failed',
+    code: error.code || 'DEPLOYMENT_ERROR',
+    context,
+    timestamp: new Date().toISOString()
+  };
+  
+  if (error.stack) {
+    errorResponse.stack = error.stack;
+  }
+  
+  return errorResponse;
 }
 
 // Main configuration function
