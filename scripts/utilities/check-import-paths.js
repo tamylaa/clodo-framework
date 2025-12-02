@@ -22,31 +22,32 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(__dirname, '../../');
 
 const RULES = {
-  // Re-export wrappers in src/utils/ need correct paths that work from src/ AND dist/
-  // Since both src/ and dist/ are at the same level relative to lib/, use ../../lib/
+  // Re-export wrappers in src/utils/ compile to dist/utils/ and need paths that work in npm packages
+  // When installed via npm, only dist/ exists at package root level
+  // So paths must resolve correctly: dist/utils/X.js -> ../lib/ (one level up to dist, then lib)
   
-  // Files at src/utils/X.js and dist/utils/X.js (both 2 levels deep) use '../../lib/...'
+  // Files at src/utils/X.js compile to dist/utils/X.js (2 levels deep) use '../lib/...'
   'src/utils/file-manager.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../lib/shared/utils/file-manager.js',
-    description: 'file-manager re-export wrapper (works from both src/ and dist/)'
+    shouldContain: '../lib/shared/utils/file-manager.js',
+    description: 'file-manager re-export wrapper (compiles with depth adjustment for npm)'
   },
   'src/utils/formatters.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../lib/shared/utils/formatters.js',
-    description: 'formatters re-export wrapper (works from both src/ and dist/)'
+    shouldContain: '../lib/shared/utils/formatters.js',
+    description: 'formatters re-export wrapper (compiles with depth adjustment for npm)'
   },
   'src/utils/logger.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../lib/shared/logging/Logger.js',
-    description: 'logger re-export wrapper (works from both src/ and dist/)'
+    shouldContain: '../lib/shared/logging/Logger.js',
+    description: 'logger re-export wrapper (compiles with depth adjustment for npm)'
   },
   
-  // Files at src/utils/cloudflare/X.js and dist/utils/cloudflare/X.js (both 3 levels deep) use '../../../lib/...'
+  // Files at src/utils/cloudflare/X.js compile to dist/utils/cloudflare/X.js (3 levels deep) use '../../lib/...'
   'src/utils/cloudflare/ops.js': {
     pattern: /from\s+['"]([^'"]+)['"]/,
-    shouldContain: '../../../lib/shared/cloudflare/ops.js',
-    description: 'cloudflare ops re-export wrapper (works from both src/ and dist/)'
+    shouldContain: '../../lib/shared/cloudflare/ops.js',
+    description: 'cloudflare ops re-export wrapper (3 levels, compiles with depth adjustment)'
   }
 };
 
