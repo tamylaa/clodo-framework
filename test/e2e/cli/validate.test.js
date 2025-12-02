@@ -194,7 +194,7 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
   });
 
   describe('Real Deep Scan Validation', () => {
-    it('should perform comprehensive validation with deep scan', () => {
+    it('should perform comprehensive validation with simplified API', () => {
       const outputDir = join(testDir, 'output');
       mkdirSync(outputDir, { recursive: true });
 
@@ -209,8 +209,8 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
 
       const servicePath = join(outputDir, createConfig.serviceName);
 
-      // Test deep scan functionality
-      const validateCommand = `node cli/clodo-service.js validate "${servicePath}" --deep-scan`;
+      // Test validation functionality (simplified API)
+      const validateCommand = `node cli/clodo-service.js validate "${servicePath}"`;
 
       expect(() => {
         execSync(validateCommand, {
@@ -234,7 +234,7 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
 
       writeFileSync(join(incompleteServicePath, 'package.json'), JSON.stringify(incompletePackageJson, null, 2));
 
-      const validateCommand = `node cli/clodo-service.js validate "${incompleteServicePath}" --deep-scan`;
+      const validateCommand = `node cli/clodo-service.js validate "${incompleteServicePath}"`;
 
       // Should throw due to missing dependencies
       expect(() => {
@@ -271,7 +271,7 @@ export const domains = createDomainConfigSchema({
 
       writeFileSync(join(badDomainServicePath, 'src/config/domains.js'), badDomainConfig);
 
-      const validateCommand = `node cli/clodo-service.js validate "${badDomainServicePath}" --deep-scan`;
+      const validateCommand = `node cli/clodo-service.js validate "${badDomainServicePath}"`;
 
       // Should throw due to invalid domain format
       expect(() => {

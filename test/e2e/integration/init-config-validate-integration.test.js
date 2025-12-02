@@ -101,10 +101,10 @@ ENVIRONMENT = "development"
       }
 
       // Should auto-load the validation config
-      expect(output).toContain('✅ Loaded service config');
+      expect(output).toContain('Loaded configuration from: ./validation-config.json');
 
       // Should mention missing required file
-      expect(output).toContain('Missing required file') || expect(output).toContain('src/index.js');
+      expect(output).toContain('Missing required file') || expect(output).toContain('src/worker/index.js');
     });
 
     it('should pass validation when using default validation-config.json', () => {
@@ -142,7 +142,7 @@ ENVIRONMENT = "development"
       } catch (error) {
         const output = error.stdout ? error.stdout.toString() : error.message;
         // Should have auto-loaded the validation config
-        expect(output).toContain('✅ Loaded service config');
+        expect(output).toContain('Loaded configuration from: ./validation-config.json');
         // Should contain validation errors for package.json fields
         expect(output).toContain('package.json: Missing required field');
       }

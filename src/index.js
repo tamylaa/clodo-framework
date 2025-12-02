@@ -6,10 +6,13 @@ export * from './worker/index.js';
 export * from './utils/index.js';
 export * from './orchestration/index.js';
 
+// Simple API - Recommended for most users
+export { default as Clodo, createService, deploy, validate, initialize, getInfo } from './simple-api.js';
+
 // Core framework classes and utilities
 export { FeatureFlagManager } from './config/features.js';
 export { createDomainConfigSchema, validateDomainConfig, createDefaultDomainConfig } from './utils/domain-config.js';
-export { initializeService, createFeatureGuard } from './worker/integration.js';
+export { initializeService } from './worker/integration.js';
 
 // Core data and schema components
 export * from './services/GenericDataService.js';
@@ -25,7 +28,7 @@ export { WranglerDeployer } from './deployment/wrangler-deployer.js';
 export * from './security/index.js';
 
 // Service management components
-export { ServiceCreator, createService } from './service-management/ServiceCreator.js';
+export { ServiceCreator } from './service-management/ServiceCreator.js';
 export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
 export { InputHandler } from './service-management/handlers/InputHandler.js';
 export { ConfirmationHandler } from './service-management/handlers/ConfirmationHandler.js';

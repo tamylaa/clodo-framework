@@ -43,6 +43,7 @@
   },
   "bin": {
     "clodo-service": "./dist/cli/clodo-service.js",
+    "clodo-simple": "./dist/cli/clodo-simple.js",
     "clodo-security": "./dist/cli/security-cli.js"
   },
   "publishConfig": {

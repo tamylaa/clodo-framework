@@ -666,6 +666,89 @@ export class ServiceOrchestrator {
   extractFeaturesFromConfig(config) { return []; }
 
   /**
+   * Simple API: Create a service with minimal configuration
+   * @param {Object} options - Simple service creation options
+   * @param {string} options.name - Service name (required)
+   * @param {string} options.type - Service type (default: 'generic')
+   * @param {string} options.domain - Domain name (required)
+   * @param {string} options.environment - Environment (default: 'development')
+   * @param {string} options.outputPath - Output path (default: '.')
+   * @param {Object} options.credentials - Cloudflare credentials
+   * @returns {Promise<Object>} Service creation result
+   */
+  static async create(options = {}) {
+    const {
+      name,
+      type = 'generic',
+      domain,
+      environment = 'development',
+      outputPath = '.',
+      credentials = {}
+    } = options;
+
+    if (!name) {
+      throw new Error('Service name is required');
+    }
+
+    if (!domain) {
+      throw new Error('Domain name is required');
+    }
+
+    // Create orchestrator instance
+    const orchestrator = new ServiceOrchestrator({
+      interactive: false,
+      outputPath
+    });
+
+    // Prepare core inputs
+    const coreInputs = {
+      serviceName: name,
+      serviceType: type,
+      domainName: domain,
+      environment,
+      cloudflareToken: credentials.token,
+      cloudflareAccountId: credentials.accountId,
+      cloudflareZoneId: credentials.zoneId
+    };
+
+    try {
+      await orchestrator.runNonInteractive(coreInputs);
+
+      return {
+        success: true,
+        serviceName: name,
+        outputPath,
+        message: `Service "${name}" created successfully`
+      };
+    } catch (error) {
+      throw new Error(`Service creation failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Validate a service configuration (static method for simple API)
+   * @param {string} servicePath - Path to service directory
+   * @param {Object} options - Validation options
+   * @param {string} options.exportReport - Path to export validation report
+   * @returns {Promise<Object>} Validation result
+   */
+  static async validate(servicePath = '.', options = {}) {
+    const orchestrator = new ServiceOrchestrator();
+
+    try {
+      const result = await orchestrator.validateService(servicePath, options);
+
+      return {
+        success: result.valid,
+        issues: result.issues || [],
+        message: result.valid ? 'Service validation passed' : 'Service validation failed'
+      };
+    } catch (error) {
+      throw new Error(`Validation failed: ${error.message}`);
+    }
+  }
+
+  /**
    * Escape special regex characters for safe replacement
    */
   escapeRegExp(string) {

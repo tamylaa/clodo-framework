@@ -6,7 +6,7 @@
  */
 
 import chalk from 'chalk';
-import { ServiceOrchestrator } from '../../src/service-management/ServiceOrchestrator.js';
+import { Clodo } from '../../src/simple-api.js';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
 import { ConfigLoader } from '../../lib/shared/utils/config-loader.js';
 
@@ -46,40 +46,27 @@ export function registerCreateCommand(program) {
         // Merge config file defaults with CLI options (CLI takes precedence)
         const mergedOptions = configLoader.merge(configFileData, options);
 
-        const orchestrator = new ServiceOrchestrator({
-          interactive: !mergedOptions.nonInteractive,
+        // Use simple API for service creation
+        const result = await Clodo.createService({
+          name: mergedOptions.serviceName,
+          type: mergedOptions.serviceType,
+          domain: mergedOptions.domainName,
+          environment: mergedOptions.environment,
           outputPath: mergedOptions.outputPath,
-          templatePath: mergedOptions.templatePath
+          interactive: !mergedOptions.nonInteractive,
+          credentials: {
+            token: mergedOptions.cloudflareToken,
+            accountId: mergedOptions.cloudflareAccountId,
+            zoneId: mergedOptions.cloudflareZoneId
+          }
         });
 
-        if (mergedOptions.nonInteractive) {
-          // Validate required parameters for non-interactive mode
-          const required = ['serviceName', 'domainName', 'cloudflareToken', 'cloudflareAccountId', 'cloudflareZoneId'];
-          const missing = required.filter(key => !mergedOptions[key]);
-
-          if (missing.length > 0) {
-            output.error(`Missing required parameters: ${missing.join(', ')}`);
-            output.info('Use --help for parameter details');
-            process.exit(1);
-          }
-
-          // Convert merged options to core inputs
-          const coreInputs = {
-            serviceName: mergedOptions.serviceName,
-            serviceType: mergedOptions.serviceType,
-            domainName: mergedOptions.domainName,
-            cloudflareToken: mergedOptions.cloudflareToken,
-            cloudflareAccountId: mergedOptions.cloudflareAccountId,
-            cloudflareZoneId: mergedOptions.cloudflareZoneId,
-            environment: mergedOptions.environment
-          };
-
-          await orchestrator.runNonInteractive(coreInputs);
+        if (result.success) {
+          output.success(result.message);
         } else {
-          await orchestrator.runInteractive();
+          output.error('Service creation failed');
+          process.exit(1);
         }
-
-        output.success('Service creation completed successfully!');
         output.section('Next steps');
         output.list([
           'cd into your new service directory',

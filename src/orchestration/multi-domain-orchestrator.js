@@ -801,6 +801,59 @@ export class MultiDomainOrchestrator {
   getPortfolioStats() {
     return this.stateManager.getPortfolioSummary();
   }
+
+  /**
+   * Simple API: Deploy a service with minimal configuration
+   * @param {Object} options - Simple deployment options
+   * @param {string} options.servicePath - Path to service directory
+   * @param {string} options.environment - Target environment
+   * @param {string} options.domain - Specific domain to deploy to
+   * @param {boolean} options.dryRun - Simulate deployment
+   * @param {Object} options.credentials - Cloudflare credentials
+   * @returns {Promise<Object>} Deployment result
+   */
+  static async deploy(options = {}) {
+    const {
+      servicePath = '.',
+      environment = 'production',
+      domain,
+      dryRun = false,
+      credentials = {}
+    } = options;
+
+    // Create orchestrator with simplified options
+    const orchestrator = new MultiDomainOrchestrator({
+      environment,
+      dryRun,
+      servicePath,
+      cloudflareToken: credentials.token,
+      cloudflareAccountId: credentials.accountId,
+      cloudflareZoneId: credentials.zoneId,
+      domains: domain ? [domain] : []
+    });
+
+    try {
+      // Initialize the orchestrator
+      await orchestrator.initialize();
+
+      // Deploy based on configuration
+      let result;
+      if (domain) {
+        result = await orchestrator.deploySingleDomain(domain);
+      } else {
+        result = await orchestrator.deployPortfolio();
+      }
+
+      return {
+        success: true,
+        environment,
+        deployedDomains: result.deployedDomains || [domain],
+        message: `Service deployed to ${environment} successfully`
+      };
+    } catch (error) {
+      throw new Error(`Deployment failed: ${error.message}`);
+    }
+  }
 }
 
 export default MultiDomainOrchestrator;
