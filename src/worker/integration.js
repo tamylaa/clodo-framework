@@ -1,10 +1,22 @@
-import { COMMON_FEATURES, ConfigurationManager } from '../../lib/shared/config/ConfigurationManager.js';
 import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js';
 
-// Create a singleton instance of ConfigurationManager for use in integration
-export const configManager = new ConfigurationManager({});
+// Export COMMON_FEATURES constant (simplified from ConfigurationManager)
+export const COMMON_FEATURES = [
+  'authentication',
+  'logging',
+  'caching',
+  'rate-limiting',
+  'monitoring'
+];
 
-// Legacy featureManager compatibility interface using ConfigurationManager
+// Simple feature manager interface (replaces ConfigurationManager dependency)
+export const configManager = {
+  setDomain: () => {},
+  getEnabledFeatures: () => COMMON_FEATURES,
+  isFeatureEnabled: (feature) => COMMON_FEATURES.includes(feature)
+};
+
+// Legacy featureManager compatibility interface
 const featureManager = {
   setDomain: (domainConfig) => configManager.setDomain(domainConfig),
   getEnabledFeatures: () => configManager.getEnabledFeatures(),

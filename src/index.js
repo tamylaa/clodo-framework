@@ -22,18 +22,21 @@ export * from './routing/EnhancedRouter.js';
 export * from './handlers/GenericRouteHandler.js';
 
 // Deployment components (build-time only)
-export { WranglerDeployer } from './deployment/wrangler-deployer.js';
+// NOTE: Temporarily disabled - has lib/ dependencies that don't exist in npm distribution
+// export { WranglerDeployer } from './deployment/wrangler-deployer.js';
 
 // Security components
-export * from './security/index.js';
+// NOTE: Temporarily disabled - has lib/ dependencies
+// export * from './security/index.js';
 
-// Service management components
-export { ServiceCreator } from './service-management/ServiceCreator.js';
-export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
-export { InputHandler } from './service-management/handlers/InputHandler.js';
-export { ConfirmationHandler } from './service-management/handlers/ConfirmationHandler.js';
-export { GenerationHandler } from './service-management/handlers/GenerationHandler.js';
-export { ValidationHandler } from './service-management/handlers/ValidationHandler.js';
+// Service management components (build-time only - has lib dependencies)
+// NOTE: Temporarily disabled - ServiceCreator imports from lib/
+// export { ServiceCreator } from './service-management/ServiceCreator.js';
+// export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
+// export { InputHandler } from './service-management/handlers/InputHandler.js';
+// export { ConfirmationHandler } from './service-management/handlers/ConfirmationHandler.js';
+// export { GenerationHandler } from './service-management/handlers/GenerationHandler.js';
+// export { ValidationHandler } from './service-management/handlers/ValidationHandler.js';
 
 // Framework version info
 export const FRAMEWORK_VERSION = '1.0.0';

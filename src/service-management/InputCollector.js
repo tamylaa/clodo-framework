@@ -15,7 +15,7 @@ import { createInterface } from 'readline';
 import chalk from 'chalk';
 import { validateServiceName, validateDomainName } from '../utils/validation.js';
 import { uiStructuresLoader } from '../utils/ui-structures-loader.js';
-import { NameFormatters, UrlFormatters, ResourceFormatters } from '../../lib/shared/utils/formatters.js';
+import { NameFormatters, UrlFormatters, ResourceFormatters } from '../lib/shared/utils/formatters.js';
 
 // Assessment capabilities moved to @tamyla/clodo-orchestration (professional edition)
 

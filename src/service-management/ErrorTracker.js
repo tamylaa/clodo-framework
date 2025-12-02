@@ -8,7 +8,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
-import { logger } from '../../lib/shared/logging/Logger.js';
+import { logger } from '../lib/shared/logging/Logger.js';
 
 export class ErrorTracker {
   constructor() {
