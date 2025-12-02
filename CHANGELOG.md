@@ -1,3 +1,21 @@
+## [3.1.27](https://github.com/tamylaa/clodo-framework/compare/v3.1.26...v3.1.27) (2025-12-02)
+
+
+### Bug Fixes
+
+* clarify lib/ imports from src/ are intentional and working ([7556cbd](https://github.com/tamylaa/clodo-framework/commit/7556cbdfa1a8ae24ea5c342df0631014b5c1b060))
+* correct ALL lib/ module import paths for npm package compatibility ([4df859e](https://github.com/tamylaa/clodo-framework/commit/4df859ed1e5123d3862dc160a078b60803d7a37d))
+* correct CloudflareAPI import path in credential-collector.js ([805e027](https://github.com/tamylaa/clodo-framework/commit/805e02793467f21aa06e85af609fcb395710d165))
+* correct credential-collector CloudflareAPI import path ([5573780](https://github.com/tamylaa/clodo-framework/commit/557378010dea5fb9e3f83952cc38632b0e94f53d))
+* correct EnvironmentManager relative import paths ([0f62df6](https://github.com/tamylaa/clodo-framework/commit/0f62df6bc9e059f6c66a87b88ffe9ca57a25f8c1))
+* correct relative import paths for npm distribution ([68c53e0](https://github.com/tamylaa/clodo-framework/commit/68c53e0c3716ed4044688dd151b26b6d8a113e05))
+* correct validation.js import path in ValidationRegistry.js ([882fe21](https://github.com/tamylaa/clodo-framework/commit/882fe21b964670dc2e075b3169068e6973677b42))
+* remove unnecessary warning about missing validation-config.json ([15d22db](https://github.com/tamylaa/clodo-framework/commit/15d22db8fa26202ffa81654c417ae2fa69345bba))
+* resolve all lib import paths for npm distribution ([1e32bef](https://github.com/tamylaa/clodo-framework/commit/1e32bef70505a1cd142efbe94016027edbbe61df))
+* resolve ErrorHandler reference in security module ([5bc406e](https://github.com/tamylaa/clodo-framework/commit/5bc406eb768d10409d615c67b11d8118fac4081d))
+* use lib re-export wrapper for MultiDomainOrchestrator in domain-router.js ([215aefc](https://github.com/tamylaa/clodo-framework/commit/215aefc382b811c105598e6241beae60e65b0409))
+* use lib re-export wrappers instead of direct src/ references ([3aaf672](https://github.com/tamylaa/clodo-framework/commit/3aaf6725e6c09b97e3ea4d80519c1bf4ae61a921))
+
 ## [3.1.26](https://github.com/tamylaa/clodo-framework/compare/v3.1.25...v3.1.26) (2025-12-02)
 
 
