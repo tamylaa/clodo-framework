@@ -9,7 +9,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { Clodo } from '../src/simple-api.js';
+import { Clodo } from '@tamyla/clodo-framework';
 
 // Create program instance
 const program = new Command();

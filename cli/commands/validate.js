@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { Clodo } from '../../src/simple-api.js';
+import { Clodo } from '@tamyla/clodo-framework';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
 
 export function registerValidateCommand(program) {

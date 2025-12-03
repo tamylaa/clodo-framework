@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import path from 'path';
-import { ServiceOrchestrator } from '../../src/service-management/ServiceOrchestrator.js';
+import { ServiceOrchestrator } from '@tamyla/clodo-framework';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
 import { ServiceConfigManager } from '../../lib/shared/utils/service-config-manager.js';
 
