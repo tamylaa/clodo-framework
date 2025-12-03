@@ -21,22 +21,21 @@ export * from './modules/ModuleManager.js';
 export * from './routing/EnhancedRouter.js';
 export * from './handlers/GenericRouteHandler.js';
 
-// Deployment components (build-time only)
-// NOTE: Temporarily disabled - has lib/ dependencies that don't exist in npm distribution
+// Deployment components
+export { DeploymentValidator } from './deployment/validator.js';
+export { DeploymentAuditor } from './deployment/auditor.js';
+// NOTE: WranglerDeployer has lib/ dependencies not available in npm distribution
 // export { WranglerDeployer } from './deployment/wrangler-deployer.js';
 
 // Security components
-// NOTE: Temporarily disabled - has lib/ dependencies
-// export * from './security/index.js';
+export { SecurityCLI } from './security/SecurityCLI.js';
+export { ConfigurationValidator } from './security/ConfigurationValidator.js';
+export { SecretGenerator } from './security/SecretGenerator.js';
 
-// Service management components (build-time only - has lib dependencies)
-// NOTE: Temporarily disabled - ServiceCreator imports from lib/
-// export { ServiceCreator } from './service-management/ServiceCreator.js';
-// export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
-// export { InputHandler } from './service-management/handlers/InputHandler.js';
-// export { ConfirmationHandler } from './service-management/handlers/ConfirmationHandler.js';
-// export { GenerationHandler } from './service-management/handlers/GenerationHandler.js';
-// export { ValidationHandler } from './service-management/handlers/ValidationHandler.js';
+// Service management components
+export { ServiceCreator } from './service-management/ServiceCreator.js';
+export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
+export { InputCollector } from './service-management/InputCollector.js';
 
 // Framework version info
 export const FRAMEWORK_VERSION = '1.0.0';
