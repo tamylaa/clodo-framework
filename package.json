@@ -118,6 +118,7 @@
     "test:automated:deployment": "node scripts/automated-testing-suite.js deployment",
     "test:automated:lifecycle": "node scripts/automated-testing-suite.js lifecycle",
     "test:automated:integration": "node scripts/automated-testing-suite.js integration",
+    "test:downstream": "node scripts/test-downstream-install.js",
     "test:automated:performance": "node scripts/automated-testing-suite.js performance",
     "test:automated:regression": "node scripts/automated-testing-suite.js regression"
   },
