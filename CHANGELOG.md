@@ -1,3 +1,18 @@
+# [3.2.0](https://github.com/tamylaa/clodo-framework/compare/v3.1.27...v3.2.0) (2025-12-03)
+
+
+### Bug Fixes
+
+* add pre-publish import validation and remove non-existent exports ([a41fa7d](https://github.com/tamylaa/clodo-framework/commit/a41fa7df5c1ce05d34efe7e62e68d1c2fa8ea89c))
+* correct CLI import paths for npm distribution ([ba68e0a](https://github.com/tamylaa/clodo-framework/commit/ba68e0adfa4c3bf36584b8bd37310ef616f79722))
+* enable missing exports and remove lib-dependent modules from npm ([1645a58](https://github.com/tamylaa/clodo-framework/commit/1645a58d1e1f5d7126fd02766e9b4d006fa45be7))
+
+
+### Features
+
+* add comprehensive pre-publish and downstream install tests ([b1e8a25](https://github.com/tamylaa/clodo-framework/commit/b1e8a25b3acae840b66f728aa55dd5c24af0914f))
+* add proper CLI regression tests to downstream install test ([4cde4bc](https://github.com/tamylaa/clodo-framework/commit/4cde4bc08f0290f0432815b2c8cfa60247bc8dfd))
+
 ## [3.1.27](https://github.com/tamylaa/clodo-framework/compare/v3.1.26...v3.1.27) (2025-12-02)
 
 
