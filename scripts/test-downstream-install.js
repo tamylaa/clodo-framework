@@ -154,30 +154,52 @@ import('@tamyla/clodo-framework')
       throw new Error(`Import test failed: ${e.message}`);
     }
 
-    // Step 5: Test CLI commands
+    // Step 5: Test CLI commands with actual subcommands
     log(colors.blue, '🛠️  Step 5: Testing CLI commands');
     log(colors.blue, '─'.repeat(60));
 
+    // On Windows, npm bin shims are bash scripts. Use direct node execution instead
     const cliTests = [
-      { cmd: 'clodo-service', args: '--help' },
-      { cmd: 'clodo-simple', args: '--help' },
-      { cmd: 'clodo-security', args: '--help' }
+      { 
+        path: 'dist/cli/clodo-service.js',
+        args: '--version',
+        name: 'clodo-service --version'
+      },
+      { 
+        path: 'dist/cli/clodo-simple.js',
+        args: '--help',
+        name: 'clodo-simple --help'
+      },
+      { 
+        path: 'dist/cli/security-cli.js',
+        args: '--help',
+        name: 'clodo-security --help'
+      }
     ];
 
     for (const test of cliTests) {
       try {
-        execSync(`node node_modules/.bin/${test.cmd} ${test.args}`, {
+        const cliPath = path.join(testDir, 'node_modules/@tamyla/clodo-framework', test.path);
+        
+        if (!fs.existsSync(cliPath)) {
+          throw new Error(`CLI file not found: ${cliPath}`);
+        }
+        
+        const output = execSync(`node ${cliPath} ${test.args}`, {
           cwd: testDir,
           stdio: 'pipe',
-          encoding: 'utf8'
+          encoding: 'utf8',
+          timeout: 5000
         });
-        log(colors.green, `✅ CLI command works: ${test.cmd}`);
-      } catch (e) {
-        // Some CLIs may fail on --help if they require args, that's ok
-        if (e.status !== 0 && e.status !== 1) {
-          throw new Error(`CLI test failed for ${test.cmd}: ${e.message}`);
+        
+        // Check that we got actual output
+        if (output && output.trim().length > 0) {
+          log(colors.green, `✅ ${test.name} executed successfully`);
+        } else {
+          throw new Error('No output from command');
         }
-        log(colors.yellow, `⚠️  CLI command ${test.cmd} returned non-zero (expected for some CLIs)`);
+      } catch (e) {
+        throw new Error(`CLI test failed for ${test.name}: ${e.message}`);
       }
     }
 
