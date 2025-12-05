@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/tamylaa/clodo-framework/compare/v3.2.1...v3.2.2) (2025-12-05)
+
+
+### Bug Fixes
+
+* correct import paths in lib/ files and enhance build script ([77abdb2](https://github.com/tamylaa/clodo-framework/commit/77abdb24ccfab61275a8f9716b09c84faaf8db84))
+
 ## [3.2.1](https://github.com/tamylaa/clodo-framework/compare/v3.2.0...v3.2.1) (2025-12-05)
 
 
