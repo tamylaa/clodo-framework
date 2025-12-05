@@ -11,10 +11,13 @@ const projectRoot = path.join(__dirname, '../..');
  * NOTE: This script should do MINIMAL changes. Babel preserves relative imports
  * from source files, so most imports are already correct.
  * 
- * Only fix:
+ * Fix:
  * 1. CLI commands that reference ../lib/ instead of ../../lib/ (depth mismatch)
  * 2. CLI commands that reference ../config/ instead of ../../config/
  * 3. CLI commands that reference ../service-management/ instead of ../../service-management/
+ * 4. Files importing ../../../dist/utils/ should be ../../../utils/
+ * 5. Files in dist/utils/ importing ../../../lib/shared/ should be ../../lib/shared/
+ * 6. Files in dist/lib/shared/ importing ../../../src/utils/ should be ../../utils/
  * 
  * DO NOT apply aggressive global replacements - they break things!
  */
@@ -46,6 +49,25 @@ function fixDistImports(dir) {
         content = content.replace(/import\(['"]\.\.\/service-management\//g, "import('../../service-management/");
       }
       
+      // Fix imports in all dist/ files
+      if (relPath.startsWith('dist/')) {
+        // Fix ../../../dist/utils/ to ../../../utils/
+        content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/dist\/utils\//g, "from '../../../utils/");
+        content = content.replace(/import\(['"]\.\.\/\.\.\/\.\.\/dist\/utils\//g, "import('../../../utils/");
+        
+        // Fix ../../../lib/shared/ to ../../lib/shared/ for files in dist/utils/
+        if (relPath.startsWith('dist/utils/')) {
+          content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from '../../lib/shared/");
+          content = content.replace(/import\(['"]\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import('../../lib/shared/");
+        }
+        
+        // Fix ../../../src/utils/ to ../../utils/ for files in dist/lib/shared/
+        if (relPath.startsWith('dist/lib/shared/')) {
+          content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/src\/utils\//g, "from '../../utils/");
+          content = content.replace(/import\(['"]\.\.\/\.\.\/\.\.\/src\/utils\//g, "import('../../utils/");
+        }
+      }
+      
       if (content !== original) {
         fs.writeFileSync(filePath, content);
         console.log('✅ Fixed dist import:', relPath);
@@ -54,6 +76,6 @@ function fixDistImports(dir) {
   });
 }
 
-// Only process dist/cli where the fixes are needed
-fixDistImports('dist/cli');
+// Process all dist/ where the fixes are needed
+fixDistImports('dist');
 console.log('✅ Dist import path fixes completed');
