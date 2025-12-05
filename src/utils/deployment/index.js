@@ -5,3 +5,4 @@ export { ConfigurationCacheManager } from './config-cache.js';
 export { EnhancedSecretManager } from './secret-generator.js';
 export { UnifiedConfigManager, unifiedConfigManager } from '../config/unified-config-manager.js';
 export { askUser, askYesNo, askChoice, closePrompts } from '../interactive-prompts.js';
+export { DeploymentCredentialCollector } from '../../../lib/shared/deployment/credential-collector.js';

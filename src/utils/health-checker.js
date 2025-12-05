@@ -1,40 +1,44 @@
 /**
  * Health Checker Module
  * Endpoint health checking and validation utilities
+ * Worker-compatible version using fetch API
  */
 
-import https from 'https';
-import http from 'http';
-
 /**
- * Make HTTP request with timeout
+ * Make HTTP request with timeout using fetch
  * @param {string} url - URL to request
  * @param {string} method - HTTP method
  * @param {number} timeout - Request timeout in ms
  * @returns {Promise<Object>} Response data and status
  */
-function makeHttpRequest(url, method = 'GET', timeout = 5000) {
-  return new Promise((resolve, reject) => {
-    const protocol = url.startsWith('https:') ? https : http;
-    const req = protocol.request(url, { method, timeout }, (res) => {
-      let data = '';
-      res.on('data', (chunk) => data += chunk);
-      res.on('end', () => {
-        resolve({ data, statusCode: res.statusCode });
-      });
+async function makeHttpRequest(url, method = 'GET', timeout = 5000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      method,
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Clodo-Framework-Health-Check/1.0'
+      }
     });
 
-    req.on('error', (err) => {
-      reject(err);
-    });
+    clearTimeout(timeoutId);
 
-    req.on('timeout', () => {
-      req.destroy();
-      reject(new Error('Request timed out'));
-    });
-
-    req.end();
-  });
+    const data = await response.text();
+    return {
+      data,
+      statusCode: response.status,
+      headers: Object.fromEntries(response.headers.entries())
+    };
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error('Request timed out');
+    }
+    throw error;
+  }
 }
 
 /**
@@ -44,57 +48,38 @@ function makeHttpRequest(url, method = 'GET', timeout = 5000) {
  * @returns {Promise<Object>} Health check result
  */
 export async function checkHealth(url, timeout = 10000) {
-  return new Promise((resolve, reject) => {
-    const protocol = url.startsWith('https:') ? https : http;
-    const healthUrl = `${url.replace(/\/$/, '')}/health`;
+  const startTime = Date.now();
+  const healthUrl = `${url.replace(/\/$/, '')}/health`;
 
-    const req = protocol.get(healthUrl, { timeout }, (res) => {
-      let data = '';
-      res.on('data', (chunk) => data += chunk);
-      res.on('end', () => {
-        try {
-          const result = {
-            url: healthUrl,
-            status: res.statusCode,
-            healthy: res.statusCode >= 200 && res.statusCode < 300,
-            responseTime: Date.now() - req.startTime,
-            data: data ? JSON.parse(data) : null
-          };
-          resolve(result);
-        } catch (parseError) {
-          resolve({
-            url: healthUrl,
-            status: res.statusCode,
-            healthy: res.statusCode >= 200 && res.statusCode < 300,
-            responseTime: Date.now() - req.startTime,
-            data: null,
-            parseError: parseError.message
-          });
-        }
-      });
-    });
+  try {
+    const result = await makeHttpRequest(healthUrl, 'GET', timeout);
+    const responseTime = Date.now() - startTime;
 
-    req.startTime = Date.now();
+    let data = null;
+    let parseError = null;
 
-    req.on('error', (err) => {
-      reject({
-        url: healthUrl,
-        error: err.message,
-        healthy: false,
-        responseTime: Date.now() - req.startTime
-      });
-    });
+    try {
+      data = result.data ? JSON.parse(result.data) : null;
+    } catch (error) {
+      parseError = error.message;
+    }
 
-    req.on('timeout', () => {
-      req.destroy();
-      reject({
-        url: healthUrl,
-        error: 'Health check timed out',
-        healthy: false,
-        responseTime: timeout
-      });
-    });
-  });
+    return {
+      url: healthUrl,
+      status: result.statusCode,
+      healthy: result.statusCode >= 200 && result.statusCode < 300,
+      responseTime,
+      data,
+      parseError
+    };
+  } catch (error) {
+    return {
+      url: healthUrl,
+      error: error.message,
+      healthy: false,
+      responseTime: Date.now() - startTime
+    };
+  }
 }
 
 /**

@@ -22,7 +22,7 @@
     "./config/customers": "./dist/config/customers.js",
     "./utils/config": "./dist/utils/config/unified-config-manager.js",
     "./worker": "./dist/worker/index.js",
-    "./utils": "./dist/utils/index.js",
+    "./utils/cloudflare": "./dist/utils/cloudflare/index.js",
     "./utils/deployment": "./dist/utils/deployment/index.js",
     "./orchestration": "./dist/orchestration/index.js",
     "./deployment": "./dist/deployment/index.js",

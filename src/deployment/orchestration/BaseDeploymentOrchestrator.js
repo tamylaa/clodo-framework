@@ -19,7 +19,7 @@
  * @abstract
  */
 
-import { ErrorHandler } from '../../shared/utils/ErrorHandler.js';
+import { ErrorHandler } from '../../../lib/shared/utils/ErrorHandler.js';
 
 /**
  * Phase state and execution order

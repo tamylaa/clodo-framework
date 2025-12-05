@@ -36,8 +36,7 @@
 import { BaseDeploymentOrchestrator } from './BaseDeploymentOrchestrator.js';
 import { SingleServiceOrchestrator } from './SingleServiceOrchestrator.js';
 import { PortfolioOrchestrator } from './PortfolioOrchestrator.js';
-import { EnterpriseOrchestrator } from './EnterpriseOrchestrator.js';
-import { ErrorHandler } from '../../shared/utils/ErrorHandler.js';
+import { ErrorHandler } from '../../../lib/shared/utils/ErrorHandler.js';
 
 /**
  * Capability descriptors - Defines what each capability provides
@@ -211,8 +210,7 @@ export class UnifiedDeploymentOrchestrator extends BaseDeploymentOrchestrator {
     // System adapters for backward compatibility
     this.systemAdapters = {
       single: SingleServiceOrchestrator,
-      portfolio: PortfolioOrchestrator,
-      enterprise: EnterpriseOrchestrator
+      portfolio: PortfolioOrchestrator
     };
     
     // Deployment context

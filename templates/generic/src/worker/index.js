@@ -1,4 +1,4 @@
-import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/clodo-framework';
+import { initializeService, createFeatureGuard, COMMON_FEATURES } from '@tamyla/clodo-framework/worker';
 import { domains } from './config/domains.js';
 
 /**

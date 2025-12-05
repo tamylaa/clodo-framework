@@ -34,5 +34,8 @@ export const createLogger = (prefix = 'ClodoFramework') => {
 // Health checking utilities
 export * from './health-checker.js';
 
+// Framework configuration
+export * from './framework-config.js';
+
 // Deployment utilities
 export * from './deployment/index.js';
