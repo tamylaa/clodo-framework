@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/tamylaa/clodo-framework/compare/v3.2.0...v3.2.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* enhance deploy command with prerequisite checking and organize project structure ([660c5ab](https://github.com/tamylaa/clodo-framework/commit/660c5ab82546ca1a80b42c1d4cbc6d3972cc6203))
+
 # [3.2.0](https://github.com/tamylaa/clodo-framework/compare/v3.1.27...v3.2.0) (2025-12-03)
 
 
