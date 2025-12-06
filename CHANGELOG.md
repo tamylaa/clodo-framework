@@ -1,3 +1,10 @@
+## [3.2.4](https://github.com/tamylaa/clodo-framework/compare/v3.2.3...v3.2.4) (2025-12-06)
+
+
+### Bug Fixes
+
+* expose CLI utilities in public API to fix import issues ([5d995ab](https://github.com/tamylaa/clodo-framework/commit/5d995abb2f6cb718acc0a03beef75f1025204200))
+
 ## [3.2.3](https://github.com/tamylaa/clodo-framework/compare/v3.2.2...v3.2.3) (2025-12-06)
 
 
