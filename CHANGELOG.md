@@ -1,3 +1,11 @@
+## [3.2.3](https://github.com/tamylaa/clodo-framework/compare/v3.2.2...v3.2.3) (2025-12-06)
+
+
+### Bug Fixes
+
+* clean up debug logging in fix-dist-imports.js ([374318e](https://github.com/tamylaa/clodo-framework/commit/374318efc9b73cf304306f3dd249eb88f8b06c98))
+* resolve all test suite failures for production readiness ([519df7c](https://github.com/tamylaa/clodo-framework/commit/519df7c755bd1a93bb5e9717c2aaf21bdf02e636))
+
 ## [3.2.2](https://github.com/tamylaa/clodo-framework/compare/v3.2.1...v3.2.2) (2025-12-05)
 
 
