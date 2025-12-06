@@ -1,3 +1,10 @@
+## [3.2.5](https://github.com/tamylaa/clodo-framework/compare/v3.2.4...v3.2.5) (2025-12-06)
+
+
+### Bug Fixes
+
+* correct import paths in dist/index.js for Windows compatibility ([351ba68](https://github.com/tamylaa/clodo-framework/commit/351ba68450c675af6f199036121aa2797eaa97a8))
+
 ## [3.2.4](https://github.com/tamylaa/clodo-framework/compare/v3.2.3...v3.2.4) (2025-12-06)
 
 
