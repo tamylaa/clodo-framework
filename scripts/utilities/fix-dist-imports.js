@@ -50,21 +50,10 @@ function fixDistImports(dir) {
       }
       
       // Fix imports in all dist/ files
-      if (relPath.startsWith('dist/')) {
-        // Fix ../../../dist/utils/ to ../../../utils/
-        content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/dist\/utils\//g, "from '../../../utils/");
-        content = content.replace(/import\(['"]\.\.\/\.\.\/\.\.\/dist\/utils\//g, "import('../../../utils/");
-        
-        // Fix ../../../lib/shared/ to ../../lib/shared/ for files in dist/utils/
-        if (relPath.startsWith('dist/utils/')) {
-          content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from '../../lib/shared/");
-          content = content.replace(/import\(['"]\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import('../../lib/shared/");
-        }
-        
+      if (relPath.startsWith('dist')) {
         // Fix ../../../src/utils/ to ../../utils/ for files in dist/lib/shared/
-        if (relPath.startsWith('dist/lib/shared/')) {
-          content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/src\/utils\//g, "from '../../utils/");
-          content = content.replace(/import\(['"]\.\.\/\.\.\/\.\.\/src\/utils\//g, "import('../../utils/");
+        if (relPath.includes('dist/lib/shared/') || relPath.includes('dist\\lib\\shared\\')) {
+          content = content.replace(/\.\.\/\.\.\/\.\.\/src\/utils\//g, "../../utils/");
         }
       }
       
