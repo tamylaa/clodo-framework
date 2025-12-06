@@ -1,8 +1,5 @@
 ﻿import chalk from 'chalk';
-import { Clodo } from '@tamyla/clodo-framework';
-import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
-import { ConfigLoader } from '../../lib/shared/utils/config-loader.js';
-import { InteractiveDeploymentCoordinator } from '../../lib/shared/deployment/workflows/interactive-deployment-coordinator.js';
+import { Clodo, StandardOptions, ConfigLoader, InteractiveDeploymentCoordinator, OutputFormatter } from '@tamyla/clodo-framework';
 
 export function registerDeployCommand(program) {
   const command = program
@@ -29,7 +26,7 @@ export function registerDeployCommand(program) {
   StandardOptions.define(command)
     .action(async (options) => {
       try {
-        const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
+        const output = new OutputFormatter(options);
         const configLoader = new ConfigLoader({ verbose: options.verbose, quiet: options.quiet, json: options.json });
 
         // Handle shorthand environment flags
@@ -119,7 +116,7 @@ export function registerDeployCommand(program) {
         }
 
       } catch (error) {
-        const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options || {});
+        const output = new OutputFormatter(options || {});
         output.error(`Deployment failed: ${error.message}`);
         process.exit(1);
       }

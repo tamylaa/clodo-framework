@@ -3,7 +3,7 @@
  * Provides interactive error recovery by delegating to shared error classification
  */
 
-import { classifyError, getRecoverySuggestions } from '../../../lib/shared/error-handling/error-classifier.js';
+import { classifyError, getRecoverySuggestions } from '@tamyla/clodo-framework';
 import chalk from 'chalk';
 import readline from 'readline';
 

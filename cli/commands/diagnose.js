@@ -1,8 +1,6 @@
 import chalk from 'chalk';
 import path from 'path';
-import { ServiceOrchestrator } from '@tamyla/clodo-framework';
-import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
-import { ServiceConfigManager } from '../../lib/shared/utils/service-config-manager.js';
+import { ServiceOrchestrator, StandardOptions, ServiceConfigManager } from '@tamyla/clodo-framework';
 
 export function registerDiagnoseCommand(program) {
   const command = program

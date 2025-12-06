@@ -37,6 +37,15 @@ export { ServiceCreator } from './service-management/ServiceCreator.js';
 export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
 export { InputCollector } from './service-management/InputCollector.js';
 
+// CLI utilities (for framework CLI commands)
+export { StandardOptions } from '../lib/shared/utils/cli-options.js';
+export { ConfigLoader } from '../lib/shared/utils/config-loader.js';
+export { ServiceConfigManager } from '../lib/shared/utils/service-config-manager.js';
+export { InteractiveDeploymentCoordinator } from '../lib/shared/deployment/workflows/interactive-deployment-coordinator.js';
+export { OutputFormatter } from '../lib/shared/utils/output-formatter.js';
+export { verifyWorkerDeployment, healthCheckWithBackoff, checkHealth } from '../lib/shared/monitoring/health-checker.js';
+export { classifyError, getRecoverySuggestions } from '../lib/shared/error-handling/error-classifier.js';
+
 // Framework version info
 export const FRAMEWORK_VERSION = '1.0.0';
 export const FRAMEWORK_NAME = 'Clodo Framework';

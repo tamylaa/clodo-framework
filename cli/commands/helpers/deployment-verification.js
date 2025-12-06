@@ -3,7 +3,7 @@
  * Provides UI-specific deployment verification by delegating to shared infrastructure
  */
 
-import { verifyWorkerDeployment, healthCheckWithBackoff, checkHealth } from '../../../lib/shared/monitoring/health-checker.js';
+import { verifyWorkerDeployment, healthCheckWithBackoff, checkHealth } from '@tamyla/clodo-framework';
 import chalk from 'chalk';
 import readline from 'readline';
 
