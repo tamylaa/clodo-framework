@@ -748,7 +748,7 @@ npx wrangler --version
 ### **2. Cloudflare Authentication**
 ```bash
 # Login to Cloudflare (first time only)
-npx wrangler auth login
+npx wrangler login
 
 # Or set API token directly (will be prompted automatically)
 # The system will securely store your token with encryption
@@ -1318,7 +1318,7 @@ node bin/deployment/enterprise-deploy.js list
 # Problem: No Cloudflare authentication
 # Solution: The system will automatically prompt for API token
 # Or manually set up wrangler auth:
-npx wrangler auth login
+npx wrangler login
 ```
 
 #### **"D1 database discovery requires additional permissions"**

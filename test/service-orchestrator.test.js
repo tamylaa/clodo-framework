@@ -21,10 +21,46 @@ describe('ServiceOrchestrator Integration', () => {
   });
 
   afterAll(() => {
-    // Clean up test output directory
-    if (fs.existsSync(testOutputDir)) {
-      fs.rmSync(testOutputDir, { recursive: true, force: true });
-    }
+    // Clean up test output directory with retry mechanism
+    const cleanupTestOutput = () => {
+      try {
+        if (fs.existsSync(testOutputDir)) {
+          // First try to remove files individually to handle locked files
+          const files = fs.readdirSync(testOutputDir);
+          for (const file of files) {
+            const filePath = path.join(testOutputDir, file);
+            try {
+              const stat = fs.statSync(filePath);
+              if (stat.isDirectory()) {
+                fs.rmSync(filePath, { recursive: true, force: true });
+              } else {
+                fs.unlinkSync(filePath);
+              }
+            } catch (fileError) {
+              // Ignore individual file errors and continue
+              console.warn(`Could not remove ${filePath}: ${fileError.message}`);
+            }
+          }
+          // Then try to remove the directory itself
+          fs.rmdirSync(testOutputDir);
+        }
+      } catch (error) {
+        // If cleanup fails, just warn and continue - don't fail the test
+        console.warn(`Test output cleanup failed: ${error.message}`);
+      }
+    };
+
+    // Retry cleanup a few times with delays to handle file locks
+    let retries = 3;
+    const retryCleanup = () => {
+      cleanupTestOutput();
+      if (fs.existsSync(testOutputDir) && retries > 0) {
+        retries--;
+        setTimeout(retryCleanup, 100); // Wait 100ms and retry
+      }
+    };
+
+    retryCleanup();
   });
 
   describe('CLI Interface', () => {

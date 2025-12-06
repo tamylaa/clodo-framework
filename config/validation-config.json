@@ -12,7 +12,7 @@
     },
     "cloudflare": {
       "whoami": "npx wrangler whoami",
-      "auth_login": "npx wrangler auth login",
+      "auth_login": "npx wrangler login",
       "deployments_list": "npx wrangler deployments list",
       "list_workers": "npx wrangler dev --help",
       "deploy": "npx wrangler deploy",

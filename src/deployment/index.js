@@ -9,3 +9,6 @@ export { BaseDeploymentOrchestrator } from './orchestration/BaseDeploymentOrches
 export { SingleServiceOrchestrator } from './orchestration/SingleServiceOrchestrator.js';
 export { PortfolioOrchestrator } from './orchestration/PortfolioOrchestrator.js';
 export { UnifiedDeploymentOrchestrator } from './orchestration/UnifiedDeploymentOrchestrator.js';
+
+// Rollback Management
+export { RollbackManager } from './rollback-manager.js';

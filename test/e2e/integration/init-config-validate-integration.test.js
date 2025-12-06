@@ -101,7 +101,7 @@ ENVIRONMENT = "development"
       }
 
       // Should auto-load the validation config
-      expect(output).toContain('Loaded configuration from: ./validation-config.json');
+      expect(output).toContain('Loaded configuration from:');
 
       // Should mention missing required file
       expect(output).toContain('Missing required file') || expect(output).toContain('src/worker/index.js');
@@ -142,7 +142,7 @@ ENVIRONMENT = "development"
       } catch (error) {
         const output = error.stdout ? error.stdout.toString() : error.message;
         // Should have auto-loaded the validation config
-        expect(output).toContain('Loaded configuration from: ./validation-config.json');
+        expect(output).toContain('Loaded configuration from:');
         // Should contain validation errors for package.json fields
         expect(output).toContain('package.json: Missing required field');
       }

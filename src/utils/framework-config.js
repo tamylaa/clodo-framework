@@ -23,27 +23,33 @@ export class FrameworkConfig {
 
   /**
    * Find the configuration file in standard locations
+   * 
+   * For a packaged framework, we should only look within the framework's own directory
+   * to maintain self-containment. Users can explicitly pass config paths if needed.
    */
   findConfigFile() {
     let __filename, __dirname;
     
-    // Handle test environment where import.meta might be transformed
+    // Get the framework's directory (works in both source and packaged environments)
     try {
       __filename = fileURLToPath(import.meta.url);
       __dirname = dirname(__filename);
     } catch (error) {
-      // Fallback for test environment
+      // Fallback for environments where import.meta is not available
+      // This should not happen in modern Node.js environments
+      console.warn('⚠️  Unable to determine framework directory, using current directory');
       __dirname = process.cwd();
-      __filename = join(__dirname, 'src', 'utils', 'framework-config.js');
     }
     
+    // Only look for config files within the framework's package directory
+    // This ensures the framework is self-contained and doesn't depend on user project files
+    const frameworkRoot = join(__dirname, '..', '..');
     const possiblePaths = [
-      './validation-config.json',
-      '../validation-config.json',
-      '../../validation-config.json',
-      join(process.cwd(), 'validation-config.json'),
-      join(__dirname, '..', '..', 'validation-config.json')
-    ];
+      join(frameworkRoot, 'validation-config.json'),
+      join(frameworkRoot, 'config', 'validation-config.json'),
+      // Allow explicit config path via environment variable (for advanced users)
+      process.env.CLODO_FRAMEWORK_CONFIG && join(process.cwd(), process.env.CLODO_FRAMEWORK_CONFIG)
+    ].filter(Boolean); // Remove falsy values
 
     for (const path of possiblePaths) {
       if (this.fileManager.exists(path)) {
@@ -52,7 +58,7 @@ export class FrameworkConfig {
     }
 
     // Return null instead of throwing - will use default config
-    // Note: This is expected behavior - services don't need their own config
+    // This is expected behavior - services don't need their own config
     return null;
   }
 

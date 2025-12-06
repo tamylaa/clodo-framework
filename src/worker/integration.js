@@ -1,19 +1,13 @@
 import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js';
 
-// Export COMMON_FEATURES constant (simplified from ConfigurationManager)
-export const COMMON_FEATURES = [
-  'authentication',
-  'logging',
-  'caching',
-  'rate-limiting',
-  'monitoring'
-];
+// Import COMMON_FEATURES from ConfigurationManager
+import { COMMON_FEATURES } from '../../lib/shared/config/ConfigurationManager.js';
 
 // Simple feature manager interface (replaces ConfigurationManager dependency)
 export const configManager = {
   setDomain: () => {},
-  getEnabledFeatures: () => COMMON_FEATURES,
-  isFeatureEnabled: (feature) => COMMON_FEATURES.includes(feature)
+  getEnabledFeatures: () => Object.values(COMMON_FEATURES),
+  isFeatureEnabled: (feature) => Object.values(COMMON_FEATURES).includes(feature)
 };
 
 // Legacy featureManager compatibility interface
@@ -57,7 +51,9 @@ export const initializeService = (env, domainConfigs = {}) => {
     const serviceContext = {
       domain: domainConfig.name,
       environment,
-      features: featureManager.getEnabledFeatures(),
+      features: Object.keys(domainConfig.features || {}).filter(feature => 
+        domainConfig.features[feature] === true
+      ),
       config: envConfig,
       env,
       isProduction: environment === 'production',

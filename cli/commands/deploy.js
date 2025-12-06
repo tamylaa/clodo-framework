@@ -13,6 +13,7 @@ export function registerDeployCommand(program) {
     .option('--account-id <id>', 'Cloudflare account ID (or set CLOUDFLARE_ACCOUNT_ID env var)')
     .option('--zone-id <id>', 'Cloudflare zone ID (or set CLOUDFLARE_ZONE_ID env var)')
     .option('--domain <domain>', 'Specific domain to deploy to')
+    .option('--service-name <name>', 'Service name for URL generation (e.g., data-service, auth-service)', 'data-service')
     .option('--environment <env>', 'Target environment (development, staging, production)', 'production')
     .option('--development', 'Deploy to development environment (shorthand for --environment development)')
     .option('--staging', 'Deploy to staging environment (shorthand for --environment staging)')
@@ -65,6 +66,7 @@ export function registerDeployCommand(program) {
             servicePath: mergedOptions.servicePath || '.',
             environment: mergedOptions.environment || 'production',
             domain: mergedOptions.domain,
+            serviceName: mergedOptions.serviceName,
             dryRun: mergedOptions.dryRun || false,
             credentials: {
               token: mergedOptions.token,
@@ -96,6 +98,7 @@ export function registerDeployCommand(program) {
             servicePath: mergedOptions.servicePath || '.',
             environment: mergedOptions.environment || 'production',
             domain: mergedOptions.domain,
+            serviceName: mergedOptions.serviceName,
             dryRun: mergedOptions.dryRun || false,
             credentials: {
               token: mergedOptions.token,

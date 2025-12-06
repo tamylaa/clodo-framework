@@ -7,6 +7,14 @@ export default {
     },
   },
   moduleNameMapper: {
+    // Map package imports to source files during testing
+    '^@tamyla/clodo-framework/utils$': '<rootDir>/src/utils/index.js',
+    // Map re-export wrapper imports to their actual implementations during testing
+    '^../lib/shared/utils/file-manager.js$': '<rootDir>/lib/shared/utils/file-manager.js',
+    '^../lib/shared/utils/formatters.js$': '<rootDir>/lib/shared/utils/formatters.js',
+    '^../lib/shared/logging/Logger.js$': '<rootDir>/lib/shared/logging/Logger.js',
+    '^../../lib/shared/cloudflare/ops.js$': '<rootDir>/lib/shared/cloudflare/ops.js',
+    '^../../../shared/utils/ErrorHandler.js$': '<rootDir>/lib/shared/utils/ErrorHandler.js',
     // Removed .js extension stripping for ES modules
   },
   transform: {

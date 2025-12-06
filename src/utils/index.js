@@ -31,6 +31,9 @@ export const createLogger = (prefix = 'ClodoFramework') => {
   };
 };
 
+// Validation utilities
+export * from './validation.js';
+
 // Health checking utilities
 export * from './health-checker.js';
 

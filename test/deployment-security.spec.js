@@ -30,7 +30,7 @@ describe('CLODO Framework Deployment & Security Features v3.0.3', () => {
     // Should export the key functions that were demonstrated
     expect(content).toContain('deployWithSecurity');
     expect(content).toContain('InteractiveDeploymentConfigurator');
-    expect(content).toContain('ErrorHandler');
+    expect(content).toContain('handleDeploymentError');
   });
 
   test('should validate error handler structure', () => {

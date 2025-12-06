@@ -41,7 +41,7 @@ describe('Deploy Command', () => {
       expect(mockProgram.description).toHaveBeenCalled();
       expect(mockProgram.option).toHaveBeenCalledWith(
         '--token <token>',
-        'Cloudflare API token'
+        'Cloudflare API token (or set CLOUDFLARE_API_TOKEN env var)'
       );
       expect(mockProgram.option).toHaveBeenCalledWith(
         '--service-path <path>',

@@ -564,7 +564,7 @@ export class WranglerDeployer {
           error: 'Wrangler authentication failed',
           details: 'You need to login to Cloudflare',
           suggestions: [
-            'Run: wrangler auth login',
+            'Run: wrangler login',
             'Or set CLOUDFLARE_API_TOKEN environment variable'
           ]
         };

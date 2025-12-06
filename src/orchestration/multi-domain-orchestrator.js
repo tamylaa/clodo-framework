@@ -37,7 +37,7 @@ export class MultiDomainOrchestrator {
     this.skipTests = options.skipTests || false;
     this.parallelDeployments = options.parallelDeployments || 3;
     this.servicePath = options.servicePath || process.cwd();
-    this.serviceName = options.serviceName || 'worker'; // Service name for custom domain
+    this.serviceName = options.serviceName || 'data-service'; // Service name for custom domain (e.g., 'data-service', 'auth-service')
     
     // Wrangler config path - allows using customer-specific wrangler.toml files
     // If not specified, wrangler uses the default wrangler.toml in servicePath
@@ -807,7 +807,8 @@ export class MultiDomainOrchestrator {
    * @param {Object} options - Simple deployment options
    * @param {string} options.servicePath - Path to service directory
    * @param {string} options.environment - Target environment
-   * @param {string} options.domain - Specific domain to deploy to
+   * @param {string} options.domain - Specific domain to deploy to (used as zone name and domain suffix)
+   * @param {string} options.serviceName - Service name for URL generation (e.g., 'data-service', 'auth-service')
    * @param {boolean} options.dryRun - Simulate deployment
    * @param {Object} options.credentials - Cloudflare credentials
    * @returns {Promise<Object>} Deployment result
@@ -817,6 +818,7 @@ export class MultiDomainOrchestrator {
       servicePath = '.',
       environment = 'production',
       domain,
+      serviceName,
       dryRun = false,
       credentials = {}
     } = options;
@@ -826,9 +828,11 @@ export class MultiDomainOrchestrator {
       environment,
       dryRun,
       servicePath,
+      serviceName, // Pass through serviceName if provided
       cloudflareToken: credentials.token,
       cloudflareAccountId: credentials.accountId,
       cloudflareZoneId: credentials.zoneId,
+      cloudflareZoneName: domain, // Use domain as zone name for customer config
       domains: domain ? [domain] : []
     });
 
