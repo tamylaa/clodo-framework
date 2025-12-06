@@ -55,6 +55,14 @@ function fixDistImports(dir) {
         if (relPath.includes('dist/lib/shared/') || relPath.includes('dist\\lib\\shared\\')) {
           content = content.replace(/\.\.\/\.\.\/\.\.\/src\/utils\//g, "../../utils/");
         }
+        
+        // Fix ../lib/ to ./lib/ for files directly in dist/ root (like index.js)
+        // For dist/index.js, relPath is 'dist/index.js', split('/') gives ['dist', 'index.js'], length === 2
+        // On Windows, it might be 'dist\index.js', so normalize to forward slashes
+        const normalizedRelPath = relPath.replace(/\\/g, '/');
+        if (normalizedRelPath.startsWith('dist/') && normalizedRelPath.split('/').length === 2 && normalizedRelPath.endsWith('.js')) {
+          content = content.replace(/\.\.\/lib\//g, "./lib/");
+        }
       }
       
       if (content !== original) {
