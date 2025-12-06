@@ -56,30 +56,10 @@ function fixDistImports(dir) {
       if (relPath.startsWith('dist')) {
         const normalizedRelPath = relPath.replace(/\\/g, '/');
         
-        // Fix ../../../src/utils/ to ../../utils/ for files in dist/lib/shared/
-        if (normalizedRelPath.includes('dist/lib/shared/')) {
-          content = content.replace(/\.\.\/\.\.\/\.\.\/src\/utils\//g, "../../utils/");
-          
-          // Fix ../../utils/framework-config.js to ../../../utils/framework-config.js
-          // (for dist/lib/shared/database|security|utils files that are 4 levels deep)
-          content = content.replace(/import\(\s*['"]\.\.\/\.\.\/utils\/framework-config\.js['"]\s*\)/g, 
-                                   "import('../../../utils/framework-config.js')");
-        }
-        
-        // Fix ../lib/ to ./lib/ for files directly in dist/ root (like index.js)
-        // For dist/index.js, relPath is 'dist/index.js', split('/') gives ['dist', 'index.js'], length === 2
-        if (normalizedRelPath.startsWith('dist/') && normalizedRelPath.split('/').length === 2 && normalizedRelPath.endsWith('.js')) {
-          content = content.replace(/\.\.\/lib\//g, "./lib/");
-          
-          // Fix ../../../lib/shared/deployment/credential-collector.js to ./lib/shared/deployment/credential-collector.js
-          content = content.replace(/import\(\s*['"]\.\.\/\.\.\/\.\.\/lib\/shared\/deployment\/credential-collector\.js['"]\s*\)/g,
-                                   "import('./lib/shared/deployment/credential-collector.js')");
-        }
-        
-        // Fix ../../lib/shared/config/ConfigurationManager.js to ../lib/shared/config/ConfigurationManager.js for dist/worker/integration.js
-        if (normalizedRelPath === 'dist/worker/integration.js') {
-          content = content.replace(/from\s+['"]\.\.\/\.\.\/lib\/shared\/config\/ConfigurationManager\.js['"]/g, 
-                                   "from '../lib/shared/config/ConfigurationManager.js'");
+        // Single minimal fix for wrapper re-exports: ../../../src/utils/ becomes ../../../utils/ in dist/
+        // This handles the framework-config wrapper in lib/shared/utils/
+        if (normalizedRelPath === 'dist/lib/shared/utils/framework-config.js') {
+          content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/src\/utils\//g, "from '../../../utils/");
         }
       }
       
