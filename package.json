@@ -1,6 +1,6 @@
 {
   "name": "@tamyla/clodo-framework",
-  "version": "3.2.5",
+  "version": "4.0.0",
   "description": "Reusable framework for Clodo-style software architecture on Cloudflare Workers + D1",
   "type": "module",
   "sideEffects": [
@@ -89,7 +89,7 @@
     "test:integration": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/integration/ --verbose",
     "test:comprehensive": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/comprehensive-suite.spec.js --verbose",
     "test:package": "node scripts/test-package.js",
-    "prepublishOnly": "npm run test:package",
+    "prepublishOnly": "npm run build:ci",
     "test:coverage:cli": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/cli-integration/ --coverage",
     "test:coverage:deployment": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/deployment/ test/deployment-security.spec.js --coverage",
     "test:coverage:services": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/service-management/ test/services/ --coverage",
@@ -103,7 +103,6 @@
     "analyze:bundle": "echo 'Bundle analysis not implemented yet'",
     "docs": "echo 'JSDoc documentation generation not configured yet'",
     "validate": "npm run check:all",
-    "prepublishOnly": "npm run build:ci",
     "postpublish": "echo 'Published successfully to npm registry!'",
     "publish:beta": "npm publish --tag beta",
     "publish:latest": "npm publish --tag latest",

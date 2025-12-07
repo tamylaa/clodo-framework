@@ -1,3 +1,37 @@
+# [4.0.0](https://github.com/tamylaa/clodo-framework/compare/v3.2.5...v4.0.0) (2025-12-07)
+
+
+### Bug Fixes
+
+* resolve remaining 5 import path issues in dist files ([383a625](https://github.com/tamylaa/clodo-framework/commit/383a6257910546f4d9a9f1442f4005c0cc166704))
+
+
+### Code Refactoring
+
+* replace band-aid import fixes with proper wrapper pattern ([5385ef2](https://github.com/tamylaa/clodo-framework/commit/5385ef23e9a9b8be26fce9d9fe6df2184667168c))
+
+
+### BREAKING CHANGES
+
+* from previous approach:
+- Removed post-build path manipulation that was fragile and hard to maintain
+- Implemented proper wrapper re-export pattern consistent with existing codebase
+
+Changes:
+- Create lib/shared/utils/framework-config.js wrapper that re-exports from src/utils
+- Update connection-manager.js to import from ../utils/framework-config.js wrapper
+- Update secret-generator.js to import from ../utils/framework-config.js wrapper
+- Update graceful-shutdown-manager.js to import from ./framework-config.js wrapper
+- Replace complex import path fixes with single minimal transformation in fix-dist-imports.js
+- Maintains all 23 exports working correctly
+
+Benefits:
+ Clean, maintainable architecture following existing wrapper patterns
+ No circular dependencies
+ Imports work correctly in both source and compiled dist/
+ Easier to debug and understand import resolution
+ Scales better as codebase grows
+
 ## [3.2.5](https://github.com/tamylaa/clodo-framework/compare/v3.2.4...v3.2.5) (2025-12-06)
 
 
