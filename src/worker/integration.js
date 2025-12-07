@@ -3,6 +3,9 @@ import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js'
 // Import COMMON_FEATURES from worker-safe constants (no Node.js dependencies)
 import { COMMON_FEATURES } from './features.js';
 
+// Re-export COMMON_FEATURES for use in worker templates
+export { COMMON_FEATURES };
+
 // Simple feature manager interface (replaces ConfigurationManager dependency)
 export const configManager = {
   setDomain: () => {},

@@ -13,6 +13,7 @@ export { default as Clodo, createService, deploy, validate, initialize, getInfo 
 export { FeatureFlagManager } from './config/features.js';
 export { createDomainConfigSchema, validateDomainConfig, createDefaultDomainConfig } from './utils/domain-config.js';
 export { initializeService } from './worker/integration.js';
+export { autoConfigureFramework } from './version/VersionDetector.js';
 
 // Core data and schema components
 export * from './services/GenericDataService.js';

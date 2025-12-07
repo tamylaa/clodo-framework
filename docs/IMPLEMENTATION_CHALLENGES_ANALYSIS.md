@@ -481,10 +481,10 @@ Current situation:
 import { GenericDataService } from '@tamyla/clodo-framework';
 ```
 
-After rename:
+If considering rename (NOT RECOMMENDED):
 ```javascript
-import { BaseDataService } from '@tamyla/clodo-framework';
-// User code breaks immediately
+// This would break existing users
+// Keep GenericDataService as the canonical name
 ```
 
 **Impact:**
@@ -590,7 +590,8 @@ If anyone built packages depending on current names:
 
 4. **Add aliases silently in future version:**
    ```javascript
-   export { GenericDataService as BaseDataService };  // New preferred name
+   // Keep GenericDataService as canonical name
+   // No breaking changes needed
    // Old name still works, no deprecation warning yet
    ```
 

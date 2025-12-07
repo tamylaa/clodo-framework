@@ -1,0 +1,1115 @@
+﻿[
+    {
+        "symbol":  "addD1Database",
+        "package":  "@tamyla/clodo-framework/config/customers",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "addEnvVar",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\FRAMEWORK_ASSESSMENT_SUMMARY.md"
+                    ]
+    },
+    {
+        "symbol":  "addRoute",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\FRAMEWORK_ASSESSMENT_SUMMARY.md"
+                    ]
+    },
+    {
+        "symbol":  "ApiTester",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "ApiTester",
+        "package":  "@tamyla/clodo-framework/deployment/testers",
+        "foundIn":  [
+                        "README.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "askChoice",
+        "package":  "@tamyla/clodo-framework/utils/interactive",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "askUser",
+        "package":  "@tamyla/clodo-framework/utils/deployment",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "askUser",
+        "package":  "@tamyla/clodo-framework/utils/interactive",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "askYesNo",
+        "package":  "@tamyla/clodo-framework/utils/deployment",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "AssessmentCache",
+        "package":  "@tamyla/clodo-framework/service-management",
+        "foundIn":  [
+                        "i-docs\\architecture\\CAPABILITY_DISTRIBUTION_AUDIT.md",
+                        "i-docs\\deployment\\QUICK_REFERENCE_FIX.md",
+                        "i-docs\\development\\CIRCULAR_DEPENDENCY_FIX.md",
+                        "i-docs\\roadmap\\EXECUTIVE_SUMMARY_ROADMAP.md",
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "AuthTester",
+        "package":  "@tamyla/clodo-framework/deployment/testers",
+        "foundIn":  [
+                        "README.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "AuthTester",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "autoConfigureFramework",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "BaseDataService",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\IMPLEMENTATION_CHALLENGES_ANALYSIS.md"
+                    ]
+    },
+    {
+        "symbol":  "BaseDeploymentOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment/orchestration",
+        "foundIn":  [
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md",
+                        "i-docs\\guides\\DEVELOPMENT_WORKFLOW.md"
+                    ]
+    },
+    {
+        "symbol":  "CapabilityAssessmentEngine",
+        "package":  "@tamyla/clodo-framework/service-management",
+        "foundIn":  [
+                        "i-docs\\architecture\\CAPABILITY_DISTRIBUTION_AUDIT.md",
+                        "i-docs\\deployment\\QUICK_REFERENCE_FIX.md",
+                        "i-docs\\development\\CIRCULAR_DEPENDENCY_FIX.md",
+                        "i-docs\\roadmap\\EXECUTIVE_SUMMARY_ROADMAP.md",
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "Clodo",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\FIXES_APPLIED.md"
+                    ]
+    },
+    {
+        "symbol":  "CloudflareAPI",
+        "package":  "@tamyla/clodo-framework/utils/cloudflare",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\FIXES_APPLIED.md"
+                    ]
+    },
+    {
+        "symbol":  "CloudflareDomainManager",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "README.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "CloudflareManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "COMMON_FEATURES",
+        "package":  "@tamyla/clodo-framework/worker",
+        "foundIn":  [
+                        "templates\\generic\\src\\worker\\index.js",
+                        "templates\\static-site\\src\\worker\\index.js"
+                    ]
+    },
+    {
+        "symbol":  "COMMON_FEATURES",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "ConfigurationCacheManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "i-docs\\architecture\\FRAMEWORK-ARCHITECTURE-OVERVIEW.md"
+                    ]
+    },
+    {
+        "symbol":  "ConfigurationCacheManager",
+        "package":  "@tamyla/clodo-framework/utils/deployment",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "ConfigurationValidator",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\SECURITY.md"
+                    ]
+    },
+    {
+        "symbol":  "createDataService",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "createDomainConfigSchema",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\analysis\\DOMAIN_CONFIGURATION_ARCHITECTURE.md",
+                        "i-docs\\guides\\getting-started.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "templates\\generic\\src\\config\\domains.js"
+                    ]
+    },
+    {
+        "symbol":  "createDomainConfigSchema",
+        "package":  "@tamyla/clodo-framework/config",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\developer-guide.md"
+                    ]
+    },
+    {
+        "symbol":  "createDomainRegistry",
+        "package":  "@tamyla/clodo-framework/config",
+        "foundIn":  [
+                        "i-docs\\guides\\customer-config.md"
+                    ]
+    },
+    {
+        "symbol":  "createDomainRegistry",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "createEnvironmentConfig",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "createFeatureGuard",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\examples\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "createFeatureGuard",
+        "package":  "@tamyla/clodo-framework/worker",
+        "foundIn":  [
+                        "templates\\generic\\src\\worker\\index.js",
+                        "templates\\static-site\\src\\worker\\index.js"
+                    ]
+    },
+    {
+        "symbol":  "createLogger",
+        "package":  "@tamyla/clodo-framework/utils",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "createLogger",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "createService",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\PHASE1_VISIBILITY_FOCUSED_PLAN.md",
+                        "docs\\SIMPLE_API_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "CrossDomainCoordinator",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "i-docs\\architecture\\FRAMEWORK-ARCHITECTURE-OVERVIEW.md"
+                    ]
+    },
+    {
+        "symbol":  "CrossDomainCoordinator",
+        "package":  "@tamyla/clodo-framework/orchestration",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "i-docs\\architecture\\CAPABILITY_DISTRIBUTION_AUDIT.md",
+                        "i-docs\\development\\CIRCULAR_DEPENDENCY_FIX.md",
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "CustomerConfigCLI",
+        "package":  "@tamyla/clodo-framework/config",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "CustomerConfigLoader",
+        "package":  "@tamyla/clodo-framework/config/customer-loader",
+        "foundIn":  [
+                        "i-docs\\analysis\\CONSOLIDATION_IMPACT_ANALYSIS.md"
+                    ]
+    },
+    {
+        "symbol":  "CustomerConfigurationManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "i-docs\\guides\\developer-guide.md"
+                    ]
+    },
+    {
+        "symbol":  "CustomerConfigurationManager",
+        "package":  "@tamyla/clodo-framework/config",
+        "foundIn":  [
+                        "README.md",
+                        "i-docs\\guides\\customer-config-framework.md",
+                        "i-docs\\guides\\customer-config.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "DatabaseOrchestrator",
+        "package":  "@tamyla/clodo-framework/database",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "DatabaseTester",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "DatabaseTester",
+        "package":  "@tamyla/clodo-framework/deployment/testers",
+        "foundIn":  [
+                        "README.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "deepMerge",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "deploy",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\SIMPLE_API_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "DeploymentAuditor",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md",
+                        "docs\\VISUAL_DISTRIBUTION_FLOW.md"
+                    ]
+    },
+    {
+        "symbol":  "DeploymentManager",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\SECURITY.md"
+                    ]
+    },
+    {
+        "symbol":  "DeploymentOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "deploymentUI",
+        "package":  "@tamyla/clodo-framework/dist/bin/commands/helpers/deployment-ui.js",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "DeploymentValidator",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "DeploymentValidator",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md",
+                        "i-docs\\guides\\DEVELOPMENT_WORKFLOW.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "DeploymentValidator",
+        "package":  "@tamyla/clodo-framework/orchestration",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "deployWithSecurity",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "i-docs\\architecture\\CLI_ARCHITECTURE.md"
+                    ]
+    },
+    {
+        "symbol":  "deployWithSecurity",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "DomainDiscovery",
+        "package":  "@tamyla/clodo-framework/config/discovery",
+        "foundIn":  [
+                        "README.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "DomainDiscovery",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "EnhancedRouter",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\examples\\README.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\session-reports\\CLOUDFLARE_FRAMEWORK_COMPARISON.md"
+                    ]
+    },
+    {
+        "symbol":  "EnhancedRouter",
+        "package":  "@tamyla/clodo-framework/routing",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "EnhancedSecretManager",
+        "package":  "@tamyla/clodo-framework/utils/deployment",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "EnterpriseOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment/orchestration",
+        "foundIn":  [
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md"
+                    ]
+    },
+    {
+        "symbol":  "ErrorHandler",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "ErrorRecoveryManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "FeatureFlagManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "featureManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\examples-gallery.md"
+                    ]
+    },
+    {
+        "symbol":  "featureManager",
+        "package":  "@tamyla/clodo-framework/config",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\customer-config.md"
+                    ]
+    },
+    {
+        "symbol":  "FieldConfig",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md"
+                    ]
+    },
+    {
+        "symbol":  "FRAMEWORK_NAME",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "FRAMEWORK_VERSION",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "generateJWT",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "i-docs\\guides\\examples-gallery.md"
+                    ]
+    },
+    {
+        "symbol":  "generateSecureKey",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\SECURITY.md"
+                    ]
+    },
+    {
+        "symbol":  "GenericDataService",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "docs\\IMPLEMENTATION_CHALLENGES_ANALYSIS.md",
+                        "docs\\PHASE1_VISIBILITY_FOCUSED_PLAN.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\architecture\\FRAMEWORK-ARCHITECTURE-ANALYSIS.md",
+                        "i-docs\\architecture\\FRAMEWORK-ARCHITECTURE-OVERVIEW.md",
+                        "i-docs\\examples\\README.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\examples-gallery.md",
+                        "i-docs\\guides\\getting-started.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\session-reports\\CLOUDFLARE_FRAMEWORK_COMPARISON.md"
+                    ]
+    },
+    {
+        "symbol":  "GenericDataService",
+        "package":  "@tamyla/clodo-framework/services",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "GenericRouteHandler",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\IMPLEMENTATION_CHALLENGES_ANALYSIS.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\examples\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "GenericRouteHandler",
+        "package":  "@tamyla/clodo-framework/handlers",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md"
+                    ]
+    },
+    {
+        "symbol":  "GenericRouteHandler",
+        "package":  "@tamyla/clodo-framework/routing",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "getAllDataServices",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "getDomainFromEnv",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "hashPassword",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "i-docs\\guides\\examples-gallery.md"
+                    ]
+    },
+    {
+        "symbol":  "healthCheckWithBackoff",
+        "package":  "@tamyla/clodo-framework/dist/bin/shared/monitoring/health-checker.js",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "initialize",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\SIMPLE_API_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "initializeFramework",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "initializeService",
+        "package":  "@tamyla/clodo-framework/worker",
+        "foundIn":  [
+                        "templates\\generic\\src\\worker\\index.js",
+                        "templates\\static-site\\src\\worker\\index.js"
+                    ]
+    },
+    {
+        "symbol":  "initializeService",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "docs\\overview.md",
+                        "docs\\SIMPLE_API_GUIDE.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\examples\\README.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\getting-started.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "InputCollector",
+        "package":  "@tamyla/clodo-framework/service-management",
+        "foundIn":  [
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "INSECURE_PATTERNS",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "docs\\SECURITY.md"
+                    ]
+    },
+    {
+        "symbol":  "InteractiveDeploymentConfigurator",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "isFeatureEnabled",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "LoadTester",
+        "package":  "@tamyla/clodo-framework/deployment/testers",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "mergeDomainConfigs",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "moduleManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "MultiDomainOrchestrator",
+        "package":  "@tamyla/clodo-framework/orchestration",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "i-docs\\architecture\\CAPABILITY_DISTRIBUTION_AUDIT.md",
+                        "i-docs\\deployment\\QUICK_REFERENCE_FIX.md",
+                        "i-docs\\development\\CIRCULAR_DEPENDENCY_FIX.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\examples-gallery.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md",
+                        "i-docs\\roadmap\\EXECUTIVE_SUMMARY_ROADMAP.md",
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "MultiDomainOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "i-docs\\analysis\\ISSUE_RESOLUTION_CHECKLIST.md",
+                        "i-docs\\architecture\\CLI_ARCHITECTURE.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "MultiDomainOrchestrator",
+        "package":  "@tamyla/clodo-framework/dist/orchestration/multi-domain-orchestrator.js",
+        "foundIn":  [
+                        "i-docs\\architecture\\CLI_ARCHITECTURE.md"
+                    ]
+    },
+    {
+        "symbol":  "MultiDomainOrchestrator",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\SIMPLE_API_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "orchestrator",
+        "package":  "@tamyla/clodo-framework/dist/deployment/index.js",
+        "foundIn":  [
+                        "i-docs\\architecture\\CLI_ARCHITECTURE.md"
+                    ]
+    },
+    {
+        "symbol":  "orchestrator",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "i-docs\\architecture\\CLI_ARCHITECTURE.md"
+                    ]
+    },
+    {
+        "symbol":  "PerformanceTester",
+        "package":  "@tamyla/clodo-framework/deployment/testers",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "PerformanceTester",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "i-docs\\guides\\examples-gallery.md"
+                    ]
+    },
+    {
+        "symbol":  "PortfolioOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment/orchestration",
+        "foundIn":  [
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md"
+                    ]
+    },
+    {
+        "symbol":  "ProductionTester",
+        "package":  "@tamyla/clodo-framework/deployment/testers",
+        "foundIn":  [
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md",
+                        "i-docs\\guides\\DEVELOPMENT_WORKFLOW.md"
+                    ]
+    },
+    {
+        "symbol":  "ProductionTester",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "ProductionTester",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "RollbackManager",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md"
+                    ]
+    },
+    {
+        "symbol":  "SchemaManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md",
+                        "i-docs\\architecture\\FRAMEWORK-ARCHITECTURE-ANALYSIS.md",
+                        "i-docs\\architecture\\FRAMEWORK-ARCHITECTURE-OVERVIEW.md",
+                        "i-docs\\examples\\README.md",
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\examples-gallery.md",
+                        "i-docs\\guides\\getting-started.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "schemaManager",
+        "package":  "@tamyla/clodo-framework/schema",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\guides\\INTEGRATION_PROMPT.md"
+                    ]
+    },
+    {
+        "symbol":  "schemaManager",
+        "package":  "@tamyla/clodo-framework/services",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "SecretGenerator",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\SECURITY.md"
+                    ]
+    },
+    {
+        "symbol":  "SecurityCLI",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "securityModule",
+        "package":  "@tamyla/clodo-framework/modules/security",
+        "foundIn":  [
+                        "docs\\SECURITY.md"
+                    ]
+    },
+    {
+        "symbol":  "ServiceAutoDiscovery",
+        "package":  "@tamyla/clodo-framework/service-management",
+        "foundIn":  [
+                        "i-docs\\architecture\\CAPABILITY_DISTRIBUTION_AUDIT.md",
+                        "i-docs\\deployment\\QUICK_REFERENCE_FIX.md",
+                        "i-docs\\roadmap\\EXECUTIVE_SUMMARY_ROADMAP.md",
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "ServiceCreator",
+        "package":  "@tamyla/clodo-framework/service-management",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md",
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "ServiceEnhancer",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "ServiceInitializer",
+        "package":  "@tamyla/clodo-framework/service-management",
+        "foundIn":  [
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "ServiceOrchestrator",
+        "package":  "@tamyla/clodo-framework/service-management",
+        "foundIn":  [
+                        "docs\\FIXES_APPLIED.md",
+                        "i-docs\\architecture\\CAPABILITY_DISTRIBUTION_AUDIT.md",
+                        "i-docs\\session-reports\\SESSION_COMPLETION_STATUS.md"
+                    ]
+    },
+    {
+        "symbol":  "ServiceOrchestrator",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "README.md",
+                        "docs\\PHASE1_VISIBILITY_FOCUSED_PLAN.md",
+                        "docs\\SIMPLE_API_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "SingleServiceOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment/orchestration",
+        "foundIn":  [
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md",
+                        "docs\\VISUAL_DISTRIBUTION_FLOW.md",
+                        "i-docs\\guides\\DEVELOPMENT_WORKFLOW.md"
+                    ]
+    },
+    {
+        "symbol":  "UnifiedConfigManager",
+        "package":  "@tamyla/clodo-framework/utils/deployment",
+        "foundIn":  [
+                        "i-docs\\development\\CIRCULAR_DEPENDENCY_FIX.md"
+                    ]
+    },
+    {
+        "symbol":  "UnifiedConfigManager",
+        "package":  "@tamyla/clodo-framework/utils/config",
+        "foundIn":  [
+                        "i-docs\\analysis\\CONSOLIDATION_IMPACT_ANALYSIS.md"
+                    ]
+    },
+    {
+        "symbol":  "UnifiedDeploymentOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md",
+                        "docs\\VISUAL_DISTRIBUTION_FLOW.md",
+                        "i-docs\\guides\\DEVELOPMENT_WORKFLOW.md"
+                    ]
+    },
+    {
+        "symbol":  "UnifiedDeploymentOrchestrator",
+        "package":  "@tamyla/clodo-framework/deployment/orchestration",
+        "foundIn":  [
+                        "i-docs\\guides\\DEVELOPMENT_WORKFLOW.md"
+                    ]
+    },
+    {
+        "symbol":  "updateEnvironmentConfig",
+        "package":  "@tamyla/clodo-framework/config/customers",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "updateWranglerToml",
+        "package":  "@tamyla/clodo-framework/config/customers",
+        "foundIn":  [
+                        "README.md"
+                    ]
+    },
+    {
+        "symbol":  "validate",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\SIMPLE_API_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "validateDomainConfig",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "validateJWT",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "i-docs\\guides\\examples-gallery.md"
+                    ]
+    },
+    {
+        "symbol":  "validateRequired",
+        "package":  "@tamyla/clodo-framework/utils",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "validateRequired",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\api\\README.md"
+                    ]
+    },
+    {
+        "symbol":  "validateSecurity",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "docs\\api-reference.md",
+                        "docs\\SECURITY.md"
+                    ]
+    },
+    {
+        "symbol":  "ValidationResult",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md"
+                    ]
+    },
+    {
+        "symbol":  "verifyPassword",
+        "package":  "@tamyla/clodo-framework/security",
+        "foundIn":  [
+                        "i-docs\\guides\\examples-gallery.md"
+                    ]
+    },
+    {
+        "symbol":  "withCircuitBreaker",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "withFeature",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "withRetry",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "docs\\api-reference.md"
+                    ]
+    },
+    {
+        "symbol":  "WranglerConfigManager",
+        "package":  "@tamyla/clodo-framework",
+        "foundIn":  [
+                        "i-docs\\commercialization\\planning\\CLODO_ORCHESTRATION_REPO_SETUP.md"
+                    ]
+    },
+    {
+        "symbol":  "WranglerDeployer",
+        "package":  "@tamyla/clodo-framework/orchestration",
+        "foundIn":  [
+                        "i-docs\\guides\\developer-guide.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    },
+    {
+        "symbol":  "WranglerDeployer",
+        "package":  "@tamyla/clodo-framework/deployment",
+        "foundIn":  [
+                        "docs\\ORCHESTRATOR_CLI_INTEGRATION.md",
+                        "i-docs\\guides\\DEVELOPMENT_WORKFLOW.md",
+                        "i-docs\\guides\\INTEGRATION_GUIDE.md"
+                    ]
+    }
+]

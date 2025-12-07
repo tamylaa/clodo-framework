@@ -135,14 +135,14 @@ await orchestrator.createService({
 
 #### Service Enhancement
 ```javascript
-import { ServiceEnhancer } from '@tamyla/clodo-framework';
+import { ServiceCreator } from '@tamyla/clodo-framework';
 
-// Add custom handler to existing service
-const enhancer = new ServiceEnhancer('./path/to/service');
-await enhancer.addHandler('customHandler', {
-  method: 'POST',
-  path: '/custom',
-  handler: customLogic
+// Create and configure a new service
+const creator = new ServiceCreator();
+await creator.createService({
+  serviceName: 'my-api-service',
+  serviceType: 'data-service',
+  domain: 'mycompany.com'
 });
 ```
 
