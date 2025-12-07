@@ -73,9 +73,31 @@ describe('InteractiveDatabaseWorkflow', () => {
         reused: false
       });
 
-      expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db');
+      expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db', {
+        apiToken: undefined,
+        accountId: undefined
+      });
       expect(rollbackActions).toHaveLength(1);
       expect(rollbackActions[0].type).toBe('delete-database');
+    }, 30000);
+
+    it('should pass API credentials when provided', async () => {
+      mockAskYesNo.mockResolvedValueOnce(true); // Use suggested name
+      mockAskYesNo.mockResolvedValueOnce(true); // Confirm creation
+      mockDatabaseExists.mockResolvedValue(false);
+      mockCreateDatabase.mockResolvedValue('test-db-id-456');
+
+      const result = await workflow.handleDatabaseSetup('example.com', 'production', {
+        interactive: true,
+        apiToken: 'test-api-token-123',
+        accountId: 'test-account-id-abc'
+      });
+
+      expect(result.id).toBe('test-db-id-456');
+      expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db', {
+        apiToken: 'test-api-token-123',
+        accountId: 'test-account-id-abc'
+      });
     }, 30000);
 
     it('should reuse existing database', async () => {
@@ -118,7 +140,10 @@ describe('InteractiveDatabaseWorkflow', () => {
       });
 
       expect(mockDeleteDatabase).toHaveBeenCalledWith('example.com-auth-db');
-      expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db');
+      expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db', {
+        apiToken: undefined,
+        accountId: undefined
+      });
       expect(result.created).toBe(true);
     }, 15000); // Increased timeout for mock resolution
 
