@@ -37,8 +37,8 @@ export * from './validation.js';
 // Health checking utilities
 export * from './health-checker.js';
 
-// Framework configuration
-export * from './framework-config.js';
+// Framework configuration - re-export from canonical location
+export { FrameworkConfig, frameworkConfig, getFrameworkConfig } from '../../lib/shared/utils/framework-config.js';
 
 // Deployment utilities
 export * from './deployment/index.js';

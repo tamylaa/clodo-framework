@@ -5,13 +5,68 @@
 
 import fs from 'fs/promises';
 import path from 'path';
+import { FrameworkConfig } from '../../utils/framework-config.js';
 
 export class ValidationHandler {
   constructor(options = {}) {
     this.strict = options.strict || false;
     this.customConfig = options.customConfig || {};
-    
-    // Use custom validation config if provided, otherwise use defaults
+    this.configLoaded = false;
+  }
+
+  /**
+   * Load validation configuration from validation-config.json if it exists
+   */
+  loadValidationConfig(servicePath) {
+    // Skip if already loaded or custom config provided
+    if (this.configLoaded || Object.keys(this.customConfig).length > 0) {
+      return this.validationConfig;
+    }
+
+    try {
+      // Try to load validation-config.json from service directory
+      const configPath = path.join(servicePath, 'validation-config.json');
+      const frameworkConfig = new FrameworkConfig(configPath);
+      const config = frameworkConfig.config;
+      
+      // Extract validation section from config
+      if (config && config.validation) {
+        // Log that we loaded the config
+        console.log(`📋 Loaded configuration from: ${configPath}`);
+        
+        this.validationConfig = {
+          requiredFiles: config.validation.requiredFiles || [
+            'package.json',
+            'src/config/domains.js',
+            'src/worker/index.js',
+            'wrangler.toml'
+          ],
+          optionalFiles: config.validation.optionalFiles || [
+            'README.md',
+            'LICENSE',
+            '.gitignore'
+          ],
+          requiredFields: config.validation.requiredFields || {
+            'package.json': ['name', 'version', 'type', 'main'],
+            'wrangler.toml': ['name', 'main', 'compatibility_date']
+          },
+          serviceTypes: config.validation.serviceTypes || [
+            'data-service',
+            'auth-service',
+            'content-service',
+            'api-gateway',
+            'static-site',
+            'generic'
+          ]
+        };
+        this.configLoaded = true;
+        return this.validationConfig;
+      }
+    } catch (error) {
+      // Config loading failed, use defaults silently
+    }
+
+    // Use custom config if provided, otherwise use defaults
     this.validationConfig = {
       requiredFiles: this.customConfig.requiredFiles || [
         'package.json',
@@ -37,12 +92,17 @@ export class ValidationHandler {
         'generic'
       ]
     };
+    this.configLoaded = true;
+    return this.validationConfig;
   }
 
   /**
    * Validate complete service configuration
    */
   async validateService(servicePath) {
+    // Load validation config from validation-config.json if it exists
+    this.loadValidationConfig(servicePath);
+    
     const issues = [];
 
     // Check for required files using custom config

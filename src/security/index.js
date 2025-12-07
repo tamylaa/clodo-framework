@@ -6,11 +6,13 @@
 import { ConfigurationValidator } from './ConfigurationValidator.js';
 // DeploymentManager removed - replaced by MultiDomainOrchestrator + WranglerConfigManager
 import { SecretGenerator } from './SecretGenerator.js';
+import { SecurityCLI } from './SecurityCLI.js';
 // InteractiveDeploymentConfigurator removed - replaced by InputCollector
 
 export { ConfigurationValidator } from './ConfigurationValidator.js';
-// export { DeploymentManager } - DEPRECATED: Use MultiDomainOrchestrator instead
+// export { DeploymentManager} - DEPRECATED: Use MultiDomainOrchestrator instead
 export { SecretGenerator } from './SecretGenerator.js';
+export { SecurityCLI } from './SecurityCLI.js';
 // export { InteractiveDeploymentConfigurator } - DEPRECATED: Use InputCollector instead
 
 // Re-export patterns and rules for advanced usage

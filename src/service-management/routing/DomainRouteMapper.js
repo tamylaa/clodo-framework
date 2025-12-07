@@ -7,7 +7,7 @@
  * @module service-management/routing/DomainRouteMapper
  */
 
-import { frameworkConfig } from '../../utils/framework-config.js';
+import { frameworkConfig } from '../../../lib/shared/utils/framework-config.js';
 
 export class DomainRouteMapper {
   constructor(options = {}) {

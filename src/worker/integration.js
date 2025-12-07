@@ -1,13 +1,13 @@
 import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js';
 
-// Import COMMON_FEATURES from ConfigurationManager
-import { COMMON_FEATURES } from '../../lib/shared/config/ConfigurationManager.js';
+// Import COMMON_FEATURES from worker-safe constants (no Node.js dependencies)
+import { COMMON_FEATURES } from './features.js';
 
 // Simple feature manager interface (replaces ConfigurationManager dependency)
 export const configManager = {
   setDomain: () => {},
-  getEnabledFeatures: () => Object.values(COMMON_FEATURES),
-  isFeatureEnabled: (feature) => Object.values(COMMON_FEATURES).includes(feature)
+  getEnabledFeatures: () => Object.keys(COMMON_FEATURES).filter(key => COMMON_FEATURES[key]),
+  isFeatureEnabled: (feature) => COMMON_FEATURES[feature] === true
 };
 
 // Legacy featureManager compatibility interface
@@ -198,7 +198,7 @@ export const createRateLimitGuard = (options = {}) => {
   return (handler) => {
     return async (request, env, ctx) => {
       // Skip rate limiting if feature is disabled
-      if (!featureManager.isEnabled(COMMON_FEATURES.RATE_LIMITING)) {
+      if (!featureManager.isEnabled('RATE_LIMITING')) {
         return handler(request, env, ctx);
       }
 

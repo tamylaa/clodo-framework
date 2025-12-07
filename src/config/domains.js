@@ -1,5 +1,23 @@
 // Simple inline logger to avoid circular dependency with index.js
-import { validateRequired, deepMerge } from '../utils/index.js';
+// Import only pure JS utilities (no Node.js dependencies)
+const deepMerge = (target, source) => {
+  const result = { ...target };
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMerge(result[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  return result;
+};
+
+const validateRequired = (obj, requiredFields) => {
+  const missing = requiredFields.filter(field => !obj[field]);
+  if (missing.length > 0) {
+    throw new Error(`Missing required fields: ${missing.join(', ')}`);
+  }
+};
 
 const logger = {
   info: (message, ...args) => console.log(`[DomainConfig] ${message}`, ...args),

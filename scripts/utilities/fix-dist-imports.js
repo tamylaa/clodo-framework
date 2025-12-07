@@ -18,9 +18,6 @@ const projectRoot = path.join(__dirname, '../..');
  * 4. Files importing ../../../dist/utils/ should be ../../../utils/
  * 5. Files in dist/utils/ importing ../../../lib/shared/ should be ../../lib/shared/
  * 6. Files in dist/lib/shared/ importing ../../../src/utils/ should be ../../utils/
- * 7. Files in dist/lib/shared/database|security|utils/ importing ../../utils/framework-config.js should be ../../../utils/framework-config.js
- * 8. Files in dist/index.js importing ../../../lib/shared/deployment/credential-collector should be ./lib/shared/deployment/credential-collector
- * 9. Files in dist/worker/integration.js importing ../../lib/shared/config/ConfigurationManager should be ../lib/shared/config/ConfigurationManager
  * 
  * DO NOT apply aggressive global replacements - they break things!
  */
@@ -54,12 +51,50 @@ function fixDistImports(dir) {
       
       // Fix imports in all dist/ files
       if (relPath.startsWith('dist')) {
-        const normalizedRelPath = relPath.replace(/\\/g, '/');
+        // Fix ../../../src/utils/ to ../../utils/ for files in dist/lib/shared/
+        if (relPath.includes('dist/lib/shared/') || relPath.includes('dist\\lib\\shared\\')) {
+          content = content.replace(/\.\.\/\.\.\/\.\.\/src\/utils\//g, "../../utils/");
+        }
         
-        // Single minimal fix for wrapper re-exports: ../../../src/utils/ becomes ../../../utils/ in dist/
-        // This handles the framework-config wrapper in lib/shared/utils/
-        if (normalizedRelPath === 'dist/lib/shared/utils/framework-config.js') {
-          content = content.replace(/from\s+['"]\.\.\/\.\.\/\.\.\/src\/utils\//g, "from '../../../utils/");
+        const normalizedRelPath = relPath.replace(/\\/g, '/');
+        const pathDepth = normalizedRelPath.split('/').length;
+        
+        // Fix ../../lib/shared/ to ../lib/shared/ for files at depth 2: dist/<dir>/<file>.js
+        // Example: dist/database/database-orchestrator.js importing ../../lib/shared/utils/framework-config.js
+        // Should become: ../lib/shared/utils/framework-config.js
+        if (pathDepth === 3 && normalizedRelPath.match(/^dist\/[^\/]+\/[^\/]+\.js$/)) {
+          // File is at depth 2: dist/<dir>/<file>.js
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/lib\/shared\//g, "from $1../lib/shared/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/lib\/shared\//g, "import($1../lib/shared/");
+        }
+        
+        // Fix ../../../lib/shared/ to ../../lib/shared/ for files at depth 3: dist/<dir>/<subdir>/<file>.js
+        // Example: dist/deployment/orchestration/BaseDeploymentOrchestrator.js importing ../../../lib/shared/utils/ErrorHandler.js
+        // Should become: ../../lib/shared/utils/ErrorHandler.js
+        if (pathDepth === 4 && normalizedRelPath.match(/^dist\/[^\/]+\/[^\/]+\/[^\/]+\.js$/)) {
+          // File is at depth 3: dist/<dir>/<subdir>/<file>.js
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from $1../../lib/shared/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import($1../../lib/shared/");
+        }
+        
+        // Fix ../../../lib/shared/ to ../../lib/shared/ for files in dist/utils/ subdirectories
+        // Example: dist/utils/deployment/config-cache.js importing ../../../lib/shared/utils/framework-config.js
+        // Should become: ../../lib/shared/utils/framework-config.js
+        if (normalizedRelPath.match(/^dist\/utils\/[^\/]+\/[^\/]+\.js$/)) {
+          // File is at depth 3: dist/utils/<subdir>/<file>.js
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from $1../../lib/shared/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import($1../../lib/shared/");
+        }
+        
+        // Fix ../../../lib/shared/ to ../../lib/shared/ for files in dist/service-management/ subdirectories
+        if (normalizedRelPath.match(/^dist\/service-management\/[^\/]+\/[^\/]+\.js$/)) {
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from $1../../lib/shared/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import($1../../lib/shared/");
+        }
+        
+        // Fix ../lib/ to ./lib/ for files directly in dist/ root (like index.js)
+        if (normalizedRelPath.startsWith('dist/') && pathDepth === 2 && normalizedRelPath.endsWith('.js')) {
+          content = content.replace(/\.\.\/lib\//g, "./lib/");
         }
       }
       

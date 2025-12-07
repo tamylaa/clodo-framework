@@ -9,7 +9,7 @@
 
 import { DomainRouteMapper } from './DomainRouteMapper.js';
 import { WranglerRoutesBuilder } from './WranglerRoutesBuilder.js';
-import { frameworkConfig } from '../../utils/framework-config.js';
+import { frameworkConfig } from '../../../lib/shared/utils/framework-config.js';
 
 export class RouteGenerator {
   constructor(options = {}) {

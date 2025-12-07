@@ -17,8 +17,8 @@ export class GracefulShutdownManager {
    * Initialize with framework configuration
    */
   async initialize() {
-    // Import framework config for consistent timing
-    const { frameworkConfig } = await import('./framework-config.js');
+    // Import framework config for consistent timing settings
+    const { frameworkConfig } = await import('../../lib/shared/utils/framework-config.js');
     const timing = frameworkConfig.getTiming();
     
     this.config = {

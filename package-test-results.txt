@@ -1,0 +1,709 @@
+﻿
+> @tamyla/clodo-framework@3.2.4 test:package
+> node scripts/test-package.js
+
+
+≡ƒº¬ Starting Comprehensive Package Test
+
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+≡ƒº╣ Cleaning up previous test directory...
+
+≡ƒôª Step 1: Building package...
+
+> @tamyla/clodo-framework@3.2.4 prebuild
+> npm run clean && npm run type-check
+
+
+> @tamyla/clodo-framework@3.2.4 clean
+> rimraf dist
+
+
+> @tamyla/clodo-framework@3.2.4 type-check
+> tsc --noEmit
+
+
+> @tamyla/clodo-framework@3.2.4 build
+> npm run prebuild && babel src/ --out-dir dist/ && babel cli/ --out-dir dist/cli/ --ignore 'cli/**/*.test.js' && babel lib/ --out-dir dist/lib/ --ignore 'lib/**/*.test.js' && node -e "const fs=require('fs'); fs.cpSync('ui-structures', 'dist/ui-structures', {recursive: true}); fs.cpSync('config', 'dist/config', {recursive: true});" && npm run postbuild
+
+
+> @tamyla/clodo-framework@3.2.4 prebuild
+> npm run clean && npm run type-check
+
+
+> @tamyla/clodo-framework@3.2.4 clean
+> rimraf dist
+
+
+> @tamyla/clodo-framework@3.2.4 type-check
+> tsc --noEmit
+
+Successfully compiled 124 files with Babel (2800ms).
+Successfully compiled 15 files with Babel (772ms).
+Successfully compiled 80 files with Babel (1993ms).
+
+> @tamyla/clodo-framework@3.2.4 postbuild
+> npm run check:bundle && npm run check:imports && node scripts/utilities/fix-dist-imports.js && node scripts/utilities/validate-dist-imports.js
+
+
+> @tamyla/clodo-framework@3.2.4 check:bundle
+> node scripts/utilities/check-bundle.js || echo 'Bundle check passed'
+
+Bundle check passed: 23 files in dist/
+- cli
+- cloudflare
+- config
+- database
+- deployment
+- handlers
+- index.js
+- lib
+- migration
+- modules
+- orchestration
+- production-tester
+- routing
+- schema
+- security
+- service-management
+- services
+- simple-api.js
+- ui-structures
+- utils
+- version
+- worker
+- worker-entry.js
+
+> @tamyla/clodo-framework@3.2.4 check:imports
+> node scripts/utilities/check-import-paths.js
+
+
+≡ƒöì Checking import paths in re-export wrappers...
+
+Γ£à CORRECT: src/utils/file-manager.js
+   ΓåÆ ../lib/shared/utils/file-manager.js
+
+Γ£à CORRECT: src/utils/formatters.js
+   ΓåÆ ../lib/shared/utils/formatters.js
+
+Γ£à CORRECT: src/utils/logger.js
+   ΓåÆ ../lib/shared/logging/Logger.js
+
+Γ£à CORRECT: src/utils/cloudflare/ops.js
+   ΓåÆ ../../lib/shared/cloudflare/ops.js
+
+
+≡ƒöì Checking dynamic imports in bin/ files...
+
+Γ£à NO DIST/ IMPORTS: lib/shared/cloudflare/ops.js
+
+
+≡ƒôª Verifying compiled dist/ structure...
+
+Γ£à EXISTS: dist/utils/file-manager.js
+Γ£à EXISTS: dist/utils/formatters.js
+Γ£à EXISTS: dist/utils/logger.js
+Γ£à EXISTS: dist/utils/cloudflare/ops.js
+
+≡ƒôé Verifying cli/ and lib/ were compiled to dist/...
+
+Γ£à EXISTS: dist/cli/ directory
+Γ£à EXISTS: dist/lib/ directory
+
+
+============================================================
+Validation Results: 11 passed, 0 failed
+============================================================
+
+Γ£à ALL PATHS VALID
+
+The re-export wrappers are correctly configured for the npm package.
+Users should not encounter ERR_MODULE_NOT_FOUND errors.
+
+Γ£à Fixed dist import: dist\index.js
+Γ£à Fixed dist import: dist\database\database-orchestrator.js
+Γ£à Fixed dist import: dist\utils\graceful-shutdown-manager.js
+Γ£à Fixed dist import: dist\utils\index.js
+Γ£à Fixed dist import: dist\deployment\orchestration\BaseDeploymentOrchestrator.js
+Γ£à Fixed dist import: dist\deployment\orchestration\UnifiedDeploymentOrchestrator.js
+Γ£à Fixed dist import: dist\service-management\routing\DomainRouteMapper.js
+Γ£à Fixed dist import: dist\service-management\routing\RouteGenerator.js
+Γ£à Fixed dist import: dist\utils\deployment\config-cache.js
+Γ£à Fixed dist import: dist\utils\deployment\index.js
+Γ£à Dist import path fixes completed
+[36m
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù[0m
+[36mΓòæ  PRE-PUBLISH DISTRIBUTION IMPORT VALIDATOR                     Γòæ[0m
+[36mΓòæ  Testing all exports with actual import attempts               Γòæ[0m
+[36mΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+[0m
+[34m≡ƒôª Testing Main Entry Point[0m
+[34mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[0m
+Γ£à Environment variables validated successfully
+Γ£à Registered model: users
+Γ£à Registered model: magic_links
+Γ£à Registered model: tokens
+Γ£à Registered model: files
+Γ£à Registered model: logs
+Γ£à Schema Manager initialized with existing models
+Γ£à Registered module: auth
+Γ£à Registered module: files
+Γ£à Registered module: logging
+Γ£à Module Manager initialized with core modules
+[32mΓ£à "./dist/index.js" exists and imports successfully[0m
+[34m
+≡ƒôÜ Testing Named Exports (23+ files)[0m
+[34mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[0m
+[32mΓ£à ./services                  ΓåÆ ./dist/services/GenericDataService.js[0m
+[32mΓ£à ./schema                    ΓåÆ ./dist/schema/SchemaManager.js[0m
+[32mΓ£à ./modules                   ΓåÆ ./dist/modules/ModuleManager.js[0m
+[32mΓ£à ./routing                   ΓåÆ ./dist/routing/EnhancedRouter.js[0m
+[32mΓ£à ./handlers                  ΓåÆ ./dist/handlers/GenericRouteHandler.js[0m
+[32mΓ£à ./config                    ΓåÆ ./dist/config/index.js[0m
+[32mΓ£à ./config/customers          ΓåÆ ./dist/config/customers.js[0m
+[32mΓ£à ./utils/config              ΓåÆ ./dist/utils/config/unified-config-manager.js[0m
+[32mΓ£à ./worker                    ΓåÆ ./dist/worker/index.js[0m
+[32mΓ£à ./utils/cloudflare          ΓåÆ ./dist/utils/cloudflare/index.js[0m
+[32mΓ£à ./utils/deployment          ΓåÆ ./dist/utils/deployment/index.js[0m
+[32mΓ£à ./orchestration             ΓåÆ ./dist/orchestration/index.js[0m
+[32mΓ£à ./deployment                ΓåÆ ./dist/deployment/index.js[0m
+[32mΓ£à ./database                  ΓåÆ ./dist/database/index.js[0m
+[32mΓ£à ./security                  ΓåÆ ./dist/security/index.js[0m
+[32mΓ£à ./security/cli              ΓåÆ ./dist/security/SecurityCLI.js[0m
+[32mΓ£à ./service-management        ΓåÆ ./dist/service-management/index.js[0m
+[32mΓ£à ./service-management/create ΓåÆ ./dist/service-management/ServiceCreator.js[0m
+[32mΓ£à ./modules/security          ΓåÆ ./dist/modules/security.js[0m
+[34m
+≡ƒ¢á∩╕Å  Testing CLI Binaries[0m
+[34mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[0m
+[32mΓ£à clodo-service        ΓåÆ ./dist/cli/clodo-service.js[0m
+[32mΓ£à clodo-simple         ΓåÆ ./dist/cli/clodo-simple.js[0m
+[32mΓ£à clodo-security       ΓåÆ ./dist/cli/security-cli.js[0m
+[34m
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ[0m
+[34m≡ƒôè VALIDATION SUMMARY[0m
+[34mΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ[0m
+[32mΓ£à Successful: 23[0m
+[34m
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ[0m
+[32mΓ£à ALL 23 EXPORTS VALIDATED SUCCESSFULLY[0m
+[32m
+≡ƒÄë Package is ready for npm publication!
+[0m
+
+> @tamyla/clodo-framework@3.2.4 postbuild
+> npm run check:bundle && npm run check:imports && node scripts/utilities/fix-dist-imports.js && node scripts/utilities/validate-dist-imports.js
+
+
+> @tamyla/clodo-framework@3.2.4 check:bundle
+> node scripts/utilities/check-bundle.js || echo 'Bundle check passed'
+
+Bundle check passed: 23 files in dist/
+- cli
+- cloudflare
+- config
+- database
+- deployment
+- handlers
+- index.js
+- lib
+- migration
+- modules
+- orchestration
+- production-tester
+- routing
+- schema
+- security
+- service-management
+- services
+- simple-api.js
+- ui-structures
+- utils
+- version
+- worker
+- worker-entry.js
+
+> @tamyla/clodo-framework@3.2.4 check:imports
+> node scripts/utilities/check-import-paths.js
+
+
+≡ƒöì Checking import paths in re-export wrappers...
+
+Γ£à CORRECT: src/utils/file-manager.js
+   ΓåÆ ../lib/shared/utils/file-manager.js
+
+Γ£à CORRECT: src/utils/formatters.js
+   ΓåÆ ../lib/shared/utils/formatters.js
+
+Γ£à CORRECT: src/utils/logger.js
+   ΓåÆ ../lib/shared/logging/Logger.js
+
+Γ£à CORRECT: src/utils/cloudflare/ops.js
+   ΓåÆ ../../lib/shared/cloudflare/ops.js
+
+
+≡ƒöì Checking dynamic imports in bin/ files...
+
+Γ£à NO DIST/ IMPORTS: lib/shared/cloudflare/ops.js
+
+
+≡ƒôª Verifying compiled dist/ structure...
+
+Γ£à EXISTS: dist/utils/file-manager.js
+Γ£à EXISTS: dist/utils/formatters.js
+Γ£à EXISTS: dist/utils/logger.js
+Γ£à EXISTS: dist/utils/cloudflare/ops.js
+
+≡ƒôé Verifying cli/ and lib/ were compiled to dist/...
+
+Γ£à EXISTS: dist/cli/ directory
+Γ£à EXISTS: dist/lib/ directory
+
+
+============================================================
+Validation Results: 11 passed, 0 failed
+============================================================
+
+Γ£à ALL PATHS VALID
+
+The re-export wrappers are correctly configured for the npm package.
+Users should not encounter ERR_MODULE_NOT_FOUND errors.
+
+Γ£à Dist import path fixes completed
+[36m
+ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù[0m
+[36mΓòæ  PRE-PUBLISH DISTRIBUTION IMPORT VALIDATOR                     Γòæ[0m
+[36mΓòæ  Testing all exports with actual import attempts               Γòæ[0m
+[36mΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+[0m
+[34m≡ƒôª Testing Main Entry Point[0m
+[34mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[0m
+Γ£à Environment variables validated successfully
+Γ£à Registered model: users
+Γ£à Registered model: magic_links
+Γ£à Registered model: tokens
+Γ£à Registered model: files
+Γ£à Registered model: logs
+Γ£à Schema Manager initialized with existing models
+Γ£à Registered module: auth
+Γ£à Registered module: files
+Γ£à Registered module: logging
+Γ£à Module Manager initialized with core modules
+[32mΓ£à "./dist/index.js" exists and imports successfully[0m
+[34m
+≡ƒôÜ Testing Named Exports (23+ files)[0m
+[34mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[0m
+[32mΓ£à ./services                  ΓåÆ ./dist/services/GenericDataService.js[0m
+[32mΓ£à ./schema                    ΓåÆ ./dist/schema/SchemaManager.js[0m
+[32mΓ£à ./modules                   ΓåÆ ./dist/modules/ModuleManager.js[0m
+[32mΓ£à ./routing                   ΓåÆ ./dist/routing/EnhancedRouter.js[0m
+[32mΓ£à ./handlers                  ΓåÆ ./dist/handlers/GenericRouteHandler.js[0m
+[32mΓ£à ./config                    ΓåÆ ./dist/config/index.js[0m
+[32mΓ£à ./config/customers          ΓåÆ ./dist/config/customers.js[0m
+[32mΓ£à ./utils/config              ΓåÆ ./dist/utils/config/unified-config-manager.js[0m
+[32mΓ£à ./worker                    ΓåÆ ./dist/worker/index.js[0m
+[32mΓ£à ./utils/cloudflare          ΓåÆ ./dist/utils/cloudflare/index.js[0m
+[32mΓ£à ./utils/deployment          ΓåÆ ./dist/utils/deployment/index.js[0m
+[32mΓ£à ./orchestration             ΓåÆ ./dist/orchestration/index.js[0m
+[32mΓ£à ./deployment                ΓåÆ ./dist/deployment/index.js[0m
+[32mΓ£à ./database                  ΓåÆ ./dist/database/index.js[0m
+[32mΓ£à ./security                  ΓåÆ ./dist/security/index.js[0m
+[32mΓ£à ./security/cli              ΓåÆ ./dist/security/SecurityCLI.js[0m
+[32mΓ£à ./service-management        ΓåÆ ./dist/service-management/index.js[0m
+[32mΓ£à ./service-management/create ΓåÆ ./dist/service-management/ServiceCreator.js[0m
+[32mΓ£à ./modules/security          ΓåÆ ./dist/modules/security.js[0m
+[34m
+≡ƒ¢á∩╕Å  Testing CLI Binaries[0m
+[34mΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ[0m
+[32mΓ£à clodo-service        ΓåÆ ./dist/cli/clodo-service.js[0m
+[32mΓ£à clodo-simple         ΓåÆ ./dist/cli/clodo-simple.js[0m
+[32mΓ£à clodo-security       ΓåÆ ./dist/cli/security-cli.js[0m
+[34m
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ[0m
+[34m≡ƒôè VALIDATION SUMMARY[0m
+[34mΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ[0m
+[32mΓ£à Successful: 23[0m
+[34m
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ[0m
+[32mΓ£à ALL 23 EXPORTS VALIDATED SUCCESSFULLY[0m
+[32m
+≡ƒÄë Package is ready for npm publication!
+[0m
+Γ£à Build successful
+
+≡ƒôª Step 2: Packing package...
+node.exe : npm notice
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm notice:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+npm notice ≡ƒôª  @tamyla/clodo-framework@3.2.4
+npm notice Tarball Contents
+npm notice 65.9kB CHANGELOG.md
+npm notice 1.1kB LICENSE
+npm notice 69.4kB README.md
+npm notice 3.3kB dist/cli/clodo-service.js
+npm notice 4.4kB dist/cli/clodo-simple.js
+npm notice 8.0kB dist/cli/commands/assess.js
+npm notice 3.7kB dist/cli/commands/create.js
+npm notice 5.5kB dist/cli/commands/deploy.js
+npm notice 3.5kB dist/cli/commands/diagnose.js
+npm notice 3.6kB dist/cli/commands/helpers.js
+npm notice 4.8kB dist/cli/commands/helpers/deployment-ui.js
+npm notice 8.9kB dist/cli/commands/helpers/deployment-verification.js
+npm notice 2.5kB dist/cli/commands/helpers/error-recovery.js
+npm notice 4.3kB dist/cli/commands/helpers/resource-detection.js
+npm notice 2.4kB dist/cli/commands/init-config.js
+npm notice 4.6kB dist/cli/commands/update.js
+npm notice 1.6kB dist/cli/commands/validate.js
+npm notice 4.8kB dist/cli/security-cli.js
+npm notice 800B dist/cloudflare/domain-discovery.js
+npm notice 932B dist/config/.env.staging.example
+npm notice 810B dist/config/clodo-create.example.json
+npm notice 1.2kB dist/config/clodo-deploy.example.json
+npm notice 1.1kB dist/config/clodo-update.example.json
+npm notice 1.2kB dist/config/clodo-validate.example.json
+npm notice 22.0kB dist/config/customers.js
+npm notice 865B dist/config/customers/template/development.env.template
+npm notice 938B dist/config/customers/template/production.env.template
+npm notice 882B dist/config/customers/template/staging.env.template
+npm notice 5.4kB dist/config/domain-examples/environment-mapped.json
+npm notice 4.2kB dist/config/domain-examples/multi-domain.json
+npm notice 10.5kB dist/config/domain-examples/README.md
+npm notice 1.4kB dist/config/domain-examples/single-domain.json
+npm notice 6.7kB dist/config/domains.js
+npm notice 467B dist/config/examples
+npm notice 112B dist/config/FeatureManager.js
+npm notice 1.7kB dist/config/features.js
+npm notice 172B dist/config/index.js
+npm notice 1.7kB dist/config/staging-deployment.json
+npm notice 10.2kB dist/config/validation-config.json
+npm notice 29.2kB dist/database/database-orchestrator.js
+npm notice 138B dist/database/index.js
+npm notice 1.1kB dist/deployment/auditor.js
+npm notice 860B dist/deployment/index.js
+npm notice 12.2kB dist/deployment/orchestration/BaseDeploymentOrchestrator.js
+npm notice 729B dist/deployment/orchestration/index.js
+npm notice 8.5kB dist/deployment/orchestration/PortfolioOrchestrator.js
+npm notice 7.3kB dist/deployment/orchestration/SingleServiceOrchestrator.js
+npm notice 19.2kB dist/deployment/orchestration/UnifiedDeploymentOrchestrator.js
+npm notice 862B dist/deployment/rollback-manager.js
+npm notice 1.0kB dist/deployment/validator.js
+npm notice 21.9kB dist/deployment/wrangler-deployer.js
+npm notice 14.4kB dist/handlers/GenericRouteHandler.js
+npm notice 3.1kB dist/index.js
+npm notice 15.1kB dist/lib/database/deployment-db-manager.js
+npm notice 24.1kB dist/lib/database/wrangler-d1-manager.js
+npm notice 13.2kB dist/lib/deployment/modules/DeploymentConfiguration.js
+npm notice 18.1kB dist/lib/deployment/modules/DeploymentOrchestrator.js
+npm notice 18.4kB dist/lib/deployment/modules/EnvironmentManager.js
+npm notice 16.8kB dist/lib/deployment/modules/MonitoringIntegration.js
+npm notice 10.4kB dist/lib/deployment/modules/ValidationManager.js
+npm notice 12.2kB dist/lib/deployment/orchestration/BaseDeploymentOrchestrator.js
+npm notice 978B dist/lib/deployment/orchestration/EnterpriseOrchestrator.js
+npm notice 8.5kB dist/lib/deployment/orchestration/PortfolioOrchestrator.js
+npm notice 7.3kB dist/lib/deployment/orchestration/SingleServiceOrchestrator.js
+npm notice 19.3kB dist/lib/deployment/orchestration/UnifiedDeploymentOrchestrator.js
+npm notice 1.9kB dist/lib/shared/cache/configuration-cache.js
+npm notice 19.9kB dist/lib/shared/cloudflare/domain-discovery.js
+npm notice 32.9kB dist/lib/shared/cloudflare/domain-manager.js
+npm notice 247B dist/lib/shared/cloudflare/index.js
+npm notice 16.1kB dist/lib/shared/cloudflare/ops.js
+npm notice 36.2kB dist/lib/shared/config/cache.js
+npm notice 6.3kB dist/lib/shared/config/cloudflare-service-validator.js
+npm notice 5.8kB dist/lib/shared/config/command-config-manager.js
+npm notice 16.1kB dist/lib/shared/config/ConfigurationManager.js
+npm notice 591B dist/lib/shared/config/index.js
+npm notice 9.0kB dist/lib/shared/config/manager.js
+npm notice 10.5kB dist/lib/shared/config/manifest-loader.js
+npm notice 10.3kB dist/lib/shared/database/connection-manager.js
+npm notice 202B dist/lib/shared/database/index.js
+npm notice 23.3kB dist/lib/shared/database/orchestrator.js
+npm notice 32.7kB dist/lib/shared/deployment/auditor.js
+npm notice 14.6kB dist/lib/shared/deployment/credential-collector.js
+npm notice 597B dist/lib/shared/deployment/index.js
+npm notice 367B dist/lib/shared/deployment/rollback-manager.js
+npm notice 6.5kB dist/lib/shared/deployment/utilities/d1-error-recovery.js
+npm notice 27.6kB dist/lib/shared/deployment/validator.js
+npm notice 8.4kB dist/lib/shared/deployment/workflows/deployment-summary.js
+npm notice 808B dist/lib/shared/deployment/workflows/index.js
+npm notice 7.4kB dist/lib/shared/deployment/workflows/interactive-confirmation.js
+npm notice 7.9kB dist/lib/shared/deployment/workflows/interactive-database-workflow.js
+npm notice 8.4kB dist/lib/shared/deployment/workflows/interactive-deployment-coordinator.js
+npm notice 8.1kB dist/lib/shared/deployment/workflows/interactive-domain-info-gatherer.js
+npm notice 8.4kB dist/lib/shared/deployment/workflows/interactive-secret-workflow.js
+npm notice 7.0kB dist/lib/shared/deployment/workflows/interactive-testing-workflow.js
+npm notice 6.8kB dist/lib/shared/deployment/workflows/interactive-validation.js
+npm notice 2.3kB dist/lib/shared/error-handling/error-classifier.js
+npm notice 816B dist/lib/shared/index.js
+npm notice 5.1kB dist/lib/shared/logging/Logger.js
+npm notice 18.9kB dist/lib/shared/monitoring/health-checker.js
+npm notice 252B dist/lib/shared/monitoring/index.js
+npm notice 10.0kB dist/lib/shared/monitoring/memory-manager.js
+npm notice 10.8kB dist/lib/shared/monitoring/production-monitor.js
+npm notice 2.2kB dist/lib/shared/production-tester/api-tester.js
+npm notice 3.4kB dist/lib/shared/production-tester/auth-tester.js
+npm notice 6.6kB dist/lib/shared/production-tester/core.js
+npm notice 2.8kB dist/lib/shared/production-tester/database-tester.js
+npm notice 2.2kB dist/lib/shared/production-tester/index.js
+npm notice 3.5kB dist/lib/shared/production-tester/load-tester.js
+npm notice 2.9kB dist/lib/shared/production-tester/performance-tester.js
+npm notice 20.4kB dist/lib/shared/routing/domain-router.js
+npm notice 8.8kB dist/lib/shared/security/api-token-manager.js
+npm notice 270B dist/lib/shared/security/index.js
+npm notice 30.0kB dist/lib/shared/security/secret-generator.js
+npm notice 10.8kB dist/lib/shared/security/secure-token-manager.js
+npm notice 4.2kB dist/lib/shared/utils/cli-options.js
+npm notice 10.4kB dist/lib/shared/utils/config-loader.js
+npm notice 3.0kB dist/lib/shared/utils/deployment-validator.js
+npm notice 7.1kB dist/lib/shared/utils/error-recovery.js
+npm notice 27.8kB dist/lib/shared/utils/ErrorHandler.js
+npm notice 3.5kB dist/lib/shared/utils/file-manager.js
+npm notice 5.6kB dist/lib/shared/utils/formatters.js
+npm notice 22.1kB dist/lib/shared/utils/framework-config.js
+npm notice 10.3kB dist/lib/shared/utils/graceful-shutdown-manager.js
+npm notice 1.4kB dist/lib/shared/utils/index.js
+npm notice 4.8kB dist/lib/shared/utils/interactive-prompts.js
+npm notice 15.2kB dist/lib/shared/utils/interactive-utils.js
+npm notice 7.4kB dist/lib/shared/utils/output-formatter.js
+npm notice 9.1kB dist/lib/shared/utils/progress-manager.js
+npm notice 1.9kB dist/lib/shared/utils/progress-spinner.js
+npm notice 6.6kB dist/lib/shared/utils/rate-limiter.js
+npm notice 3.4kB dist/lib/shared/utils/sensitive-redactor.js
+npm notice 7.6kB dist/lib/shared/utils/service-config-manager.js
+npm notice 3.3kB dist/lib/shared/validation/ValidationRegistry.js
+npm notice 21.1kB dist/migration/MigrationAdapters.js
+npm notice 20.9kB dist/modules/ModuleManager.js
+npm notice 4.0kB dist/modules/security.js
+npm notice 37.9kB dist/orchestration/cross-domain-coordinator.js
+npm notice 698B dist/orchestration/index.js
+npm notice 13.2kB dist/orchestration/modules/DeploymentCoordinator.js
+npm notice 6.0kB dist/orchestration/modules/DomainResolver.js
+npm notice 10.0kB dist/orchestration/modules/StateManager.js
+npm notice 32.9kB dist/orchestration/multi-domain-orchestrator.js
+npm notice 981B dist/production-tester/index.js
+npm notice 4.8kB dist/routing/EnhancedRouter.js
+npm notice 21.1kB dist/schema/SchemaManager.js
+npm notice 16.9kB dist/security/ConfigurationValidator.js
+npm notice 2.3kB dist/security/index.js
+npm notice 1.8kB dist/security/patterns/environment-rules.js
+npm notice 1.4kB dist/security/patterns/insecure-patterns.js
+npm notice 4.0kB dist/security/SecretGenerator.js
+npm notice 5.7kB dist/security/SecurityCLI.js
+npm notice 13.3kB dist/service-management/ConfirmationEngine.js
+npm notice 10.5kB dist/service-management/ErrorTracker.js
+npm notice 14.5kB dist/service-management/GenerationEngine.js
+npm notice 7.6kB dist/service-management/generators/BaseGenerator.js
+npm notice 1.9kB dist/service-management/generators/cicd/CiWorkflowGenerator.js
+npm notice 2.7kB dist/service-management/generators/cicd/DeployWorkflowGenerator.js
+npm notice 7.3kB dist/service-management/generators/code/ServiceHandlersGenerator.js
+npm notice 3.8kB dist/service-management/generators/code/ServiceMiddlewareGenerator.js
+npm notice 6.4kB dist/service-management/generators/code/ServiceUtilsGenerator.js
+npm notice 4.0kB dist/service-management/generators/code/WorkerIndexGenerator.js
+npm notice 2.7kB dist/service-management/generators/config/DevelopmentEnvGenerator.js
+npm notice 4.8kB dist/service-management/generators/config/DomainsConfigGenerator.js
+npm notice 4.9kB dist/service-management/generators/config/EnvExampleGenerator.js
+npm notice 2.6kB dist/service-management/generators/config/ProductionEnvGenerator.js
+npm notice 2.6kB dist/service-management/generators/config/StagingEnvGenerator.js
+npm notice 7.0kB dist/service-management/generators/config/WranglerTomlGenerator.js
+npm notice 8.2kB dist/service-management/generators/core/PackageJsonGenerator.js
+npm notice 4.2kB dist/service-management/generators/core/SiteConfigGenerator.js
+npm notice 6.6kB dist/service-management/generators/documentation/ApiDocsGenerator.js
+npm notice 8.8kB dist/service-management/generators/documentation/ConfigurationDocsGenerator.js
+npm notice 5.7kB dist/service-management/generators/documentation/DeploymentDocsGenerator.js
+npm notice 4.9kB dist/service-management/generators/documentation/ReadmeGenerator.js
+npm notice 8.4kB dist/service-management/generators/GeneratorRegistry.js
+npm notice 5.5kB dist/service-management/generators/schemas/ServiceSchemaGenerator.js
+npm notice 3.5kB dist/service-management/generators/scripts/DeployScriptGenerator.js
+npm notice 3.5kB dist/service-management/generators/scripts/HealthCheckScriptGenerator.js
+npm notice 2.8kB dist/service-management/generators/scripts/SetupScriptGenerator.js
+npm notice 11.5kB dist/service-management/generators/service-types/StaticSiteGenerator.js
+npm notice 2.4kB dist/service-management/generators/testing/EslintConfigGenerator.js
+npm notice 8.1kB dist/service-management/generators/testing/IntegrationTestsGenerator.js
+npm notice 1.7kB dist/service-management/generators/testing/JestConfigGenerator.js
+npm notice 9.3kB dist/service-management/generators/testing/UnitTestsGenerator.js
+npm notice 1.8kB dist/service-management/generators/tooling/DockerComposeGenerator.js
+npm notice 2.3kB dist/service-management/generators/tooling/GitignoreGenerator.js
+npm notice 5.1kB dist/service-management/generators/utils/FileWriter.js
+npm notice 528B dist/service-management/generators/utils/index.js
+npm notice 4.2kB dist/service-management/generators/utils/PathResolver.js
+npm notice 4.0kB dist/service-management/generators/utils/ServiceManifestGenerator.js
+npm notice 6.1kB dist/service-management/generators/utils/TemplateEngine.js
+npm notice 2.0kB dist/service-management/handlers/ConfirmationHandler.js
+npm notice 2.2kB dist/service-management/handlers/GenerationHandler.js
+npm notice 1.5kB dist/service-management/handlers/InputHandler.js
+npm notice 6.9kB dist/service-management/handlers/ValidationHandler.js
+npm notice 502B dist/service-management/index.js
+npm notice 22.9kB dist/service-management/InputCollector.js
+npm notice 10.4kB dist/service-management/routing/DomainRouteMapper.js
+npm notice 454B dist/service-management/routing/index.js
+npm notice 10.0kB dist/service-management/routing/RouteGenerator.js
+npm notice 9.2kB dist/service-management/routing/WranglerRoutesBuilder.js
+npm notice 423B dist/service-management/ServiceCreator.js
+Γ£à Package created: tamyla-clodo-framework-3.2.4.tgz
+
+≡ƒôü Step 3: Creating test project...
+Γ£à Test project created
+
+≡ƒôÑ Step 4: Installing package in test project...
+npm notice 26.2kB dist/service-management/ServiceOrchestrator.js
+npm notice 1.8kB dist/service-management/services/DirectoryStructureService.js
+npm notice 8.5kB dist/service-management/services/GenerationCoordinator.js
+npm notice 7.6kB dist/service-management/services/GeneratorRegistry.js
+npm notice 15.2kB dist/services/GenericDataService.js
+npm notice 3.5kB dist/simple-api.js
+npm notice 9.5kB dist/ui-structures/concepts/second-order-acquisition-strategy.md
+npm notice 6.2kB dist/ui-structures/concepts/service-lifecycle-management.md
+npm notice 8.7kB dist/ui-structures/concepts/service-manifest-guide.md
+npm notice 8.9kB dist/ui-structures/concepts/three-tier-categorization-strategy.md
+npm notice 8.5kB dist/ui-structures/creation/automated-generation-ui.json
+npm notice 8.8kB dist/ui-structures/creation/core-inputs-ui.json
+npm notice 15.4kB dist/ui-structures/creation/smart-confirmable-ui.json
+npm notice 12.3kB dist/ui-structures/reference/absolutely-required-inputs.json
+npm notice 11.8kB dist/ui-structures/reference/service-manifest-template.json
+npm notice 11.8kB dist/utils/cloudflare/api.js
+npm notice 2.6kB dist/utils/cloudflare/index.js
+npm notice 754B dist/utils/cloudflare/ops.js
+npm notice 21.0kB dist/utils/config/unified-config-manager.js
+npm notice 3.4kB dist/utils/constants.js
+npm notice 36.2kB dist/utils/deployment/config-cache.js
+npm notice 511B dist/utils/deployment/index.js
+npm notice 29.5kB dist/utils/deployment/secret-generator.js
+npm notice 19.2kB dist/utils/deployment/wrangler-config-manager.js
+npm notice 889B dist/utils/dirname-helper.js
+npm notice 4.4kB dist/utils/domain-config.js
+npm notice 1.7kB dist/utils/esm-helper.js
+npm notice 660B dist/utils/file-manager.js
+npm notice 398B dist/utils/formatters.js
+npm notice 22.1kB dist/utils/framework-config.js
+npm notice 10.2kB dist/utils/graceful-shutdown-manager.js
+npm notice 2.5kB dist/utils/health-checker.js
+npm notice 1.4kB dist/utils/index.js
+npm notice 3.5kB dist/utils/interactive-prompts.js
+npm notice 332B dist/utils/logger.js
+npm notice 2.3kB dist/utils/prompt-handler.js
+npm notice 4.7kB dist/utils/scripts-manager.js
+npm notice 3.3kB dist/utils/ui-structures-loader.js
+npm notice 7.5kB dist/utils/usage-tracker.js
+npm notice 2.6kB dist/utils/validation.js
+npm notice 22.9kB dist/version/VersionDetector.js
+npm notice 853B dist/worker-entry.js
+npm notice 1.2kB dist/worker/features.js
+npm notice 111B dist/worker/index.js
+npm notice 11.9kB dist/worker/integration.js
+npm notice 22.2kB docs/api-reference.md
+npm notice 9.6kB docs/overview.md
+npm notice 1.5kB docs/README.md
+npm notice 7.6kB docs/SECURITY.md
+npm notice 10.8kB package.json
+npm notice 915B templates/generic/.env.example
+npm notice 578B templates/generic/clodo-service-manifest.json
+npm notice 714B templates/generic/package.json
+npm notice 4.6kB templates/generic/README.md
+npm notice 140B templates/generic/scripts/deploy.ps1
+npm notice 170B templates/generic/scripts/setup.ps1
+npm notice 3.3kB templates/generic/src/config/domains.js
+npm notice 5.8kB templates/generic/src/worker/index.js
+npm notice 657B templates/generic/wrangler.toml
+npm notice 1.5kB templates/scripts/deploy.js
+npm notice 1.9kB templates/static-site/.env.example
+npm notice 1.4kB templates/static-site/clodo-service-manifest.json
+npm notice 770B templates/static-site/package.json
+npm notice 2.4kB templates/static-site/public/404.html
+npm notice 3.3kB templates/static-site/public/app.js
+npm notice 1.6kB templates/static-site/public/index.html
+npm notice 2.0kB templates/static-site/public/styles.css
+npm notice 4.6kB templates/static-site/README.md
+npm notice 4.1kB templates/static-site/scripts/deploy.ps1
+npm notice 6.1kB templates/static-site/scripts/setup.ps1
+npm notice 856B templates/static-site/src/config/domains.js
+npm notice 5.2kB templates/static-site/src/worker/index.js
+npm notice 916B templates/static-site/wrangler.toml
+npm notice 13.7kB types/index.d.ts
+npm notice 9.5kB ui-structures/concepts/second-order-acquisition-strategy.md
+npm notice 6.2kB ui-structures/concepts/service-lifecycle-management.md
+npm notice 8.7kB ui-structures/concepts/service-manifest-guide.md
+npm notice 8.9kB ui-structures/concepts/three-tier-categorization-strategy.md
+npm notice 8.5kB ui-structures/creation/automated-generation-ui.json
+npm notice 8.8kB ui-structures/creation/core-inputs-ui.json
+npm notice 15.4kB ui-structures/creation/smart-confirmable-ui.json
+npm notice 12.3kB ui-structures/reference/absolutely-required-inputs.json
+npm notice 11.8kB ui-structures/reference/service-manifest-template.json
+npm notice Tarball Details
+npm notice name: @tamyla/clodo-framework
+npm notice version: 3.2.4
+npm notice filename: tamyla-clodo-framework-3.2.4.tgz
+npm notice package size: 485.5 kB
+npm notice unpacked size: 2.3 MB
+npm notice shasum: 33c6e7d67dd07a6d6e9d35dc769a4cf62f45b380
+npm notice integrity: sha512-0EhOdZ1ZPphq1[...]oZx9K6sjsIKjA==
+npm notice total files: 284
+npm notice
+
+added 85 packages, and audited 86 packages in 22s
+
+14 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+Γ£à Package installed
+
+≡ƒº¬ Step 5: Testing package exports...
+
+  Testing: Main Entry Point
+  Γ£à Main Entry Point passed
+
+  Testing: Worker Integration
+  Γ£à Worker Integration passed
+
+  Testing: Config Module
+  Γ£à Config Module passed
+
+  Testing: Services Module
+  Γ£à Services Module passed
+
+  Testing: Schema Module
+  Γ£à Schema Module passed
+
+  Testing: Routing Module
+  Γ£à Routing Module passed
+
+  Testing: Security Module
+  Γ£à Security Module passed
+
+  Testing: Service Management
+  Γ£à Service Management passed
+
+  Testing: Database Module
+  Γ£à Database Module passed
+
+  Testing: Deployment Module
+  Γ£à Deployment Module passed
+
+  Testing: Cloudflare Utils
+  Γ£à Cloudflare Utils passed
+
+  Testing: Dynamic Import Test (frameworkConfig)
+  Γ£à Dynamic Import Test (frameworkConfig) passed
+
+  Testing: Circular Dependency Check
+  Γ£à Circular Dependency Check passed
+
+≡ƒöì Step 6: Checking for common packaging issues...
+Γ£à No obvious packaging issues found
+
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+≡ƒôè TEST SUMMARY
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  Γ£à Passed: 13
+  Γ¥î Failed: 0
+
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+≡ƒº╣ Cleaning up...
+
+Γ£à Package is ready for publication!
+

@@ -1,6 +1,10 @@
 // Deployment Module
 // Core deployment components for the Clodo Framework
 
+// Validation and Auditing
+export { DeploymentValidator } from './validator.js';
+export { DeploymentAuditor } from './auditor.js';
+
 // NOTE: WranglerDeployer has lib/ dependencies not available in npm distribution
 // export { WranglerDeployer } from './wrangler-deployer.js';
 

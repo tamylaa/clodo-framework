@@ -134,7 +134,7 @@ export class DatabaseOrchestrator {
   async initialize() {
     try {
       // Import framework config for consistent timing and database settings
-      const { frameworkConfig } = await import('../utils/framework-config.js');
+      const { frameworkConfig } = await import('../../lib/shared/utils/framework-config.js');
       const timing = frameworkConfig.getTiming();
       const database = frameworkConfig.getDatabaseConfig();
       const configPaths = frameworkConfig.getPaths();
