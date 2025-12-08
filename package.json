@@ -100,6 +100,7 @@
     "check:bundle": "node scripts/utilities/check-bundle.js || echo 'Bundle check passed'",
     "check:imports": "node scripts/utilities/check-import-paths.js",
     "check:all": "npm run type-check && npm run test",
+    "diagnose": "node scripts/framework-diagnostic.js",
     "analyze:bundle": "echo 'Bundle analysis not implemented yet'",
     "docs": "echo 'JSDoc documentation generation not configured yet'",
     "validate": "npm run check:all",
