@@ -1,3 +1,10 @@
+## [4.0.2](https://github.com/tamylaa/clodo-framework/compare/v4.0.1...v4.0.2) (2025-12-08)
+
+
+### Bug Fixes
+
+* Pass API credentials through database creation workflow ([c245618](https://github.com/tamylaa/clodo-framework/commit/c245618290a7c71808de6d1934076bd53a0519c9))
+
 ## [4.0.1](https://github.com/tamylaa/clodo-framework/compare/v4.0.0...v4.0.1) (2025-12-07)
 
 
