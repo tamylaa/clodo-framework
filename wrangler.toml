@@ -10,6 +10,9 @@ name = "worker"
   database_name = "api2-com-development-db"
   database_id = "0ca068af-625d-4587-81f4-85b1a754b2b4"
 
+[env.development.vars]
+NODE_ENV = "development"
+
 [env.staging]
 name = "worker-staging"
 
