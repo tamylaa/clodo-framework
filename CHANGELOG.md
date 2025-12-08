@@ -1,3 +1,10 @@
+## [4.0.3](https://github.com/tamylaa/clodo-framework/compare/v4.0.2...v4.0.3) (2025-12-08)
+
+
+### Bug Fixes
+
+* Export CLI utilities to enable framework CLI commands ([35f1701](https://github.com/tamylaa/clodo-framework/commit/35f1701653ebe01b8fe41d184d2b88dac4c5b8d4))
+
 ## [4.0.2](https://github.com/tamylaa/clodo-framework/compare/v4.0.1...v4.0.2) (2025-12-08)
 
 
