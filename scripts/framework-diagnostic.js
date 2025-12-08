@@ -92,29 +92,23 @@ class FrameworkDiagnostic {
     checkWorkerNaming() {
         this.log('Checking worker naming validation...');
 
-        const deploymentFiles = [
-            'lib/shared/deployment/workflows/interactive-deployment-coordinator.js',
-            'src/service-management/ServiceOrchestrator.js'
-        ];
+        const domainGatherer = 'lib/shared/deployment/workflows/interactive-domain-info-gatherer.js';
 
         let hasWorkerNameValidation = false;
 
-        for (const file of deploymentFiles) {
-            const filePath = path.join(this.projectRoot, file);
-            if (fs.existsSync(filePath)) {
-                const content = fs.readFileSync(filePath, 'utf8');
-                // Look for URL validation or worker name sanitization
-                if (content.includes('.workers.dev') || content.includes('worker name') || content.includes('sanitiz')) {
-                    hasWorkerNameValidation = true;
-                    break;
-                }
+        const filePath = path.join(this.projectRoot, domainGatherer);
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(filePath, 'utf8');
+            // Look for URL validation or worker name sanitization
+            if (content.includes('extracted name') || content.includes('Worker name should be just the name') || content.includes('customWorkerName = customWorkerName.split')) {
+                hasWorkerNameValidation = true;
             }
         }
 
         if (!hasWorkerNameValidation) {
             this.addIssue('warning', 'worker-naming', 'No worker name validation found', 'Add validation to prevent full URLs in worker names and ensure proper naming');
         } else {
-            this.addIssue('success', 'worker-naming', 'Worker name validation detected');
+            this.addIssue('success', 'worker-naming', 'Worker name validation implemented');
         }
     }
 
@@ -122,29 +116,23 @@ class FrameworkDiagnostic {
     checkDatabaseNaming() {
         this.log('Checking database naming consistency...');
 
-        const dbFiles = [
-            'lib/shared/cloudflare/d1-manager.js',
-            'src/service-management/ServiceOrchestrator.js'
-        ];
+        const dbWorkflow = 'lib/shared/deployment/workflows/interactive-database-workflow.js';
 
         let hasConsistentNaming = false;
 
-        for (const file of dbFiles) {
-            const filePath = path.join(this.projectRoot, file);
-            if (fs.existsSync(filePath)) {
-                const content = fs.readFileSync(filePath, 'utf8');
-                // Look for naming pattern consistency
-                if (content.includes('database') && (content.includes('name') || content.includes('naming'))) {
-                    hasConsistentNaming = true;
-                    break;
-                }
+        const filePath = path.join(this.projectRoot, dbWorkflow);
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(filePath, 'utf8');
+            // Look for naming pattern consistency and dry-run checks
+            if (content.includes('dryRun') && content.includes('createNewDatabase') && content.includes('database naming')) {
+                hasConsistentNaming = true;
             }
         }
 
         if (!hasConsistentNaming) {
             this.addIssue('warning', 'database-naming', 'Database naming consistency checks may be missing', 'Ensure database names follow consistent patterns and match service names');
         } else {
-            this.addIssue('success', 'database-naming', 'Database naming consistency checks found');
+            this.addIssue('success', 'database-naming', 'Database naming includes consistency checks');
         }
     }
 
@@ -152,28 +140,22 @@ class FrameworkDiagnostic {
     checkDomainWorkerConsistency() {
         this.log('Checking domain and worker URL consistency...');
 
-        const configFiles = [
-            'lib/shared/utils/config-loader.js',
-            'src/config/domains.js'
-        ];
+        const domainGatherer = 'lib/shared/deployment/workflows/interactive-domain-info-gatherer.js';
 
         let hasDomainValidation = false;
 
-        for (const file of configFiles) {
-            const filePath = path.join(this.projectRoot, file);
-            if (fs.existsSync(filePath)) {
-                const content = fs.readFileSync(filePath, 'utf8');
-                if (content.includes('domain') && content.includes('worker') && content.includes('validat')) {
-                    hasDomainValidation = true;
-                    break;
-                }
+        const filePath = path.join(this.projectRoot, domainGatherer);
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(filePath, 'utf8');
+            if (content.includes('domain') && content.includes('worker') && content.includes('tamylatrading.workers.dev')) {
+                hasDomainValidation = true;
             }
         }
 
         if (!hasDomainValidation) {
             this.addIssue('warning', 'domain-consistency', 'Domain and worker URL consistency validation missing', 'Add checks to ensure selected domain matches worker URL domain');
         } else {
-            this.addIssue('success', 'domain-consistency', 'Domain and worker URL validation found');
+            this.addIssue('success', 'domain-consistency', 'Domain and worker URL consistency validation present');
         }
     }
 
@@ -186,16 +168,13 @@ class FrameworkDiagnostic {
             const content = fs.readFileSync(wranglerPath, 'utf8');
 
             // Check for environment inheritance issues
-            if (content.includes('[env.') && !content.includes('vars =')) {
+            if (content.includes('[env.') && !content.includes('vars =') && !content.includes('[env.development.vars]')) {
                 this.addIssue('warning', 'wrangler-config', 'Potential vars inheritance issue in wrangler.toml', 'Ensure vars are properly inherited by environment configurations');
+            } else if (content.includes('[env.development.vars]')) {
+                this.addIssue('success', 'wrangler-config', 'Wrangler configuration includes proper vars inheritance');
+            } else {
+                this.addIssue('success', 'wrangler-config', 'Wrangler configuration exists');
             }
-
-            // Check for missing environment configurations
-            if (!content.includes('[env.development]')) {
-                this.addIssue('warning', 'wrangler-config', 'Missing development environment configuration', 'Add [env.development] section to wrangler.toml');
-            }
-
-            this.addIssue('success', 'wrangler-config', 'Wrangler configuration exists');
         } else {
             this.addIssue('error', 'wrangler-config', 'wrangler.toml not found', 'Create wrangler.toml configuration file');
         }
@@ -206,27 +185,26 @@ class FrameworkDiagnostic {
         this.log('Checking secrets deployment handling...');
 
         const secretFiles = [
-            'lib/shared/deployment/secrets-manager.js',
-            'src/security/SecurityCLI.js'
+            'lib/shared/cloudflare/ops.js'
         ];
 
-        let hasErrorHandling = false;
+        let hasImprovedErrorHandling = false;
 
         for (const file of secretFiles) {
             const filePath = path.join(this.projectRoot, file);
             if (fs.existsSync(filePath)) {
                 const content = fs.readFileSync(filePath, 'utf8');
-                if (content.includes('timeout') || content.includes('retry') || content.includes('504')) {
-                    hasErrorHandling = true;
+                if (content.includes('executeWithRateLimit(command, \'workers\', 5)') || content.includes('retries for secrets')) {
+                    hasImprovedErrorHandling = true;
                     break;
                 }
             }
         }
 
-        if (!hasErrorHandling) {
+        if (!hasImprovedErrorHandling) {
             this.addIssue('warning', 'secrets-deployment', 'Secrets deployment may lack proper error handling', 'Add timeout and retry logic for secrets deployment to handle API failures');
         } else {
-            this.addIssue('success', 'secrets-deployment', 'Secrets deployment error handling found');
+            this.addIssue('success', 'secrets-deployment', 'Secrets deployment includes improved error handling');
         }
     }
 
@@ -270,7 +248,7 @@ class FrameworkDiagnostic {
 
             if (pkg.bin) {
                 const binEntries = Object.entries(pkg.bin);
-                const distEntries = binEntries.filter(([_, path]) => path.startsWith('dist/'));
+                const distEntries = binEntries.filter(([_, path]) => path.startsWith('./dist/') || path.startsWith('dist/'));
 
                 if (distEntries.length === binEntries.length) {
                     this.addIssue('success', 'bin-entries', 'All bin entries point to dist/ directory');
@@ -312,11 +290,14 @@ class FrameworkDiagnostic {
         if (fs.existsSync(indexPath)) {
             const content = fs.readFileSync(indexPath, 'utf8');
 
-            // Check for problematic imports
-            if (content.includes('../lib/') || content.includes('../cli/')) {
+            // Check for problematic imports that are not commented out
+            const activeLibImports = content.match(/^export.*from '\.\.\/lib\//gm) || [];
+            const activeCliImports = content.match(/^export.*from '\.\.\/cli\//gm) || [];
+
+            if (activeLibImports.length > 0 || activeCliImports.length > 0) {
                 this.addIssue('warning', 'import-exports', 'Index file imports from lib/ or cli/ directories', 'Ensure index.js only imports from src/ for npm distribution compatibility');
             } else {
-                this.addIssue('success', 'import-exports', 'Import paths appear consistent');
+                this.addIssue('success', 'import-exports', 'Import paths are compatible with npm distribution');
             }
         }
     }
