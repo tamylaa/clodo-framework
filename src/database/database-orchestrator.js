@@ -773,6 +773,11 @@ export class DatabaseOrchestrator {
       command += ` --local`;
     }
     
+    // Add API token if available
+    if (this.cloudflareToken) {
+      command = `CLOUDFLARE_API_TOKEN=${this.cloudflareToken} ${command}`;
+    }
+    
     return command;
   }
 
