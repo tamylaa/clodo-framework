@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/tamylaa/clodo-framework/compare/v4.0.0...v4.0.1) (2025-12-07)
+
+
+### Bug Fixes
+
+* Export COMMON_FEATURES and autoConfigureFramework, update docs ([6cf9a7e](https://github.com/tamylaa/clodo-framework/commit/6cf9a7e13c5b0b6dc10b69624e5633429890f894))
+
 # [4.0.0](https://github.com/tamylaa/clodo-framework/compare/v3.2.5...v4.0.0) (2025-12-07)
 
 
