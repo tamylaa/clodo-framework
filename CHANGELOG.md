@@ -1,3 +1,10 @@
+## [4.0.4](https://github.com/tamylaa/clodo-framework/compare/v4.0.3...v4.0.4) (2025-12-08)
+
+
+### Bug Fixes
+
+* enhance existing resource handling and API token propagation ([c7b3a22](https://github.com/tamylaa/clodo-framework/commit/c7b3a226b01609f01f6e8cb1cf27b957cd11868e))
+
 ## [4.0.3](https://github.com/tamylaa/clodo-framework/compare/v4.0.2...v4.0.3) (2025-12-08)
 
 
