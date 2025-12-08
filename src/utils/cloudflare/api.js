@@ -241,6 +241,23 @@ export class CloudflareAPI {
   }
 
   /**
+   * Put a secret for a worker
+   * @param {string} accountId - Account ID
+   * @param {string} scriptName - Worker script name
+   * @param {string} secretName - Secret name
+   * @param {Object} secretValue - Secret value object with 'text' property
+   * @returns {Promise<Object>} API response
+   */
+  async putWorkerSecret(accountId, scriptName, secretName, secretValue) {
+    const data = await this.request(`/accounts/${accountId}/workers/scripts/${scriptName}/secrets/${secretName}`, {
+      method: 'PUT',
+      body: JSON.stringify(secretValue)
+    });
+    
+    return data;
+  }
+
+  /**
    * List D1 databases for an account
    * @param {string} accountId - Account ID
    * @returns {Promise<Array>} Array of D1 databases
