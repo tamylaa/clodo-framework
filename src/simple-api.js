@@ -35,6 +35,9 @@ export class Clodo {
    * @param {string} options.servicePath - Path to service directory
    * @param {string} options.environment - Target environment
    * @param {string} options.domain - Specific domain to deploy to
+   * @param {string} options.serviceName - Service name for URL generation
+   * @param {string} options.workerName - Specific worker name to use
+   * @param {string} options.databaseName - Specific database name to use
    * @param {boolean} options.dryRun - Simulate deployment
    * @returns {Promise<Object>} Deployment result
    */

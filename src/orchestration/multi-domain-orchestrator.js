@@ -38,6 +38,8 @@ export class MultiDomainOrchestrator {
     this.parallelDeployments = options.parallelDeployments || 3;
     this.servicePath = options.servicePath || process.cwd();
     this.serviceName = options.serviceName || 'data-service'; // Service name for custom domain (e.g., 'data-service', 'auth-service')
+    this.workerName = options.workerName; // Specific worker name to use (optional)
+    this.databaseName = options.databaseName; // Specific database name to use (optional)
     
     // Wrangler config path - allows using customer-specific wrangler.toml files
     // If not specified, wrangler uses the default wrangler.toml in servicePath
@@ -316,13 +318,14 @@ export class MultiDomainOrchestrator {
     
     if (this.dryRun) {
       console.log(`   � DRY RUN: Would create database for ${domain}`);
-      const databaseName = `${domain.replace(/\./g, '-')}-${this.environment}-db`;
+      const databaseName = this.databaseName || `${domain.replace(/\./g, '-')}-${this.environment}-db`;
       return { databaseName, databaseId: 'dry-run-id', created: false };
     }
     
     try {
       // Create D1 database using Cloudflare ops
-      const databaseName = `${domain.replace(/\./g, '-')}-${this.environment}-db`;
+      // Use provided database name, or generate one based on domain/environment
+      const databaseName = this.databaseName || `${domain.replace(/\./g, '-')}-${this.environment}-db`;
       
       // Check if database already exists
       console.log(`     � Checking if database exists: ${databaseName}`);
@@ -565,13 +568,15 @@ export class MultiDomainOrchestrator {
       // 2. Root wrangler.toml is ephemeral (reflects current active deployment)
       if (this.cloudflareZoneName) {
         console.log(`   🔧 Preparing customer config for zone: ${this.cloudflareZoneName}`);
+        console.log(`   🔍 DEBUG: this.workerName is "${this.workerName}"`);
         
         // Generate or update customer config with current deployment parameters
         const customerConfigPath = await this.wranglerConfigManager.generateCustomerConfig(
           this.cloudflareZoneName,
           {
             accountId: this.cloudflareAccountId,
-            environment: this.environment
+            environment: this.environment,
+            workerName: this.workerName // Pass specific worker name if provided
           }
         );
         
@@ -803,12 +808,14 @@ export class MultiDomainOrchestrator {
   }
 
   /**
-   * Simple API: Deploy a service with minimal configuration
-   * @param {Object} options - Simple deployment options
+   * Deploy a single service to a specific domain/environment
+   * @param {Object} options - Deployment options
    * @param {string} options.servicePath - Path to service directory
    * @param {string} options.environment - Target environment
    * @param {string} options.domain - Specific domain to deploy to (used as zone name and domain suffix)
    * @param {string} options.serviceName - Service name for URL generation (e.g., 'data-service', 'auth-service')
+   * @param {string} options.workerName - Specific worker name to use
+   * @param {string} options.databaseName - Specific database name to use
    * @param {boolean} options.dryRun - Simulate deployment
    * @param {Object} options.credentials - Cloudflare credentials
    * @returns {Promise<Object>} Deployment result
@@ -819,6 +826,8 @@ export class MultiDomainOrchestrator {
       environment = 'production',
       domain,
       serviceName,
+      workerName,
+      databaseName,
       dryRun = false,
       credentials = {}
     } = options;
@@ -829,6 +838,8 @@ export class MultiDomainOrchestrator {
       dryRun,
       servicePath,
       serviceName, // Pass through serviceName if provided
+      workerName, // Pass through workerName if provided
+      databaseName, // Pass through databaseName if provided
       cloudflareToken: credentials.token,
       cloudflareAccountId: credentials.accountId,
       cloudflareZoneId: credentials.zoneId,

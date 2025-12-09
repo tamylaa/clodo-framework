@@ -129,10 +129,13 @@ export class WranglerConfigManager {
    * @param {Object} params - Deployment parameters
    * @param {string} params.accountId - Cloudflare account ID
    * @param {string} params.environment - Deployment environment (production, staging, development)
+   * @param {string} params.workerName - Specific worker name to use (optional, overrides automatic naming)
    * @returns {Promise<string>} Path to generated/updated customer config
    */
   async generateCustomerConfig(zoneName, params = {}) {
-    const { accountId, environment = 'production' } = params;
+    const { accountId, environment = 'production', workerName } = params;
+    
+    console.log(`   🔍 DEBUG: generateCustomerConfig called with workerName: ${workerName}`);
     
     if (!zoneName) {
       throw new Error('Zone name is required to generate customer config');
@@ -186,16 +189,25 @@ export class WranglerConfigManager {
       console.log(`   ✅ Set account_id to ${accountId} in customer config`);
     }
 
-    // Update worker name based on zone
+    // Update worker name based on zone or provided name
     // Extract base service name and apply zone-based naming
     const customerPrefix = zoneName.split('.')[0]; // clodo.dev → clodo
     
     // Update root-level worker name
     if (config.name) {
-      const baseName = config.name.replace(/^[^-]+-/, ''); // Remove existing prefix
-      const newWorkerName = `${customerPrefix}-${baseName}`;
+      let newWorkerName;
+      console.log(`   🔍 DEBUG: config.name is "${config.name}", workerName param is "${workerName}"`);
+      if (workerName) {
+        // Use the provided worker name directly
+        newWorkerName = workerName;
+        console.log(`   ✅ Set worker name to ${newWorkerName} in customer config (provided)`);
+      } else {
+        // Apply automatic zone-based naming
+        const baseName = config.name.replace(/^[^-]+-/, ''); // Remove existing prefix
+        newWorkerName = `${customerPrefix}-${baseName}`;
+        console.log(`   ✅ Set worker name to ${newWorkerName} in customer config (auto-generated)`);
+      }
       config.name = newWorkerName;
-      console.log(`   ✅ Set worker name to ${newWorkerName} in customer config`);
     }
 
     // Update SERVICE_DOMAIN in environment variables (all environments)
@@ -227,9 +239,20 @@ export class WranglerConfigManager {
     if (config.env) {
       for (const [envName, envConfig] of Object.entries(config.env)) {
         if (envConfig.name) {
-          const baseName = envConfig.name.replace(/^[^-]+-/, ''); // Remove existing prefix
-          envConfig.name = `${customerPrefix}-${baseName}`;
-          console.log(`   ✅ Set [env.${envName}] worker name to ${envConfig.name}`);
+          let newEnvWorkerName;
+          if (workerName) {
+            // Derive environment-specific name from provided worker name
+            const baseName = workerName.replace(/-service$/, ''); // Remove -service suffix if present
+            const envSuffix = envName === 'production' ? '' : `-${envName}`;
+            newEnvWorkerName = `${baseName}${envSuffix}`;
+            console.log(`   ✅ Set [env.${envName}] worker name to ${newEnvWorkerName} (derived from provided name)`);
+          } else {
+            // Apply automatic zone-based naming
+            const baseName = envConfig.name.replace(/^[^-]+-/, ''); // Remove existing prefix
+            newEnvWorkerName = `${customerPrefix}-${baseName}`;
+            console.log(`   ✅ Set [env.${envName}] worker name to ${newEnvWorkerName} (auto-generated)`);
+          }
+          envConfig.name = newEnvWorkerName;
         }
         
         if (envConfig.vars) {
