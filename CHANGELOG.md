@@ -1,3 +1,10 @@
+## [4.0.5](https://github.com/tamylaa/clodo-framework/compare/v4.0.4...v4.0.5) (2025-12-09)
+
+
+### Bug Fixes
+
+* ensure deployments use correct Cloudflare account and zone ([22d42a9](https://github.com/tamylaa/clodo-framework/commit/22d42a9d4cf800e78953a0bcd897d6cb94dfefc5))
+
 ## [4.0.4](https://github.com/tamylaa/clodo-framework/compare/v4.0.3...v4.0.4) (2025-12-08)
 
 
