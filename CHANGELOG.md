@@ -1,3 +1,13 @@
+## [4.0.7](https://github.com/tamylaa/clodo-framework/compare/v4.0.6...v4.0.7) (2025-12-09)
+
+
+### Bug Fixes
+
+* correct dynamic import paths in interactive-validation.js ([acbadae](https://github.com/tamylaa/clodo-framework/commit/acbadaefc10cf7efab9dd263f7a40f8db18fccb4))
+* correct import path in interactive-validation.js ([8355677](https://github.com/tamylaa/clodo-framework/commit/83556777a0faa1a85766c0bf4795428d8ba807e6))
+* correct remaining dynamic import paths in interactive-validation.js ([837f0a4](https://github.com/tamylaa/clodo-framework/commit/837f0a48489dbde6b644944950232ec0f424639f))
+* correct Windows PowerShell environment variable handling ([f3c5354](https://github.com/tamylaa/clodo-framework/commit/f3c535449f744a2448b4c1b7d98fc62853a8eaab))
+
 ## [4.0.6](https://github.com/tamylaa/clodo-framework/compare/v4.0.5...v4.0.6) (2025-12-09)
 
 
