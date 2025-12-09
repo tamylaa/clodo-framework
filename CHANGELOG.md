@@ -1,3 +1,13 @@
+## [4.0.6](https://github.com/tamylaa/clodo-framework/compare/v4.0.5...v4.0.6) (2025-12-09)
+
+
+### Bug Fixes
+
+* add null checks for enterprise deployment methods ([97c3237](https://github.com/tamylaa/clodo-framework/commit/97c32371e97f259f62a82e9f7cc393dab0def7ed))
+* correct URL construction and export missing testing workflow ([19691e1](https://github.com/tamylaa/clodo-framework/commit/19691e1651b3f37762e0564ccbb939c7c22965ad))
+* correct worker URL construction and prevent undefined errors ([5d94f4f](https://github.com/tamylaa/clodo-framework/commit/5d94f4f064d5264f18929a6d2bd0564b0bb5494a))
+* remove duplicate export in InteractiveTestingWorkflow ([db710c2](https://github.com/tamylaa/clodo-framework/commit/db710c2342ac3fd41b73ffd01fdd83ce0e0256f1))
+
 ## [4.0.5](https://github.com/tamylaa/clodo-framework/compare/v4.0.4...v4.0.5) (2025-12-09)
 
 
