@@ -752,7 +752,7 @@ export class MultiDomainOrchestrator {
           
           // Log successful health check
           this.stateManager.logAuditEvent('HEALTH_CHECK_PASSED', domain, {
-            url: deploymentUrl,
+            url: healthCheckUrl,
             status,
             responseTime,
             attempt,
