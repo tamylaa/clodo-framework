@@ -172,7 +172,7 @@
   "bugs": {
     "url": "https://github.com/tamylaa/clodo-framework/issues"
   },
-  "homepage": "https://clodo-framework.tamyla.com",
+  "homepage": "https://clodo.dev",
   "release": {
     "branches": [
       "main",

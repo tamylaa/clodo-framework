@@ -576,7 +576,6 @@ export class MultiDomainOrchestrator {
       // 2. Root wrangler.toml is ephemeral (reflects current active deployment)
       if (this.cloudflareZoneName) {
         console.log(`   🔧 Preparing customer config for zone: ${this.cloudflareZoneName}`);
-        console.log(`   🔍 DEBUG: this.workerName is "${this.workerName}"`);
         
         // Generate or update customer config with current deployment parameters
         const customerConfigPath = await this.wranglerConfigManager.generateCustomerConfig(
@@ -818,7 +817,10 @@ export class MultiDomainOrchestrator {
     
     console.log(`📋 Step 1: DNS Configuration`);
     console.log(`   Create a CNAME record in your DNS settings:`);
-    console.log(`   • Name: ${customUrl.replace(`https://${domain}`, '').replace(/\./g, '').replace('/', '')}`);
+    // Extract subdomain from custom URL (everything before the domain)
+    const urlObj = new URL(customUrl);
+    const subdomain = urlObj.hostname.replace(`.${domain}`, '');
+    console.log(`   • Name: ${subdomain}`);
     console.log(`   • Type: CNAME`);
     console.log(`   • Target: ${workerUrl.replace('https://', '')}`);
     console.log(`   • TTL: 300 (5 minutes)\n`);

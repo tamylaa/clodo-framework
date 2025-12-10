@@ -135,8 +135,6 @@ export class WranglerConfigManager {
   async generateCustomerConfig(zoneName, params = {}) {
     const { accountId, environment = 'production', workerName } = params;
     
-    console.log(`   🔍 DEBUG: generateCustomerConfig called with workerName: ${workerName}`);
-    
     if (!zoneName) {
       throw new Error('Zone name is required to generate customer config');
     }
@@ -196,7 +194,6 @@ export class WranglerConfigManager {
     // Update root-level worker name
     if (config.name) {
       let newWorkerName;
-      console.log(`   🔍 DEBUG: config.name is "${config.name}", workerName param is "${workerName}"`);
       if (workerName) {
         // Use the provided worker name directly
         newWorkerName = workerName;

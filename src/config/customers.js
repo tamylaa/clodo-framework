@@ -40,9 +40,7 @@ export class CustomerConfigurationManager {
     const customerDir = resolve(this.configDir, 'customers', customerName);
 
     // Create customer directory structure
-    console.log(`DEBUG: Checking if directory exists: ${customerDir}`);
     if (!fs.existsSync(customerDir)) {
-      console.log(`DEBUG: Creating directory: ${customerDir}`);
       fs.mkdirSync(customerDir, { recursive: true });
       logger.info(`Created customer directory: ${customerDir}`);
     }

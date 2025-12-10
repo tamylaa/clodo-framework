@@ -139,7 +139,10 @@ describe('InteractiveDatabaseWorkflow', () => {
         interactive: true
       });
 
-      expect(mockDeleteDatabase).toHaveBeenCalledWith('example.com-auth-db');
+      expect(mockDeleteDatabase).toHaveBeenCalledWith('example.com-auth-db', {
+        apiToken: undefined,
+        accountId: undefined
+      });
       expect(mockCreateDatabase).toHaveBeenCalledWith('example.com-auth-db', {
         apiToken: undefined,
         accountId: undefined
