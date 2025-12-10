@@ -311,8 +311,16 @@ export class MultiDomainOrchestrator {
   }
 
   /**
-   * Setup domain database using DatabaseOrchestrator
+   * Get base service name from worker name (remove environment suffixes)
+   * @returns {string} Base service name for URL generation
    */
+  getBaseServiceName() {
+    if (this.workerName) {
+      // Remove environment suffixes from worker name to get base service name
+      return this.workerName.replace(/-development$|-staging$|-production$/, '');
+    }
+    return this.serviceName || 'data-service';
+  }
   async setupDomainDatabase(domain) {
     console.log(`   🗄️ Setting up database for ${domain}`);
     
@@ -557,7 +565,7 @@ export class MultiDomainOrchestrator {
     if (this.dryRun) {
       console.log(`   🔍 DRY RUN: Would deploy worker for ${domain}`);
       // Use centralized domain template from validation-config.json
-      const customUrl = buildCustomDomain(this.serviceName, domain, this.environment);
+      const customUrl = buildCustomDomain(this.getBaseServiceName(), domain, this.environment);
       return { url: customUrl, deployed: false, dryRun: true };
     }
     
@@ -641,7 +649,7 @@ export class MultiDomainOrchestrator {
       
       // Construct custom domain URL using centralized template from validation-config.json
       // Handles all environment patterns: production, staging, development
-      const customUrl = buildCustomDomain(this.serviceName, domain, this.environment);
+      const customUrl = buildCustomDomain(this.getBaseServiceName(), domain, this.environment);
       
       // Store URLs in domain state
       const domainState = this.portfolioState.domainStates.get(domain);
@@ -696,16 +704,24 @@ export class MultiDomainOrchestrator {
       return true;
     }
     
-    // Get the deployment URL from domain state
+    // Get the deployment URL from domain state - prefer worker URL for immediate validation
     const domainState = this.portfolioState.domainStates.get(domain);
-    const deploymentUrl = domainState?.deploymentUrl;
+    const workerUrl = domainState?.workerUrl;
+    const customUrl = domainState?.deploymentUrl;
     
-    if (!deploymentUrl) {
+    // Use worker URL for health check since it's immediately available after deployment
+    // Custom domain may require DNS configuration and won't work immediately
+    const healthCheckUrl = workerUrl || customUrl;
+    
+    if (!healthCheckUrl) {
       console.log(`   ⚠️  No deployment URL found, skipping health check`);
       return true;
     }
     
-    console.log(`   🔍 Running health check: ${deploymentUrl}/health`);
+    console.log(`   🔍 Running health check: ${healthCheckUrl}/health`);
+    if (workerUrl && customUrl && workerUrl !== customUrl) {
+      console.log(`   ℹ️  Note: Custom domain ${customUrl} may not be configured in DNS yet`);
+    }
     
     // Retry logic for health checks
     const maxRetries = 3;
@@ -718,7 +734,7 @@ export class MultiDomainOrchestrator {
         console.log(`   Attempt ${attempt}/${maxRetries}...`);
         
         // Perform actual HTTP health check
-        const response = await fetch(`${deploymentUrl}/health`, {
+        const response = await fetch(`${healthCheckUrl}/health`, {
           method: 'GET',
           headers: { 'User-Agent': 'Clodo-Orchestrator/2.0' },
           signal: AbortSignal.timeout(15000) // 15 second timeout
@@ -745,7 +761,7 @@ export class MultiDomainOrchestrator {
           console.log(`   ⚠️  ${errorMsg}`);
           
           this.stateManager.logAuditEvent('HEALTH_CHECK_WARNING', domain, {
-            url: deploymentUrl,
+            url: healthCheckUrl,
             status,
             responseTime,
             attempt,
@@ -761,10 +777,10 @@ export class MultiDomainOrchestrator {
         
         if (isLastAttempt) {
           console.log(`   ❌ ${errorMsg} (final attempt)`);
-          console.log(`   💡 The service may still be deploying. Check manually: curl ${deploymentUrl}/health`);
+          console.log(`   💡 The service may still be deploying. Check manually: curl ${healthCheckUrl}/health`);
           
           this.stateManager.logAuditEvent('HEALTH_CHECK_FAILED', domain, {
-            url: deploymentUrl,
+            url: healthCheckUrl,
             error: error.message,
             attempts: maxRetries,
             environment: this.environment
