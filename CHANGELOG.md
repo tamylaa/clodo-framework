@@ -1,3 +1,10 @@
+## [4.0.8](https://github.com/tamylaa/clodo-framework/compare/v4.0.7...v4.0.8) (2025-12-09)
+
+
+### Bug Fixes
+
+* respect user-provided worker and database names in deployment ([04ffc38](https://github.com/tamylaa/clodo-framework/commit/04ffc382ab910d4d260ba5c3f2e421763587948a))
+
 ## [4.0.7](https://github.com/tamylaa/clodo-framework/compare/v4.0.6...v4.0.7) (2025-12-09)
 
 
