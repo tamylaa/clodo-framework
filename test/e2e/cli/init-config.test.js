@@ -35,10 +35,9 @@ describe('Real End-to-End: Init-Config Command Complete Workflow', () => {
     it('should actually copy validation-config.json to current directory', () => {
       // Change to test directory and run init-config
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${testDir} && node ${cliPath} init-config`;
 
-      execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      execSync(`node ${cliPath} init-config`, {
+        cwd: testDir,
         stdio: 'pipe',
         timeout: 30000
       });
@@ -61,10 +60,9 @@ describe('Real End-to-End: Init-Config Command Complete Workflow', () => {
 
       // Try to init-config without force
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${testDir} && node ${cliPath} init-config`;
 
-      const result = execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      const result = execSync(`node ${cliPath} init-config`, {
+        cwd: testDir,
         stdio: 'pipe',
         timeout: 30000
       });
@@ -85,10 +83,9 @@ describe('Real End-to-End: Init-Config Command Complete Workflow', () => {
 
       // Init-config with force
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${testDir} && node ${cliPath} init-config --force`;
 
-      execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      execSync(`node ${cliPath} init-config --force`, {
+        cwd: testDir,
         stdio: 'pipe',
         timeout: 30000
       });
@@ -102,10 +99,9 @@ describe('Real End-to-End: Init-Config Command Complete Workflow', () => {
 
     it('should display success message and usage information', () => {
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${testDir} && node ${cliPath} init-config`;
 
-      const result = execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      const result = execSync(`node ${cliPath} init-config`, {
+        cwd: testDir,
         stdio: 'pipe',
         timeout: 30000
       });
@@ -120,10 +116,9 @@ describe('Real End-to-End: Init-Config Command Complete Workflow', () => {
 
     it('should create valid JSON configuration file', () => {
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${testDir} && node ${cliPath} init-config`;
 
-      execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      execSync(`node ${cliPath} init-config`, {
+        cwd: testDir,
         stdio: 'pipe',
         timeout: 30000
       });
@@ -149,10 +144,9 @@ describe('Real End-to-End: Init-Config Command Complete Workflow', () => {
 
       // Run init-config from nested directory
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${nestedDir} && node ${cliPath} init-config`;
 
-      execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      execSync(`node ${cliPath} init-config`, {
+        cwd: nestedDir,
         stdio: 'pipe',
         timeout: 30000
       });

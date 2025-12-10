@@ -6,15 +6,49 @@
  */
 
 import { copyFile, access } from 'fs/promises';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Path to framework's bundled config
-const FRAMEWORK_CONFIG_PATH = join(__dirname, '../../config/validation-config.json');
+/**
+ * Find the framework's config directory by walking up from the current working directory
+ * or from the command file location
+ */
+export async function findFrameworkConfig() {
+  // First try relative to this command file
+  const relativeToCommand = join(__dirname, '../../config/validation-config.json');
+  
+  try {
+    // Check if the file exists at the expected location
+    await access(relativeToCommand);
+    return relativeToCommand;
+  } catch {
+    // If not found, try to find it by walking up from current working directory
+    let currentDir = process.cwd();
+    const maxDepth = 10;
+    
+    for (let i = 0; i < maxDepth; i++) {
+      const candidatePath = join(currentDir, 'config', 'validation-config.json');
+      try {
+        await access(candidatePath);
+        return candidatePath;
+      } catch {
+        const parentDir = dirname(currentDir);
+        if (parentDir === currentDir) {
+          // Reached root directory
+          break;
+        }
+        currentDir = parentDir;
+      }
+    }
+    
+    // As fallback, try absolute path from command location
+    return resolve(__dirname, '../../config/validation-config.json');
+  }
+}
 
 /**
  * Register the init-config command with the CLI
@@ -31,6 +65,9 @@ async function handler(options) {
   const targetPath = join(process.cwd(), 'validation-config.json');
   
   try {
+    // Find the framework config file
+    const frameworkConfigPath = await findFrameworkConfig();
+    
     // Check if file already exists
     try {
       await access(targetPath);
@@ -46,7 +83,7 @@ async function handler(options) {
     }
 
     // Copy framework config to service directory
-    await copyFile(FRAMEWORK_CONFIG_PATH, targetPath);
+    await copyFile(frameworkConfigPath, targetPath);
     
     console.log(chalk.green('✅ Successfully initialized validation-config.json'));
     console.log(chalk.gray('\n📝 Configuration file details:'));

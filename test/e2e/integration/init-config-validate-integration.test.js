@@ -54,10 +54,9 @@ ENVIRONMENT = "development"
     it('should create validation-config.json and validate service using custom rules', () => {
       // Step 1: Run init-config to create validation-config.json
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${serviceDir} && node ${cliPath} init-config`;
 
-      execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      execSync(`node ${cliPath} init-config`, {
+        cwd: serviceDir,
         stdio: 'pipe',
         timeout: 30000
       });
@@ -83,14 +82,12 @@ ENVIRONMENT = "development"
       writeFileSync(configPath, JSON.stringify(config, null, 2));
 
       // Step 3: Run validate command and verify it uses custom config
-      const validateCommand = `cd ${serviceDir} && node ${cliPath} validate . --verbose`;
-
       // Expect this to fail because src/index.js is missing
       let result;
       let output;
       try {
-        result = execSync(validateCommand, {
-          cwd: join(process.cwd()),
+        result = execSync(`node ${cliPath} validate . --verbose`, {
+          cwd: serviceDir,
           stdio: 'pipe',
           timeout: 30000
         });
@@ -112,10 +109,9 @@ ENVIRONMENT = "development"
     it('should pass validation when using default validation-config.json', () => {
       // Step 1: Run init-config to create validation-config.json
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const initConfigCommand = `cd ${serviceDir} && node ${cliPath} init-config`;
 
-      execSync(initConfigCommand, {
-        cwd: join(process.cwd()),
+      execSync(`node ${cliPath} init-config`, {
+        cwd: serviceDir,
         stdio: 'pipe',
         timeout: 30000
       });
@@ -130,12 +126,12 @@ ENVIRONMENT = "development"
       expect(config.validation).toHaveProperty('requiredFiles', ['package.json', 'wrangler.toml']);
 
       // Step 2: Run validate command with explicit config file
-      const validateCommand = `cd ${serviceDir} && node ${cliPath} validate . --verbose --config-file validation-config.json`;
+      const validateCommand = `node ${cliPath} validate . --verbose --config-file validation-config.json`;
 
       // Expect this to fail due to missing required fields in package.json
       try {
         execSync(validateCommand, {
-          cwd: join(process.cwd()),
+          cwd: serviceDir,
           stdio: 'pipe',
           timeout: 30000
         });
@@ -154,14 +150,14 @@ ENVIRONMENT = "development"
     it('should handle missing validation-config.json gracefully', () => {
       // Don't run init-config, just run validate
       const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
-      const validateCommand = `cd ${serviceDir} && node ${cliPath} validate . --verbose`;
+      const validateCommand = `node ${cliPath} validate . --verbose`;
 
       // This might fail due to validation issues, but should not crash on missing config
       let result;
       let output;
       try {
         result = execSync(validateCommand, {
-          cwd: join(process.cwd()),
+          cwd: serviceDir,
           stdio: 'pipe',
           timeout: 30000
         });

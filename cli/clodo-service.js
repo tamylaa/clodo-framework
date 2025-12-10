@@ -17,7 +17,12 @@
  */
 
 import { Command } from 'commander';
+import { join, dirname } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 import chalk from 'chalk';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Create program instance
 const program = new Command();
@@ -30,14 +35,17 @@ program
 // Dynamically load available command modules
 // This makes the CLI resilient if some commands are excluded from the package
 async function registerAvailableCommands() {
+  // Use absolute paths to ensure commands are found regardless of working directory
+  const commandsDir = join(__dirname, 'commands');
+  
   const commands = [
-    { name: 'create', path: './commands/create.js', register: 'registerCreateCommand' },
-    { name: 'deploy', path: './commands/deploy.js', register: 'registerDeployCommand' },
-    { name: 'validate', path: './commands/validate.js', register: 'registerValidateCommand' },
-    { name: 'update', path: './commands/update.js', register: 'registerUpdateCommand' },
-    { name: 'diagnose', path: './commands/diagnose.js', register: 'registerDiagnoseCommand' },
-    { name: 'assess', path: './commands/assess.js', register: 'registerAssessCommand' },
-    { name: 'init-config', path: './commands/init-config.js', register: 'registerInitConfigCommand' }
+    { name: 'create', path: pathToFileURL(join(commandsDir, 'create.js')).href, register: 'registerCreateCommand' },
+    { name: 'deploy', path: pathToFileURL(join(commandsDir, 'deploy.js')).href, register: 'registerDeployCommand' },
+    { name: 'validate', path: pathToFileURL(join(commandsDir, 'validate.js')).href, register: 'registerValidateCommand' },
+    { name: 'update', path: pathToFileURL(join(commandsDir, 'update.js')).href, register: 'registerUpdateCommand' },
+    { name: 'diagnose', path: pathToFileURL(join(commandsDir, 'diagnose.js')).href, register: 'registerDiagnoseCommand' },
+    { name: 'assess', path: pathToFileURL(join(commandsDir, 'assess.js')).href, register: 'registerAssessCommand' },
+    { name: 'init-config', path: pathToFileURL(join(commandsDir, 'init-config.js')).href, register: 'registerInitConfigCommand' }
   ];
 
   for (const cmd of commands) {
