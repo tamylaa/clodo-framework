@@ -1,3 +1,10 @@
+## [4.0.10](https://github.com/tamylaa/clodo-framework/compare/v4.0.9...v4.0.10) (2025-12-10)
+
+
+### Bug Fixes
+
+* clean up test artifacts and temporary files ([0eb6cda](https://github.com/tamylaa/clodo-framework/commit/0eb6cdac68bce6d07e567f4b7810f4d94752b7c0))
+
 ## [4.0.8](https://github.com/tamylaa/clodo-framework/compare/v4.0.7...v4.0.8) (2025-12-09)
 
 
