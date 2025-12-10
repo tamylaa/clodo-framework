@@ -662,6 +662,11 @@ export class MultiDomainOrchestrator {
         console.log(`   ✅ Worker deployed successfully`);
         console.log(`   🔗 Worker URL: ${workerUrl}`);
         console.log(`   🔗 Custom URL: ${customUrl}`);
+        
+        // Display custom domain setup instructions
+        if (customUrl && workerUrl !== customUrl) {
+          this.displayCustomDomainInstructions(customUrl, workerUrl, domain);
+        }
       } else {
         console.log(`   ✅ Deployment completed (URL not detected in output)`);
         console.log(`   🔗 Expected URL: ${customUrl}`);
@@ -720,7 +725,7 @@ export class MultiDomainOrchestrator {
     
     console.log(`   🔍 Running health check: ${healthCheckUrl}/health`);
     if (workerUrl && customUrl && workerUrl !== customUrl) {
-      console.log(`   ℹ️  Note: Custom domain ${customUrl} may not be configured in DNS yet`);
+      console.log(`   ℹ️  Health check uses worker URL (custom domain requires DNS setup - see below)`);
     }
     
     // Retry logic for health checks
@@ -797,6 +802,45 @@ export class MultiDomainOrchestrator {
     }
     
     return true;
+  }
+
+  /**
+   * Display comprehensive custom domain setup instructions
+   * @param {string} customUrl - The custom domain URL
+   * @param {string} workerUrl - The worker URL to point DNS to
+   * @param {string} domain - The domain name
+   */
+  displayCustomDomainInstructions(customUrl, workerUrl, domain) {
+    console.log(`\n🌐 Custom Domain Setup Instructions`);
+    console.log(`═`.repeat(50));
+    console.log(`Your service is deployed and working at: ${workerUrl}`);
+    console.log(`To use your custom domain ${customUrl}, follow these steps:\n`);
+    
+    console.log(`📋 Step 1: DNS Configuration`);
+    console.log(`   Create a CNAME record in your DNS settings:`);
+    console.log(`   • Name: ${customUrl.replace(`https://${domain}`, '').replace(/\./g, '').replace('/', '')}`);
+    console.log(`   • Type: CNAME`);
+    console.log(`   • Target: ${workerUrl.replace('https://', '')}`);
+    console.log(`   • TTL: 300 (5 minutes)\n`);
+    
+    console.log(`🔧 Step 2: Cloudflare Workers Configuration`);
+    console.log(`   1. Go to Cloudflare Dashboard → Workers & Pages`);
+    console.log(`   2. Select your worker`);
+    console.log(`   3. Go to "Triggers" tab`);
+    console.log(`   4. Click "Add Custom Domain"`);
+    console.log(`   5. Enter: ${customUrl}\n`);
+    
+    console.log(`⏱️  Step 3: Wait for Propagation`);
+    console.log(`   • DNS changes: 5-30 minutes`);
+    console.log(`   • SSL certificate: 5-10 minutes`);
+    console.log(`   • Total setup time: 10-60 minutes\n`);
+    
+    console.log(`✅ Step 4: Verify Setup`);
+    console.log(`   Test your custom domain:`);
+    console.log(`   curl -v ${customUrl}/health\n`);
+    
+    console.log(`💡 Note: Your service is fully functional at the worker URL immediately.`);
+    console.log(`   The custom domain is optional for branding/user experience.\n`);
   }
 
   /**
