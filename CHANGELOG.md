@@ -1,3 +1,11 @@
+## [4.0.12](https://github.com/tamylaa/clodo-framework/compare/v4.0.11...v4.0.12) (2025-12-12)
+
+
+### Bug Fixes
+
+* resolve version sync for 4.0.12 release ([6375c5f](https://github.com/tamylaa/clodo-framework/commit/6375c5f71516cf2a7a96edcf5878106063037ba8))
+* trigger 4.0.12 release after tag sync ([3dafb25](https://github.com/tamylaa/clodo-framework/commit/3dafb253cbbae6e7eac27dd5170e9f391c3deda0))
+
 ## [4.0.11](https://github.com/tamylaa/clodo-framework/compare/v4.0.10...v4.0.11) (2025-12-12)
 
 
