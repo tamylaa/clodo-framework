@@ -6,6 +6,18 @@
 * add wrangler compatibility and config validation utilities ([98c745b](https://github.com/tamylaa/clodo-framework/commit/98c745bb72608a4d5808c947cc9c7a39b868243f))
 * correct import path in file-manager.js for proper dist compilation ([166698e](https://github.com/tamylaa/clodo-framework/commit/166698ebb9473ba5d889739831a1d4e1040c12a5))
 * correct NPM_TOKEN environment variable name in GitHub Actions workflow ([938c953](https://github.com/tamylaa/clodo-framework/commit/938c953d7e2e9f1a679ee566f1a4c7a070e629e6))
+* resolve version sync for 4.0.12 release ([6375c5f](https://github.com/tamylaa/clodo-framework/commit/6375c5f71516cf2a7a96edcf5878106063037ba8))
+* trigger patch release for latest changes ([6161573](https://github.com/tamylaa/clodo-framework/commit/6161573ead8271eaea2766bf7c85f63ef7378a7d))
+* update .gitignore to prevent test artifacts from being tracked ([83457d5](https://github.com/tamylaa/clodo-framework/commit/83457d58b1e8d44865a593b2b75e39f4509a75bf))
+
+## [4.0.11](https://github.com/tamylaa/clodo-framework/compare/v4.0.10...v4.0.11) (2025-12-12)
+
+
+### Bug Fixes
+
+* add wrangler compatibility and config validation utilities ([98c745b](https://github.com/tamylaa/clodo-framework/commit/98c745bb72608a4d5808c947cc9c7a39b868243f))
+* correct import path in file-manager.js for proper dist compilation ([166698e](https://github.com/tamylaa/clodo-framework/commit/166698ebb9473ba5d889739831a1d4e1040c12a5))
+* correct NPM_TOKEN environment variable name in GitHub Actions workflow ([938c953](https://github.com/tamylaa/clodo-framework/commit/938c953d7e2e9f1a679ee566f1a4c7a070e629e6))
 * trigger patch release for latest changes ([6161573](https://github.com/tamylaa/clodo-framework/commit/6161573ead8271eaea2766bf7c85f63ef7378a7d))
 * update .gitignore to prevent test artifacts from being tracked ([83457d5](https://github.com/tamylaa/clodo-framework/commit/83457d58b1e8d44865a593b2b75e39f4509a75bf))
 
