@@ -1,4 +1,5 @@
 import { BaseGenerator } from '../BaseGenerator.js';
+import { WranglerCompatibilityDetector } from '../../../../lib/shared/utils/wrangler-compatibility.js';
 import { join } from 'path';
 
 /**
@@ -56,7 +57,7 @@ export class WranglerTomlGenerator extends BaseGenerator {
     const siteConfig = await this._generateSiteConfig(coreInputs);
 
     // Build wrangler.toml content
-    const content = this._buildWranglerToml(coreInputs, confirmedValues, routesConfig, siteConfig);
+    const content = await this._buildWranglerToml(coreInputs, confirmedValues, routesConfig, siteConfig);
 
     // Write file
     await this.writeFile('wrangler.toml', content);
@@ -116,14 +117,46 @@ export class WranglerTomlGenerator extends BaseGenerator {
   /**
    * Build the complete wrangler.toml content
    */
-  _buildWranglerToml(coreInputs, confirmedValues, routesConfig, siteConfig) {
+  async _buildWranglerToml(coreInputs, confirmedValues, routesConfig, siteConfig) {
     const compatDate = new Date().toISOString().split('T')[0];
-    
+
+    // Detect Wrangler version and get optimal compatibility config
+    let compatibilityString = 'compatibility_flags = ["nodejs_compat"]';
+    let buildString = '\n\n[build]\ncommand = "npm run build"\n\n[build.upload]\nformat = "modules"\n\n[build.upload.external]\ninclude = ["node:*"]';
+
+    try {
+      const compatibilityDetector = new WranglerCompatibilityDetector();
+      const wranglerVersion = await Promise.race([
+        compatibilityDetector.detectVersion(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000)) // 2 second timeout
+      ]);
+      const compatibilityConfig = compatibilityDetector.getOptimalConfig(wranglerVersion);
+      const buildConfig = compatibilityDetector.getBuildConfig(wranglerVersion);
+
+      // Build compatibility flags string
+      if (compatibilityConfig.nodejs_compat !== undefined) {
+        compatibilityString = `nodejs_compat = ${compatibilityConfig.nodejs_compat}`;
+      } else if (compatibilityConfig.compatibility_flags) {
+        compatibilityString = `compatibility_flags = ${JSON.stringify(compatibilityConfig.compatibility_flags)}`;
+      }
+
+      // Add any additional build config from detector (if needed)
+      if (buildConfig.command && buildConfig.command !== "npm run build") {
+        buildString += `\n\n# Additional build config from Wrangler ${wranglerVersion}\n[build.v${wranglerVersion.split('.')[0]}]\ncommand = "${buildConfig.command}"`;
+      }
+      if (buildConfig.upload && buildConfig.upload.format && buildConfig.upload.format !== "modules") {
+        buildString += `\nformat_override = "${buildConfig.upload.format}"`;
+      }
+    } catch (error) {
+      // Fall back to default configuration if detection fails
+      console.warn(`⚠️  Wrangler compatibility detection failed, using defaults: ${error.message}`);
+    }
+
     return `# Cloudflare Workers Configuration for ${confirmedValues.displayName}
 name = "${confirmedValues.workerName}"
 main = "src/worker/index.js"
 compatibility_date = "${compatDate}"
-compatibility_flags = ["nodejs_compat"]
+${compatibilityString}${buildString}
 
 # Account configuration
 account_id = "${coreInputs.cloudflareAccountId}"

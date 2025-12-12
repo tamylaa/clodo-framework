@@ -6,6 +6,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { FrameworkConfig } from '../../utils/framework-config.js';
+// import { ConfigurationValidator } from '../../../lib/shared/utils/configuration-validator.js';
 
 export class ValidationHandler {
   constructor(options = {}) {
@@ -126,6 +127,18 @@ export class ValidationHandler {
     // Validate wrangler configuration
     const wranglerValidation = await this.validateWranglerConfig(servicePath);
     issues.push(...wranglerValidation.issues);
+
+    // Run comprehensive configuration validation using ConfigurationValidator
+    // Temporarily disabled due to import issues
+    // try {
+    //   const configValidation = await ConfigurationValidator.validateServiceConfig(servicePath);
+    //   if (!configValidation.isValid) {
+    //     issues.push(...configValidation.errors);
+    //     issues.push(...configValidation.warnings.map(w => `Warning: ${w}`));
+    //   }
+    // } catch (error) {
+    //   issues.push(`Configuration validation failed: ${error.message}`);
+    // }
 
     return {
       valid: issues.length === 0,

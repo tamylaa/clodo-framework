@@ -6,7 +6,8 @@
  */
 
 import chalk from 'chalk';
-import { Clodo, StandardOptions, ConfigLoader } from '@tamyla/clodo-framework';
+import { Clodo, ConfigLoader } from '@tamyla/clodo-framework';
+import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
 
 export function registerCreateCommand(program) {
   const command = program

@@ -1,5 +1,6 @@
 ﻿import chalk from 'chalk';
-import { Clodo, StandardOptions, ConfigLoader, InteractiveDeploymentCoordinator, OutputFormatter } from '@tamyla/clodo-framework';
+import { Clodo, ConfigLoader, InteractiveDeploymentCoordinator, OutputFormatter } from '@tamyla/clodo-framework';
+import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
 
 export function registerDeployCommand(program) {
   const command = program
