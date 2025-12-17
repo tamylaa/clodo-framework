@@ -101,7 +101,16 @@ function fixDistImports(dir) {
           content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\//g, "from $1../../../lib/");
           content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import($1../../../lib/shared/");
           content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\//g, "import($1../../../lib/");
-        }        
+        }
+
+        // Specific fix for generators/config files that had one extra ../ and still resolve outside dist
+        if (normalizedRelPath.match(/^dist\/service-management\/generators\/config\/.+\.js$/)) {
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\/utils\//g, "from $1../../../lib/shared/utils/");
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from $1../../../lib/shared/");
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/utils\//g, "from $1../../../lib/utils/");
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\//g, "from $1../../../lib/");
+        }
+
         // Fix ../lib/ to ./lib/ for files directly in dist/ root (like index.js)
         if (normalizedRelPath.startsWith('dist/') && pathDepth === 2 && normalizedRelPath.endsWith('.js')) {
           content = content.replace(/\.\.\/lib\//g, "./lib/");
