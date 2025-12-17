@@ -34,13 +34,16 @@ try {
   console.log('Running smoke checks...');
   // Run a node script that requires the package and a couple of internal modules
   const nodeScript = `try {
+  const path = require('path');
   const pkg = require('@tamyla/clodo-framework');
   console.log('package loaded, exports count:', Object.keys(pkg).length);
-  // require a CLI entry to ensure bin/ packaging works
-  const cli = require('@tamyla/clodo-framework/dist/cli/clodo-service.js');
+  // require a CLI entry to ensure bin/ packaging works (resolve via node_modules path to avoid exports map restrictions)
+  const cliPath = path.join(process.cwd(), 'node_modules', '@tamyla', 'clodo-framework', 'dist', 'cli', 'clodo-service.js');
+  const cli = require(cliPath);
   console.log('cli loaded');
-  // require an internal dist module used earlier
-  const wd = require('@tamyla/clodo-framework/dist/deployment/wrangler-deployer.js');
+  // require an internal dist module used earlier via node_modules path
+  const wdPath = path.join(process.cwd(), 'node_modules', '@tamyla', 'clodo-framework', 'dist', 'deployment', 'wrangler-deployer.js');
+  const wd = require(wdPath);
   console.log('deployment module loaded');
   process.exit(0);
 } catch (err) {
