@@ -199,6 +199,13 @@ import { CloudflareAPI } from '@tamyla/clodo-framework/utils/cloudflare';
 
 If you need functionality that's currently only in `bin/`, please open an issue - we'll consider adding it to the public API.
 
+---
+
+## How to consume (quick)
+A short guide and best practices for consuming `@tamyla/clodo-framework` are available in the docs: [docs/HOWTO_CONSUME_CLODO_FRAMEWORK.md](./docs/HOWTO_CONSUME_CLODO_FRAMEWORK.md). This file includes quickstart steps, public export guidance, CLI usage, and troubleshooting tips for packaged artifacts.
+
+If you'd like this information added to `clodo.dev`, I can prepare a small website PR as well.
+
 ## Project Structure
 
 The project is organized for maximum clarity and maintainability:
