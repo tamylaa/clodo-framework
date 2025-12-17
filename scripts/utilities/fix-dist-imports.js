@@ -64,8 +64,12 @@ function fixDistImports(dir) {
         // Should become: ../lib/shared/utils/framework-config.js
         if (pathDepth === 3 && normalizedRelPath.match(/^dist\/[^\/]+\/[^\/]+\.js$/)) {
           // File is at depth 2: dist/<dir>/<file>.js
+          // Fix specific shared lib imports
           content = content.replace(/from\s+(['"])\.\.\/\.\.\/lib\/shared\//g, "from $1../lib/shared/");
           content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/lib\/shared\//g, "import($1../lib/shared/");
+          // Fix generic lib imports (e.g. ../../lib/database/.. -> ../lib/database/...)
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/lib\//g, "from $1../lib/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/lib\//g, "import($1../lib/");
         }
         
         // Fix ../../../lib/shared/ to ../../lib/shared/ for files at depth 3: dist/<dir>/<subdir>/<file>.js

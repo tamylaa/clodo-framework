@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Bug Fixes
+
+* Fix import paths in `dist/` to ensure packaged artifact resolves internal modules correctly (fix `wrangler-deployer` and `WranglerTomlGenerator`).
+* Add `scripts/utilities/check-dist-imports.js` and `scripts/utilities/test-packaged-artifact.js` and include packaged-artifact smoke test in release workflow.
+
 ## [4.0.11](https://github.com/tamylaa/clodo-framework/compare/v4.0.10...v4.0.11) (2025-12-12)
 
 
