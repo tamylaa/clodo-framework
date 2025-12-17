@@ -64,8 +64,12 @@ function fixDistImports(dir) {
         // Should become: ../lib/shared/utils/framework-config.js
         if (pathDepth === 3 && normalizedRelPath.match(/^dist\/[^\/]+\/[^\/]+\.js$/)) {
           // File is at depth 2: dist/<dir>/<file>.js
+          // Fix specific shared lib imports
           content = content.replace(/from\s+(['"])\.\.\/\.\.\/lib\/shared\//g, "from $1../lib/shared/");
           content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/lib\/shared\//g, "import($1../lib/shared/");
+          // Fix generic lib imports (e.g. ../../lib/database/.. -> ../lib/database/...)
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/lib\//g, "from $1../lib/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/lib\//g, "import($1../lib/");
         }
         
         // Fix ../../../lib/shared/ to ../../lib/shared/ for files at depth 3: dist/<dir>/<subdir>/<file>.js
@@ -91,7 +95,27 @@ function fixDistImports(dir) {
           content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from $1../../lib/shared/");
           content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import($1../../lib/shared/");
         }
-        
+        // Fix ../../../../lib/ to ../../../lib/ for deeper nested files in dist/service-management (e.g. generators/config/...)
+        if (normalizedRelPath.startsWith('dist/service-management/')) {
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from $1../../../lib/shared/");
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\//g, "from $1../../../lib/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "import($1../../../lib/shared/");
+          content = content.replace(/import\s*\(\s*(['"])\.\.\/\.\.\/\.\.\/lib\//g, "import($1../../../lib/");
+        }
+
+        // Specific fix for generators/config files that had one extra ../ and still resolve outside dist
+        if (normalizedRelPath.match(/^dist\/service-management\/generators\/config\/.+\.js$/)) {
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\/utils\//g, "from $1../../../lib/shared/utils/");
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/shared\//g, "from $1../../../lib/shared/");
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\/utils\//g, "from $1../../../lib/utils/");
+          content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\//g, "from $1../../../lib/");
+        }
+
+        // General fix: convert four-level '../../../../lib/' imports to '../../../lib/' across dist/
+        // This handles deeply nested files that mistakenly reference project root lib/ (outside dist)
+        content = content.replace(/(\.\.\/){4}lib\//g, "../../../lib/");
+        content = content.replace(/import\s*\(\s*(['"])(?:\.\.\/){4}lib\//g, "import($1../../../lib/");
+
         // Fix ../lib/ to ./lib/ for files directly in dist/ root (like index.js)
         if (normalizedRelPath.startsWith('dist/') && pathDepth === 2 && normalizedRelPath.endsWith('.js')) {
           content = content.replace(/\.\.\/lib\//g, "./lib/");

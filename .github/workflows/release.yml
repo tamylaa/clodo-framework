@@ -89,6 +89,9 @@ jobs:
       - name: Build project
         run: npm run build:ci
 
+      - name: Validate packaged artifact
+        run: node scripts/utilities/test-packaged-artifact.js
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
