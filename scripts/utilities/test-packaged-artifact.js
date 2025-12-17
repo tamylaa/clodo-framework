@@ -43,10 +43,10 @@ try {
   console.log('named export services loaded');
   // Run CLI via local bin using node to avoid package.exports restrictions
   const binPath = path.join(process.cwd(), 'node_modules', '.bin', 'clodo-service');
-  const versionOut = execSync(`node ${JSON.stringify(binPath)} --version`, { encoding: 'utf8' }).toString().trim();
+  const versionOut = execSync('node ' + JSON.stringify(binPath) + ' --version', { encoding: 'utf8' }).toString().trim();
   console.log('clodo-service --version output:', versionOut.split('\n')[0]);
   // Run --help to ensure CLI executes successfully (exit code 0)
-  execSync(`node ${JSON.stringify(binPath)} --help`, { stdio: 'ignore' });
+  execSync('node ' + JSON.stringify(binPath) + ' --help', { stdio: 'ignore' });
   console.log('cli executed successfully');
   process.exit(0);
 } catch (err) {
