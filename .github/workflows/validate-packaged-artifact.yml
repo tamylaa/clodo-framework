@@ -1,0 +1,31 @@
+name: Validate packaged artifact (PR)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  validate-packaged-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build:ci
+
+      - name: Validate packaged artifact
+        run: node scripts/utilities/test-packaged-artifact.js

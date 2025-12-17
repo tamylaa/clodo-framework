@@ -89,6 +89,7 @@
     "test:integration": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/integration/ --verbose",
     "test:comprehensive": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/comprehensive-suite.spec.js --verbose",
     "test:package": "node scripts/test-package.js",
+    "test:packaged-artifact": "node scripts/utilities/test-packaged-artifact.js",
     "prepublishOnly": "npm run build:ci",
     "test:coverage:cli": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/cli-integration/ --coverage",
     "test:coverage:deployment": "cross-env NODE_OPTIONS=--experimental-vm-modules jest test/deployment/ test/deployment-security.spec.js --coverage",
