@@ -1,4 +1,12 @@
+## [4.0.13](https://github.com/tamylaa/clodo-framework/compare/v4.0.12...v4.0.13) (2025-12-17)
 
+
+### Bug Fixes
+
+* collapse 4-level '../../../../lib/' imports to '../../../lib/' in dist ([e0a329e](https://github.com/tamylaa/clodo-framework/commit/e0a329e94390ddad37c7ccd8e6163410c874d7d0))
+* handle deeper dist/service-management imports pointing outside dist ([f70d63c](https://github.com/tamylaa/clodo-framework/commit/f70d63cc24571e9691fe900d6a8384ce7f040992))
+* resolve CHANGELOG.md merge conflict ([25a044d](https://github.com/tamylaa/clodo-framework/commit/25a044d0d4e2c8f674f777567de1d812c8b49cfa))
+* special-case generators/config deep lib import path ([cb74ab0](https://github.com/tamylaa/clodo-framework/commit/cb74ab0a9fb0958cae5065adc750377f751f0b21))
 
 ## [4.0.10](https://github.com/tamylaa/clodo-framework/compare/v4.0.9...v4.0.10) (2025-12-10)
 
