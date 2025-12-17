@@ -1,9 +1,273 @@
+
+
+## [4.0.10](https://github.com/tamylaa/clodo-framework/compare/v4.0.9...v4.0.10) (2025-12-10)
+
+
+### Bug Fixes
+
+* clean up test artifacts and temporary files ([0eb6cda](https://github.com/tamylaa/clodo-framework/commit/0eb6cdac68bce6d07e567f4b7810f4d94752b7c0))
+
+## [4.0.8](https://github.com/tamylaa/clodo-framework/compare/v4.0.7...v4.0.8) (2025-12-09)
+
+
+### Bug Fixes
+
+* respect user-provided worker and database names in deployment ([04ffc38](https://github.com/tamylaa/clodo-framework/commit/04ffc382ab910d4d260ba5c3f2e421763587948a))
+
+## [4.0.7](https://github.com/tamylaa/clodo-framework/compare/v4.0.6...v4.0.7) (2025-12-09)
+
+
+### Bug Fixes
+
+* correct dynamic import paths in interactive-validation.js ([acbadae](https://github.com/tamylaa/clodo-framework/commit/acbadaefc10cf7efab9dd263f7a40f8db18fccb4))
+* correct import path in interactive-validation.js ([8355677](https://github.com/tamylaa/clodo-framework/commit/83556777a0faa1a85766c0bf4795428d8ba807e6))
+* correct remaining dynamic import paths in interactive-validation.js ([837f0a4](https://github.com/tamylaa/clodo-framework/commit/837f0a48489dbde6b644944950232ec0f424639f))
+* correct Windows PowerShell environment variable handling ([f3c5354](https://github.com/tamylaa/clodo-framework/commit/f3c535449f744a2448b4c1b7d98fc62853a8eaab))
+
+## [4.0.6](https://github.com/tamylaa/clodo-framework/compare/v4.0.5...v4.0.6) (2025-12-09)
+
+
+### Bug Fixes
+
+* add null checks for enterprise deployment methods ([97c3237](https://github.com/tamylaa/clodo-framework/commit/97c32371e97f259f62a82e9f7cc393dab0def7ed))
+* correct URL construction and export missing testing workflow ([19691e1](https://github.com/tamylaa/clodo-framework/commit/19691e1651b3f37762e0564ccbb939c7c22965ad))
+* correct worker URL construction and prevent undefined errors ([5d94f4f](https://github.com/tamylaa/clodo-framework/commit/5d94f4f064d5264f18929a6d2bd0564b0bb5494a))
+* remove duplicate export in InteractiveTestingWorkflow ([db710c2](https://github.com/tamylaa/clodo-framework/commit/db710c2342ac3fd41b73ffd01fdd83ce0e0256f1))
+
+## [4.0.5](https://github.com/tamylaa/clodo-framework/compare/v4.0.4...v4.0.5) (2025-12-09)
+
+
+### Bug Fixes
+
+* ensure deployments use correct Cloudflare account and zone ([22d42a9](https://github.com/tamylaa/clodo-framework/commit/22d42a9d4cf800e78953a0bcd897d6cb94dfefc5))
+
+## [4.0.4](https://github.com/tamylaa/clodo-framework/compare/v4.0.3...v4.0.4) (2025-12-08)
+
+
+### Bug Fixes
+
+* enhance existing resource handling and API token propagation ([c7b3a22](https://github.com/tamylaa/clodo-framework/commit/c7b3a226b01609f01f6e8cb1cf27b957cd11868e))
+
+## [4.0.3](https://github.com/tamylaa/clodo-framework/compare/v4.0.2...v4.0.3) (2025-12-08)
+
+
+### Bug Fixes
+
+* Export CLI utilities to enable framework CLI commands ([35f1701](https://github.com/tamylaa/clodo-framework/commit/35f1701653ebe01b8fe41d184d2b88dac4c5b8d4))
+
+## [4.0.2](https://github.com/tamylaa/clodo-framework/compare/v4.0.1...v4.0.2) (2025-12-08)
+
+
+### Bug Fixes
+
+* Pass API credentials through database creation workflow ([c245618](https://github.com/tamylaa/clodo-framework/commit/c245618290a7c71808de6d1934076bd53a0519c9))
+
+## [4.0.1](https://github.com/tamylaa/clodo-framework/compare/v4.0.0...v4.0.1) (2025-12-07)
+
+
+### Bug Fixes
+
+* Export COMMON_FEATURES and autoConfigureFramework, update docs ([6cf9a7e](https://github.com/tamylaa/clodo-framework/commit/6cf9a7e13c5b0b6dc10b69624e5633429890f894))
+
+# [4.0.0](https://github.com/tamylaa/clodo-framework/compare/v3.2.5...v4.0.0) (2025-12-07)
+
+
+### Bug Fixes
+
+* resolve remaining 5 import path issues in dist files ([383a625](https://github.com/tamylaa/clodo-framework/commit/383a6257910546f4d9a9f1442f4005c0cc166704))
+
+
+### Code Refactoring
+
+* replace band-aid import fixes with proper wrapper pattern ([5385ef2](https://github.com/tamylaa/clodo-framework/commit/5385ef23e9a9b8be26fce9d9fe6df2184667168c))
+
+
+### BREAKING CHANGES
+
+* from previous approach:
+- Removed post-build path manipulation that was fragile and hard to maintain
+- Implemented proper wrapper re-export pattern consistent with existing codebase
+
+Changes:
+- Create lib/shared/utils/framework-config.js wrapper that re-exports from src/utils
+- Update connection-manager.js to import from ../utils/framework-config.js wrapper
+- Update secret-generator.js to import from ../utils/framework-config.js wrapper
+- Update graceful-shutdown-manager.js to import from ./framework-config.js wrapper
+- Replace complex import path fixes with single minimal transformation in fix-dist-imports.js
+- Maintains all 23 exports working correctly
+
+Benefits:
+ Clean, maintainable architecture following existing wrapper patterns
+ No circular dependencies
+ Imports work correctly in both source and compiled dist/
+ Easier to debug and understand import resolution
+ Scales better as codebase grows
+
+## [3.2.5](https://github.com/tamylaa/clodo-framework/compare/v3.2.4...v3.2.5) (2025-12-06)
+
+
+### Bug Fixes
+
+* correct import paths in dist/index.js for Windows compatibility ([351ba68](https://github.com/tamylaa/clodo-framework/commit/351ba68450c675af6f199036121aa2797eaa97a8))
+
+## [3.2.4](https://github.com/tamylaa/clodo-framework/compare/v3.2.3...v3.2.4) (2025-12-06)
+
+
+### Bug Fixes
+
+* expose CLI utilities in public API to fix import issues ([5d995ab](https://github.com/tamylaa/clodo-framework/commit/5d995abb2f6cb718acc0a03beef75f1025204200))
+
+## [3.2.3](https://github.com/tamylaa/clodo-framework/compare/v3.2.2...v3.2.3) (2025-12-06)
+
+
+### Bug Fixes
+
+* clean up debug logging in fix-dist-imports.js ([374318e](https://github.com/tamylaa/clodo-framework/commit/374318efc9b73cf304306f3dd249eb88f8b06c98))
+* resolve all test suite failures for production readiness ([519df7c](https://github.com/tamylaa/clodo-framework/commit/519df7c755bd1a93bb5e9717c2aaf21bdf02e636))
+
+## [3.2.2](https://github.com/tamylaa/clodo-framework/compare/v3.2.1...v3.2.2) (2025-12-05)
+
+
+### Bug Fixes
+
+* correct import paths in lib/ files and enhance build script ([77abdb2](https://github.com/tamylaa/clodo-framework/commit/77abdb24ccfab61275a8f9716b09c84faaf8db84))
+
+## [3.2.1](https://github.com/tamylaa/clodo-framework/compare/v3.2.0...v3.2.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* enhance deploy command with prerequisite checking and organize project structure ([660c5ab](https://github.com/tamylaa/clodo-framework/commit/660c5ab82546ca1a80b42c1d4cbc6d3972cc6203))
+
+# [3.2.0](https://github.com/tamylaa/clodo-framework/compare/v3.1.27...v3.2.0) (2025-12-03)
+
+
+### Bug Fixes
+
+* add pre-publish import validation and remove non-existent exports ([a41fa7d](https://github.com/tamylaa/clodo-framework/commit/a41fa7df5c1ce05d34efe7e62e68d1c2fa8ea89c))
+* correct CLI import paths for npm distribution ([ba68e0a](https://github.com/tamylaa/clodo-framework/commit/ba68e0adfa4c3bf36584b8bd37310ef616f79722))
+* enable missing exports and remove lib-dependent modules from npm ([1645a58](https://github.com/tamylaa/clodo-framework/commit/1645a58d1e1f5d7126fd02766e9b4d006fa45be7))
 ## [Unreleased]
 
 ### Bug Fixes
 
-* Fix import paths in `dist/` to ensure packaged artifact resolves internal modules correctly (fix `wrangler-deployer` and `WranglerTomlGenerator`).
+* Fix import paths in `dist/` to ensure packaged artifact resolves internal modules correctly (fixed `wrangler-deployer` and `WranglerTomlGenerator`).
 * Add `scripts/utilities/check-dist-imports.js` and `scripts/utilities/test-packaged-artifact.js` and include packaged-artifact smoke test in release workflow.
+
+### Improvements
+
+* **Project Organization**: Complete cleanup and reorganization of project structure
+  - Removed 15+ temporary and backup files (test-output.txt, *.old.js, test-*.js, *.log files)
+  - Organized 100+ internal documentation files into categorical structure
+  - Created `i-docs/` with 10 organized categories (architecture, development, testing, deployment, roadmap, guides, session-reports, phases, analysis, licensing)
+  - Cleaned `docs/` directory to contain only 5 public-facing documentation files
+  - Moved 33 internal analysis documents from `docs/` to `i-docs/analysis/`
+  - Moved 13 root-level documentation files to appropriate i-docs categories
+  - Root directory now contains only essential project files (config, package.json, README, etc.)
+
+* **Configuration Management**: Eliminated hard-coded values from source code
+  - Moved domain defaults from ServiceCreator to `validation-config.json`
+  - Added configuration hierarchy: CLI option → config file → fallback default
+  - Introduced `templates.defaults` and `templates.companyDefaults` sections in validation-config.json
+  - ServiceCreator now uses FrameworkConfig for loading template defaults
+
+* **CLI Test Infrastructure**: Achieved 100% CLI test pass rate (44/44 tests)
+  - Fixed dry-run bug in clodo-init-service (Array.isArray check)
+  - Implemented template fallback system (generic template used when specific type missing)
+  - Added clodo-service-manifest.json to generic template
+  - Updated all test expectations to match actual CLI behavior
+  - All CLI tests updated to use command-line arguments instead of interactive input
+### Bug Fixes
+
+* compile bin/ to dist/bin/ for proper npm package structure ([d4ba5d5](https://github.com/tamylaa/clodo-framework/commit/d4ba5d55e27911333a9921234e8defe2f995efd3))
+* include required bin directories in npm package ([aa8484e](https://github.com/tamylaa/clodo-framework/commit/aa8484ed600c15a217d7b67b82ad9f31d780fdf7))
+
+## [3.1.8](https://github.com/tamylaa/clodo-framework/compare/v3.1.7...v3.1.8) (2025-10-27)
+
+
+### Bug Fixes
+
+* change prepublishOnly to use build:ci instead of full validation ([e001791](https://github.com/tamylaa/clodo-framework/commit/e0017913df28b86320b6a71eb583a8ed37a45c38))
+
+## [3.1.7](https://github.com/tamylaa/clodo-framework/compare/v3.1.6...v3.1.7) (2025-10-27)
+
+
+### Bug Fixes
+
+* allow validation-config.json warning in CLI test ([2d6870a](https://github.com/tamylaa/clodo-framework/commit/2d6870af85b2fe89168ba8a64a9c5d5b639a6c70))
+* exclude backup and archive directories from test discovery ([831eb98](https://github.com/tamylaa/clodo-framework/commit/831eb9835b5c816137cc07df8016612ed1f60334))
+
+## [3.1.6](https://github.com/tamylaa/clodo-framework/compare/v3.1.5...v3.1.6) (2025-10-27)
+
+
+### Bug Fixes
+
+* add automated testing suite, cover clodo-service deploy 3-level inputs, and Windows compatibility fixes ([305c81c](https://github.com/tamylaa/clodo-framework/commit/305c81c45bd1761a49d1d54585b189c95cd7c749))
+
+## [3.1.5](https://github.com/tamylaa/clodo-framework/compare/v3.1.4...v3.1.5) (2025-10-25)
+
+
+### Bug Fixes
+
+* deploy command should use full three-tier architecture (88+ fields)- Updated collect() to return comprehensive three-tier result- Deploy command now uses full collection with confirmations- Prevents duplicate confirmation steps in interactive mode- Restores the 80+ field deployment flow with user confirmations ([5c6c226](https://github.com/tamylaa/clodo-framework/commit/5c6c226d652d3dc7d1532147af4e87f7ccb8a811))
+
+## [3.1.4](https://github.com/tamylaa/clodo-framework/compare/v3.1.3...v3.1.4) (2025-10-25)
+
+
+### Bug Fixes
+
+* deploy command should collect deployment inputs, not service creation inputs ([63cbccf](https://github.com/tamylaa/clodo-framework/commit/63cbccfd8b3886668304a7dce51508e6ccba2450))
+
+## [3.1.3](https://github.com/tamylaa/clodo-framework/compare/v3.1.2...v3.1.3) (2025-10-25)
+
+
+### Bug Fixes
+
+* ui-structures-loader path resolution and build inclusion ([1744ce3](https://github.com/tamylaa/clodo-framework/commit/1744ce324272a9befa803498f452953409f3f870))
+* ui-structures-loader should look in package directory, not cwd ([23160a8](https://github.com/tamylaa/clodo-framework/commit/23160a808230999c26bb5c5e989ac425b150647d))
+
+## [3.1.2](https://github.com/tamylaa/clodo-framework/compare/v3.1.1...v3.1.2) (2025-10-25)
+
+
+### Bug Fixes
+
+* include ui-structures directory in published package files ([79ce369](https://github.com/tamylaa/clodo-framework/commit/79ce3692fc5fb50cf90cead6378b4d5d180d91d9))
+
+## [3.1.1](https://github.com/tamylaa/clodo-framework/compare/v3.1.0...v3.1.1) (2025-10-25)
+
+
+### Bug Fixes
+
+* add missing collect method to InputCollector for deploy command ([ef78a92](https://github.com/tamylaa/clodo-framework/commit/ef78a922dac445e6d8a88f4dc73cde7a6b280055))
+
+## [3.1.1](https://github.com/tamylaa/clodo-framework/compare/v3.1.0...v3.1.1) (2025-10-25)
+
+
+### Bug Fixes
+
+* add missing collect method to InputCollector for deploy command ([ef78a92](https://github.com/tamylaa/clodo-framework/commit/ef78a922dac445e6d8a88f4dc73cde7a6b280055))
+
+# [3.1.0](https://github.com/tamylaa/clodo-framework/compare/v3.0.15...v3.1.0) (2025-10-24)
+
+
+### Bug Fixes
+
+* import missing dependencies in generators utils index ([771a336](https://github.com/tamylaa/clodo-framework/commit/771a336f678c636221e73dd2a16efc92dca94345))
+* improve error handling in generators ([799a05b](https://github.com/tamylaa/clodo-framework/commit/799a05b205f8fd0e0c3ca512a39ce8a719c5d39c))
+* resolve ESM compatibility and test stability issues ([87c422d](https://github.com/tamylaa/clodo-framework/commit/87c422d1611469246a819620834feee67577b30f))
+
+
+### Features
+
+* comprehensive framework enhancement with domain routes automation ([ec8aa8d](https://github.com/tamylaa/clodo-framework/commit/ec8aa8d8e40310b2d617091e3d69bb97ded33d6a))
+
+## [4.0.12](https://github.com/tamylaa/clodo-framework/compare/v4.0.11...v4.0.12) (2025-12-12)
+
+
+### Bug Fixes
+
+* resolve version sync for 4.0.12 release ([6375c5f](https://github.com/tamylaa/clodo-framework/commit/6375c5f71516cf2a7a96edcf5878106063037ba8))
+* trigger 4.0.12 release after tag sync ([3dafb25](https://github.com/tamylaa/clodo-framework/commit/3dafb253cbbae6e7eac27dd5170e9f391c3deda0))
 
 ## [4.0.11](https://github.com/tamylaa/clodo-framework/compare/v4.0.10...v4.0.11) (2025-12-12)
 
