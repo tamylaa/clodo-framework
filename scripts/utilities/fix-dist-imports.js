@@ -111,6 +111,11 @@ function fixDistImports(dir) {
           content = content.replace(/from\s+(['"])\.\.\/\.\.\/\.\.\/lib\//g, "from $1../../../lib/");
         }
 
+        // General fix: convert four-level '../../../../lib/' imports to '../../../lib/' across dist/
+        // This handles deeply nested files that mistakenly reference project root lib/ (outside dist)
+        content = content.replace(/(\.\.\/){4}lib\//g, "../../../lib/");
+        content = content.replace(/import\s*\(\s*(['"])(?:\.\.\/){4}lib\//g, "import($1../../../lib/");
+
         // Fix ../lib/ to ./lib/ for files directly in dist/ root (like index.js)
         if (normalizedRelPath.startsWith('dist/') && pathDepth === 2 && normalizedRelPath.endsWith('.js')) {
           content = content.replace(/\.\.\/lib\//g, "./lib/");
