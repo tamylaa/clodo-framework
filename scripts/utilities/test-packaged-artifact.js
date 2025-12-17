@@ -33,24 +33,26 @@ try {
 
   console.log('Running smoke checks...');
   // Run a node script that requires the package and a couple of internal modules
-  const nodeScript = `
-    try {
-      const pkg = require('@tamyla/clodo-framework');
-      console.log('package loaded, exports count:', Object.keys(pkg).length);
-      // require a CLI entry to ensure bin/ packaging works
-      const cli = require('@tamyla/clodo-framework/dist/cli/clodo-service.js');
-      console.log('cli loaded');
-      // require an internal dist module used earlier
-      const wd = require('@tamyla/clodo-framework/dist/deployment/wrangler-deployer.js');
-      console.log('deployment module loaded');
-      process.exit(0);
-    } catch (err) {
-      console.error('Smoke check failed:', err && err.stack || err);
-      process.exit(2);
-    }
-  `;
+  const nodeScript = `try {
+  const pkg = require('@tamyla/clodo-framework');
+  console.log('package loaded, exports count:', Object.keys(pkg).length);
+  // require a CLI entry to ensure bin/ packaging works
+  const cli = require('@tamyla/clodo-framework/dist/cli/clodo-service.js');
+  console.log('cli loaded');
+  // require an internal dist module used earlier
+  const wd = require('@tamyla/clodo-framework/dist/deployment/wrangler-deployer.js');
+  console.log('deployment module loaded');
+  process.exit(0);
+} catch (err) {
+  console.error('Smoke check failed:', err && err.stack || err);
+  process.exit(2);
+}
+`;
 
-  execSync(`node -e "${nodeScript.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`, { cwd: tmpDir, stdio: 'inherit' });
+  // Write the smoke script to a file in the temp project and run it directly to avoid shell quoting issues
+  const smokeScriptPath = path.join(tmpDir, 'smoke-test.js');
+  fs.writeFileSync(smokeScriptPath, nodeScript.replace(/\r\n/g, '\n'));
+  execSync(`node "${smokeScriptPath}"`, { cwd: tmpDir, stdio: 'inherit' });
 
   console.log('\nAll packaged-artifact smoke checks passed.');
   // Clean up tarball to avoid leaving artifacts
