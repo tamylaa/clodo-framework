@@ -32,19 +32,22 @@ try {
   execSync(`npm install "${tarPath}" --no-audit --no-fund --no-package-lock`, { cwd: tmpDir, stdio: 'inherit' });
 
   console.log('Running smoke checks...');
-  // Run a node script that requires the package and a couple of internal modules
+  // Run a node script that requires the package and exercises the CLI via installed bin
   const nodeScript = `try {
   const path = require('path');
+  const { execSync } = require('child_process');
   const pkg = require('@tamyla/clodo-framework');
   console.log('package loaded, exports count:', Object.keys(pkg).length);
-  // require a CLI entry to ensure bin/ packaging works (resolve via node_modules path to avoid exports map restrictions)
-  const cliPath = path.join(process.cwd(), 'node_modules', '@tamyla', 'clodo-framework', 'dist', 'cli', 'clodo-service.js');
-  const cli = require(cliPath);
-  console.log('cli loaded');
-  // require an internal dist module used earlier via node_modules path
-  const wdPath = path.join(process.cwd(), 'node_modules', '@tamyla', 'clodo-framework', 'dist', 'deployment', 'wrangler-deployer.js');
-  const wd = require(wdPath);
-  console.log('deployment module loaded');
+  // require a named export that is part of the public exports map
+  const services = require('@tamyla/clodo-framework/services');
+  console.log('named export services loaded');
+  // Run CLI via local bin using node to avoid package.exports restrictions
+  const binPath = path.join(process.cwd(), 'node_modules', '.bin', 'clodo-service');
+  const versionOut = execSync(`node ${JSON.stringify(binPath)} --version`, { encoding: 'utf8' }).toString().trim();
+  console.log('clodo-service --version output:', versionOut.split('\n')[0]);
+  // Run --help to ensure CLI executes successfully (exit code 0)
+  execSync(`node ${JSON.stringify(binPath)} --help`, { stdio: 'ignore' });
+  console.log('cli executed successfully');
   process.exit(0);
 } catch (err) {
   console.error('Smoke check failed:', err && err.stack || err);
