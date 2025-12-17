@@ -173,6 +173,8 @@ Benefits:
   - Moved 13 root-level documentation files to appropriate i-docs categories
   - Root directory now contains only essential project files (config, package.json, README, etc.)
 
+* **Documentation**: Added `docs/HOWTO_CONSUME_CLODO_FRAMEWORK.md` — a concise consumer guide covering CLI usage, public exports, packaging troubleshooting, and recommended consumption patterns.
+
 * **Configuration Management**: Eliminated hard-coded values from source code
   - Moved domain defaults from ServiceCreator to `validation-config.json`
   - Added configuration hierarchy: CLI option → config file → fallback default
