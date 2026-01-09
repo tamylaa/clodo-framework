@@ -26,7 +26,33 @@ export class Clodo {
    * @returns {Promise<Object>} Service creation result
    */
   static async createService(options = {}) {
-    return await ServiceOrchestrator.create(options);
+    // Instantiate orchestrator with provided middleware strategy and paths
+    const orchestrator = new ServiceOrchestrator({
+      interactive: options.interactive !== false,
+      outputPath: options.outputPath || '.',
+      templatePath: options.templatePath || './templates',
+      middlewareStrategy: options.middlewareStrategy || 'contract'
+    });
+
+    // If interactive mode requested (default), run interactive flow
+    if (options.interactive !== false) {
+      await orchestrator.runInteractive();
+      return { success: true, message: 'Service created (interactive)' };
+    }
+
+    // Non-interactive flow: build core inputs and run non-interactive
+    const coreInputs = {
+      serviceName: options.name,
+      serviceType: options.type,
+      domainName: options.domain,
+      environment: options.environment || 'development',
+      cloudflareToken: options.credentials?.token,
+      cloudflareAccountId: options.credentials?.accountId,
+      cloudflareZoneId: options.credentials?.zoneId
+    };
+
+    await orchestrator.runNonInteractive(coreInputs);
+    return { success: true, message: `Service ${options.name} created` };
   }
 
   /**

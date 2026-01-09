@@ -1,0 +1,74 @@
+{
+  "orchestrationId": "orchestration-2025-12-11T17-50-15-314Z-20562efa5a1c",
+  "environment": "production",
+  "startTime": "2025-12-11T17:50:15.314Z",
+  "endTime": null,
+  "summary": {
+    "orchestrationId": "orchestration-2025-12-11T17-50-15-314Z-20562efa5a1c",
+    "environment": "production",
+    "totalDomains": 1,
+    "completed": 0,
+    "failed": 0,
+    "inProgress": 0,
+    "pending": 1,
+    "startTime": "2025-12-11T17:50:15.314Z",
+    "endTime": null,
+    "duration": 113,
+    "auditLogSize": 2
+  },
+  "domainStates": {
+    "api.example.com": {
+      "domain": "api.example.com",
+      "deploymentId": "deploy-api.example.com-2025-12-11T17-50-15-340Z-e8cf7a99",
+      "phase": "pending",
+      "status": "pending",
+      "startTime": null,
+      "endTime": null,
+      "error": null,
+      "rollbackActions": [],
+      "metadata": {
+        "created": "2025-12-11T17:50:15.340Z",
+        "environment": "production"
+      }
+    }
+  },
+  "rollbackPlan": [],
+  "auditLog": [
+    {
+      "timestamp": "2025-12-11T17:50:15.340Z",
+      "orchestrationId": "orchestration-2025-12-11T17-50-15-314Z-20562efa5a1c",
+      "event": "PORTFOLIO_INITIALIZED",
+      "domain": "ALL",
+      "details": {
+        "totalDomains": 1,
+        "domains": [
+          "api.example.com"
+        ]
+      },
+      "sequenceNumber": 1
+    },
+    {
+      "timestamp": "2025-12-11T17:50:15.422Z",
+      "orchestrationId": "orchestration-2025-12-11T17-50-15-314Z-20562efa5a1c",
+      "event": "orchestrator_initialized",
+      "domain": {
+        "domains": [
+          "api.example.com"
+        ],
+        "environment": "production",
+        "modularComponents": [
+          "DomainResolver",
+          "DeploymentCoordinator",
+          "StateManager"
+        ]
+      },
+      "details": {},
+      "sequenceNumber": 2
+    }
+  ],
+  "metadata": {
+    "dryRun": false,
+    "persistenceEnabled": true,
+    "rollbackEnabled": true
+  }
+}

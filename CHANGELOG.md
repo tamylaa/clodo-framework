@@ -166,6 +166,7 @@ Benefits:
   - Root directory now contains only essential project files (config, package.json, README, etc.)
 
 * **Documentation**: Added `docs/HOWTO_CONSUME_CLODO_FRAMEWORK.md` — a concise consumer guide covering CLI usage, public exports, packaging troubleshooting, and recommended consumption patterns.
+* **Middleware Architecture**: Introduce contract-first middleware generation (v4.1 candidate) with `MiddlewareRegistry` and `MiddlewareComposer` to reduce duplication and improve testability. Added a migration tool `scripts/migration/migrate-middleware-legacy-to-contract.js` and a `--middleware-strategy` CLI flag to opt into `legacy` generator output.
 
 * **Configuration Management**: Eliminated hard-coded values from source code
   - Moved domain defaults from ServiceCreator to `validation-config.json`

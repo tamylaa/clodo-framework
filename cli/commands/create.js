@@ -23,6 +23,7 @@ export function registerCreateCommand(program) {
     .option('--environment <env>', 'Target environment: development, staging, production', 'development')
     .option('--output-path <path>', 'Output directory for generated service', '.')
     .option('--template-path <path>', 'Path to service templates', './templates')
+    .option('--middleware-strategy <strategy>', 'Middleware generation strategy: contract|legacy', 'contract')
     .option('--force', 'Skip confirmation prompts')
     .option('--validate', 'Validate service after creation')
   
@@ -52,6 +53,7 @@ export function registerCreateCommand(program) {
           domain: mergedOptions.domainName,
           environment: mergedOptions.environment,
           outputPath: mergedOptions.outputPath,
+          middlewareStrategy: mergedOptions.middlewareStrategy,
           interactive: !mergedOptions.nonInteractive,
           credentials: {
             token: mergedOptions.cloudflareToken,

@@ -26,6 +26,8 @@ export class ServiceOrchestrator {
     this.interactive = options.interactive !== false;
     this.outputPath = options.outputPath || '.';
     this.templatePath = options.templatePath || './templates';
+    // Middleware strategy for generation: 'contract' (default) or 'legacy'
+    this.middlewareStrategy = options.middlewareStrategy || 'contract';
 
     // Initialize modular handler components
     this.inputHandler = new InputHandler({ interactive: this.interactive });
@@ -63,7 +65,8 @@ export class ServiceOrchestrator {
       console.log(chalk.white('Generating 67 configuration files and service components...\n'));
 
       const generationResult = await this.generationHandler.generateService(coreInputs, confirmedValues, {
-        outputPath: this.outputPath
+        outputPath: this.outputPath,
+        middlewareStrategy: this.middlewareStrategy
       });
 
       // Display results
@@ -89,7 +92,8 @@ export class ServiceOrchestrator {
 
       // Generate service using GenerationHandler
       const generationResult = await this.generationHandler.generateService(coreInputs, confirmedValues, {
-        outputPath: this.outputPath
+        outputPath: this.outputPath,
+        middlewareStrategy: this.middlewareStrategy
       });
 
       console.log(chalk.green(`✓ Service "${coreInputs.serviceName}" created successfully`));

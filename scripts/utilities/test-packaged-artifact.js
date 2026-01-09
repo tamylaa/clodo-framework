@@ -41,12 +41,34 @@ try {
   // require a named export that is part of the public exports map
   const services = require('@tamyla/clodo-framework/services');
   console.log('named export services loaded');
-  // Run CLI via local bin using node to avoid package.exports restrictions
-  const binPath = path.join(process.cwd(), 'node_modules', '.bin', 'clodo-service');
-  const versionOut = execSync('node ' + JSON.stringify(binPath) + ' --version', { encoding: 'utf8' }).toString().trim();
-  console.log('clodo-service --version output:', versionOut.split('\\n')[0]);
-  // Run --help to ensure CLI executes successfully (exit code 0)
-  execSync('node ' + JSON.stringify(binPath) + ' --help', { stdio: 'ignore' });
+  // Verify middleware export and included migration script/docs
+  let middleware;
+  try {
+    middleware = require('@tamyla/clodo-framework/middleware');
+    console.log('middleware export loaded, keys:', Object.keys(middleware));
+  } catch (e) {
+    console.error('middleware export missing:', e && e.stack || e);
+    throw e;
+  }
+
+  if (!middleware || !middleware.MiddlewareComposer) {
+    throw new Error('MiddlewareComposer not exported from @tamyla/clodo-framework/middleware');
+  }
+
+  const migrationScript = path.join(process.cwd(), 'node_modules', '@tamyla', 'clodo-framework', 'scripts', 'migration', 'migrate-middleware-legacy-to-contract.js');
+  if (!require('fs').existsSync(migrationScript)) {
+    throw new Error('Migration script missing in packaged artifact: ' + migrationScript);
+  }
+  const migrationDoc = path.join(process.cwd(), 'node_modules', '@tamyla', 'clodo-framework', 'docs', 'MIDDLEWARE_MIGRATION_SUMMARY.md');
+  if (!require('fs').existsSync(migrationDoc)) {
+    throw new Error('Migration doc missing in packaged artifact: ' + migrationDoc);
+  }
+  // Execute CLI via the installed dist path to avoid shell wrapper issues on Windows
+  const pkgRoot = path.join(process.cwd(), 'node_modules', '@tamyla', 'clodo-framework');
+  const cliPath = path.join(pkgRoot, 'dist', 'cli', 'clodo-service.js');
+  // Run --version and --help to ensure CLI executes successfully
+  execSync('node ' + JSON.stringify(cliPath) + ' --version', { stdio: 'inherit' });
+  execSync('node ' + JSON.stringify(cliPath) + ' --help', { stdio: 'ignore' });
   console.log('cli executed successfully');
   process.exit(0);
 } catch (err) {
