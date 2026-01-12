@@ -27,5 +27,8 @@ jobs:
       - name: Build project
         run: npm run build:ci
 
+      - name: Run bundle-size smoke test
+        run: npm run test -- test/service-management/integration/middleware-bundlesize.test.js --runInBand
+
       - name: Validate packaged artifact
         run: node scripts/utilities/test-packaged-artifact.js
