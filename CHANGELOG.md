@@ -1,3 +1,11 @@
+## [4.0.14](https://github.com/tamylaa/clodo-framework/compare/v4.0.13...v4.0.14) (2026-01-19)
+
+
+### Bug Fixes
+
+* middleware packaging, generators, tests, and packaged-artifact smoke test ([b001434](https://github.com/tamylaa/clodo-framework/commit/b001434697da2145e8778b5c0afd02275cd1604e))
+* resolve Windows filesystem timing issues in tests ([7092ca6](https://github.com/tamylaa/clodo-framework/commit/7092ca6ffc230a19d25c96333c0313ead1739f15))
+
 ## [4.0.13](https://github.com/tamylaa/clodo-framework/compare/v4.0.12...v4.0.13) (2025-12-17)
 
 
