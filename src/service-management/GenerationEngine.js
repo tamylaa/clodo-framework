@@ -54,6 +54,8 @@ export class GenerationEngine {
     this.templatesDir = options.templatesDir || join(__dirname, '..', '..', 'templates');
     this.outputDir = options.outputDir || process.cwd();
     this.force = options.force || false;
+    // Default middleware strategy: 'contract' (can be overridden per-generation)
+    this.middlewareStrategy = options.middlewareStrategy || 'contract';
 
     // Initialize generator registry for centralized management
     this.generatorRegistry = new GeneratorRegistry({
@@ -112,7 +114,7 @@ export class GenerationEngine {
       generateDomainsConfig: { generator: 'domainsConfigGenerator', returnPath: 'config/domains.js' },
       generateWorkerIndex: { generator: 'workerIndexGenerator', returnPath: 'src/index.js' },
       generateServiceHandlers: { generator: 'serviceHandlersGenerator', returnPath: 'src/handlers.js' },
-      generateServiceMiddleware: { generator: 'serviceMiddlewareGenerator', returnPath: 'src/middleware.js' },
+      generateServiceMiddleware: { generator: 'serviceMiddlewareGenerator', returnPath: 'src/middleware/service-middleware.js' },
       generateServiceUtils: { generator: 'serviceUtilsGenerator', returnPath: 'src/utils.js' },
       generateEnvExample: { generator: 'envExampleGenerator', returnPath: '.env.example' },
       generateProductionEnv: { generator: 'productionEnvGenerator', returnPath: '.env.production' },
@@ -140,6 +142,9 @@ export class GenerationEngine {
       // Only create proxy method if it doesn't already exist
       if (!this[methodName]) {
         this[methodName] = async function(...args) {
+          // Allow per-call overrides (apply BEFORE building context so context picks it up)
+          if (args[0] && args[0].middlewareStrategy) this.middlewareStrategy = args[0].middlewareStrategy;
+
           const context = this.buildContext(methodName, ...args);
           const generator = this[config.generator];
           const result = await generator.generate(context);
@@ -167,7 +172,8 @@ export class GenerationEngine {
     }
 
     // For most methods: (coreInputs, confirmedValues, servicePath)
-    return { coreInputs: args[0], confirmedValues: args[1], servicePath: args[2] };
+    // Include middlewareStrategy so generators can adapt their output
+    return { coreInputs: args[0], confirmedValues: args[1], servicePath: args[2], middlewareStrategy: this.middlewareStrategy };
   }
 
   /**
@@ -182,6 +188,11 @@ export class GenerationEngine {
       outputPath: this.outputDir,
       ...options
     };
+
+    // Allow per-generation override of middleware strategy
+    if (config.middlewareStrategy) {
+      this.middlewareStrategy = config.middlewareStrategy;
+    }
 
     console.log('⚙️  Tier 3: Automated Generation');
     console.log('Generating 67+ configuration files and service components...\n');

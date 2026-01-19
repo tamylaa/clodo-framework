@@ -67,7 +67,8 @@ export class WorkerIndexGenerator extends BaseGenerator {
 
 import { domains } from '../config/domains.js';
 import { createServiceHandlers } from '../handlers/service-handlers.js';
-import { createServiceMiddleware } from '../middleware/service-middleware.js';
+import { MiddlewareRegistry, MiddlewareComposer } from '../middleware/runtime.js';
+import * as Shared from '../middleware/shared/index.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -75,16 +76,81 @@ export default {
       // Get service configuration
       const serviceConfig = domains['${coreInputs.serviceName}'];
 
-      // Apply middleware
-      const middleware = createServiceMiddleware(serviceConfig, env);
-      const processedRequest = await middleware.processRequest(request);
+      // Build shared middleware instances
+      const sharedMiddlewares = [
+        Shared.cors({ origin: serviceConfig.corsPolicy || '*' }),
+        Shared.logging({ level: serviceConfig.logLevel || 'info' })
+      ];
 
-      // Route to appropriate handler
-      const handlers = createServiceHandlers(serviceConfig, env);
-      const response = await handlers.handleRequest(processedRequest, ctx);
+      // Lazy-load service middleware and support legacy factory compatibility
+      let serviceMiddlewareInstance = null;
+      let legacyFactory = null;
 
-      // Apply response middleware
-      return await middleware.processResponse(response);
+      try {
+        const mod = await import('../middleware/service-middleware.js');
+
+        if (mod?.registerMiddleware) {
+          // New-style registration helper
+          mod.registerMiddleware(MiddlewareRegistry, serviceConfig.name);
+          serviceMiddlewareInstance = MiddlewareRegistry.get(serviceConfig.name);
+        } else if (mod?.default) {
+          const def = mod.default;
+          // If the default is a class (constructor), instantiate and register
+          if (typeof def === 'function' && def.prototype) {
+            try {
+              const instance = new def();
+              MiddlewareRegistry.register(serviceConfig.name, instance);
+              serviceMiddlewareInstance = instance;
+            } catch (e) {
+              // ignore instantiation errors
+            }
+          } else if (typeof def === 'function') {
+            // Legacy factory exported as default
+            legacyFactory = def;
+          }
+        } else if (mod?.createServiceMiddleware) {
+          legacyFactory = mod.createServiceMiddleware;
+        }
+      } catch (e) {
+        // No service-specific middleware found - continue with shared only
+      }
+
+      // Compose final middleware chain
+      let chain;
+
+      if (legacyFactory) {
+        const legacyInstance = legacyFactory(serviceConfig, env);
+        const adapter = {
+          preprocess: async (req) => {
+            if (legacyInstance && typeof legacyInstance.processRequest === 'function') {
+              const processed = await legacyInstance.processRequest(req);
+              if (processed instanceof Response) return processed; // short-circuit
+              return null; // continue (legacy returns a Request)
+            }
+            return null;
+          },
+          postprocess: async (res) => {
+            if (legacyInstance && typeof legacyInstance.processResponse === 'function') {
+              const r = await legacyInstance.processResponse(res);
+              return r instanceof Response ? r : res;
+            }
+            return res;
+          }
+        };
+
+        chain = MiddlewareComposer.compose(...sharedMiddlewares, adapter);
+      } else {
+        const svcMw = serviceMiddlewareInstance || MiddlewareRegistry.get(serviceConfig.name);
+        chain = MiddlewareComposer.compose(...sharedMiddlewares, svcMw);
+      }
+
+      // Execute middleware chain with final handler
+      const response = await chain.execute(request, async (req) => {
+        const handlers = createServiceHandlers(serviceConfig, env);
+        return handlers.handleRequest(req, ctx);
+      });
+
+      return response;
 
     } catch (error) {
       console.error('Worker error:', error);

@@ -31,6 +31,7 @@
     "./security/cli": "./dist/security/SecurityCLI.js",
     "./service-management": "./dist/service-management/index.js",
     "./service-management/create": "./dist/service-management/ServiceCreator.js",
+    "./middleware": "./dist/middleware/index.js",
     "./modules/security": "./dist/modules/security.js"
   },
   "bin": {
@@ -51,6 +52,8 @@
     "docs/overview.md",
     "docs/SECURITY.md",
     "docs/api-reference.md",
+    "docs/MIDDLEWARE_MIGRATION_SUMMARY.md",
+    "scripts",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
