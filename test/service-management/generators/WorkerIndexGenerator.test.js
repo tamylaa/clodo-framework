@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { WorkerIndexGenerator } from '../../../../src/service-management/generators/code/WorkerIndexGenerator.js';
+import { WorkerIndexGenerator } from '../../../src/service-management/generators/code/WorkerIndexGenerator.js';
 import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
@@ -10,7 +10,9 @@ describe('WorkerIndexGenerator', () => {
   let servicePath;
 
   beforeEach(async () => {
-    tmpDir = path.join(os.tmpdir(), `worker-gen-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    // Use a more unique temp directory name to avoid conflicts with other tests
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2)}-${process.pid}-${Math.random().toString(36).slice(2)}`;
+    tmpDir = path.join(os.tmpdir(), `worker-gen-${uniqueId}`);
     servicePath = path.join(tmpDir, 'services', 'test');
     await fs.mkdir(path.join(servicePath, 'src', 'worker'), { recursive: true });
     await fs.mkdir(path.join(servicePath, 'src', 'middleware'), { recursive: true });
@@ -18,6 +20,8 @@ describe('WorkerIndexGenerator', () => {
   });
 
   afterEach(async () => {
+    // Add a small delay to ensure file operations complete before cleanup
+    await new Promise(resolve => setTimeout(resolve, 10));
     try { await fs.rm(tmpDir, { recursive: true, force: true }); } catch (e) {}
   });
 
@@ -25,13 +29,21 @@ describe('WorkerIndexGenerator', () => {
     const coreInputs = { serviceName: 'test', serviceType: 'api', environment: 'development' };
     const confirmed = { displayName: 'Test', version: '1.0.0' };
 
-    const filePath = await gen.generate(coreInputs, confirmed, servicePath);
+    // Generate the file
+    const filePath = await gen.generate({ coreInputs, confirmedValues: confirmed, servicePath });
     const expectedPath = path.join(servicePath, 'src', 'worker', 'index.js');
 
-    const exists = await fs.access(expectedPath).then(() => true).catch(() => false);
-    expect(exists).toBe(true);
+    // Verify the returned path is correct
+    expect(filePath).toBe(expectedPath);
 
+    // Add a delay to ensure file operations complete
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Verify the file was created by reading it
     const content = await fs.readFile(expectedPath, 'utf-8');
+    expect(content).toContain("'../middleware/runtime.js'");
+    expect(content).toContain("'../middleware/shared/index.js'");
+    expect(content).toContain('registerMiddleware');
     expect(content).toContain("'../middleware/runtime.js'")
     expect(content).toContain("'../middleware/shared/index.js'")
     expect(content).toContain('registerMiddleware');
