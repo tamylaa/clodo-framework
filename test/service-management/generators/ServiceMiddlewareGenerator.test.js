@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { ServiceMiddlewareGenerator } from '../../../../src/service-management/generators/code/ServiceMiddlewareGenerator.js';
+import { ServiceMiddlewareGenerator } from '../../../src/service-management/generators/code/ServiceMiddlewareGenerator.js';
 import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';

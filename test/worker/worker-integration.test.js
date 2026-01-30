@@ -92,7 +92,16 @@ describe('WorkerIntegration', () => {
         env: mockEnv,
         isProduction: true,
         isStaging: false,
-        isDevelopment: false
+        isDevelopment: false,
+        // Enhanced framework features
+        serviceClient: expect.any(Object),
+        healthChecker: expect.any(Object),
+        environmentValidator: expect.any(Function),
+        frameworkInfo: expect.objectContaining({
+          name: '@tamyla/clodo-framework',
+          version: expect.any(String),
+          detected: expect.any(Boolean)
+        })
       });
       expect(result.config.name).toBe('test-domain');
       expect(result.config.settings.environment).toBe('production');

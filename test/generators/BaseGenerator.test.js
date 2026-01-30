@@ -22,7 +22,7 @@ describe('BaseGenerator', () => {
 
   beforeEach(async () => {
     // Create temp directories for testing using system temp directory
-    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const uniqueId = `${Date.now()}-${process.pid}-${Math.random().toString(36).substr(2, 9)}`;
     tempDir = path.join(os.tmpdir(), `clodo-base-gen-test-${uniqueId}`);
     templatesDir = path.join(tempDir, 'templates');
     await fs.mkdir(templatesDir, { recursive: true });

@@ -3,6 +3,13 @@ import { getDomainFromEnv, createEnvironmentConfig } from '../config/domains.js'
 // Import COMMON_FEATURES from worker-safe constants (no Node.js dependencies)
 import { COMMON_FEATURES } from './features.js';
 
+// Import new framework components (worker-safe only)
+import { FrameworkInfo } from '../version/FrameworkInfo.js';
+import { EnvironmentValidator } from '../utils/EnvironmentValidator.js';
+import { ServiceClient } from '../services/ServiceClient.js';
+import { HealthChecker } from '../monitoring/HealthChecker.js';
+// Note: ConfigurationValidator requires Node.js APIs, so it's not included in worker runtime
+
 // Re-export COMMON_FEATURES for use in worker templates
 export { COMMON_FEATURES };
 
@@ -61,7 +68,13 @@ export const initializeService = (env, domainConfigs = {}) => {
       env,
       isProduction: environment === 'production',
       isStaging: environment === 'staging',
-      isDevelopment: environment === 'development'
+      isDevelopment: environment === 'development',
+
+      // Enhanced framework features (worker-safe only)
+      serviceClient: new ServiceClient(),
+      healthChecker: new HealthChecker(),
+      environmentValidator: EnvironmentValidator,
+      frameworkInfo: FrameworkInfo.getInfo()
     };
 
     logger.info(`Service initialized: ${domainConfig.name} (${environment})`);

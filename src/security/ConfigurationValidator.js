@@ -499,6 +499,205 @@ export class ConfigurationValidator {
   }
 
   /**
+   * Validate service configuration consistency between manifest and wrangler config
+   * @param {string} manifestPath - Path to manifest.json
+   * @param {string} wranglerPath - Path to wrangler.toml
+   * @returns {Object} Validation result with issues array
+   */
+  static validateServiceConfig(manifestPath, wranglerPath) {
+    const issues = [];
+
+    try {
+      // Read manifest.json
+      const manifestContent = readFileSync(manifestPath, 'utf8');
+      const manifest = JSON.parse(manifestContent);
+
+      // Read wrangler.toml (basic parsing - could be enhanced with a TOML parser)
+      const wranglerContent = readFileSync(wranglerPath, 'utf8');
+      const wranglerConfig = this.parseWranglerToml(wranglerContent);
+
+      // Validate D1 database consistency
+      this.validateD1Consistency(manifest, wranglerConfig, issues);
+
+      // Validate KV namespace consistency
+      this.validateKVConsistency(manifest, wranglerConfig, issues);
+
+      // Validate R2 bucket consistency
+      this.validateR2Consistency(manifest, wranglerConfig, issues);
+
+      // Validate environment variables
+      this.validateEnvironmentConsistency(manifest, wranglerConfig, issues);
+
+    } catch (error) {
+      issues.push({
+        type: 'error',
+        message: `Configuration validation failed: ${error.message}`,
+        severity: 'critical'
+      });
+    }
+
+    return {
+      valid: issues.length === 0,
+      issues: issues
+    };
+  }
+
+  /**
+   * Parse wrangler.toml content (basic implementation)
+   * @param {string} content - TOML content
+   * @returns {Object} Parsed configuration
+   */
+  static parseWranglerToml(content) {
+    const config = {
+      d1_databases: [],
+      kv_namespaces: [],
+      r2_buckets: [],
+      vars: {}
+    };
+
+    if (!content || !content.trim()) {
+      return config;
+    }
+
+    const lines = content.split('\n');
+    let currentSection = null;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+
+      // Section headers
+      if (trimmed.startsWith('[[')) {
+        if (trimmed.includes('d1_databases')) {
+          currentSection = 'd1_databases';
+          config.d1_databases.push({});
+        } else if (trimmed.includes('kv_namespaces')) {
+          currentSection = 'kv_namespaces';
+          config.kv_namespaces.push({});
+        } else if (trimmed.includes('r2_buckets')) {
+          currentSection = 'r2_buckets';
+          config.r2_buckets.push({});
+        }
+      } else if (trimmed.startsWith('[') && !trimmed.startsWith('[[')) {
+        currentSection = trimmed.replace(/\[|\]/g, '');
+      }
+      // Key-value pairs
+      else if (trimmed.includes('=') && currentSection) {
+        const [key, ...valueParts] = trimmed.split('=');
+        const value = valueParts.join('=').trim().replace(/"/g, '');
+
+        if (currentSection === 'vars') {
+          config.vars[key.trim()] = value;
+        } else if (Array.isArray(config[currentSection])) {
+          const currentItem = config[currentSection][config[currentSection].length - 1];
+          if (currentItem) {
+            currentItem[key.trim()] = value;
+          }
+        }
+      }
+    }
+
+    return config;
+  }
+
+  /**
+   * Validate D1 database consistency
+   */
+  static validateD1Consistency(manifest, wranglerConfig, issues) {
+    const manifestD1 = manifest.d1 || false;
+    const wranglerD1 = wranglerConfig.d1_databases || [];
+
+    if (manifestD1 === true && wranglerD1.length === 0) {
+      issues.push({
+        type: 'mismatch',
+        message: 'Manifest declares D1=true but wrangler.toml has no [[d1_databases]] configured',
+        severity: 'critical',
+        manifest: { d1: manifestD1 },
+        wrangler: { d1_databases: wranglerD1 }
+      });
+    } else if (manifestD1 === false && wranglerD1.length > 0) {
+      issues.push({
+        type: 'mismatch',
+        message: 'Manifest declares D1=false but wrangler.toml has [[d1_databases]] configured',
+        severity: 'critical',
+        manifest: { d1: manifestD1 },
+        wrangler: { d1_databases: wranglerD1 }
+      });
+    }
+  }
+
+  /**
+   * Validate KV namespace consistency
+   */
+  static validateKVConsistency(manifest, wranglerConfig, issues) {
+    const manifestKV = manifest.kv || false;
+    const wranglerKV = wranglerConfig.kv_namespaces || [];
+
+    if (manifestKV === true && wranglerKV.length === 0) {
+      issues.push({
+        type: 'mismatch',
+        message: 'Manifest declares KV=true but wrangler.toml has no [[kv_namespaces]] configured',
+        severity: 'critical',
+        manifest: { kv: manifestKV },
+        wrangler: { kv_namespaces: wranglerKV }
+      });
+    } else if (manifestKV === false && wranglerKV.length > 0) {
+      issues.push({
+        type: 'mismatch',
+        message: 'Manifest declares KV=false but wrangler.toml has [[kv_namespaces]] configured',
+        severity: 'critical',
+        manifest: { kv: manifestKV },
+        wrangler: { kv_namespaces: wranglerKV }
+      });
+    }
+  }
+
+  /**
+   * Validate R2 bucket consistency
+   */
+  static validateR2Consistency(manifest, wranglerConfig, issues) {
+    const manifestR2 = manifest.r2 || false;
+    const wranglerR2 = wranglerConfig.r2_buckets || [];
+
+    if (manifestR2 === true && wranglerR2.length === 0) {
+      issues.push({
+        type: 'mismatch',
+        message: 'Manifest declares R2=true but wrangler.toml has no [[r2_buckets]] configured',
+        severity: 'critical',
+        manifest: { r2: manifestR2 },
+        wrangler: { r2_buckets: wranglerR2 }
+      });
+    } else if (manifestR2 === false && wranglerR2.length > 0) {
+      issues.push({
+        type: 'mismatch',
+        message: 'Manifest declares R2=false but wrangler.toml has [[r2_buckets]] configured',
+        severity: 'critical',
+        manifest: { r2: manifestR2 },
+        wrangler: { r2_buckets: wranglerR2 }
+      });
+    }
+  }
+
+  /**
+   * Validate environment variable consistency
+   */
+  static validateEnvironmentConsistency(manifest, wranglerConfig, issues) {
+    const manifestEnv = manifest.environment || {};
+    const wranglerEnv = wranglerConfig.vars || {};
+
+    // Check for required environment variables declared in manifest but missing in wrangler
+    for (const [key, value] of Object.entries(manifestEnv)) {
+      if (value === 'required' && !(key in wranglerEnv)) {
+        issues.push({
+          type: 'missing_env',
+          message: `Manifest declares ${key} as required but not found in wrangler.toml vars`,
+          severity: 'warning',
+          key: key
+        });
+      }
+    }
+  }
+
+  /**
    * Log validation results
    */
   static logValidationResults(customer, environment, result) {

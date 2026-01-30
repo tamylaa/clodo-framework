@@ -22,15 +22,9 @@ let __filename, __dirname;
 // Module-level FileManager for standalone functions
 const moduleFileManager = new FileManager({ enableCache: true });
 
-// Handle test environment where import.meta might be transformed
-try {
-  __filename = fileURLToPath(import.meta.url);
-  __dirname = dirname(__filename);
-} catch (error) {
-  // Fallback for test environment
-  __dirname = join(process.cwd(), 'src', 'utils', 'deployment');
-  __filename = join(__dirname, 'secret-generator.js');
-}
+// Set __dirname relative to current working directory for compatibility
+__dirname = join(process.cwd(), 'src', 'utils', 'deployment');
+__filename = join(__dirname, 'secret-generator.js');
 
 const SECRET_CONFIGS = {
   'AUTH_JWT_SECRET': { length: 64, description: 'JWT token signing secret', scope: 'critical' },
@@ -62,14 +56,16 @@ export class EnhancedSecretManager {
     this.environmentConfigs = new Map();
     this.rotationSchedule = new Map();
     
-    // Paths for secret management
+    // Persistence opt-in: secrets are sensitive. Default storage is inside .clodo-cache and persistence is disabled
+    this.enablePersistence = options.enablePersistence ?? (process.env.CLODO_ENABLE_PERSISTENCE === '1');
+    // Paths for secret management (default to cache to avoid polluting workspace root)
     this.secretPaths = {
-      root: join(this.projectRoot, 'secrets'),
-      distribution: join(this.projectRoot, 'secrets', 'distribution'),
-      backups: join(this.projectRoot, 'secrets', 'backups'),
+      root: join(this.projectRoot, '.clodo-cache', 'secrets'),
+      distribution: join(this.projectRoot, '.clodo-cache', 'secrets', 'distribution'),
+      backups: join(this.projectRoot, '.clodo-cache', 'secrets', 'backups'),
       audit: join(this.projectRoot, 'logs', 'secrets-audit.log'),
-      templates: join(this.projectRoot, 'secrets', 'templates')
-    };
+      templates: join(this.projectRoot, '.clodo-cache', 'secrets', 'templates')
+    }; 
 
     // Supported output formats
     this.outputFormats = {
@@ -100,16 +96,21 @@ export class EnhancedSecretManager {
       console.log('');
     }
 
-    // Create directories
-    Object.values(this.secretPaths).forEach(path => {
-      if (!path.endsWith('.log')) {
-        this.ensureDirectory(path);
-      } else {
-        // For log files, ensure parent directory exists
-        const logDir = dirname(path);
-        this.ensureDirectory(logDir);
-      }
-    });
+    // Create directories only when persistence is explicitly enabled (prevents accidental creation of secrets in workspaces)
+    const shouldCreateDirs = this.enablePersistence && !isTestEnv && !this.dryRun;
+    if (shouldCreateDirs) {
+      Object.values(this.secretPaths).forEach(path => {
+        if (!path.endsWith('.log')) {
+          this.ensureDirectory(path);
+        } else {
+          // For log files, ensure parent directory exists
+          const logDir = dirname(path);
+          this.ensureDirectory(logDir);
+        }
+      });
+    } else {
+      console.log('   ℹ️ Secrets persistence disabled or dry-run/test env: skipping secrets directory creation');
+    }
 
     this.logSecretEvent('MANAGER_INITIALIZED', 'SYSTEM', {
       formats: Object.keys(this.outputFormats),
@@ -700,6 +701,11 @@ ${Object.entries(SECRET_CONFIGS).map(([key, config]) =>
   async saveDomainSecrets(domain, environment, secretData) {
     const filename = join(this.secretPaths.root, `${domain}-${environment}-secrets.json`);
     
+    if (!this.enablePersistence) {
+      console.log(`   ℹ️ Persistence disabled: not saving secrets to disk for ${domain} (${environment})`);
+      return null;
+    }
+
     if (this.dryRun) {
       console.log(`   🔍 DRY RUN: Would save secrets to ${filename}`);
       return filename;
@@ -764,7 +770,12 @@ export function generateSingleSecret(length = 32) {
 }
 
 export function saveSecrets(domain, environment, secrets, additionalData = {}) {
-  const secretsDir = 'secrets';
+  const secretsDir = process.env.CLODO_SECRETS_DIR || '.clodo-cache/secrets';
+  const persistenceEnabled = process.env.CLODO_ENABLE_PERSISTENCE === '1';
+  if (!persistenceEnabled) {
+    console.log('   ℹ️ Secrets persistence disabled: saveSecrets will not write files unless CLODO_ENABLE_PERSISTENCE=1 is set.');
+    return null;
+  }
   if (!moduleFileManager.exists(secretsDir)) {
     moduleFileManager.ensureDir(secretsDir);
   }
@@ -803,7 +814,8 @@ export function loadSecrets(domain) {
 }
 
 export function distributeSecrets(domain, secrets) {
-  const distDir = join('secrets', 'distribution', domain);
+  const distBase = process.env.CLODO_SECRETS_DIR || '.clodo-cache/secrets';
+  const distDir = join(distBase, 'distribution', domain);
   moduleFileManager.ensureDir(distDir);
 
   const files = {};

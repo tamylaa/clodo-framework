@@ -70,12 +70,22 @@ export class FileWriter {
     }
 
     // Ensure parent directory exists
-    await this.ensureDirectory(path.dirname(fullPath));
+    const dirPath = path.dirname(fullPath);
+    await this.ensureDirectory(dirPath);
 
     // Write file atomically (write to temp file, then rename)
     const tempPath = `${fullPath}.tmp`;
     try {
+      // Write to temp file first
       await fs.writeFile(tempPath, content, encoding);
+      
+      // Small delay to ensure file is fully written on Windows
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
+      // Verify temp file exists before rename (prevents ENOENT)
+      await fs.access(tempPath);
+      
+      // Rename to final destination
       await fs.rename(tempPath, fullPath);
       
       this.writtenFiles.push(fullPath);
@@ -108,6 +118,8 @@ export class FileWriter {
 
     try {
       await fs.mkdir(dirPath, { recursive: true });
+      // Verify the directory was created
+      await fs.access(dirPath);
     } catch (error) {
       // Ignore error if directory already exists
       if (error.code !== 'EEXIST') {

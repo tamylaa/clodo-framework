@@ -13,6 +13,9 @@ export const domains = {
     // 'staging.{{DOMAIN_NAME}}'
   ],
 
+  // NOTE: This directory is a sample config file for template authors. It is intentionally
+  // named `config.example` now to avoid being accidentally copied into generated services.
+
   // Environment-specific domain mappings
   environments: {
     development: '{{SERVICE_NAME}}-dev.{{WORKERS_DEV_DOMAIN}}',

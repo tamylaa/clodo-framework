@@ -15,7 +15,7 @@ describe('TemplateEngine', () => {
 
   beforeEach(async () => {
     // Create temp directories using system temp directory
-    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const uniqueId = `${Date.now()}-${process.pid}-${Math.random().toString(36).substr(2, 9)}`;
     tempDir = path.join(os.tmpdir(), `clodo-template-test-${uniqueId}`);
     templatesDir = path.join(tempDir, 'templates');
     partialsDir = path.join(tempDir, 'templates', 'partials');

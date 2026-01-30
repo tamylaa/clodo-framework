@@ -1,6 +1,7 @@
 export default {
   preset: null,
   testEnvironment: 'node',
+  maxWorkers: 1,
   globals: {
     'ts-jest': {
       useESM: true,
@@ -37,7 +38,8 @@ export default {
     '/coverage/',
     '/backups/',
     '/i-docs/',
-    '/generated/'
+    '/generated/',
+    '/clodo-dev-site/'
   ],
   testMatch: [
     '**/__tests__/**/*.[jt]s?(x)',

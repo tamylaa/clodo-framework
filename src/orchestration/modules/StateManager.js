@@ -12,8 +12,11 @@ export class StateManager {
   constructor(options = {}) {
     this.environment = options.environment || 'production';
     this.dryRun = options.dryRun || false;
-    this.logDirectory = options.logDirectory || 'deployments';
-    this.enablePersistence = options.enablePersistence !== false;
+    // Default to ephemeral cache directory to avoid polluting workspace root with artifacts
+    this.logDirectory = options.logDirectory || '.clodo-cache/deployments';
+    // Persistence must be explicitly enabled via options or environment variable to avoid
+    // accidentally creating deployment artifacts in developer workspaces.
+    this.enablePersistence = options.enablePersistence ?? (process.env.CLODO_ENABLE_PERSISTENCE === '1');
     this.rollbackEnabled = options.rollbackEnabled !== false;
     
     // Initialize portfolio state
@@ -267,8 +270,13 @@ export class StateManager {
    * @returns {Promise<void>}
    */
   async saveAuditLog() {
-    if (!this.enablePersistence) return;
-    
+    // Respect persistence opt-in: do not write orchestration artifacts unless enabled
+    if (!this.enablePersistence) {
+      // Avoid creating files during tests or normal developer runs
+      if (this.verbose) console.log('   ℹ️ Persistence disabled: skipping saveAuditLog');
+      return;
+    }
+
     try {
       // Ensure log directory exists
       try {

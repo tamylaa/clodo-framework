@@ -185,6 +185,9 @@ export class BaseGenerator {
     const fullPath = path.join(this.servicePath, relativePath);
     const overwrite = options.overwrite !== false; // Default to true
 
+    // Debug: log the target file path for diagnosis
+    this.logger.info(`BaseGenerator: writing file -> ${fullPath}`);
+
     // Check if file exists and overwrite is disabled
     try {
       await fs.access(fullPath);
@@ -200,13 +203,36 @@ export class BaseGenerator {
     const dir = path.dirname(fullPath);
     await fs.mkdir(dir, { recursive: true });
 
-    // Write file
-    try {
-      await fs.writeFile(fullPath, content, 'utf8');
-      this.logger.info(`Generated: ${relativePath}`);
-    } catch (error) {
-      throw new Error(`Failed to write file '${relativePath}': ${error.message}`);
+    // Write file with retry logic for filesystem stability
+    const maxRetries = 3;
+    let lastError;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        this.logger.info(`BaseGenerator: attempt ${attempt} - writing to ${fullPath}`);
+        await fs.writeFile(fullPath, content, 'utf8');
+        
+        // Add a small delay to let file system settle, especially on Windows
+        if (attempt === 1) {
+          await new Promise(resolve => setTimeout(resolve, 10));
+        }
+        
+        // Verify the file was written successfully by checking it exists
+        await fs.access(fullPath, fs.constants.F_OK);
+        
+        this.logger.info(`Generated: ${relativePath}`);
+        return; // Success
+      } catch (error) {
+        lastError = error;
+        this.logger.warn(`Write attempt ${attempt}/${maxRetries} failed for ${relativePath}: ${error.message}`);
+        if (attempt < maxRetries) {
+          // Wait before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 50 * attempt));
+        }
+      }
     }
+
+    // If all retries failed, throw the last error
+    throw new Error(`Failed to write and verify file '${relativePath}' after ${maxRetries} attempts: ${lastError.message}`);
   }
 
   /**

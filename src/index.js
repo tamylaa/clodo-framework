@@ -21,6 +21,7 @@ export * from './schema/SchemaManager.js';
 export * from './modules/ModuleManager.js';
 export * from './routing/EnhancedRouter.js';
 export * from './handlers/GenericRouteHandler.js';
+export { ServiceClient } from './services/ServiceClient.js';
 
 // Deployment components
 export { DeploymentValidator } from './deployment/validator.js';
@@ -32,6 +33,7 @@ export { DeploymentAuditor } from './deployment/auditor.js';
 export { SecurityCLI } from './security/SecurityCLI.js';
 export { ConfigurationValidator } from './security/ConfigurationValidator.js';
 export { SecretGenerator } from './security/SecretGenerator.js';
+export { EnvironmentValidator } from './utils/EnvironmentValidator.js';
 
 // Service management components
 export { ServiceCreator } from './service-management/ServiceCreator.js';
@@ -48,6 +50,9 @@ export { verifyWorkerDeployment, healthCheckWithBackoff, checkHealth } from '../
 export { classifyError, getRecoverySuggestions } from '../lib/shared/error-handling/error-classifier.js';
 
 // Framework version info
+export { FrameworkInfo } from './version/FrameworkInfo.js';
+export { TemplateRuntime } from './utils/TemplateRuntime.js';
+export { HealthChecker } from './monitoring/HealthChecker.js';
 export const FRAMEWORK_VERSION = '1.0.0';
 export const FRAMEWORK_NAME = 'Clodo Framework';
 
