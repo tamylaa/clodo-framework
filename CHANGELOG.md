@@ -1,3 +1,10 @@
+## [4.0.15](https://github.com/tamylaa/clodo-framework/compare/v4.0.14...v4.0.15) (2026-01-31)
+
+
+### Bug Fixes
+
+* **lint:** remove unnecessary escape in semver regex ([72751bd](https://github.com/tamylaa/clodo-framework/commit/72751bdf9a98b2f6b1f97706b175ea31f3aa0df1))
+
 ## [4.0.14](https://github.com/tamylaa/clodo-framework/compare/v4.0.13...v4.0.14) (2026-01-19)
 
 
