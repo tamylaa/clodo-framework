@@ -10,6 +10,7 @@ import path from 'path';
 import os from 'os';
 import { exec } from 'child_process';
 import util from 'util';
+import * as cloudOps from '../src/utils/cloudflare/index.js';
 
 import { DatabaseOrchestrator } from '../src/database/database-orchestrator.js';
 
@@ -41,11 +42,27 @@ describe('DatabaseOrchestrator Unit Tests', () => {
     fs.appendFile = jest.fn().mockResolvedValue();
     fs.existsSync = jest.fn().mockReturnValue(true);
 
+    // Mock global fetch so CloudflareAPI.request returns a 404 response with the expected error message
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({ errors: [{ message: 'Could not route to /client/v4/accounts/mock-account-id/d1/database, perhaps your object identifier is invalid?' }] })
+    });
+
     // Create DatabaseOrchestrator instance
     dbOrchestrator = new DatabaseOrchestrator(mockOptions);
 
     // Mock the executeWithRetry method to prevent actual wrangler command execution
     dbOrchestrator.executeWithRetry = jest.fn().mockResolvedValue('Applied 3 migrations successfully\nMigration 001_create_users.sql... ✅\nMigration 002_add_indexes.sql... ✅\nMigration 003_update_schema.sql... ✅');
+  });
+
+  afterEach(() => {
+    // Restore global fetch if it was mocked
+    if (global.fetch && global.fetch.mockRestore) {
+      global.fetch.mockRestore();
+    } else if (global.fetch && global.fetch.mockClear) {
+      global.fetch.mockClear();
+    }
   });
 
   describe('constructor', () => {

@@ -579,6 +579,10 @@ export class ConfigurationValidator {
         }
       } else if (trimmed.startsWith('[') && !trimmed.startsWith('[[')) {
         currentSection = trimmed.replace(/\[|\]/g, '');
+        // Support both table and array-of-tables syntaxes by creating a container
+        if (Array.isArray(config[currentSection]) && config[currentSection].length === 0) {
+          config[currentSection].push({});
+        }
       }
       // Key-value pairs
       else if (trimmed.includes('=') && currentSection) {

@@ -53,8 +53,8 @@ describe('Worker integration (middleware)', () => {
     // Generate worker index using the generator (with improved retry logic)
     await wig.generate({ coreInputs, confirmedValues: confirmed, servicePath });
 
-    // Add a small delay to ensure file system operations complete
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // Add a longer delay to ensure file system operations complete on Windows
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     // Verify the file exists before importing
     const expectedPath = path.join(servicePath, 'src', 'worker', 'index.js');
@@ -113,8 +113,8 @@ describe('Worker integration (middleware)', () => {
     // Generate worker index using the generator (with improved retry logic)
     await wig.generate({ coreInputs, confirmedValues: confirmed, servicePath });
 
-    // Add a small delay to ensure file system operations complete
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // Add a longer delay to ensure file system operations complete on Windows
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     // Verify the file exists before importing
     const expectedPath = path.join(servicePath, 'src', 'worker', 'index.js');

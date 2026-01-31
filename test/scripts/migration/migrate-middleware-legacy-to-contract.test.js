@@ -20,7 +20,7 @@ describe('migrate-middleware-legacy-to-contract', () => {
     await fs.writeFile(middlewareFile, legacy, 'utf-8');
     
     // Longer delay to ensure file system operations complete on Windows
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 500));
   });
 
   afterEach(async () => {
@@ -55,7 +55,7 @@ describe('migrate-middleware-legacy-to-contract', () => {
       }
     }
 
-    const content = await readFileWithRetry(filePath, 10, 100);
+    const content = await readFileWithRetry(filePath, 10, 200);
     if (!content.includes('createServiceMiddleware')) {
       throw new Error('No legacy factory detected');
     }

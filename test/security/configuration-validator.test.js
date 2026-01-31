@@ -15,9 +15,17 @@ jest.unstable_mockModule('fs', () => ({
 const { readFileSync } = await import('fs');
 const { ConfigurationValidator } = await import('../../src/security/ConfigurationValidator.js');
 
+// Preserve original static method so tests that mock it can be safely restored
+const _originalParseWranglerToml = ConfigurationValidator.parseWranglerToml;
+
 describe('ConfigurationValidator - Service Config', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // Restore any accidental overrides of the static method
+    ConfigurationValidator.parseWranglerToml = _originalParseWranglerToml;
   });
 
   describe('validateServiceConfig', () => {

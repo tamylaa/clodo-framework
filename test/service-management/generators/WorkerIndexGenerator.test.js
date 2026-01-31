@@ -37,7 +37,7 @@ describe('WorkerIndexGenerator', () => {
     expect(filePath).toBe(expectedPath);
 
     // Add a delay to ensure file operations complete - increased for Windows file system
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     // Verify the file was created by reading it
     const content = await fs.readFile(expectedPath, 'utf-8');
