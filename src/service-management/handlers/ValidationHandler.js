@@ -6,7 +6,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { FrameworkConfig } from '../../utils/framework-config.js';
-// import { ConfigurationValidator } from '../../../lib/shared/utils/configuration-validator.js';
+import { ConfigurationValidator } from '../../security/ConfigurationValidator.js';
 
 export class ValidationHandler {
   constructor(options = {}) {
@@ -129,16 +129,35 @@ export class ValidationHandler {
     issues.push(...wranglerValidation.issues);
 
     // Run comprehensive configuration validation using ConfigurationValidator
-    // Temporarily disabled due to import issues
-    // try {
-    //   const configValidation = await ConfigurationValidator.validateServiceConfig(servicePath);
-    //   if (!configValidation.isValid) {
-    //     issues.push(...configValidation.errors);
-    //     issues.push(...configValidation.warnings.map(w => `Warning: ${w}`));
-    //   }
-    // } catch (error) {
-    //   issues.push(`Configuration validation failed: ${error.message}`);
-    // }
+    try {
+      // Determine manifest path candidates and select first that exists
+      const manifestCandidates = ['clodo-service-manifest.json', 'service-manifest.json', 'manifest.json'];
+      let manifestPath = null;
+      for (const candidate of manifestCandidates) {
+        const candidatePath = path.join(servicePath, candidate);
+        try {
+          await fs.access(candidatePath);
+          manifestPath = candidatePath;
+          break;
+        } catch {
+          // Not found, continue
+        }
+      }
+
+      const wranglerPath = path.join(servicePath, 'wrangler.toml');
+
+      if (manifestPath) {
+        const configValidation = ConfigurationValidator.validateServiceConfig(manifestPath, wranglerPath);
+        if (!configValidation.valid) {
+          issues.push(...(configValidation.issues || []).map(i => `Configuration mismatch: ${i.message || JSON.stringify(i)}`));
+        }
+      } else {
+        // No manifest found — warn but do not block validation
+        issues.push('Warning: No service manifest found (clodo-service-manifest.json) — skipping manifest↔wrangler validation');
+      }
+    } catch (error) {
+      issues.push(`Configuration validation step failed: ${error.message}`);
+    }
 
     return {
       valid: issues.length === 0,
