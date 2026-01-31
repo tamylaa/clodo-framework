@@ -104,6 +104,56 @@ export class ServiceOrchestrator {
   }
 
   /**
+   * Programmatic service creation API
+   * Accepts a ServicePayload and performs validation, generation and returns structured result
+   */
+  async createService(payload, options = {}) {
+    // Validate payload using new validator
+    const { validateServicePayload } = await import('../validation/payloadValidation.js');
+
+    const validation = validateServicePayload(payload);
+    if (!validation.valid && !options.force) {
+      return {
+        success: false,
+        errors: validation.errors,
+        warnings: validation.warnings || []
+      };
+    }
+
+    // Map payload to coreInputs expected by generation handlers
+    const coreInputs = {
+      serviceName: payload.serviceName,
+      serviceType: payload.serviceType,
+      domainName: payload.domain,
+      environment: options.environment || 'development'
+    };
+
+    try {
+      // Generate derived confirmations and run generation
+      const confirmedValues = await this.confirmationHandler.generateAndConfirm(coreInputs);
+
+      const generationResult = await this.generationHandler.generateService(coreInputs, confirmedValues, {
+        outputPath: options.outputDir || this.outputPath,
+        middlewareStrategy: this.middlewareStrategy
+      });
+
+      return {
+        success: true,
+        serviceId: generationResult.serviceId || null,
+        servicePath: generationResult.servicePath || null,
+        serviceName: generationResult.serviceName || coreInputs.serviceName,
+        fileCount: generationResult.fileCount || (generationResult.generatedFiles || []).length,
+        generatedFiles: generationResult.generatedFiles || [],
+        warnings: validation.warnings || []
+      };
+    } catch (error) {
+      return {
+        success: false,
+        errors: [error.message]
+      };
+    }
+  }
+  /**
    * Validate an existing service configuration
    */
   async validateService(servicePath, options = {}) {
