@@ -162,7 +162,9 @@ database_name = "${confirmedValues.databaseName}"
 database_id = ""  # To be configured during setup
 ` : '';
 
-    const kvBlock = (confirmedValues.features && confirmedValues.features.kv) ? `
+    // Support both generic KV flag and provider-specific flag (upstash)
+    const kvEnabled = confirmedValues.features && (confirmedValues.features.kv || confirmedValues.features.upstash);
+    const kvBlock = kvEnabled ? `
 
 # KV namespaces
 [[kv_namespaces]]

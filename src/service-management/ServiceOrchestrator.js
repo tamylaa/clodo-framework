@@ -130,7 +130,13 @@ export class ServiceOrchestrator {
 
     try {
       // Generate derived confirmations and run generation
-      const confirmedValues = await this.confirmationHandler.generateAndConfirm(coreInputs);
+      let confirmedValues = await this.confirmationHandler.generateAndConfirm(coreInputs);
+
+      // Respect features passed in the programmatic payload by merging them into confirmedValues
+      if (payload.features && Array.isArray(payload.features)) {
+        const featureMap = payload.features.reduce((acc, f) => ({ ...acc, [f]: true }), {});
+        confirmedValues = { ...confirmedValues, features: { ...(confirmedValues.features || {}), ...featureMap } };
+      }
 
       const generationResult = await this.generationHandler.generateService(coreInputs, confirmedValues, {
         outputPath: options.outputDir || this.outputPath,
