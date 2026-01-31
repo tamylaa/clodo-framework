@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/tamylaa/clodo-framework/compare/v4.1.0...v4.2.0) (2026-01-31)
+
+
+### Features
+
+* **validation:** integrate ConfigurationValidator into ValidationHandler; add post-generation validation in ServiceOrchestrator; tests ([#5](https://github.com/tamylaa/clodo-framework/issues/5)) ([2889864](https://github.com/tamylaa/clodo-framework/commit/28898641bac4c2d6d206e12dbba8216e1de386a3))
+
 # [4.1.0](https://github.com/tamylaa/clodo-framework/compare/v4.0.15...v4.1.0) (2026-01-31)
 
 
