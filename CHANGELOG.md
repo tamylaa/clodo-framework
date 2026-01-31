@@ -1,3 +1,15 @@
+# [4.1.0](https://github.com/tamylaa/clodo-framework/compare/v4.0.15...v4.1.0) (2026-01-31)
+
+
+### Bug Fixes
+
+* **lint:** remove unnecessary escape in serviceName regex to satisfy no-useless-escape ([ac4dcda](https://github.com/tamylaa/clodo-framework/commit/ac4dcdabb39dda3dba3f4e06022f28936a53d645))
+
+
+### Features
+
+* **programmatic-service-api:** programmatic createService + configurable validation ([#4](https://github.com/tamylaa/clodo-framework/issues/4)) ([040f68b](https://github.com/tamylaa/clodo-framework/commit/040f68b9115b604b3f27d7baa14c63122494c5f3))
+
 ## [4.0.15](https://github.com/tamylaa/clodo-framework/compare/v4.0.14...v4.0.15) (2026-01-31)
 
 
