@@ -42,4 +42,37 @@ describe('WranglerTomlGenerator', () => {
     const contentMissing = await gen._buildWranglerToml(baseCoreInputs, confirmedMissing, '# routes', '');
     expect(contentMissing).not.toMatch(/\[\[d1_databases\]\]/);
   });
+
+  test('includes KV block when features.kv = true and omits when false/missing', async () => {
+    const gen = new WranglerTomlGenerator({ outputPath: process.cwd() });
+
+    const confirmed = { ...baseConfirmed, features: { kv: true } };
+    const content = await gen._buildWranglerToml(baseCoreInputs, confirmed, '# routes', '');
+    expect(content).toMatch(/\[\[kv_namespaces\]\]/);
+
+    const confirmedFalse = { ...baseConfirmed, features: { kv: false } };
+    const contentFalse = await gen._buildWranglerToml(baseCoreInputs, confirmedFalse, '# routes', '');
+    expect(contentFalse).not.toMatch(/\[\[kv_namespaces\]\]/);
+
+    const confirmedMissing = { ...baseConfirmed };
+    const contentMissing = await gen._buildWranglerToml(baseCoreInputs, confirmedMissing, '# routes', '');
+    expect(contentMissing).not.toMatch(/\[\[kv_namespaces\]\]/);
+  }, 15000);
+
+  test('includes R2 block when features.r2 = true and omits when false/missing', async () => {
+    const gen = new WranglerTomlGenerator({ outputPath: process.cwd() });
+
+    const confirmed = { ...baseConfirmed, features: { r2: true }, bucketName: 'my-bucket' };
+    const content = await gen._buildWranglerToml(baseCoreInputs, confirmed, '# routes', '');
+    expect(content).toMatch(/\[\[r2_buckets\]\]/);
+    expect(content).toMatch(/bucket_name = "my-bucket"/);
+
+    const confirmedFalse = { ...baseConfirmed, features: { r2: false } };
+    const contentFalse = await gen._buildWranglerToml(baseCoreInputs, confirmedFalse, '# routes', '');
+    expect(contentFalse).not.toMatch(/\[\[r2_buckets\]\]/);
+
+    const confirmedMissing = { ...baseConfirmed };
+    const contentMissing = await gen._buildWranglerToml(baseCoreInputs, confirmedMissing, '# routes', '');
+    expect(contentMissing).not.toMatch(/\[\[r2_buckets\]\]/);
+  }, 15000);
 });
