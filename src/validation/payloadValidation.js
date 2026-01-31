@@ -1,27 +1,19 @@
 import { z } from 'zod';
 
 // Allowed enums
-export const VALID_SERVICE_TYPES = [
-  'api-service',
-  'data-service',
-  'worker',
-  'pages',
-  'gateway',
-  'generic'
-];
+import { getConfig } from '../config/service-schema-config.js';
 
-export const VALID_FEATURES = [
-  'd1', 'upstash', 'r2', 'pages', 'ws', 'durableObject', 'cron', 'metrics'
-];
+export const VALID_SERVICE_TYPES = () => getConfig().serviceTypes;
+export const VALID_FEATURES = () => getConfig().features;
 
 // Zod schema with refined validations
 export const ServicePayloadSchema = z.object({
   serviceName: z.string().min(3).max(50).regex(/^[a-z0-9\-]+$/, 'serviceName must be lowercase letters, numbers and hyphens only'),
-  serviceType: z.string().refine(v => VALID_SERVICE_TYPES.includes(v), { message: `Invalid serviceType. Expected one of: ${VALID_SERVICE_TYPES.join(', ')}` }),
+  serviceType: z.string().refine(v => VALID_SERVICE_TYPES().includes(v), { message: `Invalid serviceType. Expected one of: ${VALID_SERVICE_TYPES().join(', ')}` }),
   domain: z.string().min(3).regex(/^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/, 'domain must be a valid domain name'),
   description: z.string().optional(),
   template: z.string().optional(),
-  features: z.array(z.string().refine(v => VALID_FEATURES.includes(v), { message: `Invalid feature. Expected one of: ${VALID_FEATURES.join(', ')}` })).optional(),
+  features: z.array(z.string().refine(v => VALID_FEATURES().includes(v), { message: `Invalid feature. Expected one of: ${VALID_FEATURES().join(', ')}` })).optional(),
   bindings: z.array(z.string()).optional(),
   resources: z.record(z.any()).optional(),
   specs: z.record(z.any()).optional(),
@@ -38,6 +30,13 @@ export function validateServicePayload(payload) {
       const duplicates = payload.features.filter((v, i, a) => a.indexOf(v) !== i);
       if (duplicates.length) {
         result.warnings.push({ field: 'features', code: 'DUPLICATE_FEATURES', message: `Duplicate features: ${[...new Set(duplicates)].join(', ')}` });
+      }
+
+      // Check for unknown features if config changed at runtime
+      const configured = VALID_FEATURES();
+      const unknown = payload.features.filter(f => !configured.includes(f));
+      if (unknown.length) {
+        result.warnings.push({ field: 'features', code: 'UNKNOWN_FEATURES', message: `Unknown features: ${[...new Set(unknown)].join(', ')}` });
       }
     }
 
@@ -92,7 +91,7 @@ export function getParameterDefinitions() {
       type: 'string',
       required: true,
       description: 'Type of service to create',
-      enum: VALID_SERVICE_TYPES
+      enum: VALID_SERVICE_TYPES()
     },
     domain: {
       name: 'domain',
