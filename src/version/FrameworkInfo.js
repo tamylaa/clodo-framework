@@ -42,7 +42,7 @@ export class FrameworkInfo {
 
           if (frameworkDep) {
             // Extract version from semver range (e.g., "^4.0.11" -> "4.0.11", ">=4.0.0" -> "4.0.0")
-            const version = frameworkDep.replace(/^[^\d]*/, '').split(/[\s\-]/)[0];
+            const version = frameworkDep.replace(/^[^\d]*/, '').split(/[\s-]/)[0];
             return version || frameworkDep;
           }
         } catch (error) {
