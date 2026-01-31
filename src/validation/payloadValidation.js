@@ -8,7 +8,7 @@ export const VALID_FEATURES = () => getConfig().features;
 
 // Zod schema with refined validations
 export const ServicePayloadSchema = z.object({
-  serviceName: z.string().min(3).max(50).regex(/^[a-z0-9\-]+$/, 'serviceName must be lowercase letters, numbers and hyphens only'),
+  serviceName: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/, 'serviceName must be lowercase letters, numbers and hyphens only'),
   serviceType: z.string().refine(v => VALID_SERVICE_TYPES().includes(v), { message: `Invalid serviceType. Expected one of: ${VALID_SERVICE_TYPES().join(', ')}` }),
   domain: z.string().min(3).regex(/^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/, 'domain must be a valid domain name'),
   description: z.string().optional(),
