@@ -152,6 +152,16 @@ export class WranglerTomlGenerator extends BaseGenerator {
       console.warn(`⚠️  Wrangler compatibility detection failed, using defaults: ${error.message}`);
     }
 
+    // Only include D1 database binding when the confirmed values indicate D1 feature is enabled
+    const d1Block = (confirmedValues.features && confirmedValues.features.d1) ? `
+
+# Database bindings
+[[d1_databases]]
+binding = "DB"
+database_name = "${confirmedValues.databaseName}"
+database_id = ""  # To be configured during setup
+` : '';
+
     return `# Cloudflare Workers Configuration for ${confirmedValues.displayName}
 name = "${confirmedValues.workerName}"
 main = "src/worker/index.js"
@@ -174,12 +184,7 @@ name = "${confirmedValues.workerName}-staging"
 [env.production]
 name = "${confirmedValues.workerName}"
 
-# Database bindings
-[[d1_databases]]
-binding = "DB"
-database_name = "${confirmedValues.databaseName}"
-database_id = ""  # To be configured during setup
-
+${d1Block}
 # Environment variables
 [vars]
 SERVICE_NAME = "${coreInputs.serviceName}"
