@@ -137,15 +137,52 @@ export class ServiceOrchestrator {
         middlewareStrategy: this.middlewareStrategy
       });
 
-      return {
-        success: true,
-        serviceId: generationResult.serviceId || null,
-        servicePath: generationResult.servicePath || null,
-        serviceName: generationResult.serviceName || coreInputs.serviceName,
-        fileCount: generationResult.fileCount || (generationResult.generatedFiles || []).length,
-        generatedFiles: generationResult.generatedFiles || [],
-        warnings: validation.warnings || []
-      };
+      // Post-generation validation using ValidationHandler
+      const validationHandler = options.customConfig 
+        ? new ValidationHandler({ customConfig: options.customConfig })
+        : this.validationHandler;
+
+      try {
+        const postValidation = await validationHandler.validateService(generationResult.servicePath);
+        if (!postValidation.valid && !options.force) {
+          return {
+            success: false,
+            errors: postValidation.issues || [],
+            warnings: validation.warnings || [],
+            validationReport: postValidation
+          };
+        }
+
+        return {
+          success: true,
+          serviceId: generationResult.serviceId || null,
+          servicePath: generationResult.servicePath || null,
+          serviceName: generationResult.serviceName || coreInputs.serviceName,
+          fileCount: generationResult.fileCount || (generationResult.generatedFiles || []).length,
+          generatedFiles: generationResult.generatedFiles || [],
+          warnings: validation.warnings || [],
+          validationReport: postValidation
+        };
+      } catch (valErr) {
+        // If validation step throws, surface error unless forced
+        if (!options.force) {
+          return {
+            success: false,
+            errors: [valErr.message]
+          };
+        }
+
+        return {
+          success: true,
+          serviceId: generationResult.serviceId || null,
+          servicePath: generationResult.servicePath || null,
+          serviceName: generationResult.serviceName || coreInputs.serviceName,
+          fileCount: generationResult.fileCount || (generationResult.generatedFiles || []).length,
+          generatedFiles: generationResult.generatedFiles || [],
+          warnings: validation.warnings || [],
+          validationReport: { error: valErr.message }
+        };
+      }
     } catch (error) {
       return {
         success: false,
