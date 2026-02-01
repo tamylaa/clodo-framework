@@ -138,7 +138,14 @@ export function registerMiddleware(registry, serviceName) {
     this.logger.info(`Generated: ${filePath}`);
 
     // Also generate a lightweight runtime helper for middleware composition and registry
-    const runtimeContent = `// Lightweight middleware runtime for generated services
+    let runtimeContent = '';
+
+    // If Durable Objects are enabled (support both singular/plural feature names), inject DO imports/bindings
+    if (confirmedValues.features && (confirmedValues.features.durableObjects || confirmedValues.features.durableObject)) {
+      runtimeContent += `// Durable Object imports and bindings\nimport { DurableObject } from '@cloudflare/workers-types';\nexport const DURABLE_OBJECT = { type: 'durable_object', className: 'MyDurableObject' };\n\n`;
+    }
+
+    runtimeContent += `// Lightweight middleware runtime for generated services
 export const MiddlewareRegistry = (() => {
   const map = new Map();
   return {
