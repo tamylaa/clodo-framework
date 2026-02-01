@@ -1,0 +1,35 @@
+name: Validate X Bearer Token (dry run)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check token presence
+        run: |
+          if [ -z "${{ secrets.X_BEARER_TOKEN }}" ]; then
+            echo "❌ X_BEARER_TOKEN is not set in repository secrets";
+            exit 1;
+          fi
+          echo "🔒 X_BEARER_TOKEN is set — attempting dry-check against X API"
+
+      - name: Dry-check GET /2/users/me
+        env:
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+        run: |
+          set -euo pipefail
+          HTTP_STATUS=$(curl -s -o /tmp/x_response.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${X_BEARER_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "https://api.twitter.com/2/users/me")
+          echo "HTTP status: ${HTTP_STATUS}"
+          if [ "${HTTP_STATUS}" = "200" ]; then
+            echo "✅ Token valid. User info:"
+            jq . /tmp/x_response.json
+          else
+            echo "⚠️ Token check failed (HTTP ${HTTP_STATUS}). Response:"
+            jq . /tmp/x_response.json
+            exit 1
+          fi
