@@ -1,3 +1,18 @@
+# [4.3.0](https://github.com/tamylaa/clodo-framework/compare/v4.2.0...v4.3.0) (2026-02-01)
+
+
+### Bug Fixes
+
+* ensure programmatic feature normalization and DO middleware support are included ([e2e6867](https://github.com/tamylaa/clodo-framework/commit/e2e6867ed96f0619cfd3a07b117a49717c47ac68))
+* only include D1 binding in wrangler.toml when D1 feature enabled; adjust e2e assertion for forced validation report ([7a7b549](https://github.com/tamylaa/clodo-framework/commit/7a7b549aca3b8359ee76825b1bc64cb0815b35c1))
+* **wrangler:** emit KV and R2 bindings conditionally; add unit tests ([36702f3](https://github.com/tamylaa/clodo-framework/commit/36702f3146ce1f12fef6838010e20d2efbfed306))
+
+
+### Features
+
+* **generator:** emit Durable Object import/binding into middleware runtime when feature enabled ([22b9b14](https://github.com/tamylaa/clodo-framework/commit/22b9b14567038a0f7f73221f31925ee9a2066736))
+* normalize features (kv -> upstash) and add unit tests ([14e5a56](https://github.com/tamylaa/clodo-framework/commit/14e5a564b5cec4016ddbafd2b39e944eee74d40a))
+
 # [4.2.0](https://github.com/tamylaa/clodo-framework/compare/v4.1.0...v4.2.0) (2026-01-31)
 
 
@@ -1787,4 +1802,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Removed` for now removed features
 - `Fixed` for any bug fixes
 - `Security` for vulnerability fixes
-
