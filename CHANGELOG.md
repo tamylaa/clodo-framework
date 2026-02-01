@@ -1,3 +1,10 @@
+## [4.3.1](https://github.com/tamylaa/clodo-framework/compare/v4.3.0...v4.3.1) (2026-02-01)
+
+
+### Bug Fixes
+
+* validate X_BEARER_TOKEN dry-check workflow added (no-op commit to trigger release) ([b28a539](https://github.com/tamylaa/clodo-framework/commit/b28a539af7174e7716ea4a5d4156d64f67087b8b))
+
 # [4.3.0](https://github.com/tamylaa/clodo-framework/compare/v4.2.0...v4.3.0) (2026-02-01)
 
 
