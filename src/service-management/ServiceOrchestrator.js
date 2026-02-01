@@ -13,6 +13,7 @@ import { ConfirmationHandler } from './handlers/ConfirmationHandler.js';
 import { GenerationHandler } from './handlers/GenerationHandler.js';
 import { WranglerConfigManager } from '../utils/deployment/wrangler-config-manager.js';
 import { ValidationHandler } from './handlers/ValidationHandler.js';
+import { normalizeFeatures } from '../validation/payloadNormalization.js';
 
 // Legacy imports for backward compatibility
 import { ErrorTracker } from './ErrorTracker.js';
@@ -130,7 +131,15 @@ export class ServiceOrchestrator {
 
     try {
       // Generate derived confirmations and run generation
-      const confirmedValues = await this.confirmationHandler.generateAndConfirm(coreInputs);
+      let confirmedValues = await this.confirmationHandler.generateAndConfirm(coreInputs);
+
+      // Respect features passed in the programmatic payload by merging them into confirmedValues
+      if (payload.features && Array.isArray(payload.features)) {
+        // Normalize features (e.g., accept legacy 'kv' alias and enable provider flags like 'upstash')
+        payload.features = normalizeFeatures(payload.features);
+        const featureMap = payload.features.reduce((acc, f) => ({ ...acc, [f]: true }), {});
+        confirmedValues = { ...confirmedValues, features: { ...(confirmedValues.features || {}), ...featureMap } };
+      }
 
       const generationResult = await this.generationHandler.generateService(coreInputs, confirmedValues, {
         outputPath: options.outputDir || this.outputPath,

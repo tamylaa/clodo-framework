@@ -13,10 +13,18 @@ export class ServiceManifestGenerator {
    * @returns {Object} Service manifest
    */
   createManifest(coreInputs, confirmedValues, generatedFiles) {
+    // Derive explicit top-level feature booleans for quick manifest checks (e.g., D1/KV/R2)
+    const features = confirmedValues.features || {};
+
     return {
       manifestVersion: '1.0.0',
       frameworkVersion: '3.0.0',
       generatedAt: new Date().toISOString(),
+      // Top-level feature flags for ConfigurationValidator compatibility
+      d1: !!features.d1,
+      // kv may be represented via a provider flag (e.g., upstash) - accept either
+      kv: !!(features.kv || features.upstash),
+      r2: !!features.r2,
       service: {
         name: coreInputs.serviceName,
         displayName: confirmedValues.displayName,

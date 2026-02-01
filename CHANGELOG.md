@@ -10,37 +10,12 @@
 
 ### Bug Fixes
 
-* **lint:** remove unnecessary escape in serviceName regex to satisfy no-useless-escape ([ac4dcda](https://github.com/tamylaa/clodo-framework/commit/ac4dcdabb39dda3dba3f4e06022f28936a53d645))
+* **lint:** remove unnecessary escape in serviceName regex to satisfy no-useless-escape ([ac4dcda](https://github.com/tamylaa/clodo-framework/commit/ac4dcda))
 
 
 ### Features
 
 * **programmatic-service-api:** programmatic createService + configurable validation ([#4](https://github.com/tamylaa/clodo-framework/issues/4)) ([040f68b](https://github.com/tamylaa/clodo-framework/commit/040f68b9115b604b3f27d7baa14c63122494c5f3))
-
-## [4.0.15](https://github.com/tamylaa/clodo-framework/compare/v4.0.14...v4.0.15) (2026-01-31)
-
-
-### Bug Fixes
-
-* **lint:** remove unnecessary escape in semver regex ([72751bd](https://github.com/tamylaa/clodo-framework/commit/72751bdf9a98b2f6b1f97706b175ea31f3aa0df1))
-
-## [4.0.14](https://github.com/tamylaa/clodo-framework/compare/v4.0.13...v4.0.14) (2026-01-19)
-
-
-### Bug Fixes
-
-* middleware packaging, generators, tests, and packaged-artifact smoke test ([b001434](https://github.com/tamylaa/clodo-framework/commit/b001434697da2145e8778b5c0afd02275cd1604e))
-* resolve Windows filesystem timing issues in tests ([7092ca6](https://github.com/tamylaa/clodo-framework/commit/7092ca6ffc230a19d25c96333c0313ead1739f15))
-
-## [4.0.13](https://github.com/tamylaa/clodo-framework/compare/v4.0.12...v4.0.13) (2025-12-17)
-
-
-### Bug Fixes
-
-* collapse 4-level '../../../../lib/' imports to '../../../lib/' in dist ([e0a329e](https://github.com/tamylaa/clodo-framework/commit/e0a329e94390ddad37c7ccd8e6163410c874d7d0))
-* handle deeper dist/service-management imports pointing outside dist ([f70d63c](https://github.com/tamylaa/clodo-framework/commit/f70d63cc24571e9691fe900d6a8384ce7f040992))
-* resolve CHANGELOG.md merge conflict ([25a044d](https://github.com/tamylaa/clodo-framework/commit/25a044d0d4e2c8f674f777567de1d812c8b49cfa))
-* special-case generators/config deep lib import path ([cb74ab0](https://github.com/tamylaa/clodo-framework/commit/cb74ab0a9fb0958cae5065adc750377f751f0b21))
 
 ## [4.0.10](https://github.com/tamylaa/clodo-framework/compare/v4.0.9...v4.0.10) (2025-12-10)
 
@@ -191,8 +166,14 @@ Benefits:
 * enable missing exports and remove lib-dependent modules from npm ([1645a58](https://github.com/tamylaa/clodo-framework/commit/1645a58d1e1f5d7126fd02766e9b4d006fa45be7))
 ## [Unreleased]
 
+### Features
+
+* **programmatic-service-api:** Improve programmatic createService parity and feature normalization. Programmatic payloads now normalize legacy and plural feature names (for example, `kv` → `upstash`, and `durableObjects` ↔ `durableObject`) and merge normalized features into confirmed configuration values. The service middleware generator now emits Durable Object imports/bindings into the generated middleware runtime when Durable Objects are enabled. (refs: #6; commits: `14e5a56`, `7c0ce37`, `22b9b14`)
+
 ### Bug Fixes
 
+* **compatibility:** Accept legacy `kv` alias in payload validation and normalize to `upstash` to preserve backward compatibility with older programmatic payloads. (commits: `14e5a56`, `52b8090`)
+* **durable objects:** Accept `durableObjects` plural in allowed feature enums and ensure generated middleware includes Durable Object imports/bindings when enabled; fixed E2E parity tests. (commits: `779040c`, `22b9b14`)
 * Fix import paths in `dist/` to ensure packaged artifact resolves internal modules correctly (fixed `wrangler-deployer` and `WranglerTomlGenerator`).
 * Add `scripts/utilities/check-dist-imports.js` and `scripts/utilities/test-packaged-artifact.js` and include packaged-artifact smoke test in release workflow.
 
@@ -1806,3 +1787,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Removed` for now removed features
 - `Fixed` for any bug fixes
 - `Security` for vulnerability fixes
+
