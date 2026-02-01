@@ -84,19 +84,19 @@ describe('Programmatic createService - feature parity (D1/KV/R2)', () => {
         expect(wranglerContent).not.toMatch(/\[\[r2_buckets\]\]/);
       }
 
-      // Durable Objects: check generated worker code for DO bindings/imports
+      // Durable Objects: check generated middleware/runtime for DO imports/bindings
       const expectsDurable = combo.features.includes('durableObject') || combo.features.includes('durableObjects');
-      const workerPath = path.join(servicePath, 'src', 'worker', 'index.js');
-      const workerExists = await fs.access(workerPath).then(() => true).catch(() => false);
-      expect(workerExists).toBe(true);
-      const workerContent = await fs.readFile(workerPath, 'utf8');
+      const runtimePath = path.join(servicePath, 'src', 'middleware', 'runtime.js');
+      const runtimeExists = await fs.access(runtimePath).then(() => true).catch(() => false);
+      expect(runtimeExists).toBe(true);
+      const runtimeContent = await fs.readFile(runtimePath, 'utf8');
 
       if (expectsDurable) {
-        // TemplateRuntime should inject Durable Object binding and import
-        expect(workerContent).toMatch(/DurableObject/);
-        expect(workerContent).toMatch(/DURABLE_OBJECT|durable_object/);
+        // TemplateRuntime should inject Durable Object import/binding into middleware runtime
+        expect(runtimeContent).toMatch(/DurableObject/);
+        expect(runtimeContent).toMatch(/DURABLE_OBJECT|durable_object/);
       } else {
-        expect(workerContent).not.toMatch(/DurableObject/);
+        expect(runtimeContent).not.toMatch(/DurableObject/);
       }
     }
   }, 60000);
