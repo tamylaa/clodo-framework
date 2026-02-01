@@ -20,4 +20,14 @@ describe('Feature normalization', () => {
     expect(normalizeFeatures(null)).toEqual([]);
     expect(normalizeFeatures(undefined)).toEqual([]);
   });
+
+  it("maps 'durableObject' <-> 'durableObjects' variants", () => {
+    const res1 = normalizeFeatures(['durableObject']);
+    expect(res1).toContain('durableObjects');
+    expect(res1).toContain('durableObject');
+
+    const res2 = normalizeFeatures(['durableObjects']);
+    expect(res2).toContain('durableObject');
+    expect(res2).toContain('durableObjects');
+  });
 });

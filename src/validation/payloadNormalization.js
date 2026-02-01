@@ -9,6 +9,14 @@ export function normalizeFeatures(featuresArray = []) {
     normalized.add('upstash');
   }
 
+  // Durable Objects: accept both singular/plural variants for compatibility
+  if (normalized.has('durableObject') && !normalized.has('durableObjects')) {
+    normalized.add('durableObjects');
+  }
+  if (normalized.has('durableObjects') && !normalized.has('durableObject')) {
+    normalized.add('durableObject');
+  }
+
   return Array.from(normalized);
 }
 
