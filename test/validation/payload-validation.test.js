@@ -35,4 +35,11 @@ describe('Payload validation', () => {
     expect(defs.serviceType.enum).toBeDefined();
     expect(defs.features.enum).toEqual(VALID_FEATURES);
   });
+
+  it("accepts legacy 'kv' feature alias for backward compatibility", () => {
+    const payload = { serviceName: 'svc-kv', serviceType: 'generic', domain: 'example.com', features: ['kv'] };
+    const res = validateServicePayload(payload);
+    expect(res.valid).toBe(true);
+    expect(res.errors.length).toBe(0);
+  });
 });
