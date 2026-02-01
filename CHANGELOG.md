@@ -184,8 +184,14 @@ Benefits:
 * enable missing exports and remove lib-dependent modules from npm ([1645a58](https://github.com/tamylaa/clodo-framework/commit/1645a58d1e1f5d7126fd02766e9b4d006fa45be7))
 ## [Unreleased]
 
+### Features
+
+* **programmatic-service-api:** Improve programmatic createService parity and feature normalization. Programmatic payloads now normalize legacy and plural feature names (for example, `kv` → `upstash`, and `durableObjects` ↔ `durableObject`) and merge normalized features into confirmed configuration values. The service middleware generator now emits Durable Object imports/bindings into the generated middleware runtime when Durable Objects are enabled. (refs: #6; commits: `14e5a56`, `7c0ce37`, `22b9b14`)
+
 ### Bug Fixes
 
+* **compatibility:** Accept legacy `kv` alias in payload validation and normalize to `upstash` to preserve backward compatibility with older programmatic payloads. (commits: `14e5a56`, `52b8090`)
+* **durable objects:** Accept `durableObjects` plural in allowed feature enums and ensure generated middleware includes Durable Object imports/bindings when enabled; fixed E2E parity tests. (commits: `779040c`, `22b9b14`)
 * Fix import paths in `dist/` to ensure packaged artifact resolves internal modules correctly (fixed `wrangler-deployer` and `WranglerTomlGenerator`).
 * Add `scripts/utilities/check-dist-imports.js` and `scripts/utilities/test-packaged-artifact.js` and include packaged-artifact smoke test in release workflow.
 
