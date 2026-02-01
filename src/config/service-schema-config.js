@@ -10,7 +10,7 @@ let config = {
     'gateway',
     'generic'
   ],
-  features: ['d1', 'upstash', 'kv', 'r2', 'pages', 'ws', 'durableObject', 'cron', 'metrics']
+  features: ['d1', 'upstash', 'kv', 'r2', 'pages', 'ws', 'durableObject', 'durableObjects', 'cron', 'metrics']
 };
 
 export function getConfig() {
@@ -32,6 +32,6 @@ export function resetConfig() {
       'gateway',
       'generic'
     ],
-    features: ['d1', 'upstash', 'kv', 'r2', 'pages', 'ws', 'durableObject', 'cron', 'metrics']
+    features: ['d1', 'upstash', 'kv', 'r2', 'pages', 'ws', 'durableObject', 'durableObjects', 'cron', 'metrics']
   };
 }
