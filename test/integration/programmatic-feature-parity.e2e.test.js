@@ -21,7 +21,9 @@ describe('Programmatic createService - feature parity (D1/KV/R2)', () => {
     { name: 'd1', features: ['d1'] },
     { name: 'upstash', features: ['upstash'] },
     { name: 'r2', features: ['r2'] },
-    { name: 'd1-upstash-r2', features: ['d1', 'upstash', 'r2'] }
+    { name: 'd1-upstash-r2', features: ['d1', 'upstash', 'r2'] },
+    { name: 'durable', features: ['durableObject'] },
+    { name: 'durable-plural', features: ['durableObjects'] }
   ];
 
   test('createService produces wrangler manifest parity for feature combos', async () => {
@@ -80,6 +82,21 @@ describe('Programmatic createService - feature parity (D1/KV/R2)', () => {
         expect(wranglerContent).toMatch(/\[\[r2_buckets\]\]/);
       } else {
         expect(wranglerContent).not.toMatch(/\[\[r2_buckets\]\]/);
+      }
+
+      // Durable Objects: check generated worker code for DO bindings/imports
+      const expectsDurable = combo.features.includes('durableObject') || combo.features.includes('durableObjects');
+      const workerPath = path.join(servicePath, 'src', 'worker', 'index.js');
+      const workerExists = await fs.access(workerPath).then(() => true).catch(() => false);
+      expect(workerExists).toBe(true);
+      const workerContent = await fs.readFile(workerPath, 'utf8');
+
+      if (expectsDurable) {
+        // TemplateRuntime should inject Durable Object binding and import
+        expect(workerContent).toMatch(/DurableObject/);
+        expect(workerContent).toMatch(/DURABLE_OBJECT|durable_object/);
+      } else {
+        expect(workerContent).not.toMatch(/DurableObject/);
       }
     }
   }, 60000);
