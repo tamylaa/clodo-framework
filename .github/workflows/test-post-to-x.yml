@@ -31,6 +31,21 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Check workspace and helper script
+        run: |
+          echo "🔎 Listing workspace root"
+          ls -la || true
+          echo "🔎 Checking scripts directory"
+          ls -la scripts || true
+          echo "🔎 Show helper script head (first 40 lines) if present"
+          if [ -f scripts/x-oauth1.cjs ]; then
+            echo "✅ scripts/x-oauth1.cjs exists"
+            sed -n '1,40p' scripts/x-oauth1.cjs || true
+          else
+            echo "❌ scripts/x-oauth1.cjs MISSING"
+            exit 2
+          fi
+
       - name: Dry-check OAuth1.0a user tokens
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
