@@ -1,0 +1,29 @@
+name: Validate X Token On Push (diagnostic)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  token-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check X_BEARER_TOKEN
+        env:
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+        run: |
+          echo "Diagnose: push-based token check"
+          if [ -z "${X_BEARER_TOKEN}" ]; then
+            echo "X_BEARER_TOKEN is MISSING"
+            exit 1
+          fi
+          HTTP_STATUS=$(curl -s -o /tmp/x_response.json -w "%{http_code}" -H "Authorization: Bearer ${X_BEARER_TOKEN}" "https://api.twitter.com/2/users/me")
+          echo "HTTP status: ${HTTP_STATUS}"
+          jq . /tmp/x_response.json || true
+          if [ "${HTTP_STATUS}" = "200" ]; then
+            echo "✅ Token valid"
+            exit 0
+          else
+            echo "❌ Token invalid"
+            exit 1
+          fi
