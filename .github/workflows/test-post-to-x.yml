@@ -1,0 +1,55 @@
+name: Test post to X (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Message to post (max 280 chars)'
+        required: true
+        default: 'Test post — CI verification (please ignore)'
+      confirm:
+        description: 'Type "yes" to proceed with a public post (required)'
+        required: true
+        default: 'no'
+
+permissions:
+  contents: read
+
+jobs:
+  post-to-x:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Abort if not explicitly confirmed
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "yes" ]; then
+            echo "❌ Confirm not 'yes' — aborting to avoid accidental post. To proceed, set confirm: 'yes' when dispatching."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Dry-check OAuth1.0a user tokens
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          set -euo pipefail
+          echo "🔎 Performing OAuth1 dry-check (GET /2/users/me)"
+          node scripts/x-oauth1.cjs --dry-check
+
+      - name: Post message to X
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          set -euo pipefail
+          MSG="${{ github.event.inputs.message }}"
+          echo "📣 Posting message: $MSG"
+          node scripts/x-oauth1.cjs --post "$MSG"
