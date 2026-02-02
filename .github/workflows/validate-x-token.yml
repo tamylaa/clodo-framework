@@ -7,29 +7,25 @@ jobs:
   validate-token:
     runs-on: ubuntu-latest
     steps:
-      - name: Check token presence
-        run: |
-          if [ -z "${{ secrets.X_BEARER_TOKEN }}" ]; then
-            echo "❌ X_BEARER_TOKEN is not set in repository secrets";
-            exit 1;
-          fi
-          echo "🔒 X_BEARER_TOKEN is set — attempting dry-check against X API"
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      - name: Dry-check GET /2/users/me
-        env:
-          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+      - name: Check OAuth1.0a secrets presence
         run: |
-          set -euo pipefail
-          HTTP_STATUS=$(curl -s -o /tmp/x_response.json -w "%{http_code}" \
-            -H "Authorization: Bearer ${X_BEARER_TOKEN}" \
-            -H "Content-Type: application/json" \
-            "https://api.twitter.com/2/users/me")
-          echo "HTTP status: ${HTTP_STATUS}"
-          if [ "${HTTP_STATUS}" = "200" ]; then
-            echo "✅ Token valid. User info:"
-            jq . /tmp/x_response.json
-          else
-            echo "⚠️ Token check failed (HTTP ${HTTP_STATUS}). Response:"
-            jq . /tmp/x_response.json
+          if [ -z "${{ secrets.X_API_KEY }}" ] || [ -z "${{ secrets.X_API_SECRET }}" ] || [ -z "${{ secrets.X_ACCESS_TOKEN }}" ] || [ -z "${{ secrets.X_ACCESS_SECRET }}" ]; then
+            echo "❌ Required OAuth1.0a secrets (X_API_KEY/SECRET, X_ACCESS_TOKEN/SECRET) are not set"
             exit 1
           fi
+          echo "🔒 All required OAuth1.0a secrets are present"
+
+      - name: Dry-check GET /2/users/me (OAuth1)
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          set -euo pipefail
+          node scripts/x-oauth1.js --dry-check
