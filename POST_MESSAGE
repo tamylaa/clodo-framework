@@ -1,0 +1,2 @@
+CONFIRM: yes
+Releases: v4.2.0/v4.3.0 — Validation improvements + generator emits Durable Object bindings; feature normalization and conditional Wrangler KV/R2 handling. Details: https://github.com/tamylaa/clodo-framework/releases #clodoframework
