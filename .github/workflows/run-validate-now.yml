@@ -25,4 +25,4 @@ jobs:
         run: |
           set -euo pipefail
           echo "🔒 Running OAuth1.0a dry-check using workspace helper"
-          node scripts/x-oauth1.js --dry-check
+          node scripts/x-oauth1.cjs --dry-check

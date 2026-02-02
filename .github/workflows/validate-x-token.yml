@@ -28,4 +28,4 @@ jobs:
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
         run: |
           set -euo pipefail
-          node scripts/x-oauth1.js --dry-check
+          node scripts/x-oauth1.cjs --dry-check

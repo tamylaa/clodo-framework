@@ -32,7 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "🔒 Running OAuth1.0a dry-check (GET /2/users/me) using user-context tokens"
-          node scripts/x-oauth1.js --dry-check
+          node scripts/x-oauth1.cjs --dry-check
 
       - name: Post announcement to X
         if: github.event_name != 'workflow_dispatch' || (github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'false')
@@ -47,4 +47,4 @@ jobs:
           set -euo pipefail
           MESSAGE="v${RELEASE_TAG} — Programmatic createService now normalizes legacy kv → upstash, accepts plural durableObjects, and emits Durable Object bindings into generated middleware. Read the release notes: ${RELEASE_URL}"
           echo "Posting to X (user-context auth): $MESSAGE"
-          node scripts/x-oauth1.js --post "$MESSAGE"
+          node scripts/x-oauth1.cjs --post "$MESSAGE"
