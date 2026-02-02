@@ -1,3 +1,10 @@
+## [4.3.2](https://github.com/tamylaa/clodo-framework/compare/v4.3.1...v4.3.2) (2026-02-02)
+
+
+### Bug Fixes
+
+* **x:** resolve YAML syntax errors in run-validate-now.yml by quoting step name and adjusting indentation ([3eecf16](https://github.com/tamylaa/clodo-framework/commit/3eecf1690746c86c077f31fb64596da6d3ff9cf1))
+
 ## [4.3.1](https://github.com/tamylaa/clodo-framework/compare/v4.3.0...v4.3.1) (2026-02-01)
 
 
