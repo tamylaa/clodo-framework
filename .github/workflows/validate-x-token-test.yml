@@ -1,0 +1,19 @@
+name: Validate X Token Test (diagnostic)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo environment
+        env:
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+        run: |
+          echo "Diagnose: workflow registered and running"
+          if [ -z "${X_BEARER_TOKEN}" ]; then
+            echo "X_BEARER_TOKEN is MISSING"
+            exit 0
+          fi
+          echo "X_BEARER_TOKEN is SET"
