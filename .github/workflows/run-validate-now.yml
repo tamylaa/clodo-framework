@@ -37,8 +37,8 @@ jobs:
             set -euo pipefail
             if [ -f POST_MESSAGE ]; then
               echo "🔐 POST_MESSAGE file found — preparing to post"
-              CONFIRM_LINE=$(sed -n '1p' POST_MESSAGE || true)
-              MESSAGE=$(sed -n '2,$p' POST_MESSAGE | tr '\n' ' ' | tr -s ' ' | sed 's/^ //; s/ $//')
+            CONFIRM_LINE=$(sed -n '1p' POST_MESSAGE | tr -d '\r' || true)
+            MESSAGE=$(sed -n '2,$p' POST_MESSAGE | tr -d '\r' | tr '\n' ' ' | tr -s ' ' | sed 's/^ //; s/ $//')
               if [ "${CONFIRM_LINE}" = "CONFIRM: yes" ] && [ -n "${MESSAGE}" ]; then
                 echo "📣 Posting message: ${MESSAGE}"
                 node scripts/x-oauth1.cjs --post "${MESSAGE}"
