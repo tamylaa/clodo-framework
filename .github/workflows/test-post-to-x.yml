@@ -1,5 +1,5 @@
 name: Test post to X (manual)
-
+# registration-nudge: 2026-02-02T12:50:00Z — non-functional comment to force workflow re-registration
 on:
   workflow_dispatch:
     inputs:
