@@ -1,3 +1,10 @@
+## [4.3.3](https://github.com/tamylaa/clodo-framework/compare/v4.3.2...v4.3.3) (2026-02-02)
+
+
+### Bug Fixes
+
+* **x:** strip CRLF from POST_MESSAGE lines before comparison and message extraction ([d9db8e0](https://github.com/tamylaa/clodo-framework/commit/d9db8e0eb87081c5e9506191b21a32970a7745f4))
+
 ## [4.3.2](https://github.com/tamylaa/clodo-framework/compare/v4.3.1...v4.3.2) (2026-02-02)
 
 
