@@ -1,3 +1,11 @@
+## [4.3.4](https://github.com/tamylaa/clodo-framework/compare/v4.3.3...v4.3.4) (2026-02-04)
+
+
+### Bug Fixes
+
+* include middleware migration doc in packaged artifact ([a6e7c9e](https://github.com/tamylaa/clodo-framework/commit/a6e7c9e8d57f0bf3c11516e418ebe71a8b4e3c0e))
+* trigger semantic-release for test fixes ([04f6f90](https://github.com/tamylaa/clodo-framework/commit/04f6f90fede7fab4ca1060fc6f490d1848a2ad55))
+
 ## [4.3.3](https://github.com/tamylaa/clodo-framework/compare/v4.3.2...v4.3.3) (2026-02-02)
 
 
