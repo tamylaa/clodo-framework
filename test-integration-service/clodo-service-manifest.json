@@ -1,0 +1,135 @@
+{
+  "manifestVersion": "1.0.0",
+  "frameworkVersion": "3.0.0",
+  "generatedAt": "2026-02-04T03:54:13.701Z",
+  "d1": true,
+  "kv": false,
+  "r2": false,
+  "service": {
+    "name": "test-integration-service",
+    "displayName": "Test Integration Service",
+    "description": "A Clodo Framework service providing core functionality and extensibility",
+    "type": "api-service",
+    "version": "1.0.0",
+    "author": "Clodo Framework"
+  },
+  "configuration": {
+    "coreInputs": {
+      "serviceName": "test-integration-service",
+      "serviceType": "api-service",
+      "domainName": "test.clodo.dev",
+      "environment": "development"
+    },
+    "confirmedValues": {
+      "displayName": "Test Integration Service",
+      "description": "A Clodo Framework service providing core functionality and extensibility",
+      "version": "1.0.0",
+      "author": "Clodo Framework",
+      "productionUrl": "https://test-integration-service.test.clodo.dev",
+      "stagingUrl": "https://test-integration-service-sta.test.clodo.dev",
+      "developmentUrl": "https://test-integration-service-dev.test.clodo.dev",
+      "features": {
+        "logging": true,
+        "monitoring": true,
+        "errorReporting": true,
+        "metrics": true,
+        "healthChecks": true,
+        "extensibility": true,
+        "configuration": true,
+        "deployment": true,
+        "d1": true
+      },
+      "databaseName": "test-integration-service-db",
+      "workerName": "test-integration-service-worker",
+      "packageName": "test-integration-service",
+      "gitRepositoryUrl": "https://github.com/tamylaa/test-integration-service",
+      "documentationUrl": "https://docs.test.clodo.dev",
+      "healthCheckPath": "/health",
+      "apiBasePath": "/api/v1/test/integration-service"
+    },
+    "urls": {
+      "production": "https://test-integration-service.test.clodo.dev",
+      "staging": "https://test-integration-service-sta.test.clodo.dev",
+      "development": "https://test-integration-service-dev.test.clodo.dev",
+      "documentation": "https://docs.test.clodo.dev"
+    },
+    "api": {
+      "basePath": "/api/v1/test/integration-service",
+      "healthCheckPath": "/health"
+    },
+    "cloudflare": {
+      "workerName": "test-integration-service-worker",
+      "databaseName": "test-integration-service-db"
+    },
+    "features": {
+      "logging": true,
+      "monitoring": true,
+      "errorReporting": true,
+      "metrics": true,
+      "healthChecks": true,
+      "extensibility": true,
+      "configuration": true,
+      "deployment": true,
+      "d1": true
+    }
+  },
+  "files": {
+    "total": 27,
+    "list": [
+      "test-integration-service\\package.json",
+      "test-integration-service\\wrangler.toml",
+      "test-integration-service\\config\\domains.js",
+      "test-integration-service\\src\\index.js",
+      "test-integration-service\\.env.example",
+      "test-integration-service\\config\\schema.json",
+      "test-integration-service\\src\\handlers.js",
+      "test-integration-service\\src\\middleware\\service-middleware.js",
+      "test-integration-service\\src\\utils.js",
+      "test-integration-service\\scripts\\deploy.sh",
+      "test-integration-service\\scripts\\setup.sh",
+      "test-integration-service\\scripts\\health-check.js",
+      "test-integration-service\\.env.production",
+      "test-integration-service\\.env.staging",
+      "test-integration-service\\.env.development",
+      "test-integration-service\\test\\unit.test.js",
+      "test-integration-service\\test\\integration.test.js",
+      "test-integration-service\\jest.config.js",
+      "test-integration-service\\eslint.config.js",
+      "test-integration-service\\README.md",
+      "test-integration-service\\docs\\api.md",
+      "test-integration-service\\docs\\deployment.md",
+      "test-integration-service\\docs\\configuration.md",
+      "test-integration-service\\.github\\workflows\\ci.yml",
+      "test-integration-service\\.github\\workflows\\deploy.yml",
+      "test-integration-service\\.gitignore",
+      "test-integration-service\\docker-compose.yml"
+    ],
+    "byCategory": {
+      "core": [
+        "test-integration-service\\package.json",
+        "test-integration-service\\wrangler.toml",
+        "test-integration-service\\.env.example",
+        "test-integration-service\\.env.production",
+        "test-integration-service\\.env.staging",
+        "test-integration-service\\.env.development"
+      ],
+      "service": [],
+      "environment": [],
+      "testing": [
+        "test-integration-service\\jest.config.js"
+      ],
+      "documentation": [
+        "test-integration-service\\README.md"
+      ],
+      "automation": [
+        "test-integration-service\\.gitignore",
+        "test-integration-service\\docker-compose.yml"
+      ]
+    }
+  },
+  "metadata": {
+    "generationEngine": "GenerationEngine v1.0.0",
+    "tier": "Tier 3 - Automated Generation",
+    "checksum": "622f1388"
+  }
+}

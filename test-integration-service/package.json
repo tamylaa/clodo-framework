@@ -1,0 +1,52 @@
+{
+  "name": "test-integration-service",
+  "version": "1.0.0",
+  "description": "A Clodo Framework service providing core functionality and extensibility",
+  "main": "src/worker/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "deploy": "clodo-service deploy",
+    "deploy:dev": "node scripts/deploy.js development",
+    "deploy:staging": "node scripts/deploy.js staging",
+    "deploy:prod": "node scripts/deploy.js production",
+    "lint": "eslint src/ test/",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "validate": "clodo-service validate .",
+    "diagnose": "clodo-service diagnose .",
+    "build": "wrangler deploy --dry-run",
+    "clean": "rimraf dist/ coverage/"
+  },
+  "dependencies": {
+    "@tamyla/clodo-framework": "^3.0.15",
+    "uuid": "^13.0.0",
+    "wrangler": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.0"
+  },
+  "author": "Clodo Framework",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamylaa/test-integration-service"
+  },
+  "keywords": [
+    "clodo-framework",
+    "api-service",
+    "cloudflare",
+    "serverless"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
