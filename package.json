@@ -194,6 +194,7 @@
     "url": "https://github.com/tamylaa/clodo-framework/issues",
     "email": "product@clodo.dev"
   },
+  "support": "https://github.com/tamyla/clodo-framework/blob/main/SUPPORT.md",
   "homepage": "https://clodo.dev",
   "release": {
     "branches": [

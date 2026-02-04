@@ -1,5 +1,7 @@
 # Clodo Framework
 
+[![Validate CI](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml) [![Full tests (nightly)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml)
+
 ## 🚀 Production-Ready: Promise Delivered
 
 **Framework Status: ✅ VALIDATED & PRODUCTION-READY**  
@@ -41,6 +43,8 @@ A comprehensive framework for building enterprise-grade software architecture on
   - 🗣️ Share your experience on Twitter and tag **@clodoframework**
 
 Your feedback helps prioritize improvements and signals others that this project is useful.
+
+- **Support & SLAs:** See [SUPPORT.md](SUPPORT.md) for response times and escalation procedures.
 
 ### 📁 **Documentation Structure**
 ```
