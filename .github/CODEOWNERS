@@ -1,0 +1,4 @@
+# Code Owners - automatically request reviews from maintainers
+# Examples:
+#  - `/src/ @tamylaa` to assign owner for src
+* @tamylaa

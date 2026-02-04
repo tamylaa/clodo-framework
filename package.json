@@ -195,6 +195,10 @@
     "email": "product@clodo.dev"
   },
   "support": "https://github.com/tamyla/clodo-framework/blob/main/SUPPORT.md",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tamylaa"
+  },
   "homepage": "https://clodo.dev",
   "release": {
     "branches": [

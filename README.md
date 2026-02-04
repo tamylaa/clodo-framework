@@ -1,6 +1,6 @@
 # Clodo Framework
 
-[![Validate CI](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml) [![Full tests (nightly)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml)
+[![Validate CI](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml) [![Full tests (nightly)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml) [![npm](https://img.shields.io/npm/v/@tamyla/clodo-framework.svg)](https://www.npmjs.com/package/@tamyla/clodo-framework) [![downloads](https://img.shields.io/npm/dw/@tamyla/clodo-framework.svg)](https://www.npmjs.com/package/@tamyla/clodo-framework) [![License](https://img.shields.io/npm/l/@tamyla/clodo-framework.svg)](https://github.com/tamylaa/clodo-framework/blob/main/LICENSE) [![Sponsor](https://img.shields.io/github/sponsors/tamylaa?style=social)](https://github.com/sponsors/tamylaa) [![Support](https://img.shields.io/badge/Support-product%40clodo.dev-blue)](SUPPORT.md)
 
 ## 🚀 Production-Ready: Promise Delivered
 
