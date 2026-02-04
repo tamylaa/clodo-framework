@@ -61,6 +61,7 @@
     "docs/SIMPLE_API_GUIDE.md",
     "docs/HOWTO_CONSUME_CLODO_FRAMEWORK.md",
     "docs/MIGRATION.md",
+    "docs/MIDDLEWARE_MIGRATION_SUMMARY.md",
     "docs/errors.md",
     "docs/api/",
     "scripts",
