@@ -11,9 +11,44 @@ A comprehensive framework for building enterprise-grade software architecture on
 
 > **✅ VALIDATED PROMISE**: Through comprehensive testing and validation, the Clodo Framework has been proven to deliver on its core promise of automated Cloudflare service creation. See [Framework Evolution Narrative](docs/FRAMEWORK_EVOLUTION_NARRATIVE.md) for the complete development story.
 
-## Philosophy
+## 📚 Documentation
 
-Just like Clodo bricks snap together to build anything you can imagine, this framework provides the base components that your services snap into. Focus on your business logic while the framework handles the infrastructure, configuration, and deployment patterns.
+### 🚀 **Quick Start** (5 minutes)
+- **[Developer Quick Start](docs/00_START_HERE.md)** - Get running immediately
+- **[Simple API Guide](docs/SIMPLE_API_GUIDE.md)** - Quick examples and usage
+
+### 🔧 **API Reference**
+- **[Programmatic API](docs/api/PROGRAMMATIC_API.md)** - Complete programmatic usage
+- **[Parameter Reference](docs/api/parameter_reference.md)** - All parameters and validation
+- **[Error Reference](docs/errors.md)** - Error codes and troubleshooting
+
+### 📖 **Guides & Migration**
+- **[Getting Started](docs/HOWTO_CONSUME_CLODO_FRAMEWORK.md)** - Step-by-step tutorial
+- **[Migration Guide](docs/MIGRATION.md)** - CLI to programmatic APIs
+- **[Framework Overview](docs/overview.md)** - Philosophy and concepts
+
+### 🏗️ **Architecture & Security**
+- **[Security](docs/SECURITY.md)** - Security considerations
+- **[Framework Evolution](docs/FRAMEWORK_EVOLUTION_NARRATIVE.md)** - Development history
+
+### 📁 **Documentation Structure**
+```
+├── docs/                    # 📖 Public documentation (npm package)
+│   ├── 00_START_HERE.md    # 🚀 Quick start guide
+│   ├── README.md           # 📚 Documentation index
+│   ├── overview.md         # 🏛️ Framework philosophy
+│   ├── api/                # 🔧 API documentation
+│   ├── integration/        # 🔗 Integration guides
+│   └── architecture/       # 🏗️ Technical architecture
+└── i-docs/                 # 🔒 Internal documentation (private)
+    ├── commercialization/  # 💼 Business strategy
+    ├── roadmap/           # 🗺️ Development planning
+    └── analysis/          # 📊 Technical analysis
+```
+
+### 🏷️ **Document Types**
+- **📖 Public** (`docs/`) - Developer usage, API reference, examples
+- **🔒 Internal** (`i-docs/`) - Business strategy, implementation details, planning
 
 ## 🎯 Key Achievements
 

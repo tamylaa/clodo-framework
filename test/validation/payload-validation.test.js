@@ -33,7 +33,7 @@ describe('Payload validation', () => {
   it('parameter definitions include expected enums', () => {
     const defs = getParameterDefinitions();
     expect(defs.serviceType.enum).toBeDefined();
-    expect(defs.features.enum).toEqual(VALID_FEATURES);
+    expect(defs.features.enum).toEqual(VALID_FEATURES());
   });
 
   it("accepts legacy 'kv' feature alias for backward compatibility", () => {

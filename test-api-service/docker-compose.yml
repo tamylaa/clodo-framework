@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  test-api-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8787:8787"
+    environment:
+      - NODE_ENV=development
+      - SERVICE_NAME=test-api-service
+      - SERVICE_TYPE=api-service
+      - ENVIRONMENT=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+  test-api-service-db:
+    image: cloudflare/d1
+    ports:
+      - "8788:8787"
+    environment:
+      - DATABASE_NAME=test-api-service-db
+    volumes:
+      - .wrangler:/data

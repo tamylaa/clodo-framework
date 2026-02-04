@@ -1,0 +1,135 @@
+{
+  "manifestVersion": "1.0.0",
+  "frameworkVersion": "3.0.0",
+  "generatedAt": "2026-02-04T03:49:23.787Z",
+  "d1": true,
+  "kv": false,
+  "r2": false,
+  "service": {
+    "name": "test-api-service",
+    "displayName": "Test Api Service",
+    "description": "A Clodo Framework service providing core functionality and extensibility",
+    "type": "api-service",
+    "version": "1.0.0",
+    "author": "Clodo Framework"
+  },
+  "configuration": {
+    "coreInputs": {
+      "serviceName": "test-api-service",
+      "serviceType": "api-service",
+      "domainName": "test.example.com",
+      "environment": "development"
+    },
+    "confirmedValues": {
+      "displayName": "Test Api Service",
+      "description": "A Clodo Framework service providing core functionality and extensibility",
+      "version": "1.0.0",
+      "author": "Clodo Framework",
+      "productionUrl": "https://test-api-service.test.example.com",
+      "stagingUrl": "https://test-api-service-sta.test.example.com",
+      "developmentUrl": "https://test-api-service-dev.test.example.com",
+      "features": {
+        "logging": true,
+        "monitoring": true,
+        "errorReporting": true,
+        "metrics": true,
+        "healthChecks": true,
+        "extensibility": true,
+        "configuration": true,
+        "deployment": true,
+        "d1": true
+      },
+      "databaseName": "test-api-service-db",
+      "workerName": "test-api-service-worker",
+      "packageName": "test-api-service",
+      "gitRepositoryUrl": "https://github.com/tamylaa/test-api-service",
+      "documentationUrl": "https://docs.test.example.com",
+      "healthCheckPath": "/health",
+      "apiBasePath": "/api/v1/test/api-service"
+    },
+    "urls": {
+      "production": "https://test-api-service.test.example.com",
+      "staging": "https://test-api-service-sta.test.example.com",
+      "development": "https://test-api-service-dev.test.example.com",
+      "documentation": "https://docs.test.example.com"
+    },
+    "api": {
+      "basePath": "/api/v1/test/api-service",
+      "healthCheckPath": "/health"
+    },
+    "cloudflare": {
+      "workerName": "test-api-service-worker",
+      "databaseName": "test-api-service-db"
+    },
+    "features": {
+      "logging": true,
+      "monitoring": true,
+      "errorReporting": true,
+      "metrics": true,
+      "healthChecks": true,
+      "extensibility": true,
+      "configuration": true,
+      "deployment": true,
+      "d1": true
+    }
+  },
+  "files": {
+    "total": 27,
+    "list": [
+      "test-api-service\\package.json",
+      "test-api-service\\wrangler.toml",
+      "test-api-service\\config\\domains.js",
+      "test-api-service\\src\\index.js",
+      "test-api-service\\.env.example",
+      "test-api-service\\config\\schema.json",
+      "test-api-service\\src\\handlers.js",
+      "test-api-service\\src\\middleware\\service-middleware.js",
+      "test-api-service\\src\\utils.js",
+      "test-api-service\\scripts\\deploy.sh",
+      "test-api-service\\scripts\\setup.sh",
+      "test-api-service\\scripts\\health-check.js",
+      "test-api-service\\.env.production",
+      "test-api-service\\.env.staging",
+      "test-api-service\\.env.development",
+      "test-api-service\\test\\unit.test.js",
+      "test-api-service\\test\\integration.test.js",
+      "test-api-service\\jest.config.js",
+      "test-api-service\\eslint.config.js",
+      "test-api-service\\README.md",
+      "test-api-service\\docs\\api.md",
+      "test-api-service\\docs\\deployment.md",
+      "test-api-service\\docs\\configuration.md",
+      "test-api-service\\.github\\workflows\\ci.yml",
+      "test-api-service\\.github\\workflows\\deploy.yml",
+      "test-api-service\\.gitignore",
+      "test-api-service\\docker-compose.yml"
+    ],
+    "byCategory": {
+      "core": [
+        "test-api-service\\package.json",
+        "test-api-service\\wrangler.toml",
+        "test-api-service\\.env.example",
+        "test-api-service\\.env.production",
+        "test-api-service\\.env.staging",
+        "test-api-service\\.env.development"
+      ],
+      "service": [],
+      "environment": [],
+      "testing": [
+        "test-api-service\\jest.config.js"
+      ],
+      "documentation": [
+        "test-api-service\\README.md"
+      ],
+      "automation": [
+        "test-api-service\\.gitignore",
+        "test-api-service\\docker-compose.yml"
+      ]
+    }
+  },
+  "metadata": {
+    "generationEngine": "GenerationEngine v1.0.0",
+    "tier": "Tier 3 - Automated Generation",
+    "checksum": "16f0e22a"
+  }
+}

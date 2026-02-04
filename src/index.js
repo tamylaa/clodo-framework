@@ -40,6 +40,20 @@ export { ServiceCreator } from './service-management/ServiceCreator.js';
 export { ServiceOrchestrator } from './service-management/ServiceOrchestrator.js';
 export { InputCollector } from './service-management/InputCollector.js';
 
+// Programmatic APIs
+export { createServiceProgrammatic } from './programmatic/createService.js';
+export { deployServiceProgrammatic } from './programmatic/deployService.js';
+export { validateServiceProgrammatic } from './programmatic/validateService.js';
+export { getFrameworkCapabilities, getFrameworkVersion } from './api/frameworkCapabilities.js';
+export { getAcceptedParameters, validateServicePayload } from './validation/payloadValidation.js';
+export {
+  IntegrationError,
+  PayloadValidationError,
+  ParameterNotSupportedError,
+  VersionCompatibilityError
+} from './errors/integrationErrors.js';
+export { MockServiceOrchestrator, createMockFramework } from './testing/mockFramework.js';
+
 // CLI utilities (for framework CLI commands)
 export { StandardOptions } from '../lib/shared/utils/cli-options.js';
 export { ConfigLoader } from '../lib/shared/utils/config-loader.js';

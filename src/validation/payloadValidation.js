@@ -17,7 +17,7 @@ export const ServicePayloadSchema = z.object({
   bindings: z.array(z.string()).optional(),
   resources: z.record(z.any()).optional(),
   specs: z.record(z.any()).optional(),
-  clodo: z.record(z.any()).optional()
+  clodo: z.any().optional()
 });
 
 export function validateServicePayload(payload) {
@@ -46,7 +46,11 @@ export function validateServicePayload(payload) {
     // Handle Zod-like errors with an errors array
     if (err && err.errors && Array.isArray(err.errors)) {
       for (const e of err.errors) {
-        result.errors.push({ field: (e.path || []).join('.'), code: 'SCHEMA_VALIDATION', message: e.message });
+        if (e && typeof e === 'object') {
+          result.errors.push({ field: (e.path || []).join('.'), code: 'SCHEMA_VALIDATION', message: e.message });
+        } else {
+          result.errors.push({ field: 'unknown', code: 'SCHEMA_VALIDATION', message: `Unknown validation error: ${JSON.stringify(e)}` });
+        }
       }
     }
     // Some environments stringify Zod errors into err.message (JSON array) - try to parse
@@ -100,12 +104,42 @@ export function getParameterDefinitions() {
       description: 'Domain for the service',
       validationRules: [ { rule: 'pattern', value: '^([a-z0-9]+(-[a-z0-9]+)*\\.)+[a-z]{2,}$', message: 'Must be a valid domain' } ]
     },
+    description: {
+      name: 'description',
+      type: 'string',
+      required: false,
+      description: 'Optional description of the service'
+    },
+    template: {
+      name: 'template',
+      type: 'string',
+      required: false,
+      description: 'Template to use for service creation'
+    },
     features: {
       name: 'features',
       type: 'array',
       required: false,
       description: 'Features to enable',
-      enum: VALID_FEATURES
+      enum: VALID_FEATURES()
+    },
+    bindings: {
+      name: 'bindings',
+      type: 'array',
+      required: false,
+      description: 'Service bindings configuration'
+    },
+    resources: {
+      name: 'resources',
+      type: 'object',
+      required: false,
+      description: 'Resource specifications'
+    },
+    specs: {
+      name: 'specs',
+      type: 'object',
+      required: false,
+      description: 'Additional specifications'
     },
     clodo: {
       name: 'clodo',
@@ -115,3 +149,6 @@ export function getParameterDefinitions() {
     }
   };
 }
+
+// Alias for backward compatibility and API consistency
+export const getAcceptedParameters = getParameterDefinitions;
