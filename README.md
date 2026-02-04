@@ -31,6 +31,17 @@ A comprehensive framework for building enterprise-grade software architecture on
 - **[Security](docs/SECURITY.md)** - Security considerations
 - **[Framework Evolution](docs/FRAMEWORK_EVOLUTION_NARRATIVE.md)** - Development history
 
+## 🧑‍🤝‍🧑 Community & Support
+- **Email:** `product@clodo.dev` — product support, feedback, and security reports
+- **Twitter:** [@clodoframework](https://twitter.com/clodoframework) — follow for updates and announcements
+- **Quick ways to help:**
+  - ⭐ Star the repository on GitHub
+  - 🐛 Open issues for bugs or feature ideas
+  - 🔀 Submit PRs or reviews (even small documentation fixes are welcome)
+  - 🗣️ Share your experience on Twitter and tag **@clodoframework**
+
+Your feedback helps prioritize improvements and signals others that this project is useful.
+
 ### 📁 **Documentation Structure**
 ```
 ├── docs/                    # 📖 Public documentation (npm package)

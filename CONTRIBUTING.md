@@ -201,7 +201,10 @@ Instances of abusive, harassing, or otherwise unacceptable behavior may be repor
 - **Documentation**: Check the [docs](./docs/README.md) first
 - **GitHub Issues**: For bugs and feature requests
 - **Discussions**: For questions and community support
-- **Email**: For security issues or private concerns
+- **Email**: `product@clodo.dev` — for product support, feedback, or security issues (we aim to respond within 2 business days)
+- **Twitter**: [@clodoframework](https://twitter.com/clodoframework) — follow for releases and updates
+
+**Want to show appreciation?** Star the repository and leave a short note via an Issue or tweet — we read and appreciate every mention.
 
 ## 🏷️ Release Process
 

@@ -191,7 +191,8 @@
     "url": "git+https://github.com/tamylaa/clodo-framework.git"
   },
   "bugs": {
-    "url": "https://github.com/tamylaa/clodo-framework/issues"
+    "url": "https://github.com/tamylaa/clodo-framework/issues",
+    "email": "product@clodo.dev"
   },
   "homepage": "https://clodo.dev",
   "release": {
