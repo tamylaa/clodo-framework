@@ -1,3 +1,11 @@
+# [4.4.0](https://github.com/tamylaa/clodo-framework/compare/v4.3.5...v4.4.0) (2026-02-05)
+
+
+### Features
+
+* add comprehensive Cloudflare Workers utilities ([8c82fd9](https://github.com/tamylaa/clodo-framework/commit/8c82fd97b9f2ac7ea1e579b3a4a37fea9f0aaaab))
+* add comprehensive Cloudflare Workers utilities ([b7fd6e8](https://github.com/tamylaa/clodo-framework/commit/b7fd6e881cc6734606917b1786150abc5022f6ab))
+
 ## [4.3.5](https://github.com/tamylaa/clodo-framework/compare/v4.3.4...v4.3.5) (2026-02-04)
 
 
