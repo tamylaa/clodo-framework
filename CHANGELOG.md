@@ -1,3 +1,10 @@
+## [4.3.5](https://github.com/tamylaa/clodo-framework/compare/v4.3.4...v4.3.5) (2026-02-04)
+
+
+### Bug Fixes
+
+* **funding:** use string value for open_collective in FUNDING.yml ([680cb5f](https://github.com/tamylaa/clodo-framework/commit/680cb5fa28499f2297b39a556ee2c60c0573ab4a))
+
 ## [4.3.4](https://github.com/tamylaa/clodo-framework/compare/v4.3.3...v4.3.4) (2026-02-04)
 
 
