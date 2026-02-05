@@ -1,6 +1,6 @@
 # Clodo Framework
 
-[![Validate CI](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml) [![Full tests (nightly)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml) [![npm](https://img.shields.io/npm/v/@tamyla/clodo-framework.svg)](https://www.npmjs.com/package/@tamyla/clodo-framework) [![downloads](https://img.shields.io/npm/dw/@tamyla/clodo-framework.svg)](https://www.npmjs.com/package/@tamyla/clodo-framework) [![License](https://img.shields.io/npm/l/@tamyla/clodo-framework.svg)](https://github.com/tamylaa/clodo-framework/blob/main/LICENSE) [![Sponsor](https://img.shields.io/github/sponsors/tamylaa?style=social)](https://github.com/sponsors/tamylaa) [![Support](https://img.shields.io/badge/Support-product%40clodo.dev-blue)](SUPPORT.md)
+[![Validate CI](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/validate-on-pr.yml) [![Full tests (nightly)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml/badge.svg)](https://github.com/tamylaa/clodo-framework/actions/workflows/full-tests-nightly.yml) [![npm](https://img.shields.io/npm/v/@tamyla/clodo-framework.svg)](https://www.npmjs.com/package/@tamyla/clodo-framework) [![downloads](https://img.shields.io/npm/dw/@tamyla/clodo-framework.svg)](https://www.npmjs.com/package/@tamyla/clodo-framework) [![License](https://img.shields.io/npm/l/@tamyla/clodo-framework.svg)](https://github.com/tamylaa/clodo-framework/blob/main/LICENSE) [![Sponsor](https://img.shields.io/github/sponsors/tamylaa?style=social)](https://github.com/sponsors/tamylaa) [![Support](https://img.shields.io/badge/Support-product%40clodo.dev-blue)](SUPPORT.md) [![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%9D%A4-orange?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/yourname) [![Patreon](https://img.shields.io/badge/Patreon-Support-orange?logo=patreon)](https://www.patreon.com/yourname) [![PayPal](https://img.shields.io/badge/PayPal-Donate-blue?logo=paypal)](https://paypal.me/yourname)
 
 ## 🚀 Production-Ready: Promise Delivered
 
@@ -45,6 +45,8 @@ A comprehensive framework for building enterprise-grade software architecture on
 Your feedback helps prioritize improvements and signals others that this project is useful.
 
 - **Support & SLAs:** See [SUPPORT.md](SUPPORT.md) for response times and escalation procedures.
+
+- **Donate / Sponsor:** If you'd like to support ongoing maintenance and improvements, please see [FUNDING.md](FUNDING.md) for ways to contribute (GitHub Sponsors, Open Collective, PayPal, Buy Me a Coffee, Patreon).
 
 ### 📁 **Documentation Structure**
 ```
