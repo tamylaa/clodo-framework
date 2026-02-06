@@ -59,6 +59,8 @@ Thumbs.db
 # Logs
 logs
 *.log
+.logs/
+.tmp/
 
 # Build outputs
 build/
@@ -119,3 +121,11 @@ deployments/
 
 # Ignore the local development site which is an embedded repo and not packaged
 clodo-dev-site/
+
+# Temporary analysis and summary documents
+ACTIONABLE_SUMMARY.md
+REAL_VS_THEORETICAL_ANALYSIS.md
+RECOMMENDATIONS_QUICK_REFERENCE.md
+RECOMMENDATIONS_REVIEW_5FEB2026.md
+ROUTER_API_FIX_SUMMARY.md
+V4.4.1_RELEASE_SUMMARY.md

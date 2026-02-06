@@ -148,6 +148,76 @@ describe('EnhancedRouter', () => {
       expect(router.middleware).toEqual([middleware]);
     });
   });
+
+  describe('Express-like convenience methods', () => {
+    test('should register GET route via .get() method', () => {
+      const handler = jest.fn(() => new Response('get'));
+      router.get('/api/test', handler);
+
+      expect(router.routes.get('GET /api/test')).toBe(handler);
+    });
+
+    test('should register POST route via .post() method', () => {
+      const handler = jest.fn(() => new Response('post'));
+      router.post('/api/test', handler);
+
+      expect(router.routes.get('POST /api/test')).toBe(handler);
+    });
+
+    test('should register PUT route via .put() method', () => {
+      const handler = jest.fn(() => new Response('put'));
+      router.put('/api/test', handler);
+
+      expect(router.routes.get('PUT /api/test')).toBe(handler);
+    });
+
+    test('should register PATCH route via .patch() method', () => {
+      const handler = jest.fn(() => new Response('patch'));
+      router.patch('/api/test', handler);
+
+      expect(router.routes.get('PATCH /api/test')).toBe(handler);
+    });
+
+    test('should register DELETE route via .delete() method', () => {
+      const handler = jest.fn(() => new Response('delete'));
+      router.delete('/api/test', handler);
+
+      expect(router.routes.get('DELETE /api/test')).toBe(handler);
+    });
+
+    test('should register OPTIONS route via .options() method', () => {
+      const handler = jest.fn(() => new Response('', { headers: { Allow: 'GET,POST,OPTIONS' } }));
+      // Note: Using Object.getOwnPropertyDescriptor to access the method directly
+      // to avoid collision with Jest's test.options() function
+      const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(router), 'options');
+      descriptor.value.call(router, '/api/test', handler);
+
+      expect(router.routes.get('OPTIONS /api/test')).toBe(handler);
+    });
+
+    test('should register HEAD route via .head() method', () => {
+      const handler = jest.fn(() => new Response('', { status: 200 }));
+      router.head('/api/test', handler);
+
+      expect(router.routes.get('HEAD /api/test')).toBe(handler);
+    });
+
+    test('should handle parameterized routes with .get()', async () => {
+      const handler = jest.fn(() => new Response('user'));
+      router.get('/api/users/:id', handler);
+
+      const response = await router.handleRequest('GET', '/api/users/123', mockRequest);
+      expect(handler).toHaveBeenCalledWith(mockRequest, '123');
+    });
+
+    test('should handle parameterized routes with .post()', async () => {
+      const handler = jest.fn(() => new Response('created'));
+      router.post('/api/posts/:id/comments', handler);
+
+      const response = await router.handleRequest('POST', '/api/posts/456/comments', mockRequest);
+      expect(handler).toHaveBeenCalledWith(mockRequest, '456');
+    });
+  });
 });
 
 describe('createEnhancedRouter', () => {

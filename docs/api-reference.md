@@ -296,6 +296,40 @@ router.registerRoute('GET', '/api/users/:id', async (request, id) => {
 });
 ```
 
+##### Express-like Convenience Methods
+
+For familiarity with Express patterns, use these shorthand methods:
+
+```javascript
+// GET route
+router.get('/api/users', async (request) => {
+  return new Response(JSON.stringify(users));
+});
+
+// POST route
+router.post('/api/users', async (request) => {
+  const userData = await request.json();
+  return new Response(JSON.stringify(newUser), { status: 201 });
+});
+
+// PUT route
+router.put('/api/users/:id', async (request, id) => {
+  return new Response(JSON.stringify(updatedUser));
+});
+
+// PATCH route
+router.patch('/api/users/:id', async (request, id) => {
+  return new Response(JSON.stringify(patchedUser));
+});
+
+// DELETE route
+router.delete('/api/users/:id', async (request, id) => {
+  return new Response(JSON.stringify({ success: true }));
+});
+```
+
+These methods are aliases to `registerRoute()` and support the same handler signature.
+
 ##### `handleRequest(method, path, request)`
 ```javascript
 const response = await router.handleRequest('GET', '/api/users/123', request);
@@ -440,6 +474,125 @@ const config = DeploymentManager.generateSecureConfig('client', 'prod');
 ---
 
 ## ⚙️ Configuration Management
+
+### Service Environment Variables (v4.4.1+)
+
+The framework standardizes how environment variables are configured in services using a single recommended flat format.
+
+#### Recommended Format: Flat Structure
+
+```javascript
+// services-config.json
+{
+  "services": [
+    {
+      "name": "api-service",
+      "vars": {
+        "API_KEY": "my-api-key",
+        "DEBUG": "true",
+        "LOG_LEVEL": "info"
+      },
+      "secrets": ["DB_PASSWORD", "JWT_SECRET"]
+    }
+  ]
+}
+```
+
+**Benefits**:
+- Simple and clear
+- Aligns with Wrangler.toml conventions
+- Type-safe with validation
+- No version-specific migrations needed
+
+#### Variable Naming Conventions
+
+All environment variable names must follow SCREAMING_SNAKE_CASE:
+
+```javascript
+// ✅ Valid
+API_KEY          // Uppercase, underscores
+DATABASE_URL     // Multi-word with underscores
+_INTERNAL_FLAG   // Starting with underscore
+VAR_123          // With numbers
+
+// ❌ Invalid
+api-key          // No hyphens
+api.key          // No dots
+apiKey           // No camelCase
+```
+
+#### Secrets Management
+
+Specify which variables contain sensitive data:
+
+```javascript
+{
+  "services": [
+    {
+      "name": "api-service",
+      "vars": {
+        "API_URL": "https://api.example.com",    // Non-secret
+        "ENVIRONMENT": "production"               // Non-secret
+      },
+      "secrets": ["API_KEY", "DB_PASSWORD"]      // Sensitive values
+    }
+  ]
+}
+```
+
+Then provide secret values at deployment time via environment variables or `.dev.vars` file.
+
+#### Deprecation Notice (v4.4.1+)
+
+The following formats are deprecated and will be removed in v5.0.0:
+
+**Nested Format** (Deprecated):
+```javascript
+// ⚠️ Avoid: Will be removed in v5.0.0
+{
+  "environment": {
+    "vars": { "API_KEY": "value" },
+    "secrets": ["DB_PASSWORD"]
+  }
+}
+```
+
+**Per-Environment Format** (Deprecated):
+```javascript
+// ⚠️ Avoid: Will be removed in v5.0.0
+{
+  "env": {
+    "production": { "vars": { "API_KEY": "prod-key" } },
+    "staging": { "vars": { "API_KEY": "staging-key" } }
+  }
+}
+```
+
+**Migration Path**: See [Environment Variable Standardization Guide](./env-var-standardization.md) for complete migration instructions.
+
+#### Using `EnvironmentVarNormalizer`
+
+The framework provides automatic normalization for backward compatibility:
+
+```javascript
+import { EnvironmentVarNormalizer } from '@tamyla/clodo-framework';
+
+// Normalize any config format to standard flat structure
+const normalized = EnvironmentVarNormalizer.normalize(service, {
+  warnOnDeprecated: true,  // Log deprecation warnings
+  throwOnConflict: false   // Merge conflicting formats
+});
+
+// Validate variable naming conventions
+const validation = EnvironmentVarNormalizer.validateNamingConventions(vars);
+if (!validation.valid) {
+  console.error('Variable naming issues:', validation.issues);
+}
+
+// Check deprecation timeline
+const timeline = EnvironmentVarNormalizer.getDeprecationTimeline('4.4.1');
+console.log(timeline.v5_0_0.status);  // "REMOVAL"
+```
 
 ### Domain Configuration
 

@@ -39,6 +39,69 @@ export class EnhancedRouter {
   }
 
   /**
+   * Express-like convenience method: Register GET route
+   * @param {string} path - Route path
+   * @param {Function} handler - Route handler
+   */
+  get(path, handler) {
+    return this.registerRoute('GET', path, handler);
+  }
+
+  /**
+   * Express-like convenience method: Register POST route
+   * @param {string} path - Route path
+   * @param {Function} handler - Route handler
+   */
+  post(path, handler) {
+    return this.registerRoute('POST', path, handler);
+  }
+
+  /**
+   * Express-like convenience method: Register PUT route
+   * @param {string} path - Route path
+   * @param {Function} handler - Route handler
+   */
+  put(path, handler) {
+    return this.registerRoute('PUT', path, handler);
+  }
+
+  /**
+   * Express-like convenience method: Register PATCH route
+   * @param {string} path - Route path
+   * @param {Function} handler - Route handler
+   */
+  patch(path, handler) {
+    return this.registerRoute('PATCH', path, handler);
+  }
+
+  /**
+   * Express-like convenience method: Register DELETE route
+   * @param {string} path - Route path
+   * @param {Function} handler - Route handler
+   */
+  delete(path, handler) {
+    return this.registerRoute('DELETE', path, handler);
+  }
+
+  /**
+   * Express-like convenience method: Register OPTIONS route
+   * @param {string} path - Route path
+   * @param {Function} handler - Route handler
+   */
+  options(path, handler) {
+    return this.registerRoute('OPTIONS', path, handler);
+  }
+
+  /**
+   * Express-like convenience method: Register HEAD route
+   * @param {string} path - Route path
+   * @param {Function} handler - Route handler
+   */
+  head(path, handler) {
+    return this.registerRoute('HEAD', path, handler);
+  }
+
+  /**
    * Find and execute a route handler
    * @param {string} method - HTTP method
    * @param {string} path - Request path
