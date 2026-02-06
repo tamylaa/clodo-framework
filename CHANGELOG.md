@@ -1,3 +1,10 @@
+## [4.4.1](https://github.com/tamylaa/clodo-framework/compare/v4.4.0...v4.4.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* **routing,config:** add express-like router methods and env var standardization for v4.4.1 ([7f35681](https://github.com/tamylaa/clodo-framework/commit/7f35681ee3e19173cd41f6cc31ed1565d0aaf945))
+
 # [4.4.0](https://github.com/tamylaa/clodo-framework/compare/v4.3.5...v4.4.0) (2026-02-05)
 
 
