@@ -38,7 +38,7 @@ import { NameFormatters, UrlFormatters, ResourceFormatters } from '../utils/form
 
 export class ConfirmationEngine {
   constructor(options = {}) {
-    this.interactive = options.interactive !== false;
+    this.interactive = !!options.interactive;
     this.rl = this.interactive ? createInterface({
       input: process.stdin,
       output: process.stdout
@@ -49,6 +49,7 @@ export class ConfirmationEngine {
    * Generate and confirm all derived values from core inputs
    */
   async generateAndConfirm(coreInputs) {
+    console.error('DEBUG: ConfirmationEngine.generateAndConfirm called');
     console.log(chalk.cyan('\n🔍 Tier 2: Smart Confirmations'));
     console.log(chalk.white('Reviewing and confirming 15 derived configuration values...\n'));
 
@@ -339,6 +340,7 @@ export class ConfirmationEngine {
    * Generate features based on service type
    */
   generateFeaturesForType(serviceType) {
+    console.error(`DEBUG: generateFeaturesForType called with serviceType: ${serviceType}`);
     const baseFeatures = {
       logging: true,
       monitoring: true,
@@ -352,6 +354,7 @@ export class ConfirmationEngine {
         authentication: true,
         authorization: true,
         database: true,
+        d1: true,
         search: true,
         filtering: true,
         pagination: true,

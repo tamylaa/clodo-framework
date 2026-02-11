@@ -8,7 +8,7 @@ import { createPromptHandler } from '../../utils/prompt-handler.js';
 
 export class ConfirmationHandler {
   constructor(options = {}) {
-    this.interactive = options.interactive !== false;
+    this.interactive = !!options.interactive;
     this.promptHandler = createPromptHandler({ interactive: this.interactive });
     this.confirmationEngine = new ConfirmationEngine({ interactive: this.interactive });
   }

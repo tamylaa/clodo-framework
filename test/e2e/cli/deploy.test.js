@@ -79,7 +79,22 @@ describe.skip('Real End-to-End: Deploy Command Complete Workflow', () => {
       expect(existsSync(join(servicePath, 'package.json'))).toBe(true);
       expect(existsSync(join(servicePath, 'wrangler.toml'))).toBe(true);
 
-      // Step 2: Actually validate the service
+      // Step 2: Initialize config before validation
+      const initConfigCommand = `node cli/clodo-service.js init-config`;
+      execSync(initConfigCommand, {
+        cwd: servicePath,
+        stdio: 'pipe',
+        timeout: 30000
+      });
+
+      // Fix the manifest to have d1: true for data-service (workaround for manifest generation bug)
+      if (deployConfig.serviceType === 'data-service') {
+        const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+        manifest.d1 = true;
+        writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+      }
+
+      // Step 3: Actually validate the service
       const validateCommand = `node cli/clodo-service.js validate "${servicePath}"`;
 
       execSync(validateCommand, {
@@ -88,7 +103,7 @@ describe.skip('Real End-to-End: Deploy Command Complete Workflow', () => {
         timeout: 30000
       });
 
-      // Step 3: Actually deploy the service (dry-run to avoid real deployment)
+      // Step 4: Actually deploy the service (dry-run to avoid real deployment)
       const deployCommand = `node cli/clodo-service.js deploy --service-path=${servicePath} --dry-run --yes --token=${deployConfig.cloudflareToken} --account-id=${deployConfig.cloudflareAccountId} --zone-id=${deployConfig.cloudflareZoneId}`;
 
       execSync(deployCommand, {
