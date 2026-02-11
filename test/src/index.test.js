@@ -46,6 +46,11 @@ await jest.unstable_mockModule('../../src/service-management/handlers/Validation
   ValidationHandler: class ValidationHandler {}
 }));
 
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+
+const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url)));
+
 import {
   FRAMEWORK_VERSION,
   FRAMEWORK_NAME,
@@ -56,7 +61,8 @@ import {
 describe('Clodo Framework Main Entry Point', () => {
   describe('Framework Constants', () => {
     test('should export correct framework version', () => {
-      expect(FRAMEWORK_VERSION).toBe('1.0.0');
+      // Should match package.json version
+      expect(FRAMEWORK_VERSION).toBe(pkg.version);
     });
 
     test('should export correct framework name', () => {
@@ -69,7 +75,7 @@ describe('Clodo Framework Main Entry Point', () => {
       const result = initializeFramework();
 
       expect(result).toEqual({
-        version: '1.0.0',
+        version: pkg.version,
         name: 'Clodo Framework',
         options: {}
       });
@@ -80,7 +86,7 @@ describe('Clodo Framework Main Entry Point', () => {
       const result = initializeFramework(customOptions);
 
       expect(result).toEqual({
-        version: '1.0.0',
+        version: pkg.version,
         name: 'Clodo Framework',
         options: customOptions
       });
@@ -89,9 +95,9 @@ describe('Clodo Framework Main Entry Point', () => {
     test('should log initialization message', () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-      initializeFramework();
+      initializeFramework({ verbose: true });
 
-      expect(consoleSpy).toHaveBeenCalledWith('Clodo Framework v1.0.0 initialized');
+      expect(consoleSpy).toHaveBeenCalledWith(`Clodo Framework v${pkg.version} initialized`);
 
       consoleSpy.mockRestore();
     });

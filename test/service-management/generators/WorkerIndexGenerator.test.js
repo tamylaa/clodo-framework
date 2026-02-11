@@ -41,11 +41,12 @@ describe('WorkerIndexGenerator', () => {
 
     // Verify the file was created by reading it
     const content = await fs.readFile(expectedPath, 'utf-8');
-    expect(content).toContain("'../middleware/runtime.js'");
-    expect(content).toContain("'../middleware/shared/index.js'");
-    expect(content).toContain('registerMiddleware');
-    expect(content).toContain("'../middleware/runtime.js'")
-    expect(content).toContain("'../middleware/shared/index.js'")
-    expect(content).toContain('registerMiddleware');
+    // New generator imports from the framework package, not local middleware files
+    expect(content).toContain("from '@tamyla/clodo-framework'");
+    expect(content).toContain('createEnhancedRouter');
+    expect(content).toContain('composeMiddleware');
+    expect(content).toContain('createEnvironmentGuard');
+    expect(content).toContain('export default');
+    expect(content).toContain('async fetch(request, env, ctx)');
   });
 });

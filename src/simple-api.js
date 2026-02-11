@@ -105,15 +105,27 @@ export class Clodo {
    */
   static getInfo() {
     return {
-      name: 'Clodo Framework',
-      version: '3.1.23',
-      description: 'Unified service management framework for Cloudflare Workers',
+      name: '@tamyla/clodo-framework',
+      version: '4.4.1',
+      description: 'Batteries-included framework for Cloudflare Workers — routing, middleware, AI, KV, R2, Vectorize, Queues & more',
       features: [
-        'Service Creation',
-        'Multi-Domain Deployment',
-        'Configuration Management',
-        'Validation & Diagnostics',
-        'Worker Integration'
+        'Enhanced Router (Express/Hono-style)',
+        'Middleware Composition',
+        'Workers AI Integration',
+        'KV / R2 / D1 Storage',
+        'Vectorize (Vector DB)',
+        'Queues (Producer/Consumer)',
+        'Cron / Scheduled Handlers',
+        'Durable Objects',
+        'Email Workers',
+        'Service Bindings',
+        'Analytics Engine',
+        'Health Checks & Monitoring',
+        'Feature Flags',
+        'Rate Limiting',
+        'Environment Validation',
+        'Service Creation & Deployment',
+        'Multi-Domain Orchestration'
       ]
     };
   }

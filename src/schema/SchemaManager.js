@@ -59,7 +59,9 @@ export class SchemaManager {
       });
     }
 
-    console.log(`✅ Registered model: ${modelName}`);
+    if (typeof process !== 'undefined' && process.env?.DEBUG) {
+      console.log(`✅ Registered model: ${modelName}`);
+    }
   }
 
   /**
@@ -705,4 +707,5 @@ schemaManager.registerModel('logs', {
   indexes: ['level', 'user_id', 'timestamp']
 });
 
-console.log('✅ Schema Manager initialized with existing models');
+// Schema Manager initialized with 5 default models (users, magic_links, tokens, files, logs)
+// Set DEBUG=true to see registration logs

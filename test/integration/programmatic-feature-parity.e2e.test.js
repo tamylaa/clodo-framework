@@ -84,19 +84,23 @@ describe('Programmatic createService - feature parity (D1/KV/R2)', () => {
         expect(wranglerContent).not.toMatch(/\[\[r2_buckets\]\]/);
       }
 
-      // Durable Objects: check generated middleware/runtime for DO imports/bindings
+      // Middleware config: check generated middleware config for DO indicators
       const expectsDurable = combo.features.includes('durableObject') || combo.features.includes('durableObjects');
-      const runtimePath = path.join(servicePath, 'src', 'middleware', 'runtime.js');
-      const runtimeExists = await fs.access(runtimePath).then(() => true).catch(() => false);
-      expect(runtimeExists).toBe(true);
-      const runtimeContent = await fs.readFile(runtimePath, 'utf8');
+      const configPath = path.join(servicePath, 'src', 'middleware', 'config.js');
+      const configExists = await fs.access(configPath).then(() => true).catch(() => false);
+      // New generator produces a framework-based middleware config, assert it exists
+      expect(configExists).toBe(true);
+      const configContent = await fs.readFile(configPath, 'utf8');
+
+      // Should import from the framework package
+      expect(configContent).toMatch(/from\s+'@tamyla\/clodo-framework'/);
 
       if (expectsDurable) {
-        // TemplateRuntime should inject Durable Object import/binding into middleware runtime
-        expect(runtimeContent).toMatch(/DurableObject/);
-        expect(runtimeContent).toMatch(/DURABLE_OBJECT|durable_object/);
+        // Durable bindings should be referenced somewhere in the middleware config
+        expect(configContent).toMatch(/DurableObject/);
+        expect(configContent).toMatch(/DURABLE_OBJECT|durable_object/);
       } else {
-        expect(runtimeContent).not.toMatch(/DurableObject/);
+        expect(configContent).not.toMatch(/DurableObject/);
       }
     }
   }, 60000);

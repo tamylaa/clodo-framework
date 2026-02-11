@@ -55,7 +55,9 @@ export class ModuleManager {
       });
     }
 
-    console.log(`✅ Registered module: ${moduleName}`);
+    if (typeof process !== 'undefined' && process.env?.DEBUG) {
+      console.log(`✅ Registered module: ${moduleName}`);
+    }
   }
 
   /**
@@ -701,4 +703,5 @@ moduleManager.registerModule('logging', {
   }
 });
 
-console.log('✅ Module Manager initialized with core modules');
+// Module Manager initialized with 3 default modules (auth, files, logging)
+// Set DEBUG=true to see registration logs

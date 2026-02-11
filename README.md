@@ -23,6 +23,7 @@ A comprehensive framework for building enterprise-grade software architecture on
 - **[Programmatic API](docs/api/PROGRAMMATIC_API.md)** - Complete programmatic usage
 - **[Parameter Reference](docs/api/parameter_reference.md)** - All parameters and validation
 - **[Error Reference](docs/errors.md)** - Error codes and troubleshooting
+- **[Utilities Guide](docs/utilities/README.md)** - Cloudflare API extensions and integrations
 
 ### 📖 **Guides & Migration**
 - **[Getting Started](docs/HOWTO_CONSUME_CLODO_FRAMEWORK.md)** - Step-by-step tutorial
@@ -136,6 +137,16 @@ The Clodo Framework has undergone rigorous validation to ensure it delivers on i
 - **Middleware Extension**: Custom request processing
 - **Configuration Override**: Environment-specific settings
 - **Template Enhancement**: Service-specific customizations
+
+### Cloudflare API Utilities (v4.4.0+)
+- **AI Integration**: Workers AI for text generation, analysis, and embeddings
+- **Storage Solutions**: R2 object storage and KV key-value store
+- **Real-time Features**: Queues for messaging, Durable Objects for state
+- **Advanced Analytics**: Custom metrics and performance monitoring
+- **Email Processing**: Inbound/outbound email handling
+- **Vector Databases**: AI-powered semantic search capabilities
+
+> **💡 Utilities are optional extensions** - use them when you need advanced Cloudflare features. See [Utilities Guide](docs/utilities/README.md) for integration examples.
 
 ## 🚀 Three-Tier Service Creation
 
@@ -264,30 +275,45 @@ The project is organized for maximum clarity and maintainability:
 
 ```
 clodo-framework/
-├── docs/           # 📖 Public-facing documentation (API reference, guides)
-├── i-docs/         # 📚 Internal documentation (organized by category)
-│   ├── architecture/     # Design docs, audits, specs
-│   ├── development/      # Dev guides, improvements
-│   ├── testing/          # Test plans, validation
-│   ├── deployment/       # Deployment analysis, fixes
-│   ├── roadmap/          # Strategic planning
-│   ├── guides/           # Integration guides
-│   ├── session-reports/  # Development sessions
-│   ├── phases/           # Phase completions
-│   ├── analysis/         # Technical analysis
-│   └── licensing/        # License information
-├── src/            # 💻 Source code
-├── test/           # ✅ Test suites (Latest CI: 115 suites; 2113 tests passed, 4 skipped)
-├── bin/            # 🔧 CLI executables
-├── dist/           # 📦 Built distribution
-└── templates/      # 📋 Service templates
+├── docs/                    # 📖 Public documentation
+│   ├── strategic/          # Business strategy & planning
+│   ├── utilities/          # Utility integration guides
+│   ├── api/                # API reference & guides
+│   ├── integration/        # Integration & migration guides
+│   └── phases/             # Framework development phases
+├── i-docs/                  # 📚 Internal documentation (organized by category)
+│   ├── architecture/       # Design docs, audits, specs
+│   ├── development/        # Dev guides, improvements
+│   ├── testing/            # Test plans, validation
+│   ├── deployment/         # Deployment analysis, fixes
+│   ├── roadmap/            # Strategic planning
+│   ├── guides/             # Integration guides
+│   ├── session-reports/    # Development sessions
+│   ├── phases/             # Phase completions
+│   ├── analysis/           # Technical analysis
+│   └── licensing/          # License information
+├── src/                     # 💻 Source code
+├── test/                    # ✅ Test suites (Latest CI: 115 suites; 2113 tests passed, 4 skipped)
+├── cli/                     # 🔧 CLI tools & commands
+├── examples/                # 📚 Usage examples & demos
+├── config/                  # ⚙️ Configuration files & examples
+├── scripts/                 # 🛠️ Build & utility scripts
+├── templates/               # 📋 Service templates
+├── dist/                    # 📦 Built distribution
+├── lib/                     # 📚 Compiled libraries
+├── .logs/                   # 📝 Log files (hidden)
+├── .tmp/                    # 🗂️ Temporary files (hidden)
+├── backups/                 # 💾 Backup files
+├── deployments/             # 🚀 Deployment artifacts
+├── secrets/                 # 🔐 Secret management
+└── coverage/                # 📊 Test coverage reports
 
 ```
 
 **Quality Metrics:**
 - ✅ **Latest CI (2026-02-04): 115 test suites passed; 4 tests skipped; 2113/2117 tests passed**
 - ✅ **CLI tests:** passing (all CLI-specific tests passed in the latest run)
-- ✅ **Clean architecture** (no temporary or duplicate files)
+- ✅ **Clean architecture** (organized file structure, no clutter in root)
 - ✅ **Configuration-based** (no hard-coded values in source)
 
 ## 📚 Incremental Adoption

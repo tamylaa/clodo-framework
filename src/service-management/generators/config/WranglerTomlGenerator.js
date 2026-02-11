@@ -1,23 +1,18 @@
 import { BaseGenerator } from '../BaseGenerator.js';
-import { WranglerCompatibilityDetector } from '../../../../lib/shared/utils/wrangler-compatibility.js';
 import { join } from 'path';
 
 /**
- * WranglerTomlGenerator
+ * WranglerTomlGenerator (v4.4.1+)
  * 
  * Generates wrangler.toml configuration files for Cloudflare Workers.
  * 
- * Responsibilities:
- * - Generate main worker configuration (name, main, compatibility)
- * - Include routes configuration from RouteGenerator
- * - Include Workers Sites configuration from SiteConfigGenerator
- * - Configure environment-specific settings (dev/staging/production)
- * - Configure D1 database bindings
- * - Configure environment variables and feature flags
- * 
- * Dependencies:
- * - RouteGenerator (for routes configuration)
- * - SiteConfigGenerator (for Workers Sites configuration)
+ * v4.4.1 changes:
+ * - Supports ALL modern Cloudflare bindings: D1, KV, R2, AI, Vectorize,
+ *   Queues, Email, Hyperdrive, Browser, Durable Objects, Analytics Engine
+ * - Uses RECOMMENDED_COMPATIBILITY_DATE from framework
+ * - Generates empty IDs for auto-provisioning in local dev (Wrangler 3.91+)
+ * - Includes [observability] defaults
+ * - Clean comments explaining each binding
  */
 export class WranglerTomlGenerator extends BaseGenerator {
   constructor(options = {}) {
@@ -115,114 +110,167 @@ export class WranglerTomlGenerator extends BaseGenerator {
   }
 
   /**
-   * Build the complete wrangler.toml content
+   * Build the complete wrangler.toml content (v4.4.1+)
+   * Supports all modern Cloudflare bindings.
    */
   async _buildWranglerToml(coreInputs, confirmedValues, routesConfig, siteConfig) {
-    const compatDate = new Date().toISOString().split('T')[0];
+    const compatDate = '2024-12-01'; // Framework recommended compatibility date
 
-    // Detect Wrangler version and get optimal compatibility config
-    let compatibilityString = 'compatibility_flags = ["nodejs_compat"]';
-    let buildString = '\n\n[build]\ncommand = "npm run build"\n\n[build.upload]\nformat = "modules"\n\n[build.upload.external]\ninclude = ["node:*"]';
+    const features = confirmedValues.features || {};
+    const workerName = confirmedValues.workerName || coreInputs.serviceName;
 
-    try {
-      const compatibilityDetector = new WranglerCompatibilityDetector();
-      const wranglerVersion = await Promise.race([
-        compatibilityDetector.detectVersion(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000)) // 2 second timeout
-      ]);
-      const compatibilityConfig = compatibilityDetector.getOptimalConfig(wranglerVersion);
-      const buildConfig = compatibilityDetector.getBuildConfig(wranglerVersion);
+    // ── Binding blocks based on features ──────────────────────────────
 
-      // Build compatibility flags string
-      if (compatibilityConfig.nodejs_compat !== undefined) {
-        compatibilityString = `nodejs_compat = ${compatibilityConfig.nodejs_compat}`;
-      } else if (compatibilityConfig.compatibility_flags) {
-        compatibilityString = `compatibility_flags = ${JSON.stringify(compatibilityConfig.compatibility_flags)}`;
-      }
+    const bindingBlocks = [];
 
-      // Add any additional build config from detector (if needed)
-      if (buildConfig.command && buildConfig.command !== "npm run build") {
-        buildString += `\n\n# Additional build config from Wrangler ${wranglerVersion}\n[build.v${wranglerVersion.split('.')[0]}]\ncommand = "${buildConfig.command}"`;
-      }
-      if (buildConfig.upload && buildConfig.upload.format && buildConfig.upload.format !== "modules") {
-        buildString += `\nformat_override = "${buildConfig.upload.format}"`;
-      }
-    } catch (error) {
-      // Fall back to default configuration if detection fails
-      console.warn(`⚠️  Wrangler compatibility detection failed, using defaults: ${error.message}`);
-    }
-
-    // Only include D1/kv/r2 bindings when the confirmed values indicate features are enabled
-    const d1Block = (confirmedValues.features && confirmedValues.features.d1) ? `
-
-# Database bindings
+    if (features.d1 || features.database) {
+      bindingBlocks.push(`
+# ═══ D1 Database ═══════════════════════════════════════════════════
+# Local: Leave database_id empty for auto-provisioned SQLite
+# Production: Run \`wrangler d1 create ${confirmedValues.databaseName || workerName + '-db'}\` and paste ID
 [[d1_databases]]
 binding = "DB"
-database_name = "${confirmedValues.databaseName}"
-database_id = ""  # To be configured during setup
-` : '';
+database_name = "${confirmedValues.databaseName || workerName + '-db'}"
+database_id = ""`);
+    }
 
-    // Support both generic KV flag and provider-specific flag (upstash)
-    const kvEnabled = confirmedValues.features && (confirmedValues.features.kv || confirmedValues.features.upstash);
-    const kvBlock = kvEnabled ? `
-
-# KV namespaces
+    if (features.kv || features.upstash) {
+      bindingBlocks.push(`
+# ═══ KV Namespace ══════════════════════════════════════════════════
+# Local: Leave id empty for auto-provisioned local KV
+# Production: Run \`wrangler kv namespace create KV\` and paste ID
 [[kv_namespaces]]
 binding = "KV"
-namespace_id = ""  # To be configured during setup
-` : '';
+id = ""`);
+    }
 
-    const r2Block = (confirmedValues.features && confirmedValues.features.r2) ? `
-
-# R2 buckets
+    if (features.r2) {
+      bindingBlocks.push(`
+# ═══ R2 Object Storage ═════════════════════════════════════════════
+# Production: Run \`wrangler r2 bucket create ${workerName}-storage\`
 [[r2_buckets]]
 binding = "R2_STORAGE"
-bucket_name = "${confirmedValues.bucketName || confirmedValues.databaseName || ''}"
-bucket_id = ""  # To be configured during setup
+bucket_name = "${confirmedValues.bucketName || workerName + '-storage'}"`);
+    }
+
+    if (features.ai) {
+      bindingBlocks.push(`
+# ═══ Workers AI ════════════════════════════════════════════════════
+[ai]
+binding = "AI"`);
+    }
+
+    if (features.vectorize) {
+      bindingBlocks.push(`
+# ═══ Vectorize (Vector Database) ═══════════════════════════════════
+# Production: Run \`wrangler vectorize create ${workerName}-index --dimensions 768 --metric cosine\`
+[[vectorize]]
+binding = "VECTORIZE_INDEX"
+index_name = "${workerName}-index"`);
+    }
+
+    if (features.queues) {
+      bindingBlocks.push(`
+# ═══ Queues ════════════════════════════════════════════════════════
+[[queues.producers]]
+binding = "QUEUE"
+queue = "${workerName}-queue"
+
+[[queues.consumers]]
+queue = "${workerName}-queue"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
+dead_letter_queue = "${workerName}-queue-dlq"`);
+    }
+
+    if (features.email) {
+      bindingBlocks.push(`
+# ═══ Email Workers ═════════════════════════════════════════════════
+[send_email]
+binding = "EMAIL"`);
+    }
+
+    if (features.hyperdrive) {
+      bindingBlocks.push(`
+# ═══ Hyperdrive (Postgres Connection Pool) ═════════════════════════
+# Production: Run \`wrangler hyperdrive create ${workerName}-db --connection-string "postgres://..."\`
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = ""`);
+    }
+
+    if (features.browser) {
+      bindingBlocks.push(`
+# ═══ Browser Rendering ═════════════════════════════════════════════
+[browser]
+binding = "BROWSER"`);
+    }
+
+    if (features.durableObject || features.durableObjects) {
+      bindingBlocks.push(`
+# ═══ Durable Objects ══════════════════════════════════════════════
+[[durable_objects.bindings]]
+name = "DURABLE_OBJECT"
+class_name = "MyDurableObject"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["MyDurableObject"]`);
+    }
+
+    if (features.analytics) {
+      bindingBlocks.push(`
+# ═══ Analytics Engine ══════════════════════════════════════════════
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+dataset = "${workerName}-analytics"`);
+    }
+
+    // ── Cron triggers ─────────────────────────────────────────────────
+    const cronBlock = features.cron ? `
+# ═══ Cron Triggers ═════════════════════════════════════════════════
+[triggers]
+crons = ["*/5 * * * *"]  # Every 5 minutes — customize as needed
 ` : '';
 
-    return `# Cloudflare Workers Configuration for ${confirmedValues.displayName}
-name = "${confirmedValues.workerName}"
+    return `# ═══════════════════════════════════════════════════════════════════
+# ${confirmedValues.displayName} — Cloudflare Worker Configuration
+# Generated by Clodo Framework v4.4.1
+# ═══════════════════════════════════════════════════════════════════
+name = "${workerName}"
 main = "src/worker/index.js"
 compatibility_date = "${compatDate}"
-${compatibilityString}${buildString}
+compatibility_flags = ["nodejs_compat"]
 
 # Account configuration
-account_id = "${coreInputs.cloudflareAccountId}"
+account_id = "${coreInputs.cloudflareAccountId || ''}"
 
-${routesConfig}
-${siteConfig ? '\n' + siteConfig : ''}
-
-# Environment configurations
+${routesConfig}${siteConfig ? '\n' + siteConfig : ''}
+# ═══ Environment configurations ════════════════════════════════════
 [env.development]
-name = "${confirmedValues.workerName}-dev"
+name = "${workerName}-dev"
 
 [env.staging]
-name = "${confirmedValues.workerName}-staging"
+name = "${workerName}-staging"
 
 [env.production]
-name = "${confirmedValues.workerName}"
-
-${d1Block}${kvBlock}${r2Block}
-# Environment variables
+name = "${workerName}"
+${bindingBlocks.join('\n')}
+${cronBlock}
+# ═══ Environment variables ═════════════════════════════════════════
 [vars]
 SERVICE_NAME = "${coreInputs.serviceName}"
 SERVICE_TYPE = "${coreInputs.serviceType}"
-DOMAIN_NAME = "${coreInputs.domainName}"
-ENVIRONMENT = "${coreInputs.environment}"
-API_BASE_PATH = "${confirmedValues.apiBasePath}"
-HEALTH_CHECK_PATH = "${confirmedValues.healthCheckPath}"
 
-# Domain-specific variables
-PRODUCTION_URL = "${confirmedValues.productionUrl}"
-STAGING_URL = "${confirmedValues.stagingUrl}"
-DEVELOPMENT_URL = "${confirmedValues.developmentUrl}"
+# ═══ Observability ═════════════════════════════════════════════════
+[observability]
+enabled = true
 
-# Feature flags
-${this._generateFeatureFlags(confirmedValues.features)}
-
-# Custom environment variables (configure as needed)
-# CUSTOM_VAR = "value"
+[observability.logs]
+enabled = true
+invocation_logs = true
+# head_sampling_rate = 0.01  # Uncomment in production
 `;
   }
 

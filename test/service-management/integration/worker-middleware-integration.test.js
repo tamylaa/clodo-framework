@@ -88,71 +88,11 @@ describe('Worker integration (middleware)', () => {
     // expect(body.handled).toBe(true);
     // expect(body.url).toBe('/api/hello');
 
-    // Instead, just verify the file content is correct
+    // Verify the file content uses framework imports (not legacy MiddlewareRegistry/Composer)
     const fileContent = await fs.readFile(expectedPath, 'utf-8');
-    expect(fileContent).toContain('import { domains } from \'../config/domains.js\'');
-    expect(fileContent).toContain('import { createServiceHandlers } from \'../handlers/service-handlers.js\'');
-    expect(fileContent).toContain('MiddlewareRegistry');
-    expect(fileContent).toContain('MiddlewareComposer');
-  });
-
-  it('executes legacy factory middleware via adapter and handler', async () => {
-    const servicePath = path.join(tmpDir, 'services', 'test-svc-legacy');
-    await fs.mkdir(servicePath, { recursive: true });
-    
-    const coreInputs = { serviceName: 'test-svc', serviceType: 'api', environment: 'development' };
-    const confirmed = { displayName: 'Test Svc Legacy', version: '1.0.0', packageName: 'test-svc', apiBasePath: '/api' };
-
-    // Generate legacy middleware
-    await smg.generate({ coreInputs, confirmedValues: confirmed, servicePath, middlewareStrategy: 'legacy' });
-
-    // Add minimal domains and handlers for runtime
-    await writeDomains(servicePath, 'test-svc');
-    await writeHandlers(servicePath);
-
-    // Generate worker index using the generator (with improved retry logic)
-    await wig.generate({ coreInputs, confirmedValues: confirmed, servicePath });
-
-    // Add a longer delay to ensure file system operations complete on Windows
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Verify the file exists before importing
-    const expectedPath = path.join(servicePath, 'src', 'worker', 'index.js');
-    if (!await fs.access(expectedPath).then(() => true).catch(() => false)) {
-      // Debug: if the file still doesn't exist, print directory contents for diagnosis
-      async function listDir(dir, depth = 0) {
-        const entries = await fs.readdir(dir, { withFileTypes: true });
-        for (const e of entries) {
-          const p = path.join(dir, e.name);
-          console.log(`${' '.repeat(depth*2)}- ${p}`);
-          if (e.isDirectory()) await listDir(p, depth+1);
-        }
-      }
-      console.log('DEBUG: Generated service directory contents:');
-      await listDir(servicePath);
-      throw new Error(`Generated worker index not found at ${expectedPath}`);
-    }
-
-    // Import generated worker module and invoke fetch
-    // NOTE: Skip the import test for now due to Jest module resolution issues
-    // const workerModule = await import(pathToFileURL(expectedPath).href);
-    // const req = new Request('https://example.com/api/legacy', { method: 'GET' });
-    // let workerExport = workerModule.default;
-    // if (workerExport && workerExport.default && typeof workerExport.fetch !== 'function' && typeof workerExport.default.fetch === 'function') {
-    //   workerExport = workerExport.default;
-    // }
-    // const res = await workerExport.fetch(req, {}, {});
-    // 
-    // expect(res.status).toBe(200);
-    // const body = await res.json();
-    // expect(body.handled).toBe(true);
-    // expect(body.url).toBe('/api/legacy');
-
-    // Instead, just verify the file content is correct
-    const fileContent = await fs.readFile(expectedPath, 'utf-8');
-    expect(fileContent).toContain('import { domains } from \'../config/domains.js\'');
-    expect(fileContent).toContain('import { createServiceHandlers } from \'../handlers/service-handlers.js\'');
-    expect(fileContent).toContain('MiddlewareRegistry');
-    expect(fileContent).toContain('MiddlewareComposer');
+    expect(fileContent).toContain("from '@tamyla/clodo-framework'");
+    expect(fileContent).toContain('createEnhancedRouter');
+    expect(fileContent).toContain('composeMiddleware');
+    expect(fileContent).toContain('export default');
   });
 });

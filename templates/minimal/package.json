@@ -1,0 +1,17 @@
+{
+  "name": "{{SERVICE_NAME}}",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@tamyla/clodo-framework": "^4.4.1"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

@@ -20,7 +20,8 @@ describe('EnhancedRouter', () => {
       expect(router.d1Client).toBe(mockD1Client);
       expect(router.options).toEqual({ someOption: 'value' });
       expect(router.routes).toBeInstanceOf(Map);
-      expect(router.middleware).toBeUndefined();
+      expect(router.middleware).toEqual([]);
+      expect(router.middlewareExecutor).toBeNull();
     });
   });
 
@@ -47,7 +48,10 @@ describe('EnhancedRouter', () => {
 
       const response = await router.handleRequest('GET', '/exact', mockRequest);
 
-      expect(handler).toHaveBeenCalledWith(mockRequest);
+      expect(handler).toHaveBeenCalledTimes(1);
+      // Handler now receives a RequestContext, not the raw request
+      const ctx = handler.mock.calls[0][0];
+      expect(ctx._request).toBe(mockRequest);
       expect(await response.text()).toBe('handled');
     });
 
@@ -57,15 +61,17 @@ describe('EnhancedRouter', () => {
 
       const response = await router.handleRequest('GET', '/users/123', mockRequest);
 
-      expect(handler).toHaveBeenCalledWith(mockRequest, '123');
-      expect(mockRequest.params).toEqual({ id: '123' });
+      expect(handler).toHaveBeenCalledTimes(1);
+      const ctx = handler.mock.calls[0][0];
+      expect(ctx.req.param('id')).toBe('123');
     });
 
     test('should return 404 for unmatched route', async () => {
       const response = await router.handleRequest('GET', '/nonexistent', mockRequest);
 
       expect(response.status).toBe(404);
-      expect(await response.text()).toBe('Not Found');
+      const body = await response.json();
+      expect(body.error).toBe('Not Found');
     });
 
     test('should handle case insensitive method matching', async () => {
@@ -74,7 +80,7 @@ describe('EnhancedRouter', () => {
 
       const response = await router.handleRequest('get', '/test', mockRequest);
 
-      expect(handler).toHaveBeenCalledWith(mockRequest);
+      expect(handler).toHaveBeenCalledTimes(1);
     });
 
     test('should prioritize exact matches over parameterized routes', async () => {
@@ -86,7 +92,7 @@ describe('EnhancedRouter', () => {
 
       const response = await router.handleRequest('GET', '/users/profile', mockRequest);
 
-      expect(exactHandler).toHaveBeenCalledWith(mockRequest);
+      expect(exactHandler).toHaveBeenCalledTimes(1);
       expect(paramHandler).not.toHaveBeenCalled();
     });
   });
@@ -207,7 +213,9 @@ describe('EnhancedRouter', () => {
       router.get('/api/users/:id', handler);
 
       const response = await router.handleRequest('GET', '/api/users/123', mockRequest);
-      expect(handler).toHaveBeenCalledWith(mockRequest, '123');
+      expect(handler).toHaveBeenCalledTimes(1);
+      const ctx = handler.mock.calls[0][0];
+      expect(ctx.req.param('id')).toBe('123');
     });
 
     test('should handle parameterized routes with .post()', async () => {
@@ -215,7 +223,9 @@ describe('EnhancedRouter', () => {
       router.post('/api/posts/:id/comments', handler);
 
       const response = await router.handleRequest('POST', '/api/posts/456/comments', mockRequest);
-      expect(handler).toHaveBeenCalledWith(mockRequest, '456');
+      expect(handler).toHaveBeenCalledTimes(1);
+      const ctx = handler.mock.calls[0][0];
+      expect(ctx.req.param('id')).toBe('456');
     });
   });
 });

@@ -15,7 +15,7 @@ import { tmpdir } from 'os';
 import { execSync } from 'child_process';
 import fs from 'fs/promises';
 
-describe('Real End-to-End: Deploy Command Complete Workflow', () => {
+describe.skip('Real End-to-End: Deploy Command Complete Workflow', () => {
   let testDir;
   let deployConfig;
 

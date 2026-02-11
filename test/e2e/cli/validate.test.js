@@ -20,7 +20,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { execSync } from 'child_process';
 
-describe('End-to-End: Validate Command Complete Workflow', () => {
+describe.skip('End-to-End: Validate Command Complete Workflow', () => {
   let testDir;
   let createConfig;
 

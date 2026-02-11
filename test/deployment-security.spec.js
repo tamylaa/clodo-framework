@@ -15,7 +15,8 @@ describe('CLODO Framework Deployment & Security Features v3.0.3', () => {
     expect('3.0.3').toMatch(/^\d+\.\d+\.\d+$/);
 
     // Test that key enhancement features are documented
-    const changelogPath = path.join(process.cwd(), 'CHANGELOG.md');
+    // CHANGELOG was moved to docs/ folder
+    const changelogPath = path.join(process.cwd(), 'docs', 'CHANGELOG.md');
     const changelog = fs.readFileSync(changelogPath, 'utf8');
 
     // Should mention v3.0.3 enhancements

@@ -29,7 +29,8 @@ export class MiddlewareComposer {
         // Postprocess in reverse order
         for (const m of chain.slice().reverse()) {
           if (typeof m.postprocess === 'function') {
-            const updated = await m.postprocess(response);
+            // Pass the original request as the second argument so postprocess can access per-request state
+            const updated = await m.postprocess(response, request);
             // Allow middleware to replace response
             if (updated instanceof Response) response = updated;
           }

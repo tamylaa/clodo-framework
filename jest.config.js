@@ -6,6 +6,10 @@ export default {
     'ts-jest': {
       useESM: true,
     },
+    // Ensure babel-jest transforms files as ESM for top-level await support
+    'babel-jest': {
+      useESM: true
+    }
   },
   moduleNameMapper: {
     // Map package imports to source files during testing

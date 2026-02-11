@@ -15,6 +15,32 @@ export { createDomainConfigSchema, validateDomainConfig, createDefaultDomainConf
 export { initializeService } from './worker/integration.js';
 export { autoConfigureFramework } from './version/VersionDetector.js';
 
+// ─── NEW: Middleware Factories & Composition ─────────────────────────
+export {
+  createCorsMiddleware,
+  createErrorHandler,
+  createRateLimitGuard,
+  createLogger,
+  createBearerAuth,
+  createApiKeyAuth,
+  composeMiddleware
+} from './middleware/factories.js';
+
+// ─── NEW: Environment Guard ──────────────────────────────────────────
+export {
+  EnvironmentGuard,
+  createEnvironmentGuard
+} from './validation/environmentGuard.js';
+
+// ─── NEW: RequestContext (Hono-style) ────────────────────────────────
+export {
+  RequestContext,
+  createRequestContext
+} from './routing/RequestContext.js';
+
+// ─── NEW: Feature-to-binding mapping ─────────────────────────────────
+export { FEATURE_BINDING_MAP } from './config/service-schema-config.js';
+
 // Core data and schema components
 export * from './services/GenericDataService.js';
 export * from './schema/SchemaManager.js';
@@ -67,12 +93,20 @@ export { classifyError, getRecoverySuggestions } from '../lib/shared/error-handl
 export { FrameworkInfo } from './version/FrameworkInfo.js';
 export { TemplateRuntime } from './utils/TemplateRuntime.js';
 export { HealthChecker } from './monitoring/HealthChecker.js';
-export const FRAMEWORK_VERSION = '1.0.0';
+
+export const FRAMEWORK_VERSION = '4.4.1';
 export const FRAMEWORK_NAME = 'Clodo Framework';
 
-// Helper for framework initialization
+// ─── Compatibility Constants (for consistent wrangler.toml generation) ──
+export const RECOMMENDED_COMPATIBILITY_DATE = '2024-12-01';
+export const MINIMUM_COMPATIBILITY_DATE = '2023-06-01';
+export const RECOMMENDED_COMPATIBILITY_FLAGS = ['nodejs_compat'];
+
+// Helper for framework initialization (silent by default, verbose with DEBUG)
 export const initializeFramework = (options = {}) => {
-  console.log(`${FRAMEWORK_NAME} v${FRAMEWORK_VERSION} initialized`);
+  if (options.verbose || (typeof process !== 'undefined' && process.env?.DEBUG)) {
+    console.log(`${FRAMEWORK_NAME} v${FRAMEWORK_VERSION} initialized`);
+  }
 
   return {
     version: FRAMEWORK_VERSION,
