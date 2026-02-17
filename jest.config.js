@@ -1,6 +1,7 @@
 export default {
   preset: null,
   testEnvironment: 'node',
+  testRunner: 'jest-circus/runner',
   maxWorkers: 1,
   globals: {
     'ts-jest': {
@@ -20,10 +21,12 @@ export default {
     '^../lib/shared/logging/Logger.js$': '<rootDir>/lib/shared/logging/Logger.js',
     '^../../lib/shared/cloudflare/ops.js$': '<rootDir>/lib/shared/cloudflare/ops.js',
     '^../../../shared/utils/ErrorHandler.js$': '<rootDir>/lib/shared/utils/ErrorHandler.js',
+    // Mock framework-config to avoid import.meta issues in lib/ paths
+    '^../../../lib/shared/utils/framework-config.js$': '<rootDir>/test/mocks/framework-config.js',
     // Removed .js extension stripping for ES modules
   },
   transform: {
-    '^.+\\.js$': ['babel-jest', { presets: ['@babel/preset-env'] }],
+    '^.+\\.(js|mjs)$': ['babel-jest', { presets: ['@babel/preset-env'] }]
   },
   transformIgnorePatterns: [
     'node_modules/(?!(@babel|@jest|uuid|chalk)/)'

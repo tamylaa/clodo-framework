@@ -48,6 +48,43 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
     }
   });
 
+  /**
+   * Helper: Create a service and run init-config + manifest fix so validation works
+   */
+  function createAndInitService(outputDir) {
+    mkdirSync(outputDir, { recursive: true });
+
+    const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
+
+    execSync(createCommand, {
+      cwd: join(process.cwd()),
+      stdio: 'pipe',
+      timeout: 30000
+    });
+
+    const servicePath = join(outputDir, createConfig.serviceName);
+
+    // Initialize config in the service directory
+    const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
+    execSync(`node "${cliPath}" init-config`, {
+      cwd: servicePath,
+      stdio: 'pipe',
+      timeout: 30000
+    });
+
+    // Fix the manifest for data-service type
+    const manifestPath = join(servicePath, 'clodo-service-manifest.json');
+    if (existsSync(manifestPath)) {
+      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+      if (createConfig.serviceType === 'data-service') {
+        manifest.d1 = true;
+        writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+      }
+    }
+
+    return servicePath;
+  }
+
   describe('Real Basic Service Validation', () => {
     it('should validate a complete service successfully', () => {
       const outputDir = join(testDir, 'output');
@@ -65,7 +102,8 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
       const servicePath = join(outputDir, createConfig.serviceName);
 
       // Initialize config in the service directory before validation
-      const initConfigCommand = `node cli/clodo-service.js init-config`;
+      const cliPath = join(process.cwd(), 'cli', 'clodo-service.js');
+      const initConfigCommand = `node "${cliPath}" init-config`;
       execSync(initConfigCommand, {
         cwd: servicePath,
         stdio: 'pipe',
@@ -117,18 +155,7 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
 
     it('should validate package.json structure', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
 
       // Validate and check that it passes
       const validateCommand = `node cli/clodo-service.js validate "${servicePath}"`;
@@ -149,18 +176,7 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
 
     it('should validate domain configuration', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
 
       // Validate and check that it passes
       const validateCommand = `node cli/clodo-service.js validate "${servicePath}"`;
@@ -180,18 +196,7 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
 
     it('should validate wrangler configuration', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
 
       // Validate and check that it passes
       const validateCommand = `node cli/clodo-service.js validate "${servicePath}"`;
@@ -214,18 +219,7 @@ describe('End-to-End: Validate Command Complete Workflow', () => {
   describe('Real Deep Scan Validation', () => {
     it('should perform comprehensive validation with simplified API', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
 
       // Test validation functionality (simplified API)
       const validateCommand = `node cli/clodo-service.js validate "${servicePath}"`;
@@ -304,18 +298,7 @@ export const domains = createDomainConfigSchema({
   describe('Real Report Export Functionality', () => {
     it('should export validation report to JSON file', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
       const reportPath = join(testDir, 'validation-report.json');
 
       const validateCommand = `node cli/clodo-service.js validate "${servicePath}" --export-report="${reportPath}"`;
@@ -366,18 +349,7 @@ export const domains = createDomainConfigSchema({
 
     it('should handle report export to non-existent directory', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
       const reportPath = join(testDir, 'nonexistent', 'report.json');
 
       const validateCommand = `node cli/clodo-service.js validate "${servicePath}" --export-report="${reportPath}"`;
@@ -394,18 +366,7 @@ export const domains = createDomainConfigSchema({
   describe('Real Configuration File Handling', () => {
     it('should load configuration from config file', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
       const configPath = join(testDir, 'validate-config.json');
 
       const configData = {
@@ -434,18 +395,7 @@ export const domains = createDomainConfigSchema({
 
     it('should merge CLI options with config file', () => {
       const outputDir = join(testDir, 'output');
-      mkdirSync(outputDir, { recursive: true });
-
-      // Create a valid service
-      const createCommand = `node cli/clodo-service.js create --non-interactive --service-name=${createConfig.serviceName} --service-type=${createConfig.serviceType} --domain-name=${createConfig.domainName} --cloudflare-token=${createConfig.cloudflareToken} --cloudflare-account-id=${createConfig.cloudflareAccountId} --cloudflare-zone-id=${createConfig.cloudflareZoneId} --environment=${createConfig.environment} --output-path=${outputDir}`;
-
-      execSync(createCommand, {
-        cwd: join(process.cwd()),
-        stdio: 'pipe',
-        timeout: 30000
-      });
-
-      const servicePath = join(outputDir, createConfig.serviceName);
+      const servicePath = createAndInitService(outputDir);
       const configPath = join(testDir, 'merge-config.json');
 
       // Config file with verbose: false

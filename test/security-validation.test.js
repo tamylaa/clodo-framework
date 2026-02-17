@@ -15,12 +15,11 @@
 
 import { jest, describe, test, expect } from '@jest/globals';
 
-// Mock the ConfigurationValidator to avoid import.meta issues
+// Mock both modules for ESM compatibility
 await jest.unstable_mockModule('../src/security/ConfigurationValidator.js', () => ({
   ConfigurationValidator: {
     validate: jest.fn((config, environment) => {
       const issues = [];
-      // Simple mock implementation
       const apiKeyFields = Object.keys(config).filter(key =>
         key.includes('API_KEY') || key.includes('_KEY') || key.includes('TOKEN')
       );
@@ -42,7 +41,14 @@ await jest.unstable_mockModule('../src/security/ConfigurationValidator.js', () =
   }
 }));
 
-import { ConfigurationValidator } from '../src/security/ConfigurationValidator.js';
+await jest.unstable_mockModule('../../../lib/shared/utils/framework-config.js', () => ({
+  frameworkConfig: {
+    get: jest.fn(() => ({})),
+    set: jest.fn()
+  }
+}));
+
+const { ConfigurationValidator } = await import('../src/security/ConfigurationValidator.js');
 
 describe('ConfigurationValidator Security Tests', () => {
   test('should validate secure configuration without issues', () => {

@@ -2,7 +2,33 @@ import { jest } from '@jest/globals';
 
 // Mock missing dependencies before importing the main module
 await jest.unstable_mockModule('../../src/config/features.js', () => ({
-  FeatureFlagManager: class FeatureFlagManager {}
+  FeatureFlagManager: class FeatureFlagManager {
+    constructor() { this.features = new Map(); }
+    isEnabled() { return false; }
+    enable() {}
+    disable() {}
+    withFeature(f, fn) { return fn(); }
+    getAllFeatures() { return {}; }
+  },
+  featureManager: { isEnabled: jest.fn(), enable: jest.fn(), disable: jest.fn(), withFeature: jest.fn(), getAllFeatures: jest.fn(() => ({})), features: new Map() },
+  FEATURES: {
+    ENHANCED_SCHEMA: 'enhanced_schema',
+    ENHANCED_VALIDATION: 'enhanced_validation',
+    ENABLE_COMPREHENSIVE_VALIDATION: 'enhanced_validation',
+    ENABLE_SQL_CACHING: 'sql_caching',
+    ENABLE_SCHEMA_CACHING: 'schema_caching',
+    ENABLE_ADVANCED_QUERIES: 'advanced_queries',
+    ENABLE_SECURITY_CONTROLS: 'security_controls',
+    ENABLE_QUERY_CACHING: 'query_caching',
+    ENABLE_ADVANCED_PAGINATION: 'advanced_pagination',
+    ENABLE_CACHE_METRICS: 'cache_metrics',
+    ENABLE_DEBUG_LOGGING: 'debug_logging',
+    ENABLE_ENHANCED_SCHEMA: 'enhanced_schema',
+    ENABLE_HOOK_METRICS: 'hook_metrics',
+    ENABLE_HOOK_TIMEOUT: 'hook_timeout',
+    ENABLE_ENHANCED_HOOKS: 'enhanced_hooks',
+    ENABLE_PARALLEL_EXECUTION: 'parallel_execution'
+  }
 }));
 
 await jest.unstable_mockModule('../../src/utils/domain-config.js', () => ({
@@ -51,12 +77,12 @@ import { fileURLToPath } from 'url';
 
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url)));
 
-import {
+const {
   FRAMEWORK_VERSION,
   FRAMEWORK_NAME,
   initializeFramework,
-  default as defaultExport
-} from '../../src/index.js';
+  default: defaultExport
+} = await import('../../src/index.js');
 
 describe('Clodo Framework Main Entry Point', () => {
   describe('Framework Constants', () => {

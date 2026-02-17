@@ -94,7 +94,7 @@ export { FrameworkInfo } from './version/FrameworkInfo.js';
 export { TemplateRuntime } from './utils/TemplateRuntime.js';
 export { HealthChecker } from './monitoring/HealthChecker.js';
 
-export const FRAMEWORK_VERSION = '4.4.1';
+export const FRAMEWORK_VERSION = '4.5.0';
 export const FRAMEWORK_NAME = 'Clodo Framework';
 
 // ─── Compatibility Constants (for consistent wrangler.toml generation) ──

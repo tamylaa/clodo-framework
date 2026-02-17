@@ -81,6 +81,48 @@ DOCUMENTATION_URL=https://docs.example.com
       console.log(`   Created .env with required variables`);
     }
 
+    // Create minimal validation-config.json for CLI tests
+    const validationConfig = {
+      commands: {
+        required: {
+          npx: 'npx',
+          node: 'node',
+          npm: 'npm',
+          wrangler: 'npx wrangler'
+        }
+      },
+      timing: {
+        deploymentTimeout: 300000,
+        discoveryTimeout: 30000
+      },
+      routing: {
+        defaults: {
+          includeComments: true,
+          includeZoneId: true,
+          targetEnvironment: 'all',
+          orderStrategy: 'most-specific-first'
+        },
+        domains: {
+          complexTLDs: ['.co.uk', '.com.au', '.org.uk', '.gov.uk'],
+          ignoreSubdomains: ['www']
+        }
+      },
+      templates: {
+        defaults: {
+          WORKERS_DEV_DOMAIN: 'workers.dev'
+        }
+      }
+    };
+
+    writeFileSync(
+      join(this.testDir, 'validation-config.json'),
+      JSON.stringify(validationConfig, null, 2)
+    );
+
+    if (this.verbose) {
+      console.log(`   Created validation-config.json`);
+    }
+
     // Install framework
     await this.installFramework();
 
@@ -124,18 +166,18 @@ DOCUMENTATION_URL=https://docs.example.com
       env = {}
     } = options;
 
-    // Use the local dist path directly to avoid bin script issues
+    // Use the local source path directly (ESM project, no build step)
     const commandParts = commandWithArgs.split(' ');
     const mainCommand = commandParts[0];
     const args = commandParts.slice(1).join(' ');
     
     let fullCommand;
     if (mainCommand === 'clodo-security') {
-      fullCommand = `node "${this.localPackagePath}/dist/cli/security-cli.js" ${args}`;
+      fullCommand = `node "${this.localPackagePath}/cli/security-cli.js" ${args}`;
     } else if (mainCommand === 'clodo-service') {
-      fullCommand = `node "${this.localPackagePath}/dist/cli/clodo-service.js" ${args}`;
+      fullCommand = `node "${this.localPackagePath}/cli/clodo-service.js" ${args}`;
     } else if (mainCommand === 'clodo-create-service') {
-      fullCommand = `node "${this.localPackagePath}/dist/bin/commands/create.js" ${args}`;
+      fullCommand = `node "${this.localPackagePath}/cli/commands/create.js" ${args}`;
     } else {
       // Fallback to npx for other commands
       fullCommand = `npx ${commandWithArgs}`;
@@ -191,18 +233,25 @@ DOCUMENTATION_URL=https://docs.example.com
         return {
           success: false,
           stdout: error.stdout || '',
-          stderr: error.stderr || '',
+          stderr: error.stderr || error.message || '',
           exitCode: error.status || 1
         };
       }
 
+      // Log both stdout and stderr for debugging
+      const stdout = error.stdout || '';
+      const stderr = error.stderr || '';
+      const errorMsg = error.message || 'Unknown error';
+      const fullError = [stdout, stderr, errorMsg].filter(s => s).join('\n');
+
       if (this.verbose) {
-        console.error(`❌ Command failed: ${error.message}`);
-        if (error.stdout) console.error(`   stdout: ${error.stdout}`);
-        if (error.stderr) console.error(`   stderr: ${error.stderr}`);
+        console.error(`❌ Command failed: ${fullCommand}`);
+        if (stdout) console.error(`   stdout: ${stdout}`);
+        if (stderr) console.error(`   stderr: ${stderr}`);
+        console.error(`   error: ${errorMsg}`);
       }
 
-      throw new Error(`CLI command failed: ${fullCommand}\n${error.message}`);
+      throw new Error(`CLI command failed: ${fullCommand}\n\nActual output:\n${fullError}`);
     }
   }
 
@@ -221,6 +270,23 @@ DOCUMENTATION_URL=https://docs.example.com
     
     if (this.verbose) {
       console.log(`📝 Created file: ${relativePath}`);
+    }
+
+    return fullPath;
+  }
+
+  /**
+   * Create a directory in the test environment
+   */
+  createDir(relativePath) {
+    const fullPath = join(this.testDir, relativePath);
+    
+    if (!existsSync(fullPath)) {
+      mkdirSync(fullPath, { recursive: true });
+    }
+
+    if (this.verbose) {
+      console.log(`📁 Created directory: ${relativePath}`);
     }
 
     return fullPath;

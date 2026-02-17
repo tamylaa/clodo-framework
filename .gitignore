@@ -129,3 +129,7 @@ RECOMMENDATIONS_QUICK_REFERENCE.md
 RECOMMENDATIONS_REVIEW_5FEB2026.md
 ROUTER_API_FIX_SUMMARY.md
 V4.4.1_RELEASE_SUMMARY.md
+# Scratch/debug scripts
+fix-tests.js
+analyze-test-failures.js
+get-test-summary.js

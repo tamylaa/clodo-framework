@@ -10,5 +10,5 @@
  * - From dist/utils/, path to dist/lib/ is ../lib/
  */
 
-export { FileManager } from '../lib/shared/utils/file-manager.js';
+export { FileManager } from '../../lib/shared/utils/file-manager.js';
 

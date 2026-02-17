@@ -22,6 +22,8 @@ export function registerDeployCommand(program) {
     .option('--check-prereqs', 'Check deployment prerequisites before starting')
     .option('--check-auth', 'Check Wrangler authentication status')
     .option('--check-network', 'Check network connectivity to Cloudflare')
+    .option('--skip-doctor', 'Skip preflight doctor checks')
+    .option('--doctor-strict', 'Fail deployment if doctor finds warnings (default: fail only on errors)')
 
   // Add standard options (--verbose, --quiet, --json, --no-color, --config-file)
   StandardOptions.define(command)
@@ -50,6 +52,52 @@ export function registerDeployCommand(program) {
 
         // Merge config file defaults with CLI options (CLI takes precedence)
         const mergedOptions = configLoader.merge(configFileData, options);
+
+        // Run doctor preflight checks (unless skipped)
+        if (!mergedOptions.skipDoctor) {
+          const { ValidationHandler } = await import('../../src/service-management/handlers/ValidationHandler.js');
+          const doctor = new ValidationHandler();
+
+          if (!mergedOptions.quiet) {
+            output.info('🔍 Running preflight doctor checks...');
+          }
+
+          const doctorResults = await doctor.runDoctor({
+            servicePath: mergedOptions.servicePath || '.',
+            strict: mergedOptions.doctorStrict || false,
+            json: false // Always use human-readable for deploy context
+          });
+
+          if (doctorResults.exitCode !== 0) {
+            output.error('❌ Preflight checks failed!');
+            output.error(`Found ${doctorResults.summary.errors} errors and ${doctorResults.summary.warnings} warnings`);
+
+            // Show details of failed checks
+            doctorResults.checks.forEach(check => {
+              if (check.status !== 'passed') {
+                const color = check.severity === 'error' ? 'red' : check.severity === 'warning' ? 'yellow' : 'gray';
+                console.log(chalk[color](`  ${check.name}: ${check.message}`));
+                check.details.forEach(detail => {
+                  console.log(chalk.gray(`    ${detail}`));
+                });
+              }
+            });
+
+            if (doctorResults.fixSuggestions.length > 0) {
+              output.info('\n💡 Fix suggestions:');
+              doctorResults.fixSuggestions.forEach(suggestion => {
+                output.log(chalk.blue(`  • ${suggestion}`));
+              });
+            }
+
+            output.info('\nTo skip these checks, use --skip-doctor');
+            output.info('To run checks manually, use: clodo doctor');
+
+            process.exit(1);
+          } else if (!mergedOptions.quiet) {
+            output.success(`✅ Preflight checks passed (${doctorResults.summary.passed}/${doctorResults.summary.total})`);
+          }
+        }
 
         // Determine if interactive mode should be enabled
         const interactive = !mergedOptions.nonInteractive && !mergedOptions.yes;

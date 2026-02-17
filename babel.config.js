@@ -6,7 +6,7 @@
         targets: {
           node: '18'
         },
-        modules: false, // Always keep ES modules - even for tests
+        modules: false, // keep ES modules (Jest runs in ESM mode via babel-jest.useESM)
         useBuiltIns: false
       }
     ]

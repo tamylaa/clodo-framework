@@ -5,12 +5,24 @@
  * is blocked by ES module issues in Jest environment.
  */
 
+import { jest } from '@jest/globals';
+
+// Mock framework-config to avoid import.meta issues - must be before any imports
+await jest.unstable_mockModule('../../../lib/shared/utils/framework-config.js', () => ({
+  frameworkConfig: {
+    get: jest.fn(() => ({})),
+    set: jest.fn()
+  }
+}));
+
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Use process.cwd() and path resolution instead of import.meta.url
-const __dirname = path.resolve();
+// Use proper directory resolution for Jest (instead of import.meta.url)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('GenerationEngine CLI Integration Tests', () => {
   const cliPath = path.join(process.cwd(), 'cli', 'clodo-service.js');

@@ -14,11 +14,33 @@
  * @file test/shared/utils/ErrorHandler.test.js
  */
 
-import ErrorHandler, {
-  createErrorResponse,
-  createContextualError,
-  createErrorHandler
-} from '../../../lib/shared/utils/ErrorHandler.js';
+import { describe, test, expect, jest, beforeAll } from '@jest/globals';
+
+/**
+ * Mock modules for ESM compatibility
+ * these are handled by jest.unstable_mockModule below
+ */
+
+// Mock framework-config
+await jest.unstable_mockModule('../../../lib/shared/utils/framework-config.js', () => ({
+  frameworkConfig: {
+    get: jest.fn(() => ({})),
+    set: jest.fn()
+  }
+}));
+
+// Mock error-recovery
+await jest.unstable_mockModule('../../../lib/shared/utils/error-recovery.js', () => ({
+  ErrorRecoveryManager: jest.fn().mockImplementation(() => ({
+    attemptRecovery: jest.fn(),
+    getRecoverySuggestions: jest.fn(() => [])
+  }))
+}));
+
+// Import after mocks are established
+const errorHandlerModule = await import('../../../lib/shared/utils/ErrorHandler.js');
+const ErrorHandler = errorHandlerModule.default || errorHandlerModule.ErrorHandler;
+const { createErrorResponse, createContextualError, createErrorHandler } = errorHandlerModule;
 
 describe('ErrorHandler - Unified Error Handling Module', () => {
   // Note: Jest globals (describe, test, expect, jest) are automatically available
@@ -28,7 +50,7 @@ describe('ErrorHandler - Unified Error Handling Module', () => {
   // SECTION 1: Circuit Breaker Pattern Tests (10 tests)
   // ============================================================================
 
-  describe('Circuit Breaker Error Handling', () => {
+  describe('Circuit Breaker Pattern', () => {
     test('1.1: Should detect database not found error', () => {
       const error = new Error("Couldn't find a D1 db");
       const analysis = ErrorHandler.analyzeD1Error(error);

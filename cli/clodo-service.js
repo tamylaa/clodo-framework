@@ -44,6 +44,7 @@ async function registerAvailableCommands() {
     { name: 'validate', path: pathToFileURL(join(commandsDir, 'validate.js')).href, register: 'registerValidateCommand' },
     { name: 'update', path: pathToFileURL(join(commandsDir, 'update.js')).href, register: 'registerUpdateCommand' },
     { name: 'diagnose', path: pathToFileURL(join(commandsDir, 'diagnose.js')).href, register: 'registerDiagnoseCommand' },
+    { name: 'doctor', path: pathToFileURL(join(commandsDir, 'doctor.js')).href, register: 'registerDoctorCommand' },
     { name: 'assess', path: pathToFileURL(join(commandsDir, 'assess.js')).href, register: 'registerAssessCommand' },
     { name: 'init-config', path: pathToFileURL(join(commandsDir, 'init-config.js')).href, register: 'registerInitConfigCommand' }
   ];
