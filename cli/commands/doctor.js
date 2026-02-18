@@ -33,7 +33,8 @@ export function registerDoctorCommand(program) {
     .option('--service-path <path>', 'Path to service directory (defaults to current directory)')
     .action(async (options) => {
       try {
-        const handler = new ValidationHandler({ strict: options.strict });
+        const ValidationHandlerClass = await loadValidationHandler();
+        const handler = new ValidationHandlerClass({ strict: options.strict });
         const results = await handler.runDoctor({
           json: options.json,
           fix: options.fix,
