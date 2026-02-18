@@ -32,6 +32,11 @@ import { healthCheckWithBackoff } from '@tamyla/clodo-framework/dist/cli/shared/
 - `clodo-service validate` - Validate service configurations
 - `clodo-service update` - Update existing services
 - `clodo-service diagnose` - Diagnose service issues
+- `clodo-service doctor` - Preflight health checks (Node.js, deps, env vars, connectivity)
+- `clodo-service secrets` - Secret scanning & baseline management
+- `clodo-service config-schema` - Config file schema validation (Zod-powered)
+- `clodo-service assess` - Assess service readiness
+- `clodo-service init-config` - Initialize configuration files
 
 ### Service Management
 Command-line tools for creating and initializing services:

@@ -7,7 +7,7 @@
 **Framework Status: ✅ VALIDATED & PRODUCTION-READY**  
 **Validation: 10/10 Phases Passed**  
 **Service Generation: 28+ Files Per Service**  
-**Test Coverage:** (Latest CI run 2026-02-04) — **115 test suites passed; 4 tests skipped; 2113 passed, 2117 total**
+**Test Coverage:** (Latest CI run 2026-02-18) — **124 test suites passed; 1 skipped; 2328 passed, 2352 total**
 
 A comprehensive framework for building enterprise-grade software architecture on Cloudflare Workers + D1. This framework enables rapid development of autonomous, domain-specific services while maintaining consistency and reusability across your entire ecosystem.
 
@@ -234,11 +234,23 @@ const zones = await api.listZones();
 Run framework commands in your terminal:
 
 ```bash
+# Create a new service
+clodo-service create
+
 # Deploy your service
 clodo-service deploy
 
-# Create a new service
-clodo-create-service my-service
+# Validate service configuration
+clodo-service validate
+
+# Preflight health checks before deployment
+clodo-service doctor
+
+# Scan for leaked secrets
+clodo-service secrets scan
+
+# Validate config files against schemas
+clodo-service config-schema validate clodo-deploy.json
 
 # Security auditing
 clodo-security audit
@@ -293,7 +305,7 @@ clodo-framework/
 │   ├── analysis/           # Technical analysis
 │   └── licensing/          # License information
 ├── src/                     # 💻 Source code
-├── test/                    # ✅ Test suites (Latest CI: 115 suites; 2113 tests passed, 4 skipped)
+├── test/                    # ✅ Test suites (Latest CI: 124 suites; 2328 tests passed, 24 skipped)
 ├── cli/                     # 🔧 CLI tools & commands
 ├── examples/                # 📚 Usage examples & demos
 ├── config/                  # ⚙️ Configuration files & examples
@@ -311,7 +323,7 @@ clodo-framework/
 ```
 
 **Quality Metrics:**
-- ✅ **Latest CI (2026-02-04): 115 test suites passed; 4 tests skipped; 2113/2117 tests passed**
+- ✅ **Latest CI (2026-02-18): 124 test suites passed; 1 skipped; 2328/2352 tests passed**
 - ✅ **CLI tests:** passing (all CLI-specific tests passed in the latest run)
 - ✅ **Clean architecture** (organized file structure, no clutter in root)
 - ✅ **Configuration-based** (no hard-coded values in source)
@@ -369,6 +381,15 @@ npx @tamyla/clodo-framework security generate-key api content-skimmer
 # Validate configuration security
 npx @tamyla/clodo-framework security validate customer production
 
+# Scan source code for leaked secrets
+clodo-service secrets scan
+
+# Validate secrets against baseline
+clodo-service secrets validate
+
+# Run preflight security checks
+clodo-service doctor
+
 # Deploy with automatic security validation
 npx @tamyla/clodo-framework security deploy customer production
 ```
@@ -388,6 +409,9 @@ npx @tamyla/clodo-framework security deploy customer production
 - ✅ **🔒 Security Validation Framework**: Automated security validation and deployment blocking
 - ✅ **🛡️ Cryptographic Key Generation**: Secure API key and JWT secret generation
 - ✅ **🚫 Deployment Security**: Pre-deployment validation that blocks insecure configurations
+- ✅ **🩺 Doctor / Preflight Checks**: Automated environment, dependency, and connectivity validation before deploy
+- ✅ **🔍 Secret Scanning & Baseline**: Detect leaked secrets in source code with baseline management
+- ✅ **📋 Config Schema Validation**: Zod-powered schema validation for all CLI config files (create, deploy, validate, update)
 - ✅ **👥 Customer Configuration Management**: Multi-environment, multi-customer configuration system
 - ✅ **🏗️ Template-Based Customer Onboarding**: Automated customer setup from reusable templates
 - ✅ **🔗 Framework Integration**: Customer configs integrate with domain and feature flag systems
@@ -404,6 +428,9 @@ npx @tamyla/clodo-framework security deploy customer production
 - **🔒 Security-by-Default**: Automatic detection and prevention of insecure configurations
 - **🛡️ Production Security**: Environment-specific security requirements and validation
 - **🔐 Cryptographic Utilities**: Secure key generation and secret management
+- **🩺 Doctor / Preflight**: Automated pre-deployment environment checks with `--skip-doctor` / `--doctor-strict` flags
+- **🔍 Secret Scanning**: Source code secret detection, pattern matching, and baseline management
+- **📋 Config Schema Validation**: Zod schemas for all config file types with semantic warnings
 - **Production Testing**: Health checks, authentication flows, performance monitoring
 - **Audit & Compliance**: Detailed deployment logging and reporting
 - **👥 Customer Configuration Management**: Multi-environment customer isolation and management
@@ -413,10 +440,84 @@ npx @tamyla/clodo-framework security deploy customer production
 - **⚡ Performance Optimized**: Intelligent caching system for schemas, SQL queries, and validation results
 - **🔄 Advanced Data Operations**: Enhanced CRUD with relationships, advanced pagination, and query optimization
 
-## 🎉 What's New in v2.0.7
+## 🎉 What's New in v4.5.x
+
+### 🩺 Doctor / Preflight Command (v4.5.x)
+Run comprehensive pre-deployment health checks to catch issues before they reach production:
+
+```bash
+# Run all preflight checks
+clodo-service doctor
+
+# Skip doctor during deploy
+clodo-service deploy --skip-doctor
+
+# Fail deploy on doctor warnings
+clodo-service deploy --doctor-strict
+```
+
+**Checks performed:**
+- ✅ Node.js version compatibility
+- ✅ Required dependencies installed (wrangler, etc.)
+- ✅ Environment variables set
+- ✅ Cloudflare API connectivity
+- ✅ Config file schema validation
+- ✅ Secret baseline compliance
+
+### 🔍 Secret Scanning & Baseline Management (v4.5.x)
+Detect leaked secrets in your codebase before they reach version control:
+
+```bash
+# Scan for secrets in source code
+clodo-service secrets scan [directory]
+
+# Validate against a known baseline
+clodo-service secrets validate
+
+# Show current baseline
+clodo-service secrets baseline show
+
+# Update baseline after review
+clodo-service secrets baseline update
+
+# List known secret patterns
+clodo-service secrets patterns
+```
+
+**Features:**
+- 15+ built-in secret patterns (AWS, Stripe, GitHub, JWT, etc.)
+- Baseline management for known/accepted findings
+- Integration with doctor preflight checks
+- Programmatic API via `SecretsManager`
+
+### 📋 Config Schema Validation (v4.5.x)
+Validate your CLI config files against Zod schemas with semantic warnings:
+
+```bash
+# Validate a config file
+clodo-service config-schema validate clodo-deploy.json
+
+# Strict mode (exit code 1 on any error)
+clodo-service config-schema validate clodo-create.json --strict
+
+# Show schema for a config type
+clodo-service config-schema show deploy
+
+# List all supported config types
+clodo-service config-schema types
+```
+
+**Supported config types:** `create`, `deploy`, `validate`, `update`
+
+**Semantic warnings detect:**
+- Environment variable placeholders left in values
+- Duplicate features
+- Production configs without security features
+- Missing backup strategy with migrations enabled
+- Name mismatches between config fields
 
 ### 🔧 Enhanced Customer Configuration System
-The customer configuration CLI now **reads directly from your wrangler.toml** file, providing a single source of truth for deployment configuration:
+The customer configuration CLI **reads directly from your wrangler.toml** file, providing a single source of truth for deployment configuration:
 
 ```bash
 # List all customers with complete deployment metadata
@@ -1200,15 +1301,58 @@ npx clodo-db sync --portfolio
 npx clodo-db backup my-domain
 ```
 
-#### `clodo-secrets` - Secret Generation Utility
-Cryptographically secure secret generation for production deployments.
+#### `clodo-secrets` - Secret Scanning & Baseline Management
+Detect leaked secrets in source code and manage baselines for known findings.
 
 ```bash
-# Generate secrets for domain
-npx clodo-secrets --domain my-domain --environment production
+# Scan current directory for secrets
+clodo-service secrets scan
 
-# Generate specific secret types
-npx clodo-secrets --types database,api-keys,jwt --persist
+# Scan a specific directory
+clodo-service secrets scan ./src
+
+# Validate against baseline
+clodo-service secrets validate
+
+# Show current baseline
+clodo-service secrets baseline show
+
+# Update baseline after review
+clodo-service secrets baseline update
+
+# List known secret patterns
+clodo-service secrets patterns
+```
+
+#### `clodo doctor` - Preflight Health Checks
+Run comprehensive environment and configuration checks before deployment.
+
+```bash
+# Run all checks
+clodo-service doctor
+
+# Skip during deploy
+clodo-service deploy --skip-doctor
+
+# Strict mode (fail on warnings)
+clodo-service deploy --doctor-strict
+```
+
+#### `clodo config-schema` - Config File Validation
+Validate CLI config files against Zod schemas with semantic analysis.
+
+```bash
+# Validate a config file
+clodo-service config-schema validate clodo-deploy.json
+
+# Show schema for a config type
+clodo-service config-schema show create
+
+# List all supported config types
+clodo-service config-schema types
+
+# Strict mode
+clodo-service config-schema validate config.json --strict
 ```
 
 ## Quick Start
