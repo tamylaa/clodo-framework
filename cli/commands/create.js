@@ -8,6 +8,7 @@
 import chalk from 'chalk';
 import { Clodo, ConfigLoader } from '@tamyla/clodo-framework';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
+import { ConfigSchemaValidator } from '../../src/validation/ConfigSchemaValidator.js';
 
 export function registerCreateCommand(program) {
   const command = program
@@ -34,10 +35,24 @@ export function registerCreateCommand(program) {
         const output = new (await import('../../lib/shared/utils/output-formatter.js')).OutputFormatter(options);
         const configLoader = new ConfigLoader({ verbose: options.verbose, quiet: options.quiet, json: options.json });
 
-        // Load config from file if specified
+        // Load config from file if specified (with schema validation)
         let configFileData = {};
         if (options.configFile) {
           configFileData = configLoader.loadSafe(options.configFile, {});
+          // Validate against create schema
+          const schemaValidator = new ConfigSchemaValidator({ verbose: options.verbose });
+          const validation = schemaValidator.validateConfig(configFileData, 'create');
+          if (!validation.valid && options.verbose) {
+            output.warning(`Config file has ${validation.errors.length} schema validation issue(s):`);
+            for (const err of validation.errors) {
+              output.warning(`  ${err.field}: ${err.message}`);
+            }
+          }
+          if (validation.warnings.length > 0 && options.verbose) {
+            for (const warn of validation.warnings) {
+              output.info(`  ⚠ ${warn.field}: ${warn.message}`);
+            }
+          }
           if (options.verbose && !options.quiet) {
             output.info(`Loaded configuration from: ${options.configFile}`);
           }

@@ -72,6 +72,8 @@ export { deployServiceProgrammatic } from './programmatic/deployService.js';
 export { validateServiceProgrammatic } from './programmatic/validateService.js';
 export { getFrameworkCapabilities, getFrameworkVersion } from './api/frameworkCapabilities.js';
 export { getAcceptedParameters, validateServicePayload } from './validation/payloadValidation.js';
+export { ConfigSchemaValidator } from './validation/ConfigSchemaValidator.js';
+export { getConfigSchema, getRegisteredConfigTypes } from './validation/configSchemas.js';
 export {
   IntegrationError,
   PayloadValidationError,

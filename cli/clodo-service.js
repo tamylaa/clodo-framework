@@ -48,7 +48,8 @@ async function registerAvailableCommands() {
     { name: 'doctor', path: pathToFileURL(join(commandsDir, 'doctor.js')).href, register: 'registerDoctorCommand' },
     { name: 'assess', path: pathToFileURL(join(commandsDir, 'assess.js')).href, register: 'registerAssessCommand' },
     { name: 'init-config', path: pathToFileURL(join(commandsDir, 'init-config.js')).href, register: 'registerInitConfigCommand' },
-    { name: 'secrets', path: pathToFileURL(join(commandsDir, 'secrets.js')).href, register: 'registerSecretsCommand' }
+    { name: 'secrets', path: pathToFileURL(join(commandsDir, 'secrets.js')).href, register: 'registerSecretsCommand' },
+    { name: 'config-schema', path: pathToFileURL(join(commandsDir, 'config-schema.js')).href, register: 'registerConfigSchemaCommand' }
   ];
 
   for (const cmd of commands) {

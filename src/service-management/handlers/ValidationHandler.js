@@ -8,6 +8,7 @@ import path from 'path';
 import { FrameworkConfig } from '../../utils/framework-config.js';
 import { ConfigurationValidator } from '../../security/ConfigurationValidator.js';
 import { SecretsManager } from '../../security/SecretsManager.js';
+import { ConfigSchemaValidator } from '../../validation/ConfigSchemaValidator.js';
 
 export class ValidationHandler {
   constructor(options = {}) {
@@ -432,6 +433,11 @@ export class ValidationHandler {
     results.checks.push(secretsCheck);
     this.updateSummary(results, secretsCheck);
 
+    // Run config schema validation check
+    const configSchemaCheck = await this.checkConfigSchemas(servicePath);
+    results.checks.push(configSchemaCheck);
+    this.updateSummary(results, configSchemaCheck);
+
     // Apply fixes if requested
     if (fix && results.summary.errors > 0) {
       console.log('🔧 Attempting to fix detected issues...');
@@ -737,6 +743,89 @@ export class ValidationHandler {
   async loadSecretsBaseline(servicePath) {
     const mgr = new SecretsManager();
     return mgr.loadBaseline(servicePath);
+  }
+
+  /**
+   * Check config files in the service directory against their schemas
+   * Validates any config JSON files found (clodo-*.json pattern)
+   */
+  async checkConfigSchemas(servicePath) {
+    const check = {
+      name: 'config-schemas',
+      status: 'passed',
+      severity: 'info',
+      message: 'Config schema validation passed',
+      details: [],
+      fixSuggestions: []
+    };
+
+    try {
+      const validator = new ConfigSchemaValidator();
+      const configPairs = [
+        { glob: 'clodo-create.json', type: 'create' },
+        { glob: 'clodo-deploy.json', type: 'deploy' },
+        { glob: 'clodo-validate.json', type: 'validate' },
+        { glob: 'clodo-update.json', type: 'update' }
+      ];
+
+      let filesChecked = 0;
+      let errors = 0;
+
+      for (const { glob, type } of configPairs) {
+        // Check in service root and config/ subdirectory
+        const candidates = [
+          path.join(servicePath, glob),
+          path.join(servicePath, 'config', glob)
+        ];
+
+        for (const filePath of candidates) {
+          try {
+            await fs.access(filePath);
+          } catch {
+            continue; // File doesn't exist — skip
+          }
+
+          filesChecked++;
+          const result = validator.validateConfigFile(filePath, type);
+
+          if (!result.valid) {
+            errors++;
+            check.details.push(`✗ ${path.relative(servicePath, filePath)}: ${result.errors.length} error(s)`);
+            for (const err of result.errors) {
+              check.details.push(`    ${err.field}: ${err.message}`);
+            }
+          } else {
+            check.details.push(`✓ ${path.relative(servicePath, filePath)}: valid (${result.fieldCount} fields)`);
+          }
+
+          // Report warnings
+          for (const warn of result.warnings) {
+            check.details.push(`  ⚠ ${warn.field}: ${warn.message}`);
+          }
+        }
+      }
+
+      if (filesChecked === 0) {
+        check.details.push('No config files found to validate');
+        check.details.push('Config files follow the pattern: clodo-{create|deploy|validate|update}.json');
+      } else if (errors > 0) {
+        check.status = 'failed';
+        check.severity = 'warning';
+        check.message = `${errors} config file(s) have schema validation errors`;
+        check.fixSuggestions.push('Review the config errors above and fix invalid fields');
+        check.fixSuggestions.push('Run: clodo config-schema validate <file> for details');
+        check.fixSuggestions.push('Run: clodo config-schema show <type> for schema reference');
+      } else {
+        check.message = `${filesChecked} config file(s) validated successfully`;
+      }
+
+    } catch (error) {
+      check.status = 'warning';
+      check.severity = 'warning';
+      check.details.push(`Config schema validation failed: ${error.message}`);
+    }
+
+    return check;
   }
 
   /**

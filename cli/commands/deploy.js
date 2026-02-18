@@ -1,6 +1,7 @@
 ﻿import chalk from 'chalk';
 import { Clodo, ConfigLoader, InteractiveDeploymentCoordinator, OutputFormatter } from '@tamyla/clodo-framework';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
+import { ConfigSchemaValidator } from '../../src/validation/ConfigSchemaValidator.js';
 
 export function registerDeployCommand(program) {
   const command = program
@@ -41,10 +42,24 @@ export function registerDeployCommand(program) {
           options.environment = 'production';
         }
 
-        // Load config from file if specified
+        // Load config from file if specified (with schema validation)
         let configFileData = {};
         if (options.configFile) {
           configFileData = configLoader.loadSafe(options.configFile, {});
+          // Validate against deploy schema
+          const schemaValidator = new ConfigSchemaValidator({ verbose: options.verbose });
+          const validation = schemaValidator.validateConfig(configFileData, 'deploy');
+          if (!validation.valid && options.verbose) {
+            output.warning(`Config file has ${validation.errors.length} schema validation issue(s):`);
+            for (const err of validation.errors) {
+              output.warning(`  ${err.field}: ${err.message}`);
+            }
+          }
+          if (validation.warnings.length > 0 && options.verbose) {
+            for (const warn of validation.warnings) {
+              output.info(`  ⚠ ${warn.field}: ${warn.message}`);
+            }
+          }
           if (options.verbose && !options.quiet) {
             output.info(`Loaded configuration from: ${options.configFile}`);
           }
