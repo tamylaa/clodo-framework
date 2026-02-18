@@ -3,8 +3,25 @@
  * Provides preflight diagnostic checks for Clodo services
  */
 
-import { ValidationHandler } from '../../src/service-management/handlers/ValidationHandler.js';
 import chalk from 'chalk';
+
+// ValidationHandler is loaded at runtime so the same command module works
+// both when running from source (imports from `src/...`) and from the
+// compiled distribution (imports from `dist/...`). We attempt the source
+// import first, then fall back to the dist path.
+async function loadValidationHandler() {
+  try {
+    return (await import('../../src/service-management/handlers/ValidationHandler.js')).ValidationHandler;
+  } catch (errSource) {
+    // running from dist/ (compiled package)
+    try {
+      return (await import('../../service-management/handlers/ValidationHandler.js')).ValidationHandler;
+    } catch (errDist) {
+      // last-resort: try explicit dist path (useful in some CI/dev layouts)
+      return (await import('../../../dist/service-management/handlers/ValidationHandler.js')).ValidationHandler;
+    }
+  }
+}
 
 export function registerDoctorCommand(program) {
   program
