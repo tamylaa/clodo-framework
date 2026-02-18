@@ -1,3 +1,12 @@
+## [4.6.3](https://github.com/tamylaa/clodo-framework/compare/v4.6.2...v4.6.3) (2026-02-18)
+
+
+### Bug Fixes
+
+* **cli:** ensure doctor loads ValidationHandler at runtime and sync FRAMEWORK_VERSION ([3d86378](https://github.com/tamylaa/clodo-framework/commit/3d8637807c6fb618a4441f8d36bfef87c887a93a))
+* **cli:** lazy-load ValidationHandler in doctor command action ([99994ed](https://github.com/tamylaa/clodo-framework/commit/99994ed270babc49424aa3b37fc94943d4247ab3))
+* **cli:** runtime-load src-only handlers (ValidationHandler, ConfigSchemaValidator, SecretsManager) so commands register from both src and dist ([50c0120](https://github.com/tamylaa/clodo-framework/commit/50c012081f5582411de739f1053a568c01cf83fd))
+
 ## [4.6.2](https://github.com/tamylaa/clodo-framework/compare/v4.6.1...v4.6.2) (2026-02-18)
 
 
