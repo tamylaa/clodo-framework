@@ -18,7 +18,7 @@ async function loadValidationHandler() {
       return (await import('../../service-management/handlers/ValidationHandler.js')).ValidationHandler;
     } catch (errDist) {
       // last-resort: try explicit dist path (useful in some CI/dev layouts)
-      return (await import('../../../dist/service-management/handlers/ValidationHandler.js')).ValidationHandler;
+      return (await import('../../dist/service-management/handlers/ValidationHandler.js')).ValidationHandler;
     }
   }
 }
@@ -33,7 +33,8 @@ export function registerDoctorCommand(program) {
     .option('--service-path <path>', 'Path to service directory (defaults to current directory)')
     .action(async (options) => {
       try {
-        const handler = new ValidationHandler({ strict: options.strict });
+        const ValidationHandlerClass = await loadValidationHandler();
+        const handler = new ValidationHandlerClass({ strict: options.strict });
         const results = await handler.runDoctor({
           json: options.json,
           fix: options.fix,

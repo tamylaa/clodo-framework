@@ -8,8 +8,16 @@
  *   clodo-service secrets baseline   Show/update the secrets baseline
  */
 
-import { SecretsManager } from '../../src/security/SecretsManager.js';
 import chalk from 'chalk';
+
+// Lazy-load SecretsManager so this command module imports successfully from dist/
+async function loadSecretsManager() {
+  try {
+    return (await import('../../src/security/SecretsManager.js')).SecretsManager;
+  } catch (err) {
+    return (await import('../../security/SecretsManager.js')).SecretsManager;
+  }
+}
 
 export function registerSecretsCommand(program) {
   const secrets = program
@@ -27,7 +35,8 @@ export function registerSecretsCommand(program) {
     .option('--severity <level>', 'Minimum severity to report: critical, high, medium', 'medium')
     .action(async (options) => {
       try {
-        const mgr = new SecretsManager({ includeTests: options.includeTests });
+        const SecretsManagerClass = await loadSecretsManager();
+        const mgr = new SecretsManagerClass({ includeTests: options.includeTests });
         const servicePath = options.servicePath || process.cwd();
         const findings = await mgr.scan(servicePath);
 
@@ -58,7 +67,8 @@ export function registerSecretsCommand(program) {
     .option('--service-path <path>', 'Path to service directory (defaults to current directory)')
     .action(async (options) => {
       try {
-        const mgr = new SecretsManager();
+        const SecretsManagerClass = await loadSecretsManager();
+        const mgr = new SecretsManagerClass();
         const servicePath = options.servicePath || process.cwd();
         const result = await mgr.validate(servicePath);
 
@@ -94,7 +104,8 @@ export function registerSecretsCommand(program) {
     .option('--service-path <path>', 'Path to service directory (defaults to current directory)')
     .action(async (options) => {
       try {
-        const mgr = new SecretsManager();
+        const SecretsManagerClass = await loadSecretsManager();
+        const mgr = new SecretsManagerClass();
         const servicePath = options.servicePath || process.cwd();
         const entries = await mgr.baselineShow(servicePath);
 
@@ -122,7 +133,8 @@ export function registerSecretsCommand(program) {
     .option('--service-path <path>', 'Path to service directory (defaults to current directory)')
     .action(async (options) => {
       try {
-        const mgr = new SecretsManager();
+        const SecretsManagerClass = await loadSecretsManager();
+        const mgr = new SecretsManagerClass();
         const servicePath = options.servicePath || process.cwd();
 
         const result = await mgr.baselineUpdate(servicePath, {
@@ -149,8 +161,9 @@ export function registerSecretsCommand(program) {
     .command('patterns')
     .description('List configured detection patterns and their severity')
     .option('--json', 'Output results in JSON format')
-    .action((options) => {
-      const mgr = new SecretsManager();
+    .action(async (options) => {
+      const SecretsManagerClass = await loadSecretsManager();
+      const mgr = new SecretsManagerClass();
       const patterns = mgr.getPatterns();
 
       if (options.json) {

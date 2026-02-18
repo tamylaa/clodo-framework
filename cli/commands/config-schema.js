@@ -10,7 +10,16 @@
 
 import chalk from 'chalk';
 import { readFileSync } from 'fs';
-import { ConfigSchemaValidator } from '../../src/validation/ConfigSchemaValidator.js';
+
+// Load ConfigSchemaValidator lazily so this module can be imported both
+// from source (cli/) and from the compiled distribution (dist/cli/).
+async function loadConfigSchemaValidator() {
+  try {
+    return (await import('../../src/validation/ConfigSchemaValidator.js')).ConfigSchemaValidator;
+  } catch (err) {
+    return (await import('../../validation/ConfigSchemaValidator.js')).ConfigSchemaValidator;
+  }
+}
 
 export function registerConfigSchemaCommand(program) {
   const cmd = program
@@ -22,8 +31,9 @@ export function registerConfigSchemaCommand(program) {
     .command('show <type>')
     .description('Show the schema definition for a config type (create, deploy, validate, update)')
     .option('--json', 'Output as JSON')
-    .action((type, options) => {
-      const validator = new ConfigSchemaValidator();
+    .action(async (type, options) => {
+      const ValidatorClass = await loadConfigSchemaValidator();
+      const validator = new ValidatorClass();
       const definition = validator.getSchemaDefinition(type);
 
       if (!definition) {
@@ -70,8 +80,9 @@ export function registerConfigSchemaCommand(program) {
     .option('--type <type>', 'Config type (auto-detected if not specified)')
     .option('--strict', 'Exit with error code on validation failures')
     .option('--json', 'Output as JSON')
-    .action((file, options) => {
-      const validator = new ConfigSchemaValidator();
+    .action(async (file, options) => {
+      const ValidatorClass = await loadConfigSchemaValidator();
+      const validator = new ValidatorClass();
 
       // Determine command type
       let commandType = options.type;
@@ -151,8 +162,9 @@ export function registerConfigSchemaCommand(program) {
     .command('types')
     .description('List all available config types')
     .option('--json', 'Output as JSON')
-    .action((options) => {
-      const validator = new ConfigSchemaValidator();
+    .action(async (options) => {
+      const ValidatorClass = await loadConfigSchemaValidator();
+      const validator = new ValidatorClass();
       const types = validator.getRegisteredTypes();
 
       if (options.json) {

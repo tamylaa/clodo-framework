@@ -8,7 +8,14 @@
 import chalk from 'chalk';
 import { Clodo, ConfigLoader } from '@tamyla/clodo-framework';
 import { StandardOptions } from '../../lib/shared/utils/cli-options.js';
-import { ConfigSchemaValidator } from '../../src/validation/ConfigSchemaValidator.js';
+
+async function loadConfigSchemaValidator() {
+  try {
+    return (await import('../../src/validation/ConfigSchemaValidator.js')).ConfigSchemaValidator;
+  } catch (err) {
+    return (await import('../../validation/ConfigSchemaValidator.js')).ConfigSchemaValidator;
+  }
+}
 
 export function registerCreateCommand(program) {
   const command = program
@@ -40,7 +47,8 @@ export function registerCreateCommand(program) {
         if (options.configFile) {
           configFileData = configLoader.loadSafe(options.configFile, {});
           // Validate against create schema
-          const schemaValidator = new ConfigSchemaValidator({ verbose: options.verbose });
+          const ValidatorClass = await loadConfigSchemaValidator();
+          const schemaValidator = new ValidatorClass({ verbose: options.verbose });
           const validation = schemaValidator.validateConfig(configFileData, 'create');
           if (!validation.valid && options.verbose) {
             output.warning(`Config file has ${validation.errors.length} schema validation issue(s):`);
