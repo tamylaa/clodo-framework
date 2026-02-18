@@ -1,3 +1,10 @@
+## [4.6.2](https://github.com/tamylaa/clodo-framework/compare/v4.6.1...v4.6.2) (2026-02-18)
+
+
+### Bug Fixes
+
+* **cli:** make Doctor command load ValidationHandler at runtime (works from src & dist); test: add regression test for doctor in dist CLI ([fd7437d](https://github.com/tamylaa/clodo-framework/commit/fd7437d1a3df227ff8a35089d90f2ef82d99714a))
+
 ## [4.6.1](https://github.com/tamylaa/clodo-framework/compare/v4.6.0...v4.6.1) (2026-02-18)
 
 
