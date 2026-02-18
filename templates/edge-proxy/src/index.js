@@ -37,13 +37,13 @@ const middleware = composeMiddleware(
 const routeMap = {
   // Rewrite /api/* to upstream service
   '/api/': {
-    upstream: 'https://api.example.com',
+    upstream: 'https://upstream.local',
     stripPrefix: '/api',
     headers: { 'X-Forwarded-By': 'clodo-proxy' }
   },
   // Serve static assets from R2/another origin
   '/assets/': {
-    upstream: 'https://cdn.example.com',
+    upstream: 'https://cdn.local',
     stripPrefix: '',
     cache: { ttl: 86400 } // Cache for 24h
   }
