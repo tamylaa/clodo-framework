@@ -1,3 +1,10 @@
+## [4.6.1](https://github.com/tamylaa/clodo-framework/compare/v4.6.0...v4.6.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **security:** export SecretsManager from main index ([2884b9d](https://github.com/tamylaa/clodo-framework/commit/2884b9d880f75cc924803d6070e3603bf46929d9))
+
 # [4.6.0](https://github.com/tamylaa/clodo-framework/compare/v4.5.1...v4.6.0) (2026-02-18)
 
 
