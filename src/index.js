@@ -59,6 +59,7 @@ export { DeploymentAuditor } from './deployment/auditor.js';
 export { SecurityCLI } from './security/SecurityCLI.js';
 export { ConfigurationValidator } from './security/ConfigurationValidator.js';
 export { SecretGenerator } from './security/SecretGenerator.js';
+export { SecretsManager } from './security/SecretsManager.js';
 export { EnvironmentValidator } from './utils/EnvironmentValidator.js';
 
 // Service management components
