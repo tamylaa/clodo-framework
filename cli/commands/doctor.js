@@ -18,7 +18,7 @@ async function loadValidationHandler() {
       return (await import('../../service-management/handlers/ValidationHandler.js')).ValidationHandler;
     } catch (errDist) {
       // last-resort: try explicit dist path (useful in some CI/dev layouts)
-      return (await import('../../../dist/service-management/handlers/ValidationHandler.js')).ValidationHandler;
+      return (await import('../../dist/service-management/handlers/ValidationHandler.js')).ValidationHandler;
     }
   }
 }
