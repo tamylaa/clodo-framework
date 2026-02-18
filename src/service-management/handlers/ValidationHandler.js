@@ -7,6 +7,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { FrameworkConfig } from '../../utils/framework-config.js';
 import { ConfigurationValidator } from '../../security/ConfigurationValidator.js';
+import { SecretsManager } from '../../security/SecretsManager.js';
 
 export class ValidationHandler {
   constructor(options = {}) {
@@ -713,104 +714,29 @@ export class ValidationHandler {
 
   /**
    * Scan for potential secrets in the codebase
+   * Delegates to SecretsManager for consistent scanning logic
    */
   async scanForSecrets(servicePath) {
-    const secrets = [];
-    const secretPatterns = [
-      { name: 'api_key', pattern: /(api[_-]?key|apikey)\s*[=:]\s*['"]([^'"]{20,})['"]/gi },
-      { name: 'secret', pattern: /(secret|token)\s*[=:]\s*['"]([^'"]{20,})['"]/gi },
-      { name: 'password', pattern: /(password|passwd|pwd)\s*[=:]\s*['"]([^'"]{8,})['"]/gi },
-      { name: 'private_key', pattern: /-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----/gi },
-      { name: 'aws_access_key', pattern: /AKIA[0-9A-Z]{16}/g },
-      { name: 'cloudflare_token', pattern: /(?:cloudflare|cf)[_-]?(?:api[_-]?)?token\s*[=:]\s*['"]([^'"]{40,})['"]/gi },
-      { name: 'jwt_secret', pattern: /(?:jwt|json[_-]?web[_-]?token)[_-]?secret\s*[=:]\s*['"]([^'"]{20,})['"]/gi },
-      { name: 'database_url', pattern: /(?:database|db)[_-]?url\s*[=:]\s*['"]([^'"]*password[^'"]*)['"]/gi },
-      { name: 'stripe_key', pattern: /(sk|pk)_(?:test|live)_[0-9a-zA-Z]{20,}/g }
-    ];
-
-    // Files to scan (exclude common non-sensitive files)
-    const scanFiles = await this.getFilesToScan(servicePath);
-
-    for (const file of scanFiles) {
-      try {
-        const content = await fs.readFile(file, 'utf8');
-        const lines = content.split('\n');
-
-        lines.forEach((line, index) => {
-          secretPatterns.forEach(({ name, pattern }) => {
-            let match;
-            while ((match = pattern.exec(line)) !== null) {
-              // Skip if it's clearly a test/example
-              if (line.toLowerCase().includes('example') ||
-                  line.toLowerCase().includes('test') ||
-                  line.toLowerCase().includes('fake') ||
-                  line.toLowerCase().includes('placeholder')) {
-                continue;
-              }
-
-              secrets.push({
-                file: path.relative(servicePath, file),
-                line: index + 1,
-                pattern: name,
-                match: match[0].substring(0, 50) + '...' // Truncate for safety
-              });
-            }
-          });
-        });
-      } catch (error) {
-        // Skip files that can't be read
-        continue;
-      }
-    }
-
-    return secrets;
+    const mgr = new SecretsManager();
+    return mgr.scan(servicePath);
   }
 
   /**
    * Get list of files to scan for secrets
+   * Delegates to SecretsManager
    */
   async getFilesToScan(servicePath) {
-    const files = [];
-    const scanExtensions = ['.js', '.ts', '.json', '.toml', '.env', '.md', '.txt'];
-
-    async function scanDir(dir) {
-      const entries = await fs.readdir(dir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
-
-        // Skip common directories that shouldn't contain secrets
-        if (entry.isDirectory()) {
-          if (['node_modules', '.git', 'dist', 'build', 'coverage', 'logs'].includes(entry.name)) {
-            continue;
-          }
-          await scanDir(fullPath);
-        } else if (entry.isFile()) {
-          const ext = path.extname(entry.name);
-          if (scanExtensions.includes(ext) || entry.name.startsWith('.env')) {
-            files.push(fullPath);
-          }
-        }
-      }
-    }
-
-    await scanDir(servicePath);
-    return files;
+    const mgr = new SecretsManager();
+    return mgr.getFilesToScan(servicePath);
   }
 
   /**
    * Load secrets baseline file
+   * Delegates to SecretsManager
    */
   async loadSecretsBaseline(servicePath) {
-    const baselinePath = path.join(servicePath, '.secrets.baseline');
-
-    try {
-      const content = await fs.readFile(baselinePath, 'utf8');
-      return JSON.parse(content);
-    } catch (error) {
-      // No baseline file exists
-      return [];
-    }
+    const mgr = new SecretsManager();
+    return mgr.loadBaseline(servicePath);
   }
 
   /**

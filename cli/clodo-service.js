@@ -14,6 +14,7 @@
  * - diagnose    Diagnose and report issues with an existing service
  * - assess      Run intelligent capability assessment
  * - list-types  List available service types and their features
+ * - secrets     Secret scanning and baseline management for leak prevention
  */
 
 import { Command } from 'commander';
@@ -46,7 +47,8 @@ async function registerAvailableCommands() {
     { name: 'diagnose', path: pathToFileURL(join(commandsDir, 'diagnose.js')).href, register: 'registerDiagnoseCommand' },
     { name: 'doctor', path: pathToFileURL(join(commandsDir, 'doctor.js')).href, register: 'registerDoctorCommand' },
     { name: 'assess', path: pathToFileURL(join(commandsDir, 'assess.js')).href, register: 'registerAssessCommand' },
-    { name: 'init-config', path: pathToFileURL(join(commandsDir, 'init-config.js')).href, register: 'registerInitConfigCommand' }
+    { name: 'init-config', path: pathToFileURL(join(commandsDir, 'init-config.js')).href, register: 'registerInitConfigCommand' },
+    { name: 'secrets', path: pathToFileURL(join(commandsDir, 'secrets.js')).href, register: 'registerSecretsCommand' }
   ];
 
   for (const cmd of commands) {

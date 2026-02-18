@@ -95,6 +95,7 @@ audit-logs/
 audit-backups/
 audit-reports/
 test-results/
+test-service/
 coverage/
 
 # Local cache for framework artifacts (secrets, orchestration caches)
