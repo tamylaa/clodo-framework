@@ -1,3 +1,16 @@
+# [4.6.0](https://github.com/tamylaa/clodo-framework/compare/v4.5.1...v4.6.0) (2026-02-18)
+
+
+### Bug Fixes
+
+* **config:** add Zod schema validation for CLI config files ([3c25c88](https://github.com/tamylaa/clodo-framework/commit/3c25c88626fa5e4bc48c874a25ff89b8f75fb236))
+* **secrets:** integrate secret scanning CLI with existing SecretGenerator infrastructure ([f72f70f](https://github.com/tamylaa/clodo-framework/commit/f72f70f8fd3a0dd8da552c15e8b34bc459584870))
+
+
+### Features
+
+* **doctor:** implement clodo doctor command with token scope validation, secrets baseline scanning, and comprehensive test stabilization ([9b1fe00](https://github.com/tamylaa/clodo-framework/commit/9b1fe00f77bd7167cb8c836637caae68b9e8cd1c))
+
 ## [4.5.1](https://github.com/tamylaa/clodo-framework/compare/v4.5.0...v4.5.1) (2026-02-11)
 
 
